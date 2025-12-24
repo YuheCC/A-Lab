@@ -66,26 +66,39 @@ export const getDefectTrendConfig = (
     title: {
       text: t('manufacturing.modules.detection.charts.leftOhRange'),
       left: 'center',
+      top: 8,
       textStyle: {
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: 'normal',
+        lineHeight: 16,
       },
     },
     tooltip: {
       trigger: 'axis',
-      formatter: '{b}: {c} 个',
+      formatter: (params: any) => {
+        const xValue = params[0]?.axisValue;
+        const numValue = parseFloat(xValue);
+        return isNaN(numValue) ? xValue : numValue.toFixed(3);
+      },
     },
     grid: {
       left: '10%',
       right: '10%',
-      top: '25%',
+      top: 50,
       bottom: '15%',
     },
     xAxis: {
       type: 'category',
       data: defectTrendData.xAxis,
       axisLabel: {
-        show: false,
+        show: true,
+        interval: (index: number) => {
+          return index === 0 || index === defectTrendData.xAxis.length - 1;
+        },
+        formatter: (value: string) => {
+          const num = parseFloat(value);
+          return isNaN(num) ? value : num.toFixed(1);
+        },
       },
     },
     yAxis: {
@@ -181,26 +194,39 @@ export const getConfidenceConfig = (
     title: {
       text: t('manufacturing.modules.detection.charts.leftOhStd'),
       left: 'center',
+      top: 8,
       textStyle: {
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: 'normal',
+        lineHeight: 16,
       },
     },
     tooltip: {
       trigger: 'axis',
-      formatter: '{b}: {c} 个',
+      formatter: (params: any) => {
+        const xValue = params[0]?.axisValue;
+        const numValue = parseFloat(xValue);
+        return isNaN(numValue) ? xValue : numValue.toFixed(3);
+      },
     },
     grid: {
       left: '10%',
       right: '10%',
-      top: '25%',
+      top: 50,
       bottom: '15%',
     },
     xAxis: {
       type: 'category',
       data: confidenceData.xAxis,
       axisLabel: {
-        show: false,
+        show: true,
+        interval: (index: number) => {
+          return index === 0 || index === confidenceData.xAxis.length - 1;
+        },
+        formatter: (value: string) => {
+          const num = parseFloat(value);
+          return isNaN(num) ? value : num.toFixed(1);
+        },
       },
     },
     yAxis: {
@@ -296,26 +322,39 @@ export const getAreaDistributionConfig = (
     title: {
       text: t('manufacturing.modules.detection.charts.rightOhRange'),
       left: 'center',
+      top: 8,
       textStyle: {
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: 'normal',
+        lineHeight: 16,
       },
     },
     tooltip: {
       trigger: 'axis',
-      formatter: '{b}: {c} 个',
+      formatter: (params: any) => {
+        const xValue = params[0]?.axisValue;
+        const numValue = parseFloat(xValue);
+        return isNaN(numValue) ? xValue : numValue.toFixed(3);
+      },
     },
     grid: {
       left: '10%',
       right: '10%',
-      top: '25%',
+      top: 50,
       bottom: '15%',
     },
     xAxis: {
       type: 'category',
       data: areaDistributionData.xAxis,
       axisLabel: {
-        show: false,
+        show: true,
+        interval: (index: number) => {
+          return index === 0 || index === areaDistributionData.xAxis.length - 1;
+        },
+        formatter: (value: string) => {
+          const num = parseFloat(value);
+          return isNaN(num) ? value : num.toFixed(1);
+        },
       },
     },
     yAxis: {
@@ -411,26 +450,39 @@ export const getTimeSeriesConfig = (
     title: {
       text: t('manufacturing.modules.detection.charts.rightOhStd'),
       left: 'center',
+      top: 8,
       textStyle: {
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: 'normal',
+        lineHeight: 16,
       },
     },
     tooltip: {
       trigger: 'axis',
-      formatter: '{b}: {c} 个',
+      formatter: (params: any) => {
+        const xValue = params[0]?.axisValue;
+        const numValue = parseFloat(xValue);
+        return isNaN(numValue) ? xValue : numValue.toFixed(3);
+      },
     },
     grid: {
       left: '10%',
       right: '10%',
-      top: '25%',
+      top: 50,
       bottom: '15%',
     },
     xAxis: {
       type: 'category',
       data: timeSeriesData.xAxis,
       axisLabel: {
-        show: false,
+        show: true,
+        interval: (index: number) => {
+          return index === 0 || index === timeSeriesData.xAxis.length - 1;
+        },
+        formatter: (value: string) => {
+          const num = parseFloat(value);
+          return isNaN(num) ? value : num.toFixed(1);
+        },
       },
     },
     yAxis: {

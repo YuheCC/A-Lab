@@ -291,7 +291,7 @@ export const getScatterConfig = (
   // 构建 series 数组
   const series: any[] = [
     {
-      name: 'Red',
+      name: 'NG',
       type: 'scatter',
       data: redData.map((d) => [d.x, d.y]),
       itemStyle: {
@@ -301,7 +301,7 @@ export const getScatterConfig = (
       z: 2,
     },
     {
-      name: 'Green',
+      name: 'Ok',
       type: 'scatter',
       data: greenData.map((d) => [d.x, d.y]),
       itemStyle: {
@@ -330,9 +330,9 @@ export const getScatterConfig = (
         tooltip: {
           formatter: () => {
             return `<div style="font-weight: 600;">Selected Point</div>
-                    <div>Index: ${selectedPoint.index}</div>
-                    <div>X: ${selectedPoint.x.toFixed(3)}</div>
-                    <div>Y: ${selectedPoint.y.toFixed(3)}</div>`;
+                    <div>Barcode: ${ALL_BARCODES[selectedPoint.index]}</div>
+                    <div>PCA1: ${selectedPoint.x.toFixed(3)}</div>
+                    <div>PCA2: ${selectedPoint.y.toFixed(3)}</div>`;
           },
         },
       });
@@ -356,17 +356,17 @@ export const getScatterConfig = (
         }
         const dataIndex = params.dataIndex;
         const pointData =
-          params.seriesName === 'Red'
+          params.seriesName === 'NG'
             ? redData[dataIndex]
             : greenData[dataIndex];
         return `<div style="margin-bottom: 4px; font-weight: 600;">${params.seriesName}</div>
-                <div>Index: ${pointData.index}</div>
-                <div>X: ${pointData.x.toFixed(3)}</div>
-                <div>Y: ${pointData.y.toFixed(3)}</div>`;
+                <div>Barcode: ${ALL_BARCODES[pointData.index]}</div>
+                <div>PCA1: ${pointData.x.toFixed(3)}</div>
+                <div>PCA2: ${pointData.y.toFixed(3)}</div>`;
       },
     },
     legend: {
-      data: ['Red', 'Green'],
+      data: ['NG', 'Ok'],
       top: 40,
       itemWidth: 12,
       itemHeight: 12,
@@ -380,7 +380,7 @@ export const getScatterConfig = (
     },
     xAxis: {
       type: 'value',
-      name: t('manufacturing.modules.kvalue.result.scatterChart.xAxisName'),
+      name: 'PCA1',
       nameLocation: 'middle',
       nameGap: 30,
       nameTextStyle: {
@@ -406,7 +406,7 @@ export const getScatterConfig = (
     },
     yAxis: {
       type: 'value',
-      name: t('manufacturing.modules.kvalue.result.scatterChart.yAxisName'),
+      name: 'PCA2',
       nameLocation: 'middle',
       nameGap: 50,
       nameTextStyle: {

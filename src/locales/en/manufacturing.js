@@ -4,10 +4,10 @@ export default {
       title: 'Quality Prediction and Correlation Analysis',
       paragraph1: 'In the complex production process of lithium battery manufacturing with long chains and multiple processes, achieving precise quality control is a key challenge. Traditional methods relying on finished product inspection have obvious lag, often resulting in batch losses once defects are detected. To address this, we have built a full-process data collection system spanning from front-end electrode preparation (such as slurry mixing, coating, rolling) to back-end cell assembly (such as winding, stacking, electrolyte injection, formation and grading).',
       paragraph2: 'By collecting massive process parameters from each process step in real-time (such as coating surface density, rolling thickness, electrolyte injection volume, etc.) and using advanced algorithms like machine learning to build predictive models, we can make early predictions of the battery\'s final key performance indicators (such as capacity, internal resistance, cycle life). When potential quality anomalies are predicted or defects are detected in final inspection, the system can further initiate correlation analysis to deeply trace and locate key processes and parameter fluctuation ranges that cause defects. This not only significantly advances quality monitoring nodes, achieving a transformation from "post-inspection" to "pre-prevention", but also provides precise data-driven decision support for process optimization, continuously improving product consistency and yield.',
-      dataSize: '565 samples',
+      dataSize: '442 samples',
       dataType: 'Relational data',
-      dataSource: 'Production equipment/process/parameter data (anonymized)',
-      targetLabel: 'Classification target',
+      dataSource: 'Injection, Sealing, Degassing Equipment (Anonymized)',
+      targetLabel: 'Classification Target',
       target: '0 (Normal), 1 (Abnormal)',
       imageTitle: 'Correlation Analysis of Defect Causes',
     },
@@ -24,7 +24,7 @@ export default {
       imageTitle: 'SES Lithium Battery CT AI Tool',
       result: {
         tree: {
-          title: 'Detection List',
+          title: 'Barcode List',
         },
         imageViewer: {
           title: 'Detection Images',
@@ -42,10 +42,10 @@ export default {
         showMore: 'More... ({{count}} items remaining)',
       },
       charts: {
-        leftOhRange: 'Left OH Range Distribution',
-        leftOhStd: 'Left OH Standard Deviation Distribution',
-        rightOhRange: 'Right OH Range Distribution',
-        rightOhStd: 'Right OH Standard Deviation Distribution',
+        leftOhRange: 'Left OH Range\nDistribution',
+        leftOhStd: 'Left OH Standard\nDeviation Distribution',
+        rightOhRange: 'Right OH Range\nDistribution',
+        rightOhStd: 'Right OH Standard\nDeviation Distribution',
       },
     },
     kvalue: {
@@ -62,7 +62,7 @@ export default {
       imageTitle2: 'Feature Extraction',
       result: {
         tree: {
-          title: 'K-Value List',
+          title: 'Barcode List',
         },
         loading: 'Loading data...',
         scatterChart: {
@@ -105,7 +105,7 @@ export default {
       loading: 'Loading data...',
       result: {
         tree: {
-          title: 'Detection List',
+          title: 'Barcode List',
         },
         imageViewer: {
           title: 'Ultrasound Images',
@@ -116,11 +116,16 @@ export default {
         stateInfo: {
           title: 'State Information',
         },
+        states: {
+          state1: 'Insufficient Infiltration',
+          state2: 'Moderate Infiltration',
+          state3: 'Over Infiltration',
+        },
       },
       charts: {
-        chart1: 'Batch Wetting State 1 Distribution',
-        chart2: 'Batch Wetting State 2 Distribution',
-        chart3: 'Batch Wetting State 3 Distribution',
+        chart1: 'Insufficient Infiltration\nDistribution',
+        chart2: 'Moderate Infiltration\nDistribution',
+        chart3: 'Over Infiltration\nDistribution',
       },
     },
   },
@@ -182,9 +187,11 @@ export default {
   },
   charts: {
     shap: {
-      title: 'SHAP Feature Importance Summary',
+      title: 'Global Feature Correlation',
       xAxisName: 'Mean |SHAP Value|',
       seriesName: 'Feature Importance',
+      summaryDescription1: 'The batch summary chart is a "global map" for interpreting model decisions. The horizontal axis represents the influence of each feature on the prediction result, with longer bars indicating greater influence. The vertical axis lists all features from top to bottom by importance, helping you quickly identify core variables.',
+      summaryDescription2: 'The color of the points in the chart indicates the feature value (red for high, blue for low), and their distribution reveals how that feature affects the prediction. Through this chart, you can quickly understand what the model relies on for its decisions, thereby trusting the results, optimizing strategies, or pinpointing key influencing factors. For example, "Wetting Total Time" in the chart is the total immersion time during production; a longer time indicates better quality.',
     },
     scatter: {
       title: 'SHAP Scatter Plot',
@@ -193,9 +200,19 @@ export default {
       high: 'High',
       low: 'Low',
     },
+    featureDetailAnalysis: {
+      title: 'Feature Correlation Analysis',
+      featureAnalysisDescription1: 'The feature correlation analysis chart is a "relationship detector" for exploring internal data associations, presented as a scatter plot matrix. In the chart, the depth of color and numerical magnitude directly quantify the strength of correlation between features (between -1 and 1).',
+      featureAnalysisDescription2: 'By observing this chart, you can quickly identify highly correlated feature groups. For example, in the "raw_weight" chart, it can be seen that due to the weight distribution of incoming materials affecting the electrolyte injection and packaging results, when the incoming material quality is less than 408.5g and greater than 410.5g, it will negatively impact the quality of electrolyte injection and packaging.',
+    },
     featureImportance: {
       title: 'Sample Feature Impact Analysis',
+      description: 'In the single-cell waterfall chart, f(x) is the probability of the final quality prediction, where 0 is OK and 1 is NG (note that due to floating-point calculations, it may be slightly greater than 1 or less than 0). Red arrows indicate features having a negative impact on quality, while blue arrows indicate a positive impact.',
     },
+  },
+  tabs: {
+    batchSummary: 'Batch Summary',
+    cellAnalysis: 'Cell Analysis',
   },
   predictResult: {
     title: 'Prediction Results - Sample {{index}}',

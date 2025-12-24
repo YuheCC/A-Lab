@@ -4,10 +4,10 @@ export default {
       title: '품질 예측 및 상관 분석',
       paragraph1: '리튬 배터리 제조의 긴 체인과 다중 공정의 복잡한 생산 프로세스에서 정밀한 품질 관리를 실현하는 것은 핵심 과제입니다. 완제품 검사에 의존하는 전통적인 방법은 명백한 지연성이 있으며, 결함이 발견되면 이미 배치 손실이 발생합니다. 이를 위해 전단 전극 준비(슬러리 혼합, 코팅, 압연 등)에서 후단 셀 조립(권선, 적층, 전해질 주입, 화성 분용 등)까지 관통하는 전체 프로세스 데이터 수집 시스템을 구축했습니다.',
       paragraph2: '각 공정 단계의 방대한 프로세스 매개변수(코팅 면밀도, 압연 두께, 전해질 주입량 등)를 실시간으로 수집하고 기계 학습과 같은 고급 알고리즘을 사용하여 예측 모델을 구축함으로써 배터리의 최종 핵심 성능 지표(용량, 내부 저항, 사이클 수명 등)를 조기에 예측할 수 있습니다. 잠재적 품질 이상이 예측되거나 최종 검사에서 결함이 검출되면 시스템은 추가로 상관 분석을 시작하여 결함을 유발하는 핵심 공정 및 매개변수 변동 범위를 깊이 추적하고 특정할 수 있습니다. 이는 품질 모니터링 지점을 대폭 전진시켜 "사후 검사"에서 "사전 예방"으로의 전환을 실현할 뿐만 아니라 공정 최적화를 위한 정확한 데이터 기반 의사 결정 지원을 제공하여 제품 일관성과 수율을 지속적으로 향상시킵니다.',
-      dataSize: '565개',
-      dataType: '관계 데이터',
-      dataSource: '생산 설비/공정/매개변수 데이터 (익명화)',
-      targetLabel: '분류 대상',
+      dataSize: '442개',
+      dataType: '관계형 데이터',
+      dataSource: '주액, 실링, 가스 제거 설비 (데이터 비식별화)',
+      targetLabel: '분류 목표',
       target: '0 (정상), 1 (이상)',
     },
     detection: {
@@ -22,7 +22,7 @@ export default {
       target: 'Overhang, 정렬',
       result: {
         tree: {
-          title: '감지 목록',
+          title: 'Barcode 목록',
         },
         imageViewer: {
           title: '감지 이미지',
@@ -58,7 +58,7 @@ export default {
       target: '분용 후 K값',
       result: {
         tree: {
-          title: 'K값 목록',
+          title: 'Barcode 목록',
         },
         loading: '데이터를 로드하는 중...',
         scatterChart: {
@@ -100,7 +100,7 @@ export default {
       loading: '데이터를 로드하는 중...',
       result: {
         tree: {
-          title: '감지 목록',
+          title: 'Barcode 목록',
         },
         imageViewer: {
           title: '초음파 이미지',
@@ -111,11 +111,16 @@ export default {
         stateInfo: {
           title: '상태 정보',
         },
+        states: {
+          state1: '불충분한 침투',
+          state2: '적절한 침투',
+          state3: '과도한 침투',
+        },
       },
       charts: {
-        chart1: '배치 습윤 상태 1 분포도',
-        chart2: '배치 습윤 상태 2 분포도',
-        chart3: '배치 습윤 상태 3 분포도',
+        chart1: '불충분한 침투 분포',
+        chart2: '적절한 침투 분포',
+        chart3: '과도한 침투 분포',
       },
     },
   },
@@ -177,9 +182,11 @@ export default {
   },
   charts: {
     shap: {
-      title: '특징 중요도 요약',
+      title: '전역 특징 상관성',
       xAxisName: '평균|SHAP값|',
       seriesName: '특징 중요도',
+      summaryDescription1: '배치 요약 차트는 모델의 결정을 해석하기 위한 "글로벌 지도"입니다. 가로축은 예측 결과에 대한 각 특징의 영향력을 나타내며, 막대가 길수록 영향력이 큽니다. 세로축은 중요도에 따라 모든 특징을 위에서 아래로 나열하여 핵심 변수를 한눈에 파악할 수 있도록 도와줍니다.',
+      summaryDescription2: '차트의 점 색상은 특징 값의 크기(빨간색은 높음, 파란색은 낮음)를 나타내며, 분포는 해당 특징이 예측에 어떤 영향을 미치는지 보여줍니다. 이 차트를 통해 모델이 어떤 근거로 판단하는지 빠르게 이해하여 결과를 신뢰하고, 전략을 최적화하거나 핵심 영향 요인을 파악할 수 있습니다. 예를 들어 차트의 (Wetting) Total Time은 생산 과정의 총 침윤 시간으로, 시간이 길수록 품질에 긍정적인 영향을 미칩니다.',
     },
     scatter: {
       title: 'SHAP 산점도',
@@ -188,15 +195,25 @@ export default {
       high: '높음',
       low: '낮음',
     },
+    featureDetailAnalysis: {
+      title: '특징 상관성 분석',
+      featureAnalysisDescription1: '특징 상관 분석 차트는 데이터 내부 연관성을 탐색하는 "관계 탐지기"로, 산점도 행렬 형식으로 제공됩니다. 차트에서 색상의 농도와 숫자의 크기는 특징 간의 상관 강도(-1에서 1 사이)를 직접 정량화합니다.',
+      featureAnalysisDescription2: '이 차트를 관찰하여 상관관계가 높은 특징 그룹을 빠르게 식별할 수 있습니다. 예를 들어 raw_weight 차트에서 원자재 무게 분포가 주액 및 씰링 결과에 미치는 영향을 확인할 수 있으며, 원자재 무게가 408.5g 미만 또는 410.5g 초과일 때 주액 및 씰링 품질에 부정적인 영향을 미치는 것을 발견할 수 있습니다.',
+    },
     featureImportance: {
       title: '샘플 특징 영향 분석',
+      description: '단일 셀 폭포 차트에서 f(x)는 최종 품질 예측 확률이며, 0은 OK, 1은 NG입니다(부동 소수점 계산의 영향으로 1보다 약간 크거나 0보다 약간 작을 수 있습니다). 빨간색 화살표는 품질에 부정적인 영향을 미치는 특징을 나타내고, 파란색 화살표는 긍정적인 영향을 미치는 특징을 나타냅니다.',
     },
+  },
+  tabs: {
+    batchSummary: '배치 요약',
+    cellAnalysis: '셀 분석',
   },
   predictResult: {
     title: '예측 결과 - Sample {{index}}',
     barcode: 'Barcode',
-    predict: 'Predict',
-    actual: 'Actual',
+    predict: '예측',
+    actual: '실제',
   },
   status: {
     normal: '정상',
