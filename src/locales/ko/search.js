@@ -67,7 +67,7 @@ export default {
     upgradeEnterprise: '엔터프라이즈 계정으로 업그레이드',
     upgradeAccount: '계정을 업그레이드',
     computeWarning: '지능형 친구 찾기의 높은 성능에는 추가 컨텍스트가 필요합니다. 계산 파워가 낮음으로 설정되었습니다.',
-    batteryInfoRecommendation: '지능형 친구 찾기가 가장 관련성 높은 분자를 찾도록 돕는 추천 배터리 정보: 양극, 음극, 전해질 조성, 셀 설계, 원하는 성능 지표.',
+    batteryInfoRecommendation: '지능형 검색이 가장 관련성 높은 분자를 찾을 수 있도록 배터리 정보 제공을 권장합니다: 양극, 음극, 전해질 조성, 셀 설계, 원하는 성능 지표.',
 
     
     searchRange: '검색 범위',
