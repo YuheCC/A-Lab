@@ -66,17 +66,17 @@ export default {
     
     map: {
       title: "Map",
-      description: "Molecular Universe first became known for its molecular databases. Having the world’s largest databases of battery relevant properties for battery relevant molecules at one’s fingertips completely changed battery material discovery. In Molecular Universe (MU-1), we are expanding the databases to cover most liquid and solid battery electrolytes, including solvents, additives, diluents, salts, and solid state materials. We are offering 1M database fully viewable to the Public, and fully searchable to Research, Explorer and Team tiers, and 200M database fully searchable to Enterprise and Joint Development tiers with more in-depth properties. "
+      description: "Molecular Universe first became known for its molecular databases. Having the world’s largest databases of battery relevant properties for battery relevant molecules at one’s fingertips completely changed battery material discovery. In Molecular Universe (MU-1.5), we are expanding the databases to cover most liquid and solid battery electrolytes, including solvents, additives, diluents, salts, and solid state materials. We are offering 1M database fully viewable to the Public, and fully searchable to Research, Explorer and Team tiers, and 200M database fully searchable to Enterprise and Joint Development tiers with more in-depth properties. "
     },
     
     ask: {
       title: "Ask",
-      description1: "As one of the most popular tools in Molecular Universe, Ask is like having the world-renowned battery scientists and engineers at your fingertips. MU-1 enhances Ask performance by integrating the latest GPT-5 models and SES proprietary training data including publications, patents, and human intuition. We are offering Lightning to the Public, and more advanced Pro and multi-agent Deep Space to Research, Explorer, Team, Enterprise and Joint Development tiers. The Deep Space now has senior scientist-level agentic capability to understand users’ queries and recommend full solutions including detailed reasoning, experiments and predictions. Deep Space is also fully integrated with Maps, Predict and other features in MU-1, it is one step closer to full agentic capability that can outperform the very best human battery scientists.",
+      description1: "As one of the most popular tools in Molecular Universe, Ask is like having the world-renowned battery scientists and engineers at your fingertips. MU-1.5 enhances Ask performance by integrating the latest GPT-5 models and SES proprietary training data including publications, patents, and human intuition. We are offering Lightning to the Public, and more advanced Pro and multi-agent Deep Space to Research, Explorer, Team, Enterprise and Joint Development tiers. The Deep Space now has senior scientist-level agentic capability to understand users’ queries and recommend full solutions including detailed reasoning, experiments and predictions. Deep Space is also fully integrated with Maps, Predict and other features in MU-1.5, it is one step closer to full agentic capability that can outperform the very best human battery scientists.",
     },
     
     search: {
       title: "Search",
-      description: "As another popular tool in Molecular Universe, “Find-Friends” helps users find other molecules with similar physicochemical and/or structural properties as the input molecule, which is invaluable in helping users quickly broaden their horizon of possibilities in establishing new IPs. In MU-1, we are offering “Intelligent Find-Friends” that also takes into account the battery chemistry environment and desired performance for the molecules we are seeking, quickly identifying the top “friends” that are most relevant.",
+      description: "As another popular tool in Molecular Universe, “Find-Friends” helps users find other molecules with similar physicochemical and/or structural properties as the input molecule, which is invaluable in helping users quickly broaden their horizon of possibilities in establishing new IPs. In MU-1.5, we are offering “Intelligent Find-Friends” that also takes into account the battery chemistry environment and desired performance for the molecules we are seeking, quickly identifying the top “friends” that are most relevant.",
     },
     
     formulate: {
@@ -91,7 +91,7 @@ export default {
 
     predict: {
       title: "Predict",
-      description: "Users can blindly input data of early cell cycle life, and MU-1 will predict end of life, all without any prior knowledge of the input cell chemistry or test environment."
+      description: "Users can blindly input data of early cell cycle life, and MU-1.5 will predict end of life, all without any prior knowledge of the input cell chemistry or test environment."
     }
   },
   

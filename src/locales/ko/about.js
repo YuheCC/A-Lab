@@ -66,17 +66,17 @@ export default {
     
     map: {
       title: "지도",
-      description: "Molecular Universe는 처음에 분자 데이터베이스로 알려지기 시작했습니다. 세계 최대 규모의 배터리 관련 분자 특성 데이터베이스를 손쉽게 활용할 수 있게 되면서, 배터리 소재 발견 방식은 완전히 달라졌습니다. Molecular Universe(MU-1)에서는 데이터베이스를 확장하여 대부분의 액체 및 고체 배터리 전해질을 포괄하고 있으며, 여기에는 용매, 첨가제, 희석제, 염, 그리고 고체 전해질 소재가 포함됩니다. 우리는 1M 데이터베이스를 대중에게 열람 가능하도록 제공하며, Research, Explorer, Team 등급에서는 전체 검색 기능을 지원합니다. 또한 Enterprise 및 공동 개발(Joint Development) 등급에는 200M 데이터베이스를 심층적인 특성과 함께 전체 검색할 수 있는 기능을 제공합니다."
+      description: "Molecular Universe는 처음에 분자 데이터베이스로 알려지기 시작했습니다. 세계 최대 규모의 배터리 관련 분자 특성 데이터베이스를 손쉽게 활용할 수 있게 되면서, 배터리 소재 발견 방식은 완전히 달라졌습니다. Molecular Universe(MU-1.5)에서는 데이터베이스를 확장하여 대부분의 액체 및 고체 배터리 전해질을 포괄하고 있으며, 여기에는 용매, 첨가제, 희석제, 염, 그리고 고체 전해질 소재가 포함됩니다. 우리는 1M 데이터베이스를 대중에게 열람 가능하도록 제공하며, Research, Explorer, Team 등급에서는 전체 검색 기능을 지원합니다. 또한 Enterprise 및 공동 개발(Joint Development) 등급에는 200M 데이터베이스를 심층적인 특성과 함께 전체 검색할 수 있는 기능을 제공합니다."
     },
     
     ask: {
       title: "질문",
-      description: "Molecular Universe에서 가장 인기 있는 도구 중 하나인 Ask는 세계적인 배터리 과학자와 엔지니어와 함께 일하는 경험을 제공합니다. MU-1은 최신 GPT-5 모델과 SES의 독자적 훈련 데이터(학술 논문, 특허, 그리고 전문가의 경험적 직관)를 통합하여 Ask의 성능을 강화했습니다. 우리는 Lightning 버전을 대중에게 제공하며, 보다 고도화된 Pro와 다중 에이전트 기반 Deep Space는 Research, Explorer, Team, Enterprise 및 공동 개발(Joint Development) 등급에서 이용할 수 있습니다. Deep Space는 이제 선임 과학자 수준의 에이전트 역량을 갖추어 사용자의 질문을 이해하고, 상세한 추론·실험·예측을 포함한 완전한 해결책을 제안할 수 있습니다. 또한 Deep Space는 MU-1의 Maps, Predict 및 다른 기능들과 완전히 통합되어, 최고의 배터리 과학자를 능가할 수 있는 종합적 에이전트 기능에 한 걸음 더 다가섰습니다."
+      description: "Molecular Universe에서 가장 인기 있는 도구 중 하나인 Ask는 세계적인 배터리 과학자와 엔지니어와 함께 일하는 경험을 제공합니다. MU-1.5는 최신 GPT-5 모델과 SES의 독자적 훈련 데이터(학술 논문, 특허, 그리고 전문가의 경험적 직관)를 통합하여 Ask의 성능을 강화했습니다. 우리는 Lightning 버전을 대중에게 제공하며, 보다 고도화된 Pro와 다중 에이전트 기반 Deep Space는 Research, Explorer, Team, Enterprise 및 공동 개발(Joint Development) 등급에서 이용할 수 있습니다. Deep Space는 이제 선임 과학자 수준의 에이전트 역량을 갖추어 사용자의 질문을 이해하고, 상세한 추론·실험·예측을 포함한 완전한 해결책을 제안할 수 있습니다. 또한 Deep Space는 MU-1.5의 Maps, Predict 및 다른 기능들과 완전히 통합되어, 최고의 배터리 과학자를 능가할 수 있는 종합적 에이전트 기능에 한 걸음 더 다가섰습니다."
     },
     
     search: {
       title: "검색",
-      description: "Molecular Universe의 또 다른 인기 있는 도구인 “Find-Friends”는 입력된 분자와 유사한 물리화학적 및/또는 구조적 특성을 가진 다른 분자들을 찾아줍니다. 이는 사용자가 새로운 지식재산(IP)을 구축하는 데 있어 가능성의 지평을 빠르게 넓히는 데 매우 유용합니다. MU-1에서는, 우리가 찾고자 하는 분자에 대해 배터리 화학적 환경과 원하는 성능까지 고려하는 “Intelligent Find-Friends”를 제공하여, 가장 관련성이 높은 최적의 ‘친구’(분자)들을 빠르게 선별합니다."
+      description: "Molecular Universe의 또 다른 인기 있는 도구인 “Find-Friends”는 입력된 분자와 유사한 물리화학적 및/또는 구조적 특성을 가진 다른 분자들을 찾아줍니다. 이는 사용자가 새로운 지식재산(IP)을 구축하는 데 있어 가능성의 지평을 빠르게 넓히는 데 매우 유용합니다. MU-1.5에서는, 우리가 찾고자 하는 분자에 대해 배터리 화학적 환경과 원하는 성능까지 고려하는 “Intelligent Find-Friends”를 제공하여, 가장 관련성이 높은 최적의 ‘친구’(분자)들을 빠르게 선별합니다."
     },
     
     formulate: {
@@ -91,7 +91,7 @@ export default {
 
     predict: {
       title: "예측",
-      description: "초기 사이클 수명 데이터 입력만으로도 MU-1은 최종 수명(end of life)을 예측할 수 있으며, 입력된 셀 시스템이나 실험 환경에 대한 사전 지식 없이도 가능합니다."
+      description: "초기 사이클 수명 데이터 입력만으로도 MU-1.5은 최종 수명(end of life)을 예측할 수 있으며, 입력된 셀 시스템이나 실험 환경에 대한 사전 지식 없이도 가능합니다."
     }
   },
   
