@@ -61,6 +61,13 @@ const AboutPage = () => {
     href: string | null;
   }> = [
     {
+      key: 'release4',
+      date: t('about.newsfeed.releaseDate4'),
+      title: t('about.newsfeed.release4'),
+      content: t('about.newsfeed.releaseAbout4'),
+      href: null,
+    },
+    {
       key: 'release3',
       date: t('about.newsfeed.releaseDate3'),
       title: t('about.newsfeed.release3'),
