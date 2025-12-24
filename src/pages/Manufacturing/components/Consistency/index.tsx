@@ -195,12 +195,14 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
             key: 'feature-analysis',
             label: t('manufacturing.tabs.batchSummary'),
             children: (
-              <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', padding: '0 40px' }}>
                 {/* SHAP特征重要性图表 */}
                 <div className="chart-wrapper" style={{
                   flex: '1 1 45%',
                   minWidth: '400px',
-                  minHeight: '500px',
+                  maxWidth: '600px',
+                  minHeight: '400px',
+                  maxHeight: '650px',
                   display: 'flex',
                   flexDirection: 'column',
                   border: '1px solid #e8e8e8',
@@ -215,7 +217,7 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
                     <img
                       src="/manufacturing/consistency/images/summary.png"
                       alt="SHAP Feature Importance Summary"
-                      style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                      style={{ maxWidth: '100%', maxHeight: '450px', objectFit: 'contain' }}
                     />
                   </div>
                   <div style={{ marginTop: '16px', lineHeight: '1.6', color: '#555', fontSize: '13px' }}>
@@ -228,7 +230,9 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
                 <div className="chart-wrapper" style={{
                   flex: '1 1 45%',
                   minWidth: '400px',
-                  minHeight: '500px',
+                  maxWidth: '600px',
+                  minHeight: '400px',
+                  maxHeight: '650px',
                   display: 'flex',
                   flexDirection: 'column',
                   border: '1px solid #e8e8e8',
@@ -275,7 +279,7 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
                         alt={`Feature Analysis - ${features[selectedFeatureIndex]}`}
                         style={{
                           maxWidth: '100%',
-                          maxHeight: '100%',
+                          maxHeight: '450px',
                           objectFit: 'contain',
                           display: featureImageError ? 'none' : 'block'
                         }}
@@ -371,6 +375,7 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
                   {/* 特征影响力分析图 */}
                   <div className="chart-wrapper" style={{
                     minHeight: '400px',
+                    maxHeight: '600px',
                     display: 'flex',
                     flexDirection: 'column',
                     border: '1px solid #e8e8e8',
@@ -402,8 +407,8 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
                         src={`/manufacturing/consistency/images/${selectedSampleIndex}.png`}
                         alt={`Feature Impact Analysis - Sample ${selectedSampleIndex}`}
                         style={{
-                          maxWidth: '100%',
-                          maxHeight: '100%',
+                          maxWidth: '90%',
+                          maxHeight: '400px',
                           objectFit: 'contain',
                           display: imageError ? 'none' : 'block'
                         }}

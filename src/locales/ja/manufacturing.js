@@ -209,8 +209,8 @@ export default {
   predictResult: {
     title: '予測結果 - Sample {{index}}',
     barcode: 'Barcode',
-    predict: 'Predict',
-    actual: 'Actual',
+    predict: '予測',
+    actual: '実際',
   },
   status: {
     normal: '正常',
