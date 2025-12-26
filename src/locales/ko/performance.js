@@ -44,7 +44,7 @@ export default {
   // Weight percentage
   weightPercentage: {
     label: "중량 백분율 (wt%)",
-    tooltip: "사용자 정의 값은 MU1.5에서 출시될 예정입니다"
+    tooltip: "사용자 정의 값은 MU2에서 출시될 예정입니다"
   },
   
   // Molecule information

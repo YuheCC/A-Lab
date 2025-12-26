@@ -1,7 +1,7 @@
 export default {
   title: 'Salt & Solvent Configuration',
   subtitle: 'Configure and customize your electrolytes',
-  comingSoon: 'to be launched in MU1.5',
+  comingSoon: 'to be launched in MU2',
   comingSoon2: 'to be launched in MU2',
   tabs: {
     introduction: 'Introduction',

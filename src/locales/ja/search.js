@@ -73,7 +73,7 @@ export default {
     upgradeEnterprise: 'エンタープライズアカウントにアップグレード',
     upgradeAccount: 'アカウントをアップグレード',
     computeWarning: 'インテリジェント友達検索の高性能には追加のコンテキストが必要です。計算能力は低に設定されました。',
-    batteryInfoRecommendation: 'インテリジェント友達検索が最も関連性の高い分子を見つけるのに役立つ推奨バッテリー情報: カソード、アノード、電解液配合、セル設計、望ましい性能指標。',
+    batteryInfoRecommendation: 'インテリジェント検索が最も関連性の高い分子を見つけるために、バッテリー情報の提供を推奨します：カソード、アノード、電解液配合、セル設計、望ましい性能指標。',
 
     // Loading and Status Messages
     searching: "検索中...",

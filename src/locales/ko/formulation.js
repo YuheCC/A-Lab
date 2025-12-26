@@ -1,7 +1,7 @@
 export default {
   title: '염 및 용매 구성',
   subtitle: '전해질을 구성하고 사용자 지정하세요',
-  comingSoon: 'MU1.5에서 출시 예정',
+  comingSoon: 'MU2에서 출시 예정',
   comingSoon2: 'MU2에서 출시 예정',
   tabs: {
     introduction: '소개',
