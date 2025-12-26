@@ -761,12 +761,16 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                             {formatUTCDateTime(model.created_at) || '-'}
                           </td>
                           <td className="actions-cell">
-                            <button
-                              className="action-button delete-button"
-                              onClick={() => handleDeleteModel(model.id.toString())}
-                            >
-                              {t('design.models.actions.delete', 'Delete')}
-                            </button>
+                          {
+                            model.base_model_id !== -1 && model.base_model_id !== -2 && (
+                              <button
+                                className="action-button delete-button"
+                                onClick={() => handleDeleteModel(model.id.toString())}
+                              >
+                                {t('design.models.actions.delete', 'Delete')}
+                              </button>
+                            )
+                          }
                           </td>
                         </tr>
                       ))

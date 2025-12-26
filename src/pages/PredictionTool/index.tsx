@@ -766,12 +766,16 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                                 <td className="created-date">{formatUTCDateTime(model.created_at)}</td>
                                 <td>{model.created_by_name}</td>
                                 <td className="actions-cell">
-                                  <button
-                                    className="action-button delete-button"
-                                    onClick={() => handleDeleteModel(model.id.toString())}
-                                  >
-                                    {t('predictionTool.models.actions.delete', 'Delete')}
-                                  </button>
+                                  {
+                                    model.base_model_id !== -1 && model.base_model_id !== -2 && (
+                                      <button
+                                        className="action-button delete-button"
+                                        onClick={() => handleDeleteModel(model.id.toString())}
+                                      >
+                                        {t('predictionTool.models.actions.delete', 'Delete')}
+                                      </button>
+                                    )
+                                  }
                                 </td>
                               </tr>
                             );
