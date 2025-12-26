@@ -4,9 +4,9 @@ export default {
       title: '质量预测及相关性分析',
       paragraph1: '在锂电池制造这一长链路、多工序的复杂生产过程中，实现精准的质量管控是关键挑战。传统依赖于成品检测的方式存在明显滞后性，一旦发现缺陷往往已造成批量损失。为此，我们构建了一套贯穿前段电极制备（如匀浆、涂布、辊压）到后段电芯组装（如卷绕、叠片、注液、化成分容）的全流程数据采集系统。',
       paragraph2: '通过实时收集每个工艺环节的海量过程参数（如涂布面密度、辊压厚度、注液量等），并利用机器学习等先进算法建立预测模型，我们能够对电池最终的关键性能指标（如容量、内阻、循环寿命）进行早期预测。当预测到潜在质量异常或最终检测出缺陷时，系统可进一步启动相关性分析，深度追溯并定位导致缺陷的关键工序及参数波动范围。这不仅将质量监控节点大幅前移，实现了从"事后检验"到"事前预防"的转变，更能为工艺优化提供精准的数据驱动决策支持，从而持续提升产品一致性与良率。',
-      dataSize: '565个',
-      dataType: '关系数据',
-      dataSource: '生产设备/过程/参数数据（数据脱敏）',
+      dataSize: '442个',
+      dataType: '关系型数据',
+      dataSource: '注液、封边、排气设备（数据脱敏）',
       targetLabel: '分类目标',
       target: '0（正常），1（异常）',
       imageTitle: '缺陷成因关联分析',
@@ -24,7 +24,7 @@ export default {
       imageTitle: 'SES锂电池CT AI工具',
       result: {
         tree: {
-          title: '检测列表',
+          title: 'Barcode列表',
         },
         imageViewer: {
           title: '检测图像',
@@ -62,7 +62,7 @@ export default {
       imageTitle2: '特征提取',
       result: {
         tree: {
-          title: 'K值列表',
+          title: 'Barcode列表',
         },
         loading: '正在加载数据...',
         scatterChart: {
@@ -105,7 +105,7 @@ export default {
       loading: '正在加载数据...',
       result: {
         tree: {
-          title: '检测列表',
+          title: 'Barcode列表',
         },
         imageViewer: {
           title: '超声图像',
@@ -113,11 +113,19 @@ export default {
           mask: '掩膜图',
           imageLoadError: '图片加载失败或不存在',
         },
+        stateInfo: {
+          title: '状态信息',
+        },
+        states: {
+          state1: '浸润不充分',
+          state2: '浸润适中',
+          state3: '过浸润',
+        },
       },
       charts: {
-        chart1: '批次浸润状态1分布图',
-        chart2: '批次浸润状态2分布图',
-        chart3: '批次浸润状态3分布图',
+        chart1: '浸润不充分分布',
+        chart2: '浸润适中分布',
+        chart3: '过浸润分布',
       },
     },
   },
@@ -179,9 +187,11 @@ export default {
   },
   charts: {
     shap: {
-      title: '特征重要性摘要',
+      title: '特征相关性全局',
       xAxisName: '平均|SHAP值|',
       seriesName: '特征重要性',
+      summaryDescription1: '批次汇总图是解读模型决策的“全局地图”。横轴是每个特征对预测结果的影响力，条形越长影响力越大；纵轴按重要性自上而下排列所有特征，帮您一眼锁定核心变量。',
+      summaryDescription2: '图中点的颜色表示特征值大小（红高蓝低），分布则揭示该特征如何影响预测。通过这张图，您能快速理解模型依赖什么做判断，从而信任结果、优化策略或定位关键影响因素。例如图中（Wetting）Total Time是生产过程中的总浸润时间，时间越长对质量越好。',
     },
     scatter: {
       title: 'SHAP散点图',
@@ -190,15 +200,25 @@ export default {
       high: '高',
       low: '低',
     },
+    featureDetailAnalysis: {
+      title: '特征相关性分析',
+      featureAnalysisDescription1: '特征相关性分析图是探索数据内部关联的“关系探测器”。它以散点图矩阵形式呈现。在图中，颜色深浅和数字大小直接量化了特征间的相关强度（-1到1之间）。',
+      featureAnalysisDescription2: '通过观察这张图，您可以快速识别高度相关的特征组。例如在raw_weight图中，可以发现由于来料的重量分布对注液及封装结果的影响，当来料质量小于408.5g及大于410.5g时，将对注液和封装的质量产生负面影响。',
+    },
     featureImportance: {
       title: '样本特征影响分析',
+      description: '在单电芯瀑布图中，f(x)为最终质量预测的概率，0为OK，1为NG（注意由于浮点数计算影响，可能会略微大于1或略微小于0）。红色箭头代表特征对质量产生负面影响，蓝色代表特征对质量产生正面影响。',
     },
+  },
+  tabs: {
+    batchSummary: '批次汇总',
+    cellAnalysis: '单电芯分析',
   },
   predictResult: {
     title: '预测结果 - Sample {{index}}',
     barcode: 'Barcode',
-    predict: 'Predict',
-    actual: 'Actual',
+    predict: '预测',
+    actual: '实际',
   },
   status: {
     normal: '正常',

@@ -82,26 +82,39 @@ export const getFirstChartConfig = (
     title: {
       text: t('manufacturing.modules.ultrasound.charts.chart1'),
       left: 'center',
+      top: 8,
       textStyle: {
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: 'normal',
+        lineHeight: 16,
       },
     },
     tooltip: {
       trigger: 'axis',
-      formatter: '{b}: {c}',
+      formatter: (params: any) => {
+        const xValue = params[0]?.axisValue;
+        const numValue = parseFloat(xValue);
+        return isNaN(numValue) ? xValue : numValue.toFixed(3);
+      },
     },
     grid: {
       left: '10%',
       right: '10%',
-      top: '25%',
+      top: 50,
       bottom: '15%',
     },
     xAxis: {
       type: 'category',
       data: state1Data.x,
       axisLabel: {
-        show: false,
+        show: true,
+        interval: (index: number) => {
+          return index === 0 || index === state1Data.x.length - 1;
+        },
+        formatter: (value: string) => {
+          const num = parseFloat(value);
+          return isNaN(num) ? value : num.toFixed(1);
+        },
       },
     },
     yAxis: {
@@ -198,26 +211,39 @@ export const getSecondChartConfig = (
     title: {
       text: t('manufacturing.modules.ultrasound.charts.chart2'),
       left: 'center',
+      top: 8,
       textStyle: {
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: 'normal',
+        lineHeight: 16,
       },
     },
     tooltip: {
       trigger: 'axis',
-      formatter: '{b}: {c}',
+      formatter: (params: any) => {
+        const xValue = params[0]?.axisValue;
+        const numValue = parseFloat(xValue);
+        return isNaN(numValue) ? xValue : numValue.toFixed(3);
+      },
     },
     grid: {
       left: '10%',
       right: '10%',
-      top: '25%',
+      top: 50,
       bottom: '15%',
     },
     xAxis: {
       type: 'category',
       data: state2Data.x,
       axisLabel: {
-        show: false,
+        show: true,
+        interval: (index: number) => {
+          return index === 0 || index === state2Data.x.length - 1;
+        },
+        formatter: (value: string) => {
+          const num = parseFloat(value);
+          return isNaN(num) ? value : num.toFixed(1);
+        },
       },
     },
     yAxis: {
@@ -314,27 +340,40 @@ export const getThirdChartConfig = (
     title: {
       text: t('manufacturing.modules.ultrasound.charts.chart3'),
       left: 'center',
+      top: 8,
       textStyle: {
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: 'normal',
+        lineHeight: 16,
       },
     },
     tooltip: {
       trigger: 'axis',
-      formatter: '{b}: {c}',
+      formatter: (params: any) => {
+        const xValue = params[0]?.axisValue;
+        const numValue = parseFloat(xValue);
+        return isNaN(numValue) ? xValue : numValue.toFixed(3);
+      },
     },
     grid: {
       left: '10%',
       right: '10%',
-      top: '25%',
+      top: 50,
       bottom: '15%',
     },
     xAxis: {
       type: 'category',
       data: state3Data.x,
       axisLabel: {
-        show: false,
-      }
+        show: true,
+        interval: (index: number) => {
+          return index === 0 || index === state3Data.x.length - 1;
+        },
+        formatter: (value: string) => {
+          const num = parseFloat(value);
+          return isNaN(num) ? value : num.toFixed(1);
+        },
+      },
     },
     yAxis: {
       type: 'value',

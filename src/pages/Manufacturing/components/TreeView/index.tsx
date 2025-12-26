@@ -15,6 +15,7 @@ export interface TreeViewProps {
   selectedId?: string;
   onSelect?: (node: TreeNode) => void;
   defaultExpandedKeys?: string[]; // 默认展开的节点 ID
+  onlyLeafClickable?: boolean; // 是否只允许叶节点点击，默认 true
 }
 
 const TreeView: React.FC<TreeViewProps> = ({
@@ -23,6 +24,7 @@ const TreeView: React.FC<TreeViewProps> = ({
   selectedId,
   onSelect,
   defaultExpandedKeys = [],
+  onlyLeafClickable = true,
 }) => {
   const { t } = useTranslation();
   const [expandedKeys, setExpandedKeys] = useState<Set<string>>(
@@ -63,8 +65,15 @@ const TreeView: React.FC<TreeViewProps> = ({
           className={`tree-node ${isSelected ? 'tree-node-selected' : ''} ${
             isCollapsed ? 'tree-node-collapsed' : ''
           }`}
-          style={{ paddingLeft: `${level * 20}px` }}
-          onClick={() => !isCollapsed && handleSelect(node)}
+          style={{
+            paddingLeft: `${level * 20}px`,
+            cursor: onlyLeafClickable && hasChildren ? 'default' : 'pointer',
+          }}
+          onClick={() => {
+            if (isCollapsed) return;
+            if (onlyLeafClickable && hasChildren) return;
+            handleSelect(node);
+          }}
         >
           {hasChildren && !isCollapsed && (
             <span

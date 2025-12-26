@@ -101,21 +101,21 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
     probValue?: string | null,
     labelValue?: string | null
   ): ProcessedMetric => {
-    if (isMissingMetricValue(probValue) || isMissingMetricValue(labelValue)) {
+    // 只检查 labelValue，不检查 probValue
+    if (isMissingMetricValue(labelValue)) {
       return restrictedMetric();
     }
 
-    const parsedProb = typeof probValue === 'number'
-      ? probValue
-      : parseFloat(probValue as string);
     const parsedLabel = typeof labelValue === 'number'
       ? labelValue
       : parseInt(labelValue as string, 10);
 
-    if (!Number.isFinite(parsedProb) || !Number.isFinite(parsedLabel)) {
+    // 只验证 label 是否有效
+    if (!Number.isFinite(parsedLabel)) {
       return restrictedMetric();
     }
 
+    // 根据 label 确定 status
     let status: ProcessedMetric['status'];
     if (parsedLabel === 0) {
       status = 'Positive';
@@ -125,20 +125,26 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
       status = 'Neutral';
     }
 
-    const baseConfidence = parsedProb;
-    if (!Number.isFinite(baseConfidence)) {
-      return restrictedMetric();
-    }
+    // 尝试解析 probValue 来获取 confidence，如果不存在或无效则为 null
+    let confidence: number | null = null;
+    let parsedProb: number | null = null;
 
-    const adjustedConfidence = parseFloat(baseConfidence.toFixed(2));
+    if (!isMissingMetricValue(probValue)) {
+      parsedProb = typeof probValue === 'number'
+        ? probValue
+        : parseFloat(probValue as string);
 
-    if (!Number.isFinite(adjustedConfidence)) {
-      return restrictedMetric();
+      if (Number.isFinite(parsedProb)) {
+        const adjustedConfidence = parseFloat(parsedProb.toFixed(2));
+        if (Number.isFinite(adjustedConfidence)) {
+          confidence = adjustedConfidence;
+        }
+      }
     }
 
     return {
       status,
-      confidence: adjustedConfidence,
+      confidence,
       rawProb: parsedProb,
       rawLabel: parsedLabel,
       isRestricted: false,

@@ -100,6 +100,29 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
   const currentSpec = getCurrentSpec();
 
+  // Weight Percentage映射表 - 根据电池系统ID映射不同的weight percentage值
+  // 用户可以根据实际需求填写对应的映射关系
+  const WEIGHT_PERCENTAGE_MAP: Record<string, string> = {
+    // 示例:
+    '1': '1.9',
+    '2': '1',
+  };
+
+  // 使用 useMemo 优化性能,只有当选中的电池系统变化时才重新计算
+  const currentWeightPercentage = useMemo(() => {
+    if (!selectedSystem) {
+      return '1.9'; // 默认值
+    }
+
+    const system = batterySystemOptions?.find(s => s.name === selectedSystem);
+    if (!system || !system.id) {
+      return '1.9'; // 默认值
+    }
+
+    // 从映射表中获取对应的值,如果没有配置则使用默认值
+    return WEIGHT_PERCENTAGE_MAP[system.id] || '1.9';
+  }, [selectedSystem, batterySystemOptions]);
+
   // 计算等待时间的useEffect
   useEffect(() => {
     if (!isAnalyzing || !analysisStartTime) {
@@ -743,12 +766,20 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     };
   }, [t]);
   const batterySystemDisplayOptions = useMemo(() => {
-    return batterySystemOptions?.map(system => ({
-      id: system.id,
-      name: system.name,
-      disabled: Number(system.id) !== 1,
-      disabledText: Number(system.id) !== 1 ? (comingSoonText[Number(system.id) as keyof typeof comingSoonText] || undefined) : undefined
-    }));
+    // Configuration for available system IDs
+    const AVAILABLE_SYSTEM_IDS = [1, 2];
+    
+    return batterySystemOptions?.map(system => {
+      const systemId = Number(system.id);
+      const isAvailable = AVAILABLE_SYSTEM_IDS.includes(systemId);
+      
+      return {
+        id: system.id,
+        name: system.name,
+        disabled: !isAvailable,
+        disabledText: !isAvailable ? (comingSoonText[systemId as keyof typeof comingSoonText] || undefined) : undefined
+      };
+    });
   }, [batterySystemOptions?.length, comingSoonText]);
   return (
     <div className="pm-prediction-module">
@@ -862,7 +893,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 </label>
                 <input
                   type="text"
-                  value="1.9"
+                  value={currentWeightPercentage}
                   disabled
                   className="pm-weight-percentage-input"
                 />

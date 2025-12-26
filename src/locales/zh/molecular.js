@@ -2,6 +2,7 @@ export default {
   nodePopup: {
     title: "分子详情",
     smiles: "SMILES",
+    casrn: "CAS #",
     umapCoordinates: "UMAP坐标",
     properties: "属性",
     copyAllData: "复制所有数据",
@@ -36,10 +37,29 @@ export default {
     },
     additiveSubtypes: {
       title: "添加剂子类别",
-      seiPromoter: "SEI 促进剂",
-      sideReactionSuppressor: "副反应抑制剂",
-      dendriteSuppressor: "枝晶抑制剂",
-      interfacialStabilityImprover: "界面稳定性改进剂"
+      categoryLabel: "类别",
+      mechanistic: "机理",
+      outcome: "结果",
+      mechanisticOptions: {
+        seiStabilizer: "SEI 稳定剂",
+        ceiStabilizer: "CEI 稳定剂",
+        hfNeutralizer: "HF 中和剂",
+        tmDissolutionSuppressor: "TM 溶解抑制剂",
+        desolvationOptimizer: "脱溶优化剂",
+        dendriteSuppressor: "枝晶抑制剂",
+        polysulfideSuppressor: "多硫化物抑制剂",
+        gasSuppressor: "气体抑制剂",
+        flameRetardant: "阻燃剂"
+      },
+      outcomeOptions: {
+        fastCharging: "快速充电",
+        highVoltage: "高电压",
+        hotboxThermal: "Hotbox（热处理）",
+        htCycling: "高温循环",
+        htStorage: "高温存储",
+        ltCycling: "低温循环",
+        rtCycling: "室温循环"
+      }
     },
     properties: {
       predictedFp: "预测闪点",

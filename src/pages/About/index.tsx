@@ -61,6 +61,13 @@ const AboutPage = () => {
     href: string | null;
   }> = [
     {
+      key: 'release4',
+      date: t('about.newsfeed.releaseDate4'),
+      title: t('about.newsfeed.release4'),
+      content: t('about.newsfeed.releaseAbout4'),
+      href: null,
+    },
+    {
       key: 'release3',
       date: t('about.newsfeed.releaseDate3'),
       title: t('about.newsfeed.release3'),
@@ -295,7 +302,7 @@ const AboutPage = () => {
                           </div>
                           <div className="feature-detail" data-feature="ask" style={{display: activeFeature === 'ask' ? 'block' : 'none'}}>
                               <h3>{t('about.features.ask.title')}</h3>
-                              <p>{t('about.features.ask.description1')}</p>
+                              <p>{t('about.features.ask.description')}</p>
                               {/* <p>{t('about.features.ask.description2')}</p> */}
                           </div>
                           <div className="feature-detail" data-feature="search" style={{display: activeFeature === 'search' ? 'block' : 'none'}}>

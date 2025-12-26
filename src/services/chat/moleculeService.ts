@@ -1,6 +1,7 @@
 export type MoleculeProperties = {
   smiles?: string;
   cation?: string;
+  casrn?: string;
   molecularWeight?: string | number;
   meltingPoint?: string;
   boilingPoint?: string;
@@ -28,6 +29,7 @@ export interface MoleculeDetails {
 export interface APIMoleculeDetail {
   SMILES: string;
   cation?: string;
+  CASRN?: string;
   UMAP_0: number;
   UMAP_1: number;
   HOMO_eV: number;
@@ -75,6 +77,7 @@ class MoleculeService {
       properties: {
         smiles: apiData.SMILES,
         cation: apiData.cation,
+        casrn: apiData.CASRN,
         molecularWeight: apiData.molecular_weight,
         homo: apiData.HOMO_eV,
         lumo: apiData.LUMO_eV,
@@ -99,6 +102,7 @@ class MoleculeService {
   private mapMoleculeDetailsToMoleculeDetails(raw: any, originalName: string): MoleculeDetails {
     const smiles = raw?.SMILES || raw?.smiles || '';
     const cation = raw?.cation ?? raw?.CATION;
+    const casrn = raw?.CASRN ?? raw?.casrn ?? raw?.cas;
     const molecularWeight = raw?.molecular_weight != null ? raw.molecular_weight : raw?.molecularWeight;
     const predictedMp = raw?.predicted_MP_celsius ?? raw?.predicted_mp_celsius ?? raw?.predicted_MP ?? raw?.predictedMp;
     const predictedBp = raw?.predicted_BP_celsius ?? raw?.predicted_bp_celsius ?? raw?.predicted_BP ?? raw?.predictedBp;
@@ -120,6 +124,7 @@ class MoleculeService {
           properties: {
             smiles,
             cation,
+            casrn,
             molecularWeight: molecularWeight != null ? Number(molecularWeight) : undefined,
         meltingPoint: predictedMp != null ? `${predictedMp}` : '-',
         boilingPoint: predictedBp != null ? `${predictedBp}` : '-',

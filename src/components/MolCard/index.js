@@ -2,6 +2,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useRef, useState } from 'react';
+import { getMoleculeDescription, hasMoleculeDescription } from '@/constants/moleculeDescriptions';
 
 import './Molcard.css';
 import { Tooltip } from '@mui/material';
@@ -13,6 +14,14 @@ export const PropItem = ({ prop }) => {
     const codeRef = useRef(null);
     const [showTooltip, setShowTooltip] = useState(false);
 
+    const {
+        valueNode,
+        disableAutoTooltip,
+        tooltipContent,
+    } = prop || {};
+
+    const hasCustomValue = valueNode !== null && valueNode !== undefined;
+
     // Create and format the value string based on prop value and suffix
     let valueString;
     if (prop?.value) {
@@ -21,7 +30,7 @@ export const PropItem = ({ prop }) => {
         } else {
             valueString = prop.value.toString();
         }
-        valueString += (prop?.suffix ? prop.suffix : ""); 
+        valueString += (prop?.suffix ? prop.suffix : "");
     } else {
         valueString = t('molecular.molCard.notAvailable');
     }
@@ -33,28 +42,61 @@ export const PropItem = ({ prop }) => {
             valueString = prop.value.join(", ");
         }
     }
-    
+
     // Enable tooltip if the value string is too long and gets truncated
     useEffect(() => {
+        if (disableAutoTooltip) {
+            setShowTooltip(false);
+            return;
+        }
+
         const el = codeRef.current;
         if (!el) return;
         setShowTooltip(el.scrollWidth > el.clientWidth && !prop.wrap);
-    }, [valueString])
+    }, [valueString, disableAutoTooltip, prop?.wrap])
+
+    const baseCodeStyle = prop.wrap
+        ? { whiteSpace: 'normal', wordBreak: 'break-word', textOverflow: 'initial' }
+        : { whiteSpace: 'nowrap' };
+    const codeStyle = {
+        ...baseCodeStyle,
+        ...(prop?.valueStyle || {}),
+        ...(prop?.color ? { color: prop.color } : {}),
+    };
+
+    const tooltipNode = tooltipContent ?? (
+        <div className='molcard-property-group'>
+            <label>{prop.label}</label>
+            <div className='molcard-property-value'>{valueString}</div>
+        </div>
+    );
+
+    const disableTooltip = disableAutoTooltip || !showTooltip;
+
+    const renderedValue = hasCustomValue
+        ? valueNode
+        : (prop?.hasOwnProperty('value') ? valueString : null);
 
     return prop?.show !== false ? (
-            <div style={{ gridColumn: `span ${prop.span || 1}` }}>
+            <div style={{ gridColumn: prop.fullWidth ? '1 / -1' : `span ${prop.span || 1}` }}>
                 <div className='molcard-property-group'>
                     <label>{prop.label}</label>
-                    <Tooltip title={
-                        <div className='molcard-property-group'>
-                            <label>{prop.label}</label>
-                            <div className='molcard-property-value'>{valueString}</div>
-                        </div>
-                    } placement="bottom-start" arrow disableHoverListener={!showTooltip} disableFocusListener={!showTooltip} disableTouchListener={!showTooltip}
-                      enterDelay={500} enterNextDelay={500}>
-                        <code ref={codeRef} style={(prop.wrap ? { whiteSpace: 'normal', wordBreak: 'break-word', textOverflow: 'initial'} : { whiteSpace: 'nowrap' })}>{prop.hasOwnProperty('value') && valueString}{prop?.action && (
-                            prop?.action
-                        )}</code>
+                    <Tooltip
+                        title={tooltipNode}
+                        placement="bottom-start"
+                        arrow
+                        disableHoverListener={disableTooltip}
+                        disableFocusListener={disableTooltip}
+                        disableTouchListener={disableTooltip}
+                        enterDelay={500}
+                        enterNextDelay={500}
+                    >
+                        <code ref={codeRef} style={codeStyle}>
+                            {renderedValue}
+                            {prop?.action && (
+                                prop?.action
+                            )}
+                        </code>
                     </Tooltip>
                 </div>
             </div>
@@ -62,7 +104,7 @@ export const PropItem = ({ prop }) => {
 };
 
 const MolCard = (props) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [expanded, setExpanded] = useState(false);
     const {
         showMoreDetails = false,
@@ -98,6 +140,20 @@ const MolCard = (props) => {
         return <div className='molcard-container' {...domProps}><div className='deck-error'>{t('molecular.molCard.noMoleculeData')}</div></div>;
     }
 
+    // 获取分子 tips（先尝试用 SMILES 查询，再用分子名称查询）
+    const currentLocale = i18n?.language || 'zh';
+    const localeKey = currentLocale.split('-')[0];
+    let moleculeTips;
+
+    // 先尝试用 SMILES 查询
+    if (smileString && hasMoleculeDescription(smileString)) {
+        moleculeTips = getMoleculeDescription(smileString, localeKey);
+    }
+    // 如果没找到，再尝试用分子名称查询
+    if (!moleculeTips && name && hasMoleculeDescription(name)) {
+        moleculeTips = getMoleculeDescription(name, localeKey);
+    }
+
     const moleculeSize = compact ? 140 : 200;
     const containerClassName = [
         'molcard-container',
@@ -105,6 +161,17 @@ const MolCard = (props) => {
         vertical ? 'molcard-vertical' : '',
         compact ? 'molcard-compact' : ''
     ].filter(Boolean).join(' ');
+
+    // 如果有 tips，将其添加到显示的属性列表中
+    const displayPropGroups = [...propGroups];
+    if (moleculeTips) {
+        displayPropGroups.push({
+            label: t('molecular.moleculeModal.tips', 'Tips'),
+            value: moleculeTips,
+            fullWidth: true,
+            wrap: true
+        });
+    }
 
     return (
         <div className={containerClassName} {...domProps}>
@@ -121,8 +188,8 @@ const MolCard = (props) => {
                 <div className='molcard-info-panel'>
                     <div className='deck-info-title'><span></span></div>
                     <div className='molcard-info-content'>
-                        {propGroups && propGroups.length > 0 ? (
-                                propGroups.map((prop, index) => (
+                        {displayPropGroups && displayPropGroups.length > 0 ? (
+                                displayPropGroups.map((prop, index) => (
                                     <PropItem
                                         key={index}
                                         prop={prop}
