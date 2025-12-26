@@ -20,13 +20,13 @@ const Introduction: React.FC = () => {
 
       <div className="introduction-text-content">
         <ul className="introduction-main-list">
-          <li>
+          {/* <li>
             {t('predictionTool.tutorial.point1')}
             <ul className="introduction-sub-list">
               <li>{t('predictionTool.tutorial.point1_sub1')}</li>
               <li>{t('predictionTool.tutorial.point1_sub2')}</li>
             </ul>
-          </li>
+          </li> */}
           <li>{t('predictionTool.tutorial.point2')}</li>
           <li>
             {t('predictionTool.tutorial.point3')}
