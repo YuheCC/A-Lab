@@ -30,7 +30,7 @@ export default {
   // Weight percentage
   weightPercentage: {
     label: "Weight Percentage (wt%)",
-    tooltip: "Custom value to be launched in MU1.5"
+    tooltip: "Custom value to be launched in MU2"
   },
   
   // Molecule information
