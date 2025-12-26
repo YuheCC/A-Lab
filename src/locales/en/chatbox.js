@@ -36,7 +36,7 @@ export default {
             regularDescription: "Basic Q&A mode, suitable for daily battery-related questions. Provides accurate and concise answers.Expect response times about 5 minutes.",
             deepSpaceDescription: "A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times about 20 minutes.",
             lightningDescription: "Lowest compute power for quick replies. Expect response times about 1 minutes.",
-            askDescription: "Highest compute power for best quality.",
+            askDescription: "Highest compute power for best quality.Expect response times about 5 minutes.",
             askOssDescription: "Admin-only open-source 120B compute for Ask workflows.",
             deepSpaceOssDescription: "Admin-only open-source 120B compute powering Deep Space agents.",
             fastDeepSpaceDescription: "Multi-agent research with lower compute power for faster results.",
