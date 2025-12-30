@@ -13,13 +13,13 @@
 
 .molcard-container.molcard-published {
   background: linear-gradient(135deg, #fff7ed, #fffaf0);
-  border-color: #fdba74;
+  border-color: @color-warning-light;
   box-shadow: 0 2px 10px rgba(251, 146, 60, 0.12);
 }
 
 .molcard-container.molcard-novel {
   background: linear-gradient(135deg, #f0f9ff, #ecfeff);
-  border-color: #93c5fd;
+  border-color: @color-info-light;
   box-shadow: 0 2px 10px rgba(59, 130, 246, 0.12);
 }
 
@@ -212,4 +212,30 @@
 }
 .molcard-large .molcard-info-panel {
   max-width: none;
+}
+
+/* 错误消息样式 */
+.molcard-error {
+  background-color: @color-error-bg;
+  color: @color-error-text;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid @color-error-border;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* 信息标题样式 */
+.molcard-info-title {
+  font-size: 14px;
+  font-weight: @font-weight-semibold;
+  color: @color-text-primary;
+  margin-bottom: 8px;
+}
+
+/* 底部提示文本样式 */
+.molcard-info-footer-text {
+  font-size: 12px;
+  color: @color-text-secondary;
+  user-select: none;
 }

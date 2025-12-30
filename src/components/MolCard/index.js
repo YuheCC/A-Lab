@@ -129,7 +129,7 @@ const MolCard = (props) => {
         (group.hasOwnProperty('label') && group.hasOwnProperty('action') && group.action !== null && group.action !== undefined)
     );
     if (!validFormat) {
-        return <div className='molcard-container' {...domProps}><div className='deck-error'>Invalid molecule data structure.</div></div>;
+        return <div className='molcard-container' {...domProps}><div className='molcard-error'>Invalid molecule data structure.</div></div>;
     }
 
     const smileString = propGroups.reduce((acc, group) => {
@@ -138,7 +138,7 @@ const MolCard = (props) => {
     }, null);
 
     if (!smileString) {
-        return <div className='molcard-container' {...domProps}><div className='deck-error'>{t('molecular.molCard.noMoleculeData')}</div></div>;
+        return <div className='molcard-container' {...domProps}><div className='molcard-error'>{t('molecular.molCard.noMoleculeData')}</div></div>;
     }
 
     // 获取分子 tips（先尝试用 SMILES 查询，再用分子名称查询）
@@ -189,7 +189,7 @@ const MolCard = (props) => {
                     }}>{t('molecular.molCard.loading')}</div>}
                 </div>
                 <div className='molcard-info-panel'>
-                    <div className='deck-info-title'><span></span></div>
+                    <div className='molcard-info-title'><span></span></div>
                     <div className='molcard-info-content'>
                         {displayPropGroups && displayPropGroups.length > 0 ? (
                                 displayPropGroups.map((prop, index) => (
@@ -209,7 +209,7 @@ const MolCard = (props) => {
                 <div className='molcard-footer-expanded'>
                     <div className='molcard-expand-controls' onClick={() => setExpanded(!expanded)}>
                         {expanded ? <ChevronUp className='molcard-control-icon' size={15} /> :  <ChevronDown className='molcard-control-icon' size={15} /> }
-                        <span className='deck-info-footer-text'>{expanded ? t('molecular.molCard.clickToCollapse') : t('molecular.molCard.clickToExpand')}</span>
+                        <span className='molcard-info-footer-text'>{expanded ? t('molecular.molCard.clickToCollapse') : t('molecular.molCard.clickToExpand')}</span>
                     </div>
                     {expanded ? (
                         <div className='molcard-expanded-content'>

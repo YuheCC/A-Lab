@@ -595,40 +595,52 @@ body.chat-page-body {
     font-weight: 600;
 }
 
-/* 消息容器 */
-.message-wrapper {
-    display: flex;
-    margin-bottom: 30px;
-}
+/* 消息容器 - BEM格式 */
+.chat {
+    &__message-wrapper {
+        display: flex;
+        margin-bottom: 30px;
 
-.message-wrapper.user {
-    justify-content: flex-end;
-    position: relative;
-}
+        &--user {
+            justify-content: flex-end;
+            position: relative;
+        }
 
-.message-wrapper.bot {
-    justify-content: flex-start;
-    flex-direction: column;
-    align-items: flex-start;
-}
+        &--bot {
+            justify-content: flex-start;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
 
-.message {
-    max-width: 75%;
-    padding: 12px 18px;
-    border-radius: 18px;
-    line-height: 1.6;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: pre-wrap;
-}
+    &__message {
+        max-width: 75%;
+        padding: 12px 18px;
+        border-radius: 18px;
+        line-height: 1.6;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        white-space: pre-wrap;
 
-.message-wrapper.user .message {
-    background-color: @color-accent; /* Theme color */
-    color: white;
-    border-bottom-right-radius: 4px;
-    text-align: left;
-    align-self: flex-end;
-    max-width: 80%;
+        &--user {
+            background-color: @color-accent; /* Theme color */
+            color: white;
+            border-bottom-right-radius: 4px;
+            text-align: left;
+            align-self: flex-end;
+            max-width: 80%;
+        }
+
+        &--bot {
+            background-color: @color-gray-100;
+            color: @color-text-primary;
+            border-bottom-left-radius: 4px;
+            text-align: left;
+            /* 移除 white-space: pre-wrap，让 markdown 渲染器控制格式 */
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+    }
 }
 
 /* 用户消息容器样式 */
@@ -654,7 +666,7 @@ body.chat-page-body {
     transition: opacity 0.2s ease;
 }
 
-.message-wrapper.user:hover .edit-btn-container {
+.chat__message-wrapper--user:hover .edit-btn-container {
     opacity: 1;
 }
 
@@ -731,16 +743,6 @@ body.chat-page-body {
     background-color: #5a6268;
 }
 
-.message-wrapper.bot .message {
-    background-color: @color-gray-100;
-    color: @color-text-primary;
-    border-bottom-left-radius: 4px;
-    text-align: left;
-    /* 移除 white-space: pre-wrap，让 markdown 渲染器控制格式 */
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
-
 /* 化学分子链接样式 */
 .chemical-molecule {
     color: @color-accent;
@@ -773,13 +775,13 @@ body.chat-page-body {
     right: 0;
 }
 
-.message-wrapper.bot:hover .message-actions,
-.message-wrapper.user:hover .message-actions {
+.chat__message-wrapper--bot:hover .message-actions,
+.chat__message-wrapper--user:hover .message-actions {
     opacity: 1;
 }
 
 /* 机器人消息的操作按钮样式 - 放在回答下方，靠左侧 */
-.message-wrapper.bot .message-actions {
+.chat__message-wrapper--bot .message-actions {
     position: static;
     justify-content: flex-start;
     align-self: flex-start;
