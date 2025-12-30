@@ -138,4 +138,8 @@ export default  [
         component: "Login/resetPassword",
         layout: false,
     },
+    {
+        path: "*",
+        component: "404",
+    },
 ]

@@ -14,6 +14,7 @@ import { usePageCleanup } from "@/hooks/usePageCleanup";
 import { LoginModalProvider, useLoginModalContext } from "@/components/LoginModal/context";
 import LoginModal from "@/components/LoginModal";
 import { setGlobalPricingModalHandler, resetGlobalPricingModalHandler } from "@/utils/authHelpers";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 const API_URL = getAPIUrl();
 
@@ -221,11 +222,15 @@ const FullNavLayoutInner = () => {
           }}
         >
           <FavoriteContext.Provider value={{ moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites }}>
-              <Header />
-              <div className={`${getMainContainerClassName()} ${language}-page`}>
-                  <Outlet />
+              <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100%' }}>
+                <Header />
+                <ErrorBoundary>
+                  <div className={`${getMainContainerClassName()} ${language}-page`}>
+                      <Outlet />
+                  </div>
+                </ErrorBoundary>
               </div>
-              <PricingOverlay 
+              <PricingOverlay
                   visible={showPricingOverlay}
                   onClose={() => {
                     setShowPricingOverlay(false)
