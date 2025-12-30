@@ -73,7 +73,7 @@ export default {
     upgradeEnterprise: 'Upgrade to an enterprise-tier account',
     upgradeAccount: 'Upgrade your account',
     computeWarning: 'Additional context is necessary for high performance of Intelligent find friends. Compute power has been set to Low.',
-    batteryInfoRecommendation: 'Recommended battery information to help intelligent find friends find the most relevant molecules for you: Cathode, Anode, Electrolyte formulation, Cell design, Desired performance metric.',
+    batteryInfoRecommendation: 'Recommend battery information to help Intelligent Search find the most relevant molecules for you: Cathode, Anode, Electrolyte formulation, Cell design, Desired performance metric.',
     
     searchRange: 'Search range',
     nearbyFriends: 'nearby friends',

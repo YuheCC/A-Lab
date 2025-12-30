@@ -44,7 +44,7 @@ export default {
   // Weight percentage
   weightPercentage: {
     label: "重量百分比 (wt%)",
-    tooltip: "自定义数值将在MU1.5中推出"
+    tooltip: "自定义数值将在MU2中推出"
   },
   
   // Molecule information

@@ -38,7 +38,7 @@ export default {
     additiveSubtypes: {
       title: "Additive subcategory",
       categoryLabel: "Category",
-      mechanistic: "Mechanistic",
+      mechanistic: "mechanism",
       outcome: "Outcome",
       mechanisticOptions: {
         seiStabilizer: "SEI Stabilizer",
