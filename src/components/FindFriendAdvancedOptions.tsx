@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import './FindFriendAdvancedOptions.css';
+import './FindFriendAdvancedOptions.less';
 import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import { Info } from 'lucide-react';
 

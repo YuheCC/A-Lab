@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useEffect, useRef, useState } from 'react';
 import { getMoleculeDescription, hasMoleculeDescription } from '@/constants/moleculeDescriptions';
 
-import './Molcard.css';
+import './Molcard.less';
 import { Tooltip } from '@mui/material';
 
 export const PropItem = ({ prop }) => {

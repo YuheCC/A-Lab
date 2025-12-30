@@ -3,7 +3,7 @@ import { useNavigate } from "umi";
 import { useTranslation } from "react-i18next";
 import { X } from 'lucide-react';
 import { useAuthStore } from "@/models/useAuth";
-import './LoginModal.css';
+import './LoginModal.less';
 import { PricingContext } from "@/layouts";
 
 interface LoginModalProps {

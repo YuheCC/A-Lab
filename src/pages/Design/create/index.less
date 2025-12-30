@@ -1,3 +1,5 @@
+@import '@/styles/variables.less';
+
 .design-create-container {
   background: #ffffff;
   min-height: calc(100vh - 66px);
@@ -19,24 +21,24 @@
 .design-title {
   font-size: 24px;
   font-weight: 600;
-  color: #1e293b;
+  color: @color-text-primary;
   margin: 0;
 }
 
 .back-to-list-button {
   background: none;
-  border: 1px solid #e5e7eb;
+  border: 1px solid @color-gray-200;
   border-radius: 6px;
   padding: 8px 16px;
   font-size: 14px;
   font-weight: 500;
-  color: #374151;
+  color: @color-gray-700;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    border-color: #56B26A;
-    color: #56B26A;
+    border-color: @color-accent;
+    color: @color-accent;
   }
 }
 
@@ -46,7 +48,7 @@
 
 .design-subtitle {
   font-size: 14px;
-  color: #64748b;
+  color: @color-text-secondary;
   line-height: 1.5;
   margin: 0;
 }

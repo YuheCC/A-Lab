@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import MessageEdit from '../MessageEdit';
-import './MessageList.css';
+import './MessageList.less';
 import { InlineMoleculeRenderer } from '@/components/InlineMoleculeRenderer/index.js';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import {

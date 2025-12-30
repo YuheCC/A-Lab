@@ -1,0 +1,1314 @@
+@import '@/styles/variables.less';
+
+/* About页面专属样式 */ 
+
+/* 全局图片响应式处理 */
+.about-page-body img {
+  max-width: 95% !important;
+  height: auto !important;
+  box-sizing: border-box !important;
+}
+
+/* Logo容器和图片特殊处理 - 防止样式错乱 */
+.about-page-body .logo-container {
+  max-width: 100px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+.about-page-body .logo-img {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  box-sizing: border-box !important;
+}
+
+/* 容器溢出防护 */
+.about-page-body {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* 内容区域溢出防护 */
+.content-sections {
+  overflow-x: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* 动机模块开始的内容区域边距对齐 */
+.content-sections section[id="motivation"] > *:not(:first-child),
+.content-sections section[id="features"] > *:not(:first-child),
+.content-sections section[id="pricing"] > *:not(:first-child) {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+  box-sizing: border-box !important;
+}
+
+.about-banner-padded {
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* Banner图片基础样式 */
+.about-banner-padded-img {
+  display: block !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  height: auto !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  box-sizing: border-box !important;
+}
+
+.mu-feature-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+    margin: 40px 0 32px 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .mu-feature-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 12px 0 rgba(60,60,60,0.06);
+    padding: 32px 28px 28px 28px;
+    max-width: 340px;
+    min-width: 260px;
+    flex: 1 1 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: box-shadow 0.2s;
+    box-sizing: border-box;
+  }
+  .mu-feature-card:hover {
+    box-shadow: 0 6px 24px 0 rgba(86,178,106,0.13), 0 2px 12px 0 rgba(60,60,60,0.10);
+  }
+  .mu-feature-icon {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 18px;
+  }
+  .mu-feature-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #222;
+  }
+  .mu-feature-desc {
+    font-size: 1.08rem;
+    color: #444;
+    line-height: 1.7;
+  }
+
+  /* 桌面端导航默认显示，移动端菜单按钮默认隐藏 */
+  .desktop-nav {
+    display: flex;
+  }
+
+  .mobile-menu-button {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    z-index: 1001;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+    -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+    touch-action: manipulation;
+  }
+
+  .mobile-menu-button:hover {
+    background: rgba(0,0,0,0.05);
+  }
+
+  .mobile-menu-button:active {
+    background: rgba(0,0,0,0.1);
+  }
+
+  .hamburger {
+    display: flex;
+    flex-direction: column;
+    width: 24px;
+    height: 18px;
+    position: relative;
+  }
+
+  .hamburger span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: @color-gray-900;
+    border-radius: 1px;
+    transition: all 0.3s ease;
+    transform-origin: center;
+  }
+
+  .hamburger span:nth-child(1) {
+    margin-bottom: 6px;
+  }
+
+  .hamburger span:nth-child(2) {
+    margin-bottom: 6px;
+  }
+
+  .hamburger.open span:nth-child(1) {
+    transform: rotate(45deg) translate(7px, 7px);
+  }
+
+  .hamburger.open span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .hamburger.open span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+  }
+
+  .mobile-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fafbfc;
+    border-top: 1px solid #e5e5e5;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transform: translateY(-100%);
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+
+  .mobile-nav.open {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .mobile-nav-item {
+    display: block;
+    padding: 1rem 2rem;
+    color: @color-gray-900;
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid @color-gray-100;
+    transition: background-color 0.2s;
+    -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+    touch-action: manipulation;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+  }
+
+  .mobile-nav-item:hover {
+    background: @color-gray-100;
+  }
+
+  .mobile-nav-item.mobile-enter-mu {
+    background: #1c1c1c;
+    color: white;
+    font-weight: 600;
+    border-bottom: none;
+  }
+
+  .mobile-nav-item.mobile-enter-mu:hover {
+    background: @color-text-primary;
+  }
+
+  /* iPad Pro适配 (1024px - 1200px) */
+  @media (min-width: 1024px) and (max-width: 1200px) {
+    .about-header-container {
+      padding: 1rem 2rem;
+      min-height: 64px;
+    }
+    
+    .logo-img {
+      height: 24px;
+      width: auto;
+      max-width: 100%;
+      max-height: 24px;
+      object-fit: contain;
+      vertical-align: middle;
+      box-sizing: border-box;
+    }
+    
+    /* iPad Pro显示桌面导航 */
+    .desktop-nav {
+      display: flex !important;
+      gap: 2rem;
+    }
+    
+    .about-nav-item {
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    
+    .try-mu-button {
+      font-size: 0.9rem;
+      padding: 0.6rem 1.2rem;
+    }
+    
+    /* iPad Pro隐藏移动端菜单 */
+    .mobile-menu-button {
+      display: none !important;
+    }
+    
+    .mobile-nav {
+      display: none !important;
+    }
+    
+    /* 内容区域iPad Pro优化 */
+    .content-sections {
+      max-width: 1000px;
+      margin: 3rem auto;
+      padding: 0 2rem;
+    }
+    
+    /* 动机模块开始的内容区域边距对齐 - iPad Pro */
+    .content-sections section[id="motivation"] > *:not(:first-child),
+    .content-sections section[id="features"] > *:not(:first-child),
+    .content-sections section[id="pricing"] > *:not(:first-child) {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+      box-sizing: border-box !important;
+    }
+    
+    .content-sections h2 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .content-sections p {
+      font-size: 1.1rem;
+      line-height: 1.7;
+    }
+    
+    /* Banner iPad Pro适配 */
+    .about-banner-padded {
+      margin: 2.5rem auto;
+      width: 100%;
+      max-width: 1000px;
+      padding: 0 1rem;
+      box-sizing: border-box;
+    }
+    
+    .about-banner-padded-img {
+      width: 100%;
+      height: 450px;
+      border-radius: 24px;
+      object-fit: cover;
+      object-position: center;
+    }
+    
+    .banner-enter-mu-button {
+      bottom: 45px;
+      left: 70px;
+      padding: 0.9rem 1.4rem;
+      font-size: 0.9rem;
+    }
+    
+    /* Features iPad Pro适配 */
+    .mu-feature-cards {
+      gap: 36px;
+      margin: 36px 0 28px 0;
+    }
+    
+    .mu-feature-card {
+      padding: 30px 26px 26px 26px;
+      max-width: 320px;
+      min-width: 280px;
+    }
+    
+    .mu-feature-icon {
+      width: 54px;
+      height: 54px;
+      margin-bottom: 16px;
+    }
+    
+    .mu-feature-title {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+    
+    .mu-feature-desc {
+      font-size: 1.05rem;
+      line-height: 1.65;
+    }
+    
+    /* Features标签页iPad Pro适配 */
+    .features-flex {
+      margin: 2.2rem 0 0.5rem 0;
+      min-height: 320px;
+    }
+    
+    .features-list {
+      flex: 0 0 170px;
+    }
+    
+    .feature-tab {
+      font-size: 1.05rem;
+      padding: 1.05rem 1.4rem 1.05rem 0.5rem;
+    }
+    
+    .features-content {
+      padding: 2.2rem 0 2.2rem 2.2rem;
+    }
+    
+    .features-content h3 {
+      font-size: 1.12rem;
+      margin-bottom: 1.05rem;
+    }
+    
+    .features-content p,
+    .features-content ul,
+    .features-content li {
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+    
+    /* News Feed iPad Pro适配 */
+    .news-feed {
+      margin: 2.2rem 0 1.3rem 0;
+      gap: 1.3rem;
+    }
+    
+    .news-item {
+      padding: 1.3rem 1.8rem;
+      border-radius: 14px;
+      gap: 1.3rem;
+    }
+    
+    .news-date {
+      font-size: 1rem;
+      min-width: 110px;
+      font-weight: 600;
+    }
+    
+    .news-content {
+      font-size: 1.08rem;
+      line-height: 1.65;
+    }
+    
+    .news-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+    
+    .news-details {
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    /* Quote部分iPad Pro适配 */
+    .about-quote {
+      margin: 28px 0 22px 0 !important;
+      font-size: 1.3rem !important;
+      padding: 0 1rem;
+    }
+    
+    .about-quote span {
+      font-size: 1rem !important;
+    }
+  }
+
+  /* 桌面端确保显示导航，隐藏移动端菜单 */
+  @media (min-width: 1201px) {
+    .desktop-nav {
+      display: flex !important;
+    }
+    
+    .mobile-menu-button {
+      display: none !important;
+    }
+    
+    .mobile-nav {
+      display: none !important;
+    }
+  }
+
+  /* 中等桌面端适配 (769px - 1023px) */
+  @media (min-width: 769px) and (max-width: 1023px) {
+    .desktop-nav {
+      display: flex !important;
+    }
+    
+    .mobile-menu-button {
+      display: none !important;
+    }
+    
+    .mobile-nav {
+      display: none !important;
+    }
+  }
+
+  /* 响应式菜单调整 */
+  @media (max-width: 480px) {
+    .mobile-nav-item {
+      padding: 0.8rem 1.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .hamburger {
+      width: 22px;
+      height: 16px;
+    }
+  }
+
+  @media (max-width: 320px) {
+    .mobile-nav-item {
+      padding: 0.7rem 1.2rem;
+      font-size: 0.85rem;
+    }
+  }
+
+  /* H5移动端响应式设计 */
+  @media (max-width: 900px) {
+    .mu-feature-cards {
+      flex-direction: column;
+      gap: 24px;
+      align-items: stretch;
+      margin: 32px 0 24px 0;
+      padding: 0;
+    }
+    .mu-feature-card {
+      max-width: 100% !important;
+      min-width: 0 !important;
+      width: 100% !important;
+      flex: none !important;
+      margin: 0;
+      box-sizing: border-box;
+    }
+  }
+
+  /* 平板端适配 (768px - 900px) */
+  @media (max-width: 900px) and (min-width: 769px) {
+    /* Header调整 */
+    .about-header-container {
+      padding: 1rem 1.5rem;
+    }
+    
+    .logo-img {
+      height: 21px; /* 与之前设置的尺寸保持一致 */
+      width: auto;
+      max-width: 100%;
+      max-height: 21px;
+      object-fit: contain;
+      vertical-align: middle;
+      box-sizing: border-box;
+    }
+    
+    /* 平板端仍显示桌面导航 */
+    .desktop-nav {
+      display: flex !important;
+      gap: 1.5rem;
+    }
+    
+    .about-nav-item {
+      font-size: 0.95rem;
+    }
+    
+    .try-mu-button {
+      font-size: 0.85rem;
+      padding: 0.5rem 1rem;
+    }
+    
+    /* 平板端隐藏移动端菜单 */
+    .mobile-menu-button {
+      display: none !important;
+    }
+    
+    .mobile-nav {
+      display: none !important;
+    }
+    
+    /* Banner调整 */
+    .about-banner-padded {
+      margin: 2rem auto;
+      width: 100%;
+      max-width: 900px;
+      padding: 0 1rem;
+      box-sizing: border-box;
+    }
+    
+    .about-banner-padded-img {
+      width: 100%;
+      height: 350px;
+      object-fit: cover;
+      object-position: center;
+    }
+    
+    .banner-enter-mu-button {
+      bottom: 40px;
+      left: 60px;
+      padding: 0.8rem 1.3rem;
+    }
+    
+    /* Features部分 */
+    .features-list {
+      flex: 0 0 160px;
+    }
+    
+    .feature-tab {
+      font-size: 1rem;
+      padding: 1rem 1.2rem 1rem 0.4rem;
+    }
+    
+    .features-content {
+      padding: 2rem 0 2rem 2rem;
+    }
+    
+    /* 平板端mu-feature-card优化 */
+    .mu-feature-cards {
+      gap: 28px;
+      margin: 28px 0;
+    }
+    
+    .mu-feature-card {
+      padding: 28px 24px;
+      max-width: 100%;
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    
+    .mu-feature-icon {
+      width: 52px;
+      height: 52px;
+      margin-bottom: 14px;
+    }
+    
+    .mu-feature-title {
+      font-size: 1.15rem;
+      margin-bottom: 9px;
+    }
+    
+    .mu-feature-desc {
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+  }
+
+  /* 手机端适配 (768px以下) */
+  @media (max-width: 768px) {
+    /* Header移动端优化 */
+    .about-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background-color: #fafbfc;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    
+    .about-header-container {
+      padding: 0.8rem 1rem;
+      flex-direction: row; /* 改为水平布局 */
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .logo-container {
+      display: flex;
+      align-items: center;
+      height: auto;
+      max-width: 120px;
+      box-sizing: border-box;
+    }
+    
+    .logo-img {
+      height: 20px;
+      width: auto;
+      max-width: 100%;
+      max-height: 20px;
+      object-fit: contain;
+      vertical-align: middle;
+      box-sizing: border-box;
+    }
+    
+    /* 隐藏桌面端导航 */
+    .desktop-nav {
+      display: none !important;
+    }
+    
+    /* 隐藏桌面端按钮 */
+    .about-header-actions {
+      display: none !important;
+    }
+    
+    /* 显示移动端菜单按钮 */
+    .mobile-menu-button {
+      display: flex !important;
+    }
+    
+    /* 显示移动端导航 */
+    .mobile-nav {
+      display: block !important;
+    }
+    
+    .try-mu-button {
+      font-size: 0.9rem;
+      padding: 0.7rem 1.2rem;
+      border-radius: 20px;
+    }
+    
+    /* Banner移动端优化 */
+    .about-banner-padded {
+      margin: 1rem auto;
+      padding: 0 1rem;
+      position: relative;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    
+    .about-banner-padded-img {
+      width: 100%;
+      height: 240px;
+      border-radius: 16px;
+      object-fit: cover;
+      object-position: center;
+    }
+    
+    .banner-enter-mu-button {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.85rem;
+      padding: 0.6rem 1rem;
+      border-radius: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    
+    /* Quote部分 */
+    .about-quote {
+      margin: 24px 1rem 20px 1rem !important;
+      font-size: 1.1rem !important;
+      text-align: center;
+      padding: 0 0.5rem;
+    }
+    
+    .about-quote span {
+      font-size: 0.9rem !important;
+    }
+    
+    /* 内容区域 */
+    .content-sections {
+      max-width: 100%;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    
+    /* 动机模块开始的内容区域边距对齐 - 移动端 */
+    .content-sections section[id="motivation"] > *:not(:first-child),
+    .content-sections section[id="features"] > *:not(:first-child),
+    .content-sections section[id="pricing"] > *:not(:first-child) {
+      padding-left: 0.8rem !important;
+      padding-right: 0.8rem !important;
+      box-sizing: border-box !important;
+    }
+    
+    .content-sections h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+    
+    .content-sections h3 {
+      font-size: 1.4rem;
+      margin-bottom: 0.8rem;
+      margin-top: 1.2rem;
+    }
+    
+    .content-sections h4 {
+      font-size: 1.2rem;
+      margin-bottom: 0.6rem;
+      margin-top: 1rem;
+    }
+    
+    .content-sections p {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    
+    .content-sections ul li,
+    .content-sections ol li {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 0.5rem;
+    }
+    
+    /* Section标题区域 */
+    .content-sections section > div:first-child {
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+    
+    .content-sections section > div:first-child h2 {
+      margin: 0;
+      flex-shrink: 0;
+    }
+    
+    .content-sections section > div:first-child a {
+      font-size: 0.85rem !important;
+      margin-left: 0 !important;
+      white-space: nowrap;
+    }
+    
+    /* Features卡片移动端 */
+    .mu-feature-cards {
+      gap: 16px;
+      margin: 20px 0;
+      padding: 0;
+      width: 100%;
+    }
+    
+    .mu-feature-card {
+      max-width: 100% !important;
+      min-width: 0 !important;
+      width: 100% !important;
+      flex: none !important;
+      padding: 20px 16px;
+      border-radius: 12px;
+      box-sizing: border-box;
+      margin: 0;
+    }
+    
+    .mu-feature-icon {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+    }
+    
+    .mu-feature-title {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    
+    .mu-feature-desc {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+    
+    /* Features标签页移动端 */
+    .features-flex {
+      flex-direction: column;
+      min-height: unset;
+      margin: 1.5rem 0 0.5rem 0;
+    }
+    
+    .features-list {
+      flex-direction: row;
+      flex: none;
+      border-right: none;
+      padding: 0;
+      gap: 0;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    
+    .features-list::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .feature-tab {
+      font-size: 0.9rem;
+      padding: 0.8rem 1rem;
+      border-left: none;
+      border-bottom: 3px solid transparent;
+      white-space: nowrap;
+      min-width: auto;
+      flex-shrink: 0;
+    }
+    
+    .feature-tab.active {
+      border-left: none;
+      border-bottom: 3px solid #1c7c54;
+      background: rgba(28, 124, 84, 0.05);
+    }
+    
+    .features-content {
+      padding: 1.5rem 0.5rem 1rem 0.5rem;
+    }
+    
+    .features-content h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.8rem;
+    }
+    
+    .features-content p,
+    .features-content ul,
+    .features-content li {
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    
+    /* News Feed移动端 */
+    .news-feed {
+      gap: 1rem;
+    }
+    
+    .news-item {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 0.5rem;
+      background: @color-gray-50;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+    
+    .news-date {
+      font-size: 0.85rem;
+      color: @color-gray-500;
+      font-weight: 500;
+    }
+    
+    .news-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 0.5rem;
+    }
+    
+    .news-details {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+    
+    /* 图片响应式 - 移动端强化 */
+    .content-sections img {
+      max-width: 100% !important;
+      width: auto !important;
+      height: auto !important;
+      border-radius: 8px !important;
+      box-sizing: border-box !important;
+    }
+    
+    /* 统计图片特殊处理 - 移动端强化 */
+    .content-sections div[style*="justifyContent:center"] {
+      margin: 20px 0 0 0 !important;
+      width: 100% !important;
+      padding: 0 !important;
+      box-sizing: border-box !important;
+    }
+    
+    .content-sections div[style*="justifyContent:center"] img {
+      max-width: 100% !important;
+      width: 100% !important;
+      height: auto !important;
+      box-sizing: border-box !important;
+    }
+    
+    /* 特性图标强化 */
+    .mu-feature-icon {
+      max-width: 48px !important;
+      max-height: 48px !important;
+      object-fit: contain !important;
+    }
+    
+    /* Extended motivation section */
+    .mu-motivation-extended {
+      margin-top: 24px !important;
+    }
+    
+    /* Main容器调整 */
+    main {
+      padding-bottom: 60px !important;
+    }
+  }
+
+  /* 小屏手机适配 (480px以下) */
+  @media (max-width: 480px) {
+    .about-header-container {
+      padding: 0.6rem 0.8rem;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo-img {
+      height: 19px;
+      width: auto;
+      max-width: 100%;
+      max-height: 19px;
+      object-fit: contain;
+      vertical-align: middle;
+      box-sizing: border-box;
+    }
+    
+    /* 确保移动端菜单按钮显示 */
+    .mobile-menu-button {
+      display: flex !important;
+    }
+    
+    .mobile-nav {
+      display: block !important;
+    }
+    
+    .desktop-nav {
+      display: none !important;
+    }
+    
+    .about-header-actions {
+      display: none !important;
+    }
+    
+    /* 小屏幕上子模块标题可能需要换行 */
+    .content-sections section > div:first-child {
+      gap: 0.5rem;
+    }
+    
+    .content-sections section > div:first-child a {
+      font-size: 0.8rem !important;
+    }
+    
+    .about-banner-padded {
+      margin: 0.8rem auto;
+      padding: 0 0.8rem;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    
+    .about-banner-padded-img {
+      width: 100%;
+      height: 200px;
+      border-radius: 12px;
+      object-fit: cover;
+      object-position: center;
+    }
+    
+    .banner-enter-mu-button {
+      display: none !important;
+    }
+    
+    .content-sections {
+      padding: 0 0.8rem;
+    }
+    
+    /* 动机模块开始的内容区域边距对齐 - 小屏手机 */
+    .content-sections section[id="motivation"] > *:not(:first-child),
+    .content-sections section[id="features"] > *:not(:first-child),
+    .content-sections section[id="pricing"] > *:not(:first-child) {
+      padding-left: 0.6rem !important;
+      padding-right: 0.6rem !important;
+      box-sizing: border-box !important;
+    }
+    
+    .content-sections h2 {
+      font-size: 1.6rem;
+    }
+    
+    .content-sections h3 {
+      font-size: 1.3rem;
+    }
+    
+    .about-quote {
+      font-size: 1rem !important;
+      margin: 20px 0.8rem 16px 0.8rem !important;
+    }
+    
+    .mu-feature-card {
+      max-width: 100% !important;
+      min-width: 0 !important;
+      width: 100% !important;
+      flex: none !important;
+      padding: 18px 14px;
+      box-sizing: border-box;
+      margin: 0;
+    }
+    
+    .mu-feature-cards {
+      gap: 14px;
+      margin: 16px 0;
+    }
+    
+    .mu-feature-icon {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 10px;
+      flex-shrink: 0;
+    }
+    
+    .mu-feature-title {
+      font-size: 1rem;
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+    
+    .mu-feature-desc {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      margin: 0;
+    }
+    
+    .feature-tab {
+      font-size: 0.85rem;
+      padding: 0.7rem 0.8rem;
+    }
+    
+    .features-content {
+      padding: 1.2rem 0.3rem 0.8rem 0.3rem;
+    }
+    
+    .features-content h3 {
+      font-size: 1rem;
+    }
+    
+    .features-content p,
+    .features-content ul,
+    .features-content li {
+      font-size: 0.9rem;
+    }
+  }
+
+  /* 横屏手机适配 */
+  @media (max-width: 900px) and (orientation: landscape) {
+    .about-banner-padded {
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .about-banner-padded-img {
+      width: 100% !important;
+      height: 180px;
+      object-fit: cover;
+      object-position: center;
+    }
+    
+    .banner-enter-mu-button {
+      display: none !important;
+    }
+    
+    .content-sections {
+      margin: 1rem auto;
+    }
+    
+    .features-flex {
+      margin: 1rem 0 0.3rem 0;
+    }
+    
+    /* 横屏模式mu-feature-card优化 */
+    .mu-feature-cards {
+      gap: 16px;
+      margin: 16px 0;
+    }
+    
+    .mu-feature-card {
+      max-width: 100% !important;
+      min-width: 0 !important;
+      width: 100% !important;
+      flex: none !important;
+      padding: 16px 14px;
+      box-sizing: border-box;
+      margin: 0;
+    }
+    
+    .mu-feature-icon {
+      width: 44px;
+      height: 44px;
+      margin-bottom: 10px;
+    }
+    
+    .mu-feature-title {
+      font-size: 1rem;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    
+    .mu-feature-desc {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      margin: 0;
+    }
+  }
+
+  /* 窄屏幕隐藏Banner按钮 */
+  @media (max-width: 768px) {
+    .banner-enter-mu-button {
+      display: none !important;
+    }
+  }
+
+  /* 超小屏设备适配 (320px以下) */
+  @media (max-width: 320px) {
+    .about-header-container {
+      padding: 0.5rem 0.6rem;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo-img {
+      height: 18px;
+      width: auto;
+      max-width: 100%;
+      max-height: 18px;
+      object-fit: contain;
+      vertical-align: middle;
+      box-sizing: border-box;
+    }
+    
+    /* 确保移动端菜单按钮显示 */
+    .mobile-menu-button {
+      display: flex !important;
+    }
+    
+    .mobile-nav {
+      display: block !important;
+    }
+    
+    .desktop-nav {
+      display: none !important;
+    }
+    
+    .about-header-actions {
+      display: none !important;
+    }
+    
+    /* 调整汉堡包图标大小 */
+    .hamburger {
+      width: 20px;
+      height: 15px;
+    }
+    
+    .hamburger span {
+      height: 1.5px;
+    }
+    
+    .hamburger span:nth-child(1),
+    .hamburger span:nth-child(2) {
+      margin-bottom: 5px;
+    }
+    
+    /* 超小屏幕上子模块标题处理 */
+    .content-sections section > div:first-child {
+      gap: 0.4rem;
+    }
+    
+    .content-sections section > div:first-child a {
+      font-size: 0.75rem !important;
+    }
+    
+    .about-banner-padded {
+      padding: 0 0.6rem;
+    }
+    
+    .about-banner-padded-img {
+      height: 160px;
+    }
+    
+    .banner-enter-mu-button {
+      display: none !important;
+    }
+    
+    .content-sections {
+      padding: 0 0.6rem;
+    }
+    
+    /* 动机模块开始的内容区域边距对齐 - 超小屏 */
+    .content-sections section[id="motivation"] > *:not(:first-child),
+    .content-sections section[id="features"] > *:not(:first-child),
+    .content-sections section[id="pricing"] > *:not(:first-child) {
+      padding-left: 0.4rem !important;
+      padding-right: 0.4rem !important;
+      box-sizing: border-box !important;
+    }
+    
+    .content-sections h2 {
+      font-size: 1.4rem;
+    }
+    
+    .content-sections p {
+      font-size: 0.9rem;
+    }
+    
+    /* 超小屏mu-feature-card优化 */
+    .mu-feature-cards {
+      gap: 12px;
+      margin: 12px 0;
+    }
+    
+    .mu-feature-card {
+      max-width: 100% !important;
+      min-width: 0 !important;
+      width: 100% !important;
+      flex: none !important;
+      padding: 16px 12px;
+      box-sizing: border-box;
+      margin: 0;
+    }
+    
+    .mu-feature-icon {
+      width: 36px;
+      height: 36px;
+      margin-bottom: 8px;
+      max-width: 36px !important;
+      max-height: 36px !important;
+      object-fit: contain !important;
+    }
+    
+    .mu-feature-title {
+      font-size: 0.95rem;
+      line-height: 1.2;
+      margin-bottom: 5px;
+    }
+    
+    .mu-feature-desc {
+      font-size: 0.85rem;
+      line-height: 1.3;
+      margin: 0;
+    }
+
+    /* 超小屏图片强化处理 */
+    .content-sections img {
+      max-width: 100% !important;
+      width: auto !important;
+      height: auto !important;
+      box-sizing: border-box !important;
+    }
+
+    .content-sections div[style*="justifyContent:center"] {
+      margin: 16px 0 0 0 !important;
+      width: 100% !important;
+      padding: 0 !important;
+      box-sizing: border-box !important;
+    }
+
+    .content-sections div[style*="justifyContent:center"] img {
+      max-width: 100% !important;
+      width: 100% !important;
+      height: auto !important;
+      box-sizing: border-box !important;
+    }
+
+    .about-banner-padded {
+      padding: 0 0.6rem !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    .about-banner-padded-img {
+      height: 160px !important;
+      width: 100% !important;
+      object-fit: cover !important;
+      object-position: center !important;
+    }
+  } 

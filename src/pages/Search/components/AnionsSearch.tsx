@@ -21,7 +21,7 @@ import { FavoriteContext } from "@/layouts";
 import FindFriendOptions, { type MolTypeOption } from "./FindFriendOptions";
 import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
 import AnionsFilter, { AnionsFilterRef } from './AnionsFilter';
-import '../index.css';
+import '../index.less';
 import { useQueryLimit } from '@/hooks/useQueryLimit';
 import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
 import { useAccessModals } from '@/hooks/useAccessModals';

@@ -1,0 +1,460 @@
+@import '@/styles/variables.less';
+
+/* 修复MUI Autocomplete下拉框z-index被遮挡问题 */
+.MuiAutocomplete-popper {
+    z-index: 9999 !important;
+}
+
+.MuiPopper-root {
+    z-index: 9999 !important;
+}
+
+/* 修复MUI Slider浮层标签z-index被遮挡问题 */
+.MuiSlider-valueLabel {
+    z-index: 10000 !important;
+}
+
+.MuiSlider-valueLabelOpen {
+    z-index: 10000 !important;
+}
+
+.MuiSlider-valueLabelContainer {
+    z-index: 10000 !important;
+}
+
+/* 确保过滤器包装器允许浮层显示 */
+.filter-wrapper {
+    overflow: visible !important;
+    position: relative;
+}
+
+/* 确保滑块容器不截断浮层 */
+.sliders-container .filter-wrapper {
+    overflow: visible !important;
+    z-index: 1;
+}
+
+/* Search Page Tab Styles */
+.search-tabs-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    background-color: @color-gray-100; /* 浅灰色背景，类似浏览器标签栏 */
+    border-bottom: 1px solid @color-gray-300;
+    position: relative;
+}
+
+.search-tabs-wrapper {
+    display: flex;
+    gap: 0; /* 移除间隙，让标签重叠 */
+    position: relative;
+}
+
+.search-tab-button {
+    padding: 8px 16px 12px 16px;
+    border: none;
+    background: #ffffff; /* 白色背景 */
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #666666; /* 深灰色文字 */
+    position: relative;
+    min-width: 80px;
+    text-align: center;
+    outline: none;
+    border-radius: 8px 8px 0 0; /* 顶部圆角 */
+    margin-right: -2px; /* 创建重叠效果 */
+    border: 1px solid @color-gray-300;
+    border-bottom: none;
+    z-index: 1;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
+}
+
+.search-tab-button:hover:not(.active) {
+    background: #fafafa;
+    color: #333333;
+    z-index: 2;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.search-tab-button.active {
+    background: #ffffff; /* 白色背景 */
+    color: #333333; /* 深灰色文字，与普通状态区分 */
+    z-index: 3;
+    border-color: @color-gray-300; /* 保持普通边框颜色 */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* 轻微阴影效果 */
+}
+
+.search-tab-button:focus {
+    outline: none;
+}
+
+.search-tab-button:active {
+    transform: translateY(1px);
+}
+
+/* 移除原有的下划线动画 */
+.search-tab-button::after {
+    display: none;
+}
+
+/* 收藏按钮样式 */
+.favorites-enter-button {
+    padding: 8px 16px;
+    margin-right: 8px;
+    border: none;
+    background-color: transparent;
+    color: @color-accent;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Tab内容区域过渡效果 */
+.tab-content {
+    transition: opacity 0.3s ease;
+    min-height: 400px;
+    border: 1px solid @color-gray-300;
+    border-top: none;
+}
+
+.tab-content.fade-enter {
+    opacity: 0;
+}
+
+.tab-content.fade-enter-active {
+    opacity: 1;
+}
+
+.tab-content.fade-exit {
+    opacity: 1;
+}
+
+.tab-content.fade-exit-active {
+    opacity: 0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .search-tab-button {
+        padding: 6px 12px 10px 12px;
+        font-size: 12px;
+        min-width: 60px;
+    }
+
+    .search-tabs-container {
+        padding: 0;
+    }
+
+    .search-tabs-wrapper {
+        gap: 0;
+    }
+
+    .favorites-enter-button {
+        padding: 6px 12px;
+        font-size: 12px;
+        margin-right: 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-tabs-wrapper {
+        gap: 0;
+    }
+
+    .search-tab-button {
+        min-width: 50px;
+        font-size: 11px;
+        padding: 5px 8px 8px 8px;
+    }
+
+    .favorites-enter-button {
+        padding: 5px 8px;
+        font-size: 11px;
+        margin-right: 2px;
+        gap: 2px;
+    }
+}
+
+/* 继承Map页面的基本样式 */
+.search-umap-container {
+    display: flex;
+    height: calc(100vh - 140px);
+    position: relative;
+    width: 100%;
+    align-items: stretch;
+    gap: 0;
+}
+
+.search-umap-section {
+    position: relative;
+    background-color: #ffffff;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.search-interface-section {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 当在filter模式时，确保浮层不被截断 */
+.search-interface-section:has(.sliders-container) {
+    overflow: visible !important;
+}
+
+/* 为了兼容不支持:has的浏览器，添加特定类 */
+.search-interface-section.filter-mode {
+    overflow: visible !important;
+}
+
+/* 确保filter模式下的sliders容器不截断浮层 */
+.search-interface-section.filter-mode .sliders-container {
+    overflow: visible !important;
+}
+
+/* 确保filter模式下的filter包装器不截断浮层 */
+.search-interface-section.filter-mode .filter-wrapper {
+    overflow: visible !important;
+    position: relative;
+}
+
+/* 确保MUI Autocomplete的popper在filter模式下正确显示 */
+.search-interface-section.filter-mode .MuiAutocomplete-root {
+    position: relative;
+    z-index: 1;
+}
+
+.search-interface-section.filter-mode .functional-group-input-container {
+    position: relative;
+    z-index: 1;
+}
+
+/* 特别针对Search页面filter模式的Slider浮层标签修复 */
+.search-interface-section.filter-mode .MuiSlider-valueLabel {
+    z-index: 10001 !important;
+}
+
+.search-interface-section.filter-mode .MuiSlider-valueLabelOpen {
+    z-index: 10001 !important;
+}
+
+.search-interface-section.filter-mode .MuiSlider-valueLabelContainer {
+    z-index: 10001 !important;
+}
+
+/* 确保Slider的mark标签也不会被截断 */
+.search-interface-section.filter-mode .MuiSlider-mark {
+    z-index: 2 !important;
+}
+
+.search-interface-section.filter-mode .MuiSlider-markLabel {
+    z-index: 2 !important;
+}
+
+.resize-divider {
+    width: 4px;
+    background-color: transparent;
+    cursor: col-resize;
+    transition: background-color 0.2s ease;
+    flex: 0 0 4px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.resize-divider::after {
+    content: '';
+    width: 1px;
+    height: 40px;
+    background-color: @color-gray-300;
+    border-radius: 0.5px;
+}
+
+.resize-divider:hover {
+    background-color: rgba(0, 102, 204, 0.1);
+}
+
+.resize-divider:hover::after {
+    background-color: #0066cc;
+    width: 2px;
+}
+
+.resize-divider:active {
+    background-color: #004499;
+}
+
+/* 拖拽时的样式 */
+.dragging {
+    cursor: col-resize;
+    user-select: none;
+}
+
+.dragging * {
+    cursor: col-resize !important;
+}
+
+/* 搜索选项样式 */
+.search-options {
+    margin: 20px 0;
+}
+
+.search-option {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    flex: 0 1 100%;
+    align-self: flex-start;
+    margin-right: 0;
+    gap: 16px;
+}
+
+.search-option input[type="checkbox"] {
+    margin-right: 8px;
+    margin-top: 2px;
+}
+
+/* 搜索结果样式 */
+.search-results {
+    margin-top: 16px;
+}
+
+.search-submit-container {
+    display: flex;
+    justify-content: center;
+    margin: 12px 0 0;
+}
+
+.search-submit-container .search-button {
+    min-width: 160px;
+}
+
+.loading-container {
+    text-align: center;
+    padding: 40px;
+}
+
+.loading-spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #0066cc;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.error-message {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 15px;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.warning-message {
+    background-color: #fff3e0;
+    color: #ef6c00;
+    padding: 15px;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.molecule-properties {
+    margin-bottom: 30px;
+}
+
+.molecule-properties h3 {
+    margin-bottom: 15px;
+    color: @color-text-primary;
+    font-size: 18px;
+}
+
+.similar-molecules {
+    margin-top: 30px;
+}
+
+.similar-molecules h3 {
+    margin-bottom: 15px;
+    color: @color-text-primary;
+    font-size: 18px;
+}
+
+.molecule-not-found {
+    text-align: center;
+    padding: 40px 20px;
+    color: @color-gray-500;
+}
+
+.pricing-cta {
+    background-color: #0066cc;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.pricing-cta:hover {
+    background-color: #004499;
+}
+
+.pricing-cta.strategic {
+    background-color: #ff6b35;
+}
+
+.pricing-cta.strategic:hover {
+    background-color: #e55a2b;
+}
+
+/* ThirdSearch Component Styles */
+.third-search-container {
+    padding: 40px 20px;
+    text-align: center;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.third-search-content {
+    max-width: 600px;
+}
+
+.third-search-content h2 {
+    color: @color-text-primary;
+    font-size: 24px;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.third-search-content p {
+    color: @color-gray-500;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}

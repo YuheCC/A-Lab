@@ -1,3 +1,5 @@
+@import '@/styles/variables.less';
+
 .step-indicator {
   display: flex;
   justify-content: center;
@@ -16,8 +18,8 @@
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      background-color: #e5e7eb;
-      color: #6b7280;
+      background-color: @color-gray-200;
+      color: @color-gray-500;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -29,7 +31,7 @@
 
     .step-label {
       font-size: 14px;
-      color: #6b7280;
+      color: @color-gray-500;
       font-weight: 500;
       white-space: nowrap;
       transition: all 0.3s ease;
@@ -38,14 +40,14 @@
     .step-line {
       width: 80px;
       height: 2px;
-      background-color: #e5e7eb;
+      background-color: @color-gray-200;
       margin: 0 20px;
       transition: all 0.3s ease;
     }
 
     &.active {
       .step-number {
-        background-color: #56B26A;
+        background-color: @color-accent;
         color: #ffffff;
         box-shadow: 0 0 0 4px rgba(86, 178, 106, 0.1);
       }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { OrganicFilters, InorganicFilters } from "./components";
-import "./Filter.css";
+import "./Filter.less";
 
 const Filter = () => {
     const { t } = useTranslation();

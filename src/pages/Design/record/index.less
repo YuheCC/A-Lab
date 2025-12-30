@@ -1,3 +1,5 @@
+@import '@/styles/variables.less';
+
 .design-record-container {
   background: #ffffff;
   min-height: calc(100vh - 66px);
@@ -20,23 +22,23 @@
 .design-action-title {
   font-size: 24px;
   font-weight: 600;
-  color: #1e293b;
+  color: @color-text-primary;
 }
 
 .back-to-list-button {
   background: none;
-  border: 1px solid #e5e7eb;
+  border: 1px solid @color-gray-200;
   border-radius: 6px;
   padding: 8px 16px;
   font-size: 14px;
   font-weight: 500;
-  color: #374151;
+  color: @color-gray-700;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    border-color: #56B26A;
-    color: #56B26A;
+    border-color: @color-accent;
+    color: @color-accent;
   }
 }
 
@@ -46,7 +48,7 @@
   justify-content: center;
   align-items: center;
   min-height: 200px;
-  color: #6b7280;
+  color: @color-gray-500;
   font-size: 14px;
 }
 
@@ -65,7 +67,7 @@
 .design-section-title {
   font-size: 16px;
   font-weight: 600;
-  color: #1e293b;
+  color: @color-text-primary;
   margin: 0 0 16px 0;
 }
 
@@ -79,7 +81,7 @@
 .design-results-card,
 .design-analysis-card {
   background: #ffffff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid @color-gray-200;
   border-radius: 12px;
   padding: 24px;
 }
@@ -98,20 +100,20 @@
 
       .label {
         font-size: 14px;
-        color: #6b7280;
+        color: @color-gray-500;
         flex-shrink: 0;
         font-weight: 500;
       }
 
       .value {
         font-size: 14px;
-        color: #1e293b;
+        color: @color-text-primary;
         text-align: right;
         flex: 1;
 
         &.additive-value {
           font-family: 'Courier New', monospace;
-          background: #f9fafb;
+          background: @color-gray-50;
           padding: 4px 8px;
           border-radius: 4px;
           font-size: 13px;
@@ -139,19 +141,19 @@
 
   .label {
     font-size: 14px;
-    color: #6b7280;
+    color: @color-gray-500;
     flex-shrink: 0;
     min-width: 80px;
   }
 
   .value {
     font-size: 14px;
-    color: #1e293b;
+    color: @color-text-primary;
     word-break: break-all;
 
     &.additive-value {
       font-family: 'Courier New', monospace;
-      background: #f9fafb;
+      background: @color-gray-50;
       padding: 4px 8px;
       border-radius: 4px;
       font-size: 13px;
@@ -175,7 +177,7 @@
     h5 {
       font-size: 15px;
       font-weight: 600;
-      color: #1e293b;
+      color: @color-text-primary;
       margin: 0 0 16px 0;
     }
   }
@@ -207,7 +209,7 @@
 
 .result-label {
   font-size: 12px;
-  color: #6b7280;
+  color: @color-gray-500;
   margin-bottom: 12px;
   font-weight: 500;
   line-height: 1.3;
@@ -233,7 +235,7 @@
 .analysis-content {
   font-size: 14px;
   line-height: 1.6;
-  color: #374151;
+  color: @color-gray-700;
 
   p {
     margin: 0 0 12px 0;

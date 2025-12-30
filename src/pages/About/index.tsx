@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Pricing from '../../components/Pricing';
-import './abou.css';
+import './abou.less';
 import { MessageProvider } from '@/components/MessageProvider';
 import { LoginModalProvider } from '@/components/LoginModal/context';
 

@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import './Pricing.less';
-import '@/components/SettingModal/settingModal.css';
+import '@/components/SettingModal/settingModal.less';
 import { useNavigate } from 'umi';
 import { useAuthStore } from '@/models/useAuth';
 import ContactSalesModal from '@/components/ContactSalesModal';

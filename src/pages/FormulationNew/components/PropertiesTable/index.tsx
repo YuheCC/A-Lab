@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import './index.css';
+import './index.less';
 
 interface PropertyItem {
   id: number;

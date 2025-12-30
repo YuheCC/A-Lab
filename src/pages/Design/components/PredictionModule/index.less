@@ -1,3 +1,5 @@
+@import '@/styles/variables.less';
+
 .pm-prediction-module {
   background: #ffffff;
   height: 100%;
@@ -11,12 +13,12 @@
 .pm-module-section h2 {
   font-size: 20px;
   font-weight: 600;
-  color: #1f2937;
+  color: @color-gray-800;
   margin: 0 0 24px 0;
 }
 
 .pm-module-content-card {
-  border: 1px solid #e5e7eb;
+  border: 1px solid @color-gray-200;
   border-radius: 12px;
   padding: 32px;
   background: #ffffff;
@@ -30,7 +32,7 @@
   display: block;
   font-size: 14px;
   font-weight: 500;
-  color: #374151;
+  color: @color-gray-700;
   margin-bottom: 8px;
 }
 
@@ -43,7 +45,7 @@
   border-radius: 6px;
   font-size: 14px;
   background: #ffffff;
-  color: #374151;
+  color: @color-gray-700;
 }
 
 .pm-system-select:focus {
@@ -53,8 +55,8 @@
 }
 
 .pm-system-specs {
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
+  background: @color-gray-50;
+  border: 1px solid @color-gray-200;
   border-radius: 6px;
   padding: 16px;
   margin-bottom: 24px;
@@ -70,14 +72,14 @@
 .pm-specs-header span {
   font-size: 16px;
   font-weight: 500;
-  color: #374151;
+  color: @color-gray-700;
 }
 
 .pm-close-specs {
   background: none;
   border: none;
   font-size: 20px;
-  color: #9ca3af;
+  color: @color-gray-400;
   cursor: pointer;
   padding: 0;
   width: 24px;
@@ -88,7 +90,7 @@
 }
 
 .pm-close-specs:hover {
-  color: #6b7280;
+  color: @color-gray-500;
 }
 
 .pm-specs-grid {
@@ -105,7 +107,7 @@
 
 .pm-spec-item label {
   font-weight: 500;
-  color: #6b7280;
+  color: @color-gray-500;
   min-width: 90px;
   margin: 0;
   font-size: 14px;
@@ -116,7 +118,7 @@
 }
 
 .pm-spec-item span {
-  color: #374151;
+  color: @color-gray-700;
   font-size: 14px;
   line-height: 1.4;
 }
@@ -124,10 +126,10 @@
 .pm-additive-input {
   width: 100%;
   padding: 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid @color-gray-300;
   border-radius: 6px;
   font-size: 14px;
-  color: #374151;
+  color: @color-gray-700;
   box-sizing: border-box;
 }
 
@@ -138,7 +140,7 @@
 }
 
 .pm-additive-input::placeholder {
-  color: #9ca3af;
+  color: @color-gray-400;
 }
 
 /* 双输入框横向排列样式 */
@@ -156,7 +158,7 @@
   display: block;
   font-size: 14px;
   font-weight: 500;
-  color: #374151;
+  color: @color-gray-700;
   margin-bottom: 8px;
   line-height: 1.4;
 }
@@ -164,25 +166,25 @@
 .pm-weight-percentage-input {
   width: 100%;
   padding: 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid @color-gray-300;
   border-radius: 6px;
   font-size: 14px;
-  color: #9ca3af;
-  background: #f9fafb;
+  color: @color-gray-400;
+  background: @color-gray-50;
   box-sizing: border-box;
   cursor: not-allowed;
 }
 
 .pm-weight-percentage-input:disabled {
-  background: #f9fafb;
-  color: #9ca3af;
+  background: @color-gray-50;
+  color: @color-gray-400;
 }
 
 /* 信息图标样式 */
 .pm-info-icon {
   display: inline-block;
   margin-left: 6px;
-  color: #6b7280;
+  color: @color-gray-500;
   font-size: 12px;
   cursor: help;
   transition: color 0.2s ease;
@@ -203,7 +205,7 @@
 
 /* 计算按钮基础样式 */
 .pm-calculate-btn {
-  background: #1f2937;
+  background: @color-gray-800;
   color: #ffffff;
   border: none;
   border-radius: 6px;
@@ -219,7 +221,7 @@
 
 /* 正常状态可点击 */
 .pm-calculate-btn:hover:not(:disabled) {
-  background: #111827;
+  background: @color-gray-900;
 }
 
 .pm-calculate-btn:active:not(:disabled) {
@@ -228,7 +230,7 @@
 
 /* Loading状态 */
 .pm-calculate-btn.pm-calculating {
-  background: #1f2937;
+  background: @color-gray-800;
   cursor: not-allowed;
   color: #ffffff;
 }
@@ -246,7 +248,7 @@
 .pm-calculate-btn.pm-calculated,
 .pm-calculate-btn.pm-disabled,
 .pm-calculate-btn:disabled {
-  background: #6b7280;
+  background: @color-gray-500;
   cursor: not-allowed;
   color: #ffffff;
 }
@@ -262,7 +264,7 @@
 }
 
 .pm-results-card {
-  border: 1px solid #e5e7eb;
+  border: 1px solid @color-gray-200;
   border-radius: 12px;
   padding: 32px;
   background: #ffffff;
@@ -279,7 +281,7 @@
 .pm-results-section .pm-results-title-container h2 {
   font-size: 20px;
   font-weight: 600;
-  color: #1f2937;
+  color: @color-gray-800;
   margin: 0;
   line-height: 24px;
   display: flex;
@@ -296,7 +298,7 @@
 }
 
 .pm-tip-icon {
-  color: #6b7280;
+  color: @color-gray-500;
   cursor: help;
   transition: color 0.2s ease;
   display: flex;
@@ -305,7 +307,7 @@
 }
 
 .pm-tip-icon:hover {
-  color: #374151;
+  color: @color-gray-700;
 }
 
 /* 结果容器 - 默认垂直排列两个温度区块 */
@@ -338,7 +340,7 @@
 .pm-temperature-title {
   font-size: 16px;
   font-weight: 600;
-  color: #1e293b;
+  color: @color-text-primary;
   margin: 0 0 16px 0;
 }
 
@@ -423,7 +425,7 @@
 
   .pm-result-item {
     border-right: none;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid @color-gray-100;
   }
 
   .pm-result-item:last-child {
@@ -480,7 +482,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #374151;
+  color: @color-gray-700;
   font-size: 13px;
   font-weight: 500;
   text-align: center;
@@ -491,7 +493,7 @@
 
 .pm-result-label {
   font-size: 12px;
-  color: #6b7280;
+  color: @color-gray-500;
   margin-bottom: 12px;
   font-weight: 500;
   line-height: 1.3;
@@ -614,8 +616,8 @@
 .pm-performance-result-badge--unknown-light,
 .pm-performance-result-badge--unknown-medium,
 .pm-performance-result-badge--unknown-dark {
-  background: #f3f4f6;
-  color: #6b7280;
+  background: @color-gray-100;
+  color: @color-gray-500;
 }
 
 .pm-result-confidence {
@@ -627,7 +629,7 @@
 
 .pm-confidence-label {
   font-size: 11px;
-  color: #9ca3af;
+  color: @color-gray-400;
   font-weight: 500;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -636,7 +638,7 @@
 .pm-confidence-value {
   font-size: 20x;
   font-weight: 700;
-  color: #1f2937;
+  color: @color-gray-800;
 }
 
 .pm-llm-button-section {
@@ -647,7 +649,7 @@
 
 /* LLM分析按钮基础样式 */
 .pm-llm-analysis-btn {
-  background: #1f2937;
+  background: @color-gray-800;
   color: #ffffff;
   border: none;
   border-radius: 8px;
@@ -661,7 +663,7 @@
 
 /* 正常状态可点击 */
 .pm-llm-analysis-btn:hover:not(:disabled) {
-  background: #111827;
+  background: @color-gray-900;
 }
 
 .pm-llm-analysis-btn:active:not(:disabled) {
@@ -670,7 +672,7 @@
 
 /* Loading状态 */
 .pm-llm-analysis-btn.pm-analyzing {
-  background: #1f2937;
+  background: @color-gray-800;
   cursor: not-allowed;
   color: #ffffff;
 }
@@ -687,7 +689,7 @@
 /* 置灰状态（已分析、禁用） */
 .pm-llm-analysis-btn.pm-analyzed,
 .pm-llm-analysis-btn:disabled {
-  background: #6b7280;
+  background: @color-gray-500;
   cursor: not-allowed;
   color: #ffffff;
 }
@@ -699,12 +701,12 @@
 .pm-llm-analysis-section h2 {
   font-size: 20px;
   font-weight: 600;
-  color: #1f2937;
+  color: @color-gray-800;
   margin: 0 0 16px 0;
 }
 
 .pm-llm-analysis-card {
-  border: 1px solid #e5e7eb;
+  border: 1px solid @color-gray-200;
   border-radius: 12px;
   background: #ffffff;
   overflow: hidden;
@@ -726,14 +728,14 @@
 .pm-llm-analysis-item h3 {
   font-size: 16px;
   font-weight: 600;
-  color: #1f2937;
+  color: @color-gray-800;
   margin: 0 0 12px 0;
 }
 
 .pm-llm-analysis-item p {
   font-size: 14px;
   line-height: 1.6;
-  color: #4b5563;
+  color: @color-gray-600;
   margin: 0;
 }
 
@@ -746,20 +748,20 @@
 .pm-llm-analysis-item li {
   font-size: 14px;
   line-height: 1.6;
-  color: #4b5563;
+  color: @color-gray-600;
   position: relative;
   padding-left: 12px;
 }
 
 .pm-llm-analysis-item li::before {
   content: '•';
-  color: #6b7280;
+  color: @color-gray-500;
   position: absolute;
   left: 0;
 }
 
 .pm-llm-references {
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid @color-gray-200;
   padding-top: 24px;
   margin-top: 8px;
 }
@@ -767,7 +769,7 @@
 .pm-llm-references p {
   font-size: 13px;
   line-height: 1.5;
-  color: #6b7280;
+  color: @color-gray-500;
   margin: 0 0 8px 0;
 }
 
@@ -787,8 +789,8 @@
 
 /* 分子详情和错误提示样式 */
 .pm-molecule-loading {
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
+  background: @color-gray-100;
+  border: 1px solid @color-gray-200;
   border-radius: 8px;
   padding: 16px;
   margin-top: 16px;
@@ -797,21 +799,21 @@
 
 .pm-molecule-loading p {
   margin: 0;
-  color: #6b7280;
+  color: @color-gray-500;
   font-size: 14px;
 }
 
 .pm-molecule-information {
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
+  background: @color-gray-50;
+  border: 1px solid @color-gray-200;
   border-radius: 6px;
   padding: 16px;
   margin-bottom: 24px;
 }
 
 .pm-smiles-error-display {
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
+  background: @color-gray-50;
+  border: 1px solid @color-gray-200;
   border-radius: 6px;
   padding: 16px;
   margin-bottom: 24px;
@@ -830,14 +832,14 @@
   margin: 0;
   font-size: 16px;
   font-weight: 500;
-  color: #374151;
+  color: @color-gray-700;
 }
 
 .pm-molecule-close-btn {
   background: none;
   border: none;
   font-size: 20px;
-  color: #9ca3af;
+  color: @color-gray-400;
   cursor: pointer;
   padding: 0;
   width: 24px;
@@ -849,7 +851,7 @@
 }
 
 .pm-molecule-close-btn:hover {
-  color: #6b7280;
+  color: @color-gray-500;
 }
 
 .pm-molecule-content {
@@ -868,7 +870,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f3f4f6;
+  background: @color-gray-100;
   border-radius: 8px;
 }
 
@@ -917,7 +919,7 @@
 
 .pm-properties-grid .pm-property-item label {
   font-size: 12px;
-  color: #6b7280;
+  color: @color-gray-500;
   font-weight: 500;
   margin: 0;
   text-transform: uppercase;
@@ -926,7 +928,7 @@
 
 .pm-properties-grid .pm-property-item span {
   font-size: 14px;
-  color: #1f2937;
+  color: @color-gray-800;
   font-weight: 500;
 }
 
@@ -950,7 +952,7 @@
 }
 
 .pm-example-title {
-  color: #374151;
+  color: @color-gray-700;
   font-weight: 500;
   font-size: 14px;
   white-space: nowrap;
@@ -965,12 +967,12 @@
 .pm-example-molecule {
   display: inline-block;
   background: #ffffff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid @color-gray-200;
   border-radius: 6px;
   padding: 8px 12px;
   font-family: 'Courier New', monospace;
   font-size: 14px;
-  color: #1f2937;
+  color: @color-gray-800;
   font-weight: 500;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
   transition: box-shadow 0.2s ease;
@@ -1019,8 +1021,8 @@
 .pm-loading-spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid #f3f4f6;
-  border-top-color: #1f2937;
+  border: 4px solid @color-gray-100;
+  border-top-color: @color-gray-800;
   border-radius: 50%;
   animation: pm-spin 1s linear infinite;
 }
@@ -1032,13 +1034,13 @@
 .pm-analysis-content {
   font-size: 14px;
   line-height: 1.6;
-  color: #374151;
+  color: @color-gray-700;
 }
 
 .pm-analysis-placeholder {
   padding: 40px 20px;
   text-align: center;
-  color: #6b7280;
+  color: @color-gray-500;
 }
 
 .pm-analysis-placeholder p {
@@ -1084,7 +1086,7 @@
   background: none;
   border: none;
   font-size: 20px;
-  color: #9ca3af;
+  color: @color-gray-400;
   cursor: pointer;
   padding: 0;
   width: 24px;
@@ -1096,7 +1098,7 @@
 }
 
 .pm-close-analysis-btn:hover {
-  color: #6b7280;
+  color: @color-gray-500;
 }
 
 /* 模型选择样式 */
@@ -1108,7 +1110,7 @@
   display: block;
   font-size: 14px;
   font-weight: 500;
-  color: #374151;
+  color: @color-gray-700;
   margin-bottom: 8px;
 }
 
@@ -1122,17 +1124,17 @@
 }
 
 .pm-prediction-module .model-select__trigger {
-  border: 1px solid #d1d5db;
+  border: 1px solid @color-gray-300;
   border-radius: 6px;
   padding: 8px 12px;
   min-height: 24px;
   background: #ffffff;
-  color: #374151;
+  color: @color-gray-700;
   font-size: 14px;
 }
 
 .pm-prediction-module .model-select__trigger:hover {
-  border-color: #9ca3af;
+  border-color: @color-gray-400;
 }
 
 .pm-prediction-module .model-select__trigger.open {
@@ -1141,7 +1143,7 @@
 }
 
 .pm-prediction-module .model-select__dropdown {
-  border: 1px solid #e5e7eb;
+  border: 1px solid @color-gray-200;
   border-radius: 8px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }

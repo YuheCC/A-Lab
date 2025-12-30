@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { deleteMDHistory, MDHistoryItem } from '@/services/formulation/md';
 import { getHistoryList, isMockRecord } from './model';
-import './index.css';
+import './index.less';
 import { normalizeServerDate } from "@/utils/messageUtils";
 import { formatIonDisplay } from './utils';
 import IntroductionNew from './components/IntroductionNew';

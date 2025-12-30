@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { OrganicMolecules, InorganicMolecules, AnionsMolecules, MoleculeInfo } from "./components";
-import "./Map.css";
+import "./Map.less";
 import MoleculeInfo10 from "./components/MoleculeInfo10";
 
 const Map = () => {

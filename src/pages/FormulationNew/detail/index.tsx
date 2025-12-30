@@ -7,7 +7,7 @@ import { MDHistoryDetailResponse } from '@/services/formulation/md';
 import { getHistoryDetail } from '../model';
 import GuideTooltip from '../components/GuideTooltip';
 import { formatIonDisplay } from '../utils';
-import './index.css';
+import './index.less';
 
 interface ResultData {
   system_properties?: {
