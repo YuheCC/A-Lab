@@ -14,10 +14,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 /* Optimize font loading */
-@font-face {
-    font-family: 'Inter';
-    font-display: swap;
-}
+/* Font is loaded via Google Fonts CDN above, no need for local @font-face */
 
 /* Reduce layout shift with proper sizing */
 * {
@@ -122,18 +119,18 @@
 
 /* 确保高对比度模式下的可读性 */
 @media (prefers-contrast: high) {
-    .message-wrapper.user .message {
+    .chat__message-wrapper--user .chat__message {
         background-color: #000;
         color: #fff;
         border: 2px solid #fff;
     }
-    
-    .message-wrapper.bot .message {
+
+    .chat__message-wrapper--bot .chat__message {
         background-color: #fff;
         color: #000;
         border: 2px solid #000;
     }
-    
+
     .molecule-card {
         border-width: 2px;
     }
@@ -184,15 +181,15 @@
     .chat-input-container {
         display: none !important;
     }
-    
+
     .chat-main {
         width: 100% !important;
         max-width: none !important;
         margin: 0 !important;
     }
-    
-    .message-wrapper.user .message,
-    .message-wrapper.bot .message {
+
+    .chat__message-wrapper--user .chat__message,
+    .chat__message-wrapper--bot .chat__message {
         background: white !important;
         color: black !important;
         border: 1px solid @color-gray-300 !important;
