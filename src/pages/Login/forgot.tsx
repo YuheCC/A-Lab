@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import './Login.less';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'umi';
 import { sendForgotPasswordCode } from '@/services/auth';

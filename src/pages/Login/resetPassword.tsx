@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import './Login.less';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'umi';
 import { resetPasswordByToken } from '@/services/auth';

@@ -163,7 +163,8 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: auto;
-  padding: 15px;
+  padding: 0 15px;
+  margin-top: 15px;
   background-color: @color-bg-white;
 }
 
@@ -371,6 +372,118 @@
   color: @color-text-secondary;
   font-size: @font-size-large;
   font-family: @font-family;
+}
+
+// ==================== 加载状态 ====================
+.favorites-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  height: 100vh;
+  text-align: center;
+  position: fixed;
+  top: 65px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.95);
+  z-index: 1000;
+
+  .loading-spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1) !important; /* 必须：覆盖全局loading样式 */
+    border-radius: 50% !important;
+    border-top: 4px solid #0080ff !important;
+    width: 50px !important;
+    height: 50px !important;
+    animation: spin 1s linear infinite !important;
+    margin-bottom: 20px !important;
+  }
+
+  p {
+    color: @local-text-secondary;
+    font-size: @font-size-medium;
+    font-weight: @font-weight-medium;
+  }
+}
+
+// ==================== 错误和空状态 ====================
+.favorites-error,
+.no-favorites {
+  text-align: center;
+  padding: 40px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  margin: 30px auto;
+  max-width: 600px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+
+  h3 {
+    color: @local-text-primary;
+    margin-bottom: 15px;
+    font-size: 22px;
+    font-weight: @font-weight-semibold;
+  }
+
+  p {
+    color: @local-text-secondary;
+    margin-bottom: 20px;
+    font-size: @font-size-medium;
+    line-height: 1.6;
+  }
+
+  button,
+  a {
+    display: inline-block;
+    background-color: @color-primary;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: @font-weight-medium;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+      background-color: #0d8aee;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// ==================== 可调整大小的表头 ====================
+.resizable-header {
+  position: relative;
+  user-select: none;
+}
+
+.resize-handle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5px;
+  height: 100%;
+  cursor: col-resize;
+  background-color: transparent;
+  border-right: 2px solid transparent;
+  z-index: 1;
+
+  &:hover {
+    border-right: 2px solid #0080ff;
+    background-color: rgba(0, 128, 255, 0.1);
+  }
+
+  &:active {
+    border-right: 2px solid #0066cc;
+    background-color: rgba(0, 102, 204, 0.2);
+  }
+}
+
+// 防止调整大小时选中文本
+body.no-select {
+  user-select: none;
 }
 
 // ==================== 响应式设计 ====================

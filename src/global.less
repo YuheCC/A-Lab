@@ -340,6 +340,67 @@
   box-shadow: 0 2px 3px rgba(0,0,0,0.2);
 }
 
+/* Favorites button styles - Used in NodePopup component */
+.favorites-button {
+  padding: 10px 20px;
+  background-color: #ff9800;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  flex: 1;
+  max-width: 140px;
+}
+
+.favorites-button:hover {
+  background-color: #f57c00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.favorites-button:active {
+  background-color: #e65100;
+  transform: translateY(0);
+}
+
+.favorites-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Icon controls group - Used in Map and other DeckGL components */
+.icon-controls-group {
+  user-select: none;
+  display: flex;
+  flex-flow: row;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid @color-gray-300;
+  border-radius: 4px;
+  padding: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.icon-controls-group .control-icon {
+  padding: 5px;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.icon-controls-group .control-icon:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+}
+
+.icon-controls-group .control-icon:active {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
 /* Popup heading styles */
 .popup-content h2 {
   color: @color-text-primary;
@@ -779,238 +840,6 @@
   margin-top: 0;
 }
 
-.search-container {
-  flex: 1;
-  display: flex;
-  padding: 20px;
-  overflow: hidden;
-  width: 100%;
-  box-sizing: border-box;
-  padding-left: 0;
-}
-
-.search-umap-container {
-  display: flex;
-  flex-direction: row;
-  height: calc((100vh - 100px));
-  width: 100%;
-  gap: 20px;
-}
-
-.search-umap-section {
-  flex: 1 1 0;
-  min-width: 0;
-  border-radius: 0;
-  overflow: hidden;
-  display: flex;
-  background-color: white;
-  box-shadow: none;
-  border: none;
-  border-radius: 0px;
-  margin-right: 0;
-  height: 100%;
-  width: calc((100vh - 180px)* 0.86);
-}
-
-.search-umap-section > div {
-  flex: 1;
-  display: flex;
-}
-
-.search-umap-section .js-plotly-plot {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-.search-umap-section .plot-container {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-.search-graph {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 500px;
-  background-color: white;
-  border: none;
-}
-
-.search-interface-section {
-  flex: 0.75;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 0px;
-  overflow-y: auto;
-  /* width will be controlled by JavaScript inline styles */
-}
-
-/* 拖拽分隔条样式 */
-.resize-divider {
-  width: 4px;
-  cursor: col-resize;
-  background-color: @color-gray-300;
-  border-left: 1px solid @color-gray-300;
-  border-right: 1px solid @color-gray-300;
-  position: relative;
-  transition: background-color 0.2s ease;
-  flex-shrink: 0;
-}
-
-.resize-divider:hover {
-  background-color: #bbb;
-}
-
-.resize-divider:active {
-  background-color: @color-text-muted;
-}
-
-/* 拖拽时的全局样式 */
-body.dragging {
-  cursor: col-resize !important;
-  user-select: none !important;
-}
-
-/* 拖拽分隔条的视觉指示器 */
-.resize-divider::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 2px;
-  height: 20px;
-  background-color: #888;
-  border-radius: 1px;
-}
-
-/* 分隔条悬停时的额外效果 */
-.resize-divider::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: transparent;
-  transition: background-color 0.2s ease;
-}
-
-.resize-divider:hover::after {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-.search-type-dropdown {
-  position: relative;
-  z-index: 10;
-}
-
-.selected-type {
-  background-color: #4CAF50;
-  color: #fff;
-  padding: 10px 15px;
-  border-radius: 4px 0 0 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-}
-
-.dropdown-arrow {
-  font-size: 10px;
-  transition: transform 0.2s;
-}
-
-.dropdown-arrow.open {
-  transform: rotate(180deg);
-}
-
-.dropdown-options {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: #fff;
-  border: 1px solid @color-gray-300;
-  border-radius: 0 0 4px 4px;
-  overflow: hidden;
-  width: 100%;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.dropdown-option {
-  padding: 10px 15px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.dropdown-option:hover {
-  background-color: @color-gray-100;
-}
-
-.search-results {
-  padding: 10px 0;
-}
-
-.search-error {
-  background-color: #ffebee;
-  color: #c62828;
-  padding: 10px 15px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-}
-
-.molecule-details {
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  border: 1px solid @color-gray-200;
-}
-
-.molecule-details h2 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  font-size: 1.3rem;
-  color: @color-text-primary;
-  border-bottom: 1px solid @color-gray-300;
-  padding-bottom: 10px;
-}
-
-.molecule-data h3 {
-  margin-top: 0;
-  font-size: 1.1rem;
-  color: @color-text-primary;
-  margin-bottom: 15px;
-}
-
-.molecule-not-found {
-  background-color: #fff8e1;
-  color: #ff6f00;
-  padding: 10px 15px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-}
-
-.molecule-found-in-csv {
-  background-color: #fff3cd;
-  border: 1px solid #ffeeba;
-  border-radius: 4px;
-  padding: 10px 15px;
-  margin-bottom: 15px;
-  color: #856404;
-}
-
-.molecule-found-in-csv p {
-  margin: 0;
-  font-size: 14px;
-}
-
-/* End search page styles */
 
 .query-limit-count {
   font-weight: 600;
@@ -1127,252 +956,6 @@ body.dragging {
 }
 /* End Chatbot styles */
 
-/* Enterprise Search Page Styles */
-.enterprise-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  width: 100%;
-  height: 100%;
-  padding: 40px 20px;
-  background-color: @color-gray-50;
-  overflow-y: auto;
-  max-height: calc(100vh - 110px);
-}
-
-.enterprise-content {
-  width: 100%;
-  max-width: 1200px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.enterprise-header {
-  font-size: 32px;
-  font-weight: 600;
-  color: @color-text-primary;
-  margin-bottom: 16px;
-  text-align: center;
-}
-
-.enterprise-description {
-  font-size: 18px;
-  color: @color-gray-500;
-  text-align: center;
-  margin-bottom: 40px;
-  max-width: 800px;
-}
-
-.enterprise-search-wrapper {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 30px;
-}
-
-.enterprise-search-container {
-  display: flex;
-  width: 80%;
-  max-width: 800px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.enterprise-search-input {
-  flex: 1;
-  padding: 16px 20px;
-  font-size: 16px;
-  border: none;
-  outline: none;
-  background-color: white;
-}
-
-.enterprise-search-button {
-  padding: 0 30px;
-  background-color: #28a745;
-  color: white;
-  font-size: 16px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.enterprise-search-button:hover {
-  background-color: #218838;
-}
-
-.enterprise-search-button:active {
-  background-color: #1e7e34;
-}
-
-.search-options {
-  display: flex;
-  margin: 10px 0;
-  padding: 0 15px;
-}
-
-.search-option {
-  display: flex;
-  align-items: center;
-  font-size: 15px;
-  color: @color-text-primary;
-  cursor: pointer;
-  margin-right: 20px;
-}
-
-.search-option input[type="checkbox"] {
-  margin-right: 10px;
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-}
-
-.search-option span {
-  font-weight: 500;
-}
-
-/* Results section styling */
-.enterprise-results {
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.enterprise-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 30px;
-  background-color: @color-gray-50;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  border-radius: 50%;
-  border-top-color: #28a745;
-  animation: spin 1s ease-in-out infinite;
-  margin-bottom: 15px;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.enterprise-error {
-  padding: 20px;
-  background-color: #f8d7da;
-  color: #721c24;
-  border-radius: 8px;
-  margin-top: 20px;
-  text-align: center;
-}
-
-.enterprise-molecule {
-  padding: 30px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
-  padding-bottom: 40px;
-  margin-bottom: 40px;
-}
-
-.enterprise-molecule h2 {
-  font-size: 24px;
-  color: @color-text-primary;
-  margin-top: 0;
-  margin-bottom: 20px;
-  text-align: center;
-  border-bottom: 1px solid @color-gray-200;
-  padding-bottom: 15px;
-}
-
-.molecule-image-container {
-  display: flex;
-  justify-content: center;
-  margin: 20px 0;
-  background-color: @color-gray-50;
-  padding: 20px;
-  border-radius: 8px;
-}
-
-.molecule-image {
-  max-width: 100%;
-  height: auto;
-  border-radius: 4px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.molecule-smiles {
-  margin-top: 20px;
-  background-color: @color-gray-50;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 30px;
-}
-
-.molecule-smiles h3 {
-  font-size: 18px;
-  color: @color-text-primary;
-  margin-top: 0;
-  margin-bottom: 10px;
-}
-
-.molecule-smiles p {
-  font-family: 'Arial, sans-serif';
-  word-break: break-all;
-  background-color: white;
-  padding: 10px;
-  border-radius: 4px;
-  border: 1px solid @color-gray-200;
-  margin: 0;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .enterprise-search-container {
-    width: 95%;
-    flex-direction: column;
-  }
-  
-  .enterprise-search-input {
-    width: 100%;
-    border-bottom: 1px solid @color-gray-200;
-  }
-  
-  .enterprise-search-button {
-    width: 100%;
-    padding: 12px 0;
-  }
-  
-  .enterprise-molecule {
-    padding: 20px;
-  }
-  
-  .molecule-image-container {
-    padding: 10px;
-  }
-}
-
-.terms-section {
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  padding: 25px;
-  margin-top: 30px;
-  margin-bottom: 30px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
 .username {
   font-size: 14px;
   color: #000000;
@@ -1392,217 +975,6 @@ body.dragging {
 }
 
 /* Authentication Page Styles */
-.auth-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position:absolute;
-  left:0px;
-  top:0px;
-  right:0px;
-  bottom:0px;
-  background-color: @color-gray-50;
-  padding: 20px;
-  background-image: linear-gradient(135deg, #f5f7fa 0%, #e6eef8 100%);
-}
-
-.auth-card {
-  width: 100%;
-  max-width: 450px;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  padding: 30px;
-  transition: all 0.3s ease;
-}
-
-.auth-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.auth-header h2 {
-  font-size: 24px;
-  font-weight: 600;
-  color: #212529;
-  margin-bottom: 10px;
-}
-
-.auth-logo {
-  height: 40px;
-  width: auto;
-  margin-bottom: 16px;
-}
-
-.auth-error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border-radius: 6px;
-  padding: 8px 12px;
-  margin-bottom: 15px;
-  font-size: 14px;
-  text-align: center;
-}
-
-.auth-success {
-  background-color: #d4edda;
-  color: #155724;
-  border-radius: 6px;
-  padding: 8px 12px;
-  margin-bottom: 15px;
-  font-size: 14px;
-  text-align: center;
-}
-
-.auth-form {
-  margin-bottom: 15px;
-}
-
-.form-group {
-  margin-bottom: 12px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 4px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #495057;
-}
-
-.form-group input {
-  width: 92%;
-  padding: 8px 12px;
-  font-size: 14px;
-  border: 1px solid #ced4da;
-  border-radius: 6px;
-  background-color: #fff;
-  transition: border-color 0.2s ease;
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: #0066cc;
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
-}
-
-.auth-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #4CAF50;
-  color: white;
-  font-size: 16px;
-  font-weight: 600;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  margin-top: 8px;
-}
-
-.auth-button:hover {
-  background-color: #45a049;
-}
-
-.auth-button:disabled {
-  background-color: #a5d6a7;
-  cursor: not-allowed;
-}
-
-.auth-switch {
-  margin-top: 15px;
-  text-align: center;
-  font-size: 14px;
-  color: #495057;
-}
-
-.auth-switch button {
-  background: none;
-  border: none;
-  font-size: 14px;
-  font-weight: 600;
-  color: #0066cc;
-  cursor: pointer;
-  padding: 0;
-  margin-left: 5px;
-  transition: color 0.2s;
-}
-
-.auth-switch button:hover {
-  color: #0056b3;
-  text-decoration: underline;
-}
-
-.signin-button {
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  padding: 12px 12px;
-  text-decoration: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s;
-}
-
-.signin-button:hover {
-  background-color: #45a049;
-}
-
-.terms-link {
-  color: #0066cc;
-  text-decoration: underline;
-  font-weight: 500;
-}
-
-@media (max-width: 576px) {
-  .auth-card {
-    padding: 20px;
-  }
-  
-  .auth-header h2 {
-    font-size: 22px;
-  }
-  
-  .auth-button {
-    padding: 10px;
-  }
-}
-
-.terms-text {
-  margin-top: 10px;
-  font-size: 13px;
-  color: @color-gray-500;
-  text-align: center;
-}
-
-.terms-checkbox {
-  margin-bottom: 16px;
-}
-
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  gap: 12px;
-}
-
-.checkbox-label input[type="checkbox"] {
-  width: auto;
-  margin: 0;
-  padding: 0;
-  flex-shrink: 0;
-}
-
-.checkbox-label .terms-text {
-  margin-top: 0;
-  text-align: left;
-  flex: 1;
-}
-
 /* Permissions Error Page Styles */
 .permissions-error-container {
   display: flex;
@@ -2318,1154 +1690,6 @@ body.dragging {
   background-color: @color-gray-300;
 }
 
-/* Favorites Grid Styles */
-.favorites-page-container {
-  width: 100%;
-  display: flex;
-  height: calc(100vh - 170px);
-  overflow: hidden;
-}
-
-.favorites-content-wrapper {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-  background-color: rgb(241, 241, 241) !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-}
-
-.favorites-grid-container {
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
-  padding: 20px 0;
-  overflow: auto;
-}
-
-.favorites-grid-container h2 {
-  margin-bottom: 25px;
-  color: @color-text-primary;
-  font-size: 26px;
-  font-weight: 600;
-  position: relative;
-  padding-bottom: 10px;
-}
-
-.favorites-grid-container h2:after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 60px;
-  height: 3px;
-  background-color: #0080ff;
-  border-radius: 2px;
-}
-
-.favorites-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 25px;
-  width: 100%;
-}
-
-.favorite-card {
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  position: relative;
-  border: 1px solid #f0f0f0;
-  max-width: 403px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.favorite-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-  border-color: #0080ff;
-}
-
-.favorite-card-header {
-  padding: 15px;
-  background-color: @color-gray-50;
-  border-bottom: 1px solid #eaeaea;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.favorite-card-smiles {
-  font-family: 'Arial, sans-serif';
-  font-size: 13px;
-  color: @color-text-primary;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 250px;
-}
-
-.remove-favorite-button {
-  background-color: rgba(255, 70, 70, 0.1);
-  border: none;
-  color: #ff4646;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 5px 10px;
-  line-height: 1.6;
-  border-radius: 50%;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-}
-
-.remove-favorite-button:hover {
-  color: #ffffff;
-  background-color: #ff4646;
-  transform: scale(1.1);
-}
-
-.favorite-image-container {
-  padding: 15px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #ffffff;
-  border-bottom: 1px solid #eaeaea;
-  max-height: 200px;
-  overflow: hidden;
-}
-
-.favorite-molecule-image {
-  max-width: 100%;
-  height: auto;
-  object-fit: contain;
-  transition: transform 0.3s ease;
-}
-
-.favorite-card:hover .favorite-molecule-image {
-  transform: scale(1.05);
-}
-
-.favorite-card-properties {
-  padding: 18px;
-  flex-grow: 1;
-}
-
-.favorite-property-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-}
-
-.favorite-property-table td {
-  padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.favorite-property-table tr:last-child td {
-  border-bottom: none;
-}
-
-.favorite-property-table .property-name {
-  color: @color-gray-500;
-  font-weight: 500;
-  width: 55%;
-}
-
-.favorite-property-table .property-value {
-  color: @color-text-primary;
-  font-weight: 600;
-  text-align: right;
-}
-
-.favorite-card-footer {
-  padding: 12px 18px;
-  background-color: @color-gray-50;
-  border-top: 1px solid #eaeaea;
-  font-size: 12px;
-  color: @color-gray-500;
-  text-align: right;
-}
-
-.favorites-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  height: 100vh;
-  text-align: center;
-  position: fixed;
-  top: 65px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, 0.95);
-  z-index: 1000;
-}
-
-.favorites-loading .loading-spinner {
-  border: 4px solid rgba(0, 0, 0, 0.1) !important;
-  border-radius: 50% !important;
-  border-top: 4px solid #0080ff !important;
-  width: 50px !important;
-  height: 50px !important;
-  animation: spin 1s linear infinite !important;
-  margin-bottom: 20px !important;
-}
-
-.favorites-loading p {
-  color: @color-gray-500;
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.favorites-error, .no-favorites {
-  text-align: center;
-  padding: 40px;
-  background-color: #f9f9f9;
-  border-radius: 12px;
-  margin: 30px auto;
-  max-width: 600px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.favorites-error h3, .no-favorites h3 {
-  color: @color-text-primary;
-  margin-bottom: 15px;
-  font-size: 22px;
-}
-
-.favorites-error p, .no-favorites p {
-  color: @color-gray-500;
-  margin-bottom: 20px;
-  font-size: 16px;
-  line-height: 1.6;
-}
-
-.favorites-error button, .no-favorites a {
-  display: inline-block;
-  background-color: #2196F3;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  text-decoration: none;
-  font-weight: 500;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-}
-
-.favorites-error button:hover, .no-favorites a:hover {
-  background-color: #0d8aee;
-  transform: translateY(-2px);
-}
-
-/* Mobile responsiveness for favorites */
-@media (max-width: 1200px) {
-  .favorites-grid-container {
-    max-width: 1050px;
-  }
-}
-
-@media (max-width: 992px) {
-  .favorites-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 25px;
-  }
-  
-  .favorites-grid-container {
-    max-width: 850px;
-  }
-}
-
-@media (max-width: 768px) {
-  .favorites-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-  
-  .favorite-card {
-    margin-bottom: 15px;
-    max-width: 345px;
-  }
-  
-  .favorites-grid-container {
-    max-width: 750px;
-  }
-}
-
-@media (max-width: 620px) {
-  .favorites-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .favorite-card {
-    max-width: 403px;
-  }
-}
-
-/* Toast Message Styles */
-.toast-message {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 12px 24px;
-  border-radius: 4px;
-  color: white;
-  font-size: 14px;
-  font-weight: 500;
-  z-index: 10000;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  animation: fadeInUp 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
-}
-
-/* Add divider after favorites button */
-/* 
-.favorites-button::after {
-  content: "";
-  display: block;
-  margin-top: 15px;
-  height: 1px;
-  background-color: #dddddd;
-  width: 100%;
-}
-*/
-
-.toast-message.success {
-  background-color: #4caf50;
-}
-
-.toast-message.error {
-  background-color: #f44336;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-.favorite-card-actions {
-  padding: 0 15px 15px;
-  display: flex;
-  justify-content: center;
-}
-
-.view-in-umap-button {
-  background-color: #0080ff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
-  cursor: pointer;
-  font-weight: 500;
-  width: 100%;
-  transition: background-color 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.view-in-umap-button:hover {
-  background-color: #0066cc;
-}
-
-.view-in-umap-button:before {
-  content: "🔍";
-  margin-right: 8px;
-  font-size: 14px;
-}
-
-.favorites-container {
-  margin-top: 10px;
-  text-align: center;
-  padding-bottom: 15px;
-  position: relative;
-}
-
-/* 
-.favorites-container::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background-color: @color-gray-300;
-  margin-top: 15px;
-}
-*/
-
-.molecule-entry, .similar-molecule {
-  margin-bottom: 25px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid @color-gray-300;
-  text-align: center; /* Center the molecule entry content */
-}
-
-.molecule-entry:last-child, .similar-molecule:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-}
-
-.molecule-box {
-  margin-bottom: 20px;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  border-bottom: 1px solid @color-gray-300;
-}
-
-.molecule-box:last-child {
-  margin-bottom: 0;
-  border-bottom: none;
-}
-
-/* Ensure all text elements have consistent font and line height */
- /* h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-  } */
-
-/* New Favorites Layout Styles */
-.favorites-layout {
-  display: flex;
-  width: 100%;
-  gap: 20px;
-}
-
-.favorites-grid-container {
-  flex: 2;
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
-  padding: 20px 0;
-  overflow: auto;
-}
-
-.favorites-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 25px;
-  width: 100%;
-}
-
-.favorites-grid-container h2, .analysis-section h2 {
-  margin-bottom: 25px;
-  color: @color-text-primary;
-  font-size: 26px;
-  font-weight: 600;
-  position: relative;
-  padding-bottom: 10px;
-}
-
-.favorites-grid-container h2:after, .analysis-section h2:after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 60px;
-  height: 3px;
-  background-color: #0080ff;
-  border-radius: 2px;
-}
-
-.analysis-section {
-  flex: 1;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  max-height: calc((100vh - 200px) * 0.95); /* Reduced by 1% (from 0.96) */
-  overflow-y: auto;
-  position: sticky;
-  top: 20px;
-  border: 1.5px solid #000000;
-  max-width: 352px; /* Increased from 320px (10% wider) */
-}
-
-.analysis-tabs {
-  display: flex;
-  border-bottom: 1px solid #eaeaea;
-  margin-bottom: 15px;
-}
-
-.analysis-tab {
-  padding: 8px 15px;
-  border: none;
-  background-color: @color-gray-100;
-  font-size: 14px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: all 0.2s;
-}
-
-.analysis-tab.active {
-  background-color: #2196F3;
-  color: white;
-}
-
-.analysis-tab:hover:not(.active) {
-  background-color: @color-gray-300;
-}
-
-.molecule-checkbox {
-  display: flex;
-  align-items: center;
-}
-
-.molecule-checkbox input {
-  margin-right: 8px;
-}
-
-.molecule-checkbox label {
-  font-size: 12px;
-  color: @color-gray-500;
-}
-
-.selected-molecule {
-  border-color: #0080ff !important;
-  box-shadow: 0 4px 12px rgba(0, 128, 255, 0.15) !important;
-}
-
-.selected-info {
-  margin-bottom: 15px;
-}
-
-.selected-info p {
-  font-weight: 600;
-  margin-bottom: 5px;
-  color: @color-text-primary;
-  font-size: 14px;
-}
-
-.selected-molecules-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  max-height: 80px;
-  overflow-y: auto;
-  border: 1px solid #eaeaea;
-  border-radius: 4px;
-  padding: 5px;
-}
-
-.selected-molecule-item {
-  display: flex;
-  align-items: center;
-  padding: 4px 0;
-  font-size: 13px;
-}
-
-.selected-molecule-item input {
-  margin-right: 8px;
-}
-
-.no-molecules-selected {
-  color: @color-text-muted;
-  font-style: italic;
-  padding: 10px 0;
-  text-align: center;
-}
-
-.spider-chart-container {
-  height: 300px;
-  width: 100%;
-  margin-top: 15px;
-}
-
-.spider-chart {
-  width: 100%;
-  height: 100%;
-}
-
-/* Make favorite cards more compact with the new layout */
-.favorite-card-header {
-  padding: 10px 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* Responsive layout for the favorites page */
-@media (max-width: 1200px) {
-  .favorites-layout {
-    flex-direction: column;
-  }
-  
-  .analysis-section {
-    position: static;
-    margin-top: 20px;
-  }
-  
-  .spider-chart-container {
-    height: 350px;
-  }
-}
-
-@media (max-width: 768px) {
-  .favorites-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* New Favorites Page Styles */
-.favorites-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.favorites-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 20px;
-  background-color: #f9f9f9;
-  border-bottom: 1px solid @color-gray-300;
-  margin-bottom: 15px;
-}
-
-.favorites-search-input {
-  width: 300px;
-  padding: 8px 12px;
-  border: 1px solid @color-gray-300;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.favorites-header .search-container {
-  margin-left: 20px;
-}
-
-.favorites-table-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0 15px;
-}
-
-.favorites-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
-.favorites-table th,
-.favorites-table td {
-  padding: 10px 8px;
-  text-align: left;
-  border-bottom: 1px solid @color-gray-200;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 200px;
-}
-
-/* Style for SMILES column to show full text */
-.favorites-table td:nth-child(3) {  /* 3rd column is SMILES */
-  white-space: normal;
-  max-width: 400px;
-  min-width: 300px;
-  word-break: break-word;
-}
-
-/* Make the SMILES header match the cell width */
-.favorites-table th:nth-child(3) {
-  min-width: 300px;
-}
-
-.favorites-table th {
-  background-color: @color-gray-100;
-  font-weight: 600;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.favorites-table tr:hover {
-  background-color: #f7f7f7;
-}
-
-.favorites-table .selected-row {
-  background-color: rgba(0, 102, 204, 0.1);
-}
-
-.favorites-table .selected-row:hover {
-  background-color: rgba(0, 102, 204, 0.15);
-}
-
-.checkbox-column {
-  width: 40px;
-}
-
-.molecule-image-cell {
-  width: 60px;
-  padding: 5px;
-  text-align: center;
-  position: relative;
-  height: 50px; /* Increased from default */
-}
-
-.table-molecule-image {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  transition: transform 0.2s ease;
-}
-
-.molecule-image-cell:hover .table-molecule-image {
-  transform: scale(2.5);
-  position: absolute;
-  z-index: 10;
-  left: 30px;
-  max-height: 100px; /* Added to ensure image doesn't get cut off */
-}
-
-/* Create space for the enlarged image */
-.molecule-image-cell:hover {
-  overflow: visible;
-  z-index: 20;
-}
-
-.remove-favorite-table-button {
-  background-color: transparent;
-  color: #ff3b30;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 0 5px;
-  border-radius: 3px;
-  transition: background-color 0.2s;
-}
-
-.remove-favorite-table-button:hover {
-  background-color: rgba(255, 59, 48, 0.1);
-}
-
-.show-analysis-button {
-  background-color: #2196F3;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.show-analysis-button:hover {
-  background-color: #0d8aee;
-}
-
-.analysis-view {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  background-color: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.analysis-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 20px;
-  background-color: #f9f9f9;
-  border-bottom: 1px solid @color-gray-300;
-}
-
-.analysis-header h2 {
-  margin: 0;
-  font-size: 18px;
-}
-
-.selected-molecules-count {
-  color: @color-gray-500;
-  font-size: 14px;
-}
-
-.close-analysis-button {
-  background-color: transparent;
-  border: none;
-  color: @color-text-primary;
-  font-size: 24px;
-  cursor: pointer;
-  padding: 0 5px;
-  line-height: 1;
-}
-
-.close-analysis-button:hover {
-  color: #0066cc;
-}
-
-.analysis-content {
-  flex: 1;
-  padding: 20px;
-  overflow: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.spider-chart-container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.spider-chart {
-  width: 100%;
-  height: 100%;
-  border: 1px solid transparent;
-  transition: border-color 0.3s;
-}
-
-.spider-chart:hover {
-  border: 1px solid @color-gray-300;
-}
-
-.esp-analysis-placeholder,
-.mo-analysis-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  color: @color-gray-500;
-  font-size: 18px;
-}
-
-.analysis-tabs {
-  display: flex;
-  gap: 10px;
-}
-
-.analysis-tab {
-  padding: 8px 15px;
-  border: none;
-  background-color: @color-gray-100;
-  font-size: 14px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: all 0.2s;
-}
-
-.analysis-tab.active {
-  background-color: @color-accent;
-  color: white;
-}
-
-.analysis-tab:hover:not(.active) {
-  background-color: @color-gray-300;
-}
-
-@media (max-width: 1200px) {
-  .favorites-search-input {
-    width: 200px;
-  }
-}
-
-@media (max-width: 768px) {
-  .favorites-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-  
-  .favorites-search-input {
-    width: 100%;
-  }
-  
-  .analysis-tabs {
-    width: 100%;
-    justify-content: space-between;
-  }
-  
-  .show-analysis-button {
-    width: 100%;
-  }
-}
-
-/* End New Favorites Page Styles */
-
-.esp-chart-container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.esp-chart {
-  width: 100%;
-  height: 100%;
-  border: 1px solid transparent;
-  transition: border-color 0.3s;
-}
-
-.esp-chart:hover {
-  border: 1px solid @color-gray-300;
-}
-
-.mo-chart-container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.mo-chart {
-  width: 100%;
-  height: 100%;
-  border: 1px solid transparent;
-  transition: border-color 0.3s;
-}
-
-.mo-chart:hover {
-  border: 1px solid @color-gray-300;
-}
-
-/* Add styles for sortable headers */
-.sortable-header {
-  cursor: pointer;
-  position: relative;
-  user-select: none;
-  transition: background-color 0.2s;
-}
-
-.sortable-header:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-/* Table styles - this may already exist in your CSS */
-.favorites-table-container {
-  overflow-x: auto;
-  max-width: 100%;
-}
-
-.favorites-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-  table-layout: fixed; /* Enable fixed table layout for column resizing */
-}
-
-.favorites-table th {
-  background-color: @color-gray-100;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  padding: 10px;
-  text-align: left;
-  border-bottom: 2px solid @color-gray-300;
-}
-
-.favorites-table td {
-  padding: 8px;
-  border-bottom: 1px solid @color-gray-300;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.favorites-table tr:hover {
-  background-color: rgba(0, 0, 0, 0.03);
-}
-
-.selected-row {
-  background-color: rgba(135, 206, 250, 0.2) !important;
-}
-
-/* Column resizing styles */
-.resizable-header {
-  position: relative;
-  user-select: none;
-}
-
-.resize-handle {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 5px;
-  height: 100%;
-  cursor: col-resize;
-  background-color: transparent;
-  border-right: 2px solid transparent;
-  z-index: 1;
-}
-
-.resize-handle:hover {
-  border-right: 2px solid #0080ff;
-  background-color: rgba(0, 128, 255, 0.1);
-}
-
-.resize-handle:active {
-  border-right: 2px solid #0066cc;
-  background-color: rgba(0, 102, 204, 0.2);
-}
-
-/* Prevent text selection during resize */
-body.no-select {
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-}
-
-/* Allow text wrapping for certain columns when they're wide enough */
-.favorites-table td:nth-child(3) { /* SMILES column */
-  white-space: normal;
-  word-break: break-word;
-}
-
-.favorites-table td:nth-child(8) { /* Commercial Viability column */
-  white-space: normal;
-  word-break: break-word;
-  min-width: 120px;
-}
-
-.favorites-table td:nth-child(11) { /* Commercial Viability column */
-  white-space: normal;
-  word-break: break-word;
-  min-width: 120px;
-}
-
-.favorites-table td:nth-child(14) { /* Functional Groups column */
-  white-space: normal;
-  word-break: break-word;
-}
-
-/* Deckgl Styles */
-.icon-controls-group {
-  user-select: none;
-  display: flex;
-  flex-flow:row;
-  background-color: rgba(255, 255, 255, 0.9);
-  border: 1px solid @color-gray-300;
-  border-radius: 4px;
-  padding: 5px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  z-index: 999;
-}
-
-.icon-controls-group  .control-icon {
-  padding: 5px;
-  border-radius:4px;
-  background-color:transparent;
-}
-.icon-controls-group  .control-icon:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-  cursor: pointer;
-}
-
-.icon-controls-group  .control-icon:active {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-/* Favorites actions container */
-.favorites-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* Bulk delete button */
-.bulk-delete-button {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  transition: background-color 0.2s ease;
-}
-
-.bulk-delete-button:hover:not(:disabled) {
-  background-color: #c82333;
-}
-
-.bulk-delete-button:disabled {
-  background-color: @color-gray-300;
-  cursor: not-allowed;
-}
-
-/* Ensure favorites header has proper flex layout */
-.favorites-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  gap: 15px;
-}
-
-/* Favorites button styles */
-.favorites-button {
-  padding: 10px 20px;
-  background-color: #0080ff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.favorites-button:hover {
-  background-color: #0066cc;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-}
-
-.favorites-button:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 3px rgba(0,0,0,0.2);
-}
-
-.favorites-container .plot-container{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
 /* 升级确认框样式 */
 .upgrade-modal-overlay {
@@ -3551,4 +1775,151 @@ body.no-select {
   padding: 0;
   min-height: calc(100vh - 116px);
   height: auto;
+}
+
+/* ==================== 跨页面共享样式 ==================== */
+
+/* Form Group - 被 16 个文件使用 (ContactSalesModal, LoginModal, UserFeedBackModal, Design, Predict, FormulationNew, Login等) */
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.form-group input {
+  width: 92%;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  background-color: #fff;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
+}
+
+/* Terms 相关样式 - 被 LoginModal, Login 和 Map 页面共享使用 */
+.terms-link {
+  color: #0066cc;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.terms-text {
+  margin-top: 10px;
+  font-size: 13px;
+  color: @color-gray-500;
+  text-align: center;
+}
+
+.terms-checkbox {
+  margin-bottom: 16px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 12px;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.checkbox-label .terms-text {
+  margin-top: 0;
+  text-align: left;
+  flex: 1;
+}
+
+/* Search Graph - 被 Map 和 Search 页面共享使用 */
+.search-graph {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 500px;
+  background-color: white;
+  border: none;
+}
+
+/* Molecule 样式 - 被多个页面共享使用 (Design, Predict, Favorites, Search) */
+.molecule-details {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid @color-gray-200;
+}
+
+.molecule-details h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.3rem;
+  color: @color-text-primary;
+  border-bottom: 1px solid @color-gray-300;
+  padding-bottom: 10px;
+}
+
+.molecule-data h3 {
+  margin-top: 0;
+  font-size: 1.1rem;
+  color: @color-text-primary;
+  margin-bottom: 15px;
+}
+
+.molecule-image-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  background-color: @color-gray-50;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.molecule-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.molecule-smiles {
+  margin-top: 20px;
+  background-color: @color-gray-50;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.molecule-smiles h3 {
+  font-size: 18px;
+  color: @color-text-primary;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.molecule-smiles p {
+  font-family: 'Arial, sans-serif';
+  word-break: break-all;
+  background-color: white;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid @color-gray-200;
+  margin: 0;
 }

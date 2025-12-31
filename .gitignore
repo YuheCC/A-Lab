@@ -19,3 +19,4 @@ config/config.ts
 CLAUDE.md
 .npm-cache
 .DS_Store
+*.bak*

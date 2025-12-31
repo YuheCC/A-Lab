@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import './Login.less';
 import { useNavigate, useSearchParams } from "umi";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/models/useAuth";

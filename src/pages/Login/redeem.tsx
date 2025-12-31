@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import './Login.less';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'umi';
 import { redeemCode } from '@/services/auth';
