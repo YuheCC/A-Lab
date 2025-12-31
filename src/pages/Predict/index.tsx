@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "./Predict.css";
+import "./Predict.less";
 
 const Predict = () => {
     const [activeTab, setActiveTab] = useState<'performance' | 'early-life'>('performance');

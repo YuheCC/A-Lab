@@ -22,7 +22,7 @@ import FindFriendOptions from "./FindFriendOptions";
 import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
 import { useQueryLimit } from '@/hooks/useQueryLimit';
 import OrganicFilter, { OrganicFilterRef } from './OrganicFilter';
-import '../index.css';
+import '../index.less';
 import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
 import { useAccessModals } from '@/hooks/useAccessModals';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';

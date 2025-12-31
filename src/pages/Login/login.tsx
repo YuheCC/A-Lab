@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "umi";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/models/useAuth";
+import './Login.less';
 
 // Login component
 const AuthPage = () => {

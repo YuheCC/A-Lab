@@ -1,4 +1,4 @@
-import './chat-styles.css';
+import './chat-styles.less';
 import ChatSider from './components/ChatSider';
 import ChatWelcome from './components/ChatWelcome';
 import ChatInput from './components/ChatInput';

@@ -1,0 +1,927 @@
+@import '@/styles/variables.less';
+
+.App {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .main-container {
+    flex: 1;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .App-header, .navbar {
+    flex-shrink: 0;
+  }
+  
+  .enterprise-page {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+  }
+  
+  .enterprise-container {
+    height: auto;
+    min-height: 100%;
+    padding: 0 20px;
+  }
+  
+  .enterprise-content {
+    padding-bottom: 80px;
+  }
+  
+  .about-container, .chatbot-container {
+    height: 100%;
+    overflow: auto;
+  }
+  
+  .graph-container {
+    height: 100%;
+    min-height: 400px;
+  }
+  
+  .enterprise-molecule img {
+    max-width: 100%;
+    max-height: 500px;
+    object-fit: contain;
+  }
+  
+  .enterprise-results {
+    margin-top: 20px;
+  }
+  
+  @media (max-height: 800px) {
+    .enterprise-umap-container {
+      height: 400px !important;
+    }
+  }
+  
+  /* General Body Style */
+  body:not(.about-page-body):not(.chat-page-body) {
+    background: @color-gray-100;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    margin: 0;
+    padding: 0;
+    color: @color-text-primary;
+  }
+  
+  body.chat-page-body {
+    background: @color-gray-50; /* Lighter grey for modern look */
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    margin: 0;
+    padding: 0;
+    color: @color-text-primary;
+    overflow: hidden; /* Prevent body scroll with chat layout */
+  }
+  
+  .centered-body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  
+  /* Header Styles */
+  .main-header {
+    background: #ffffff; /* White background */
+    color: @color-text-primary; /* Dark text color */
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    height: 64px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Softer shadow */
+    border-bottom: 1px solid @color-gray-200; /* Subtle border */
+    position: relative;
+    z-index: 1000;
+  }
+  .logo-container {
+    display: flex;
+    align-items: center;
+  }
+  .logo-img {
+    height: 28px; /* Adjust logo size */
+  }
+  
+  /* Navigation Styles */
+  .main-nav {
+    margin: 0 auto;
+    display: flex;
+    gap: 32px;
+  }
+  .nav-item {
+    color: #4a5568; /* Grey text for nav items */
+    text-decoration: none;
+    font-size: 16px;
+    padding: 20px 4px;
+    position: relative;
+    transition: color 0.3s;
+  }
+  .nav-item:hover {
+    color: @color-accent; /* Green for hover */
+  }
+  .nav-item.active {
+    font-weight: 600;
+    color: @color-accent; /* Green active color */
+  }
+  .nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: @color-accent; /* Green for active indicator */
+    border-radius: 2px;
+  }
+  .nav-item.disabled {
+    color: @color-gray-400 !important; /* Gray-400 for disabled state */
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  .nav-item.disabled:hover {
+    color: @color-gray-400 !important; /* Keep gray color on hover */
+  }
+  
+  .nav-item-separated {
+    margin-right: 32px;
+  }
+  
+  .nav-item-separated::before {
+    content: '';
+    position: absolute;
+    right: -32px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 20px;
+    background-color: @color-gray-300;
+    z-index: 1;
+  }
+
+  /* Navigation Dropdown Styles */
+  .nav-dropdown-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+
+  .nav-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: max-content;
+    max-width: 300px;
+    background: #ffffff;
+    border: 1px solid @color-gray-300;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+    margin-top: 8px;
+    pointer-events: none;
+  }
+
+  /* 添加一个透明的桥接区域，覆盖视觉间隙，防止鼠标移动时失去hover状态 */
+  .nav-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 8px;
+    background: transparent;
+    pointer-events: auto;
+    z-index: 1;
+  }
+
+  .nav-dropdown-container:hover .nav-dropdown,
+  .nav-dropdown-container.hovered .nav-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0px);
+    pointer-events: auto;
+    transition-delay: 0s;
+  }
+
+  .nav-dropdown:hover {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0px);
+    pointer-events: auto;
+    transition-delay: 0s;
+  }
+
+  /* 使用更精确的hover状态控制 */
+  .nav-dropdown-container:not(:hover):not(.hovered) .nav-dropdown:not(:hover) {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition-delay: 0.15s;
+  }
+  
+  .nav-dropdown-container.disabled:hover .nav-dropdown {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  
+  .nav-dropdown .dropdown-item {
+    display: block;
+    padding: 16px;
+    color: @color-gray-600;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    border: 1px solid transparent;
+  }
+  
+  .nav-dropdown .dropdown-item:hover {
+    background-color: @color-gray-50;
+    color: @color-gray-900;
+    border-color: @color-gray-200;
+  }
+  
+  .nav-dropdown .dropdown-item.active {
+    background-color: #ecfdf5;
+    color: @color-accent;
+    font-weight: 500;
+    border-color: #bbf7d0;
+  }
+  
+  .nav-dropdown .dropdown-item.disabled {
+    color: @color-gray-400 !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  
+  .nav-dropdown .dropdown-item.disabled:hover {
+    background-color: transparent !important;
+    border-color: transparent !important;
+  }
+  
+  .nav-dropdown .dropdown-item:first-child {
+    margin-top: 0;
+  }
+  
+  .nav-dropdown .dropdown-item:last-child {
+    margin-bottom: 0;
+  }
+  
+  /* User Actions Styles */
+  .user-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .user-avatar-container {
+    position: relative;
+  }
+  .action-icon {
+    font-size: 20px;
+    cursor: pointer;
+    color: #4a5568; /* Grey icon color */
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+  }
+  .user-avatar {
+    /* No longer needed, as SVG replaces the background circle */
+    width: auto;
+    height: auto;
+    background: none;
+    border-radius: 0;
+  }
+  
+  /* User Dropdown Styles */
+  .user-dropdown {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: 50px; /* Position below the avatar */
+    right: 0;
+    width: 300px;
+    background: #fff;
+    border: 1px solid @color-gray-200;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 8px;
+    z-index: 1100;
+  }
+  .user-dropdown.show {
+    display: block; /* Show when active */
+  }
+  .user-info {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid @color-gray-100;
+  }
+  .user-avatar-large {
+    margin-right: 12px;
+  }
+  .user-details {
+    line-height: 1.4;
+  }
+  .user-name {
+    font-weight: 600;
+    color: @color-text-primary;
+  }
+  .user-email {
+    font-size: 14px;
+    color: @color-text-secondary;
+  }
+  .user-name-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .subscription-badge {
+    background-color: #ede9fe; /* Light purple */
+    color: #5b21b6; /* Dark purple text */
+    padding: 2px 8px;
+    border-radius: 9999px; /* Pill shape */
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .dropdown-item {
+    display: flex; /* Use flexbox for icon alignment */
+    align-items: center;
+    gap: 12px; /* Space between icon and text */
+    padding: 10px 12px;
+    color: #334155;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+    font-size: 15px;
+  }
+  .item-icon {
+    width: 20px;
+    height: 20px;
+  }
+  .dropdown-item:hover {
+    background-color: @color-gray-100;
+  }
+  
+  /* Chat Layout Styles */
+  .chat-container, .predict-container {
+    display: flex;
+    height: calc(100vh - 66px); /* Full height minus header */
+  }
+  
+  .chat-sidebar {
+    width: 260px;
+    background-color: @color-gray-100; /* Soft grey background */
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-right: 1px solid @color-gray-200;
+    transition: width 0.3s ease;
+  }
+  
+  .new-chat-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid @color-gray-300;
+    border-radius: 8px;
+    text-decoration: none;
+    color: @color-gray-700;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+  
+  .new-chat-btn:hover {
+    background-color: @color-gray-200;
+  }
+  
+  .new-chat-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .chat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+  }
+  
+  .initial-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+  }
+  
+  .chat-logo {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 24px;
+  }
+  
+  .initial-view h2 {
+    font-size: 24px;
+    color: @color-text-primary;
+    font-weight: 600;
+  }
+
+  /* 聊天消息样式已移至 ChatStyles.less，使用BEM格式 (.chat__message-wrapper, .chat__message) */
+
+  .send-btn {
+    background: @color-accent;
+    border: none;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.2s;
+  }
+  
+  .send-btn:hover {
+    background: #449a57;
+  }
+  
+  .send-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .input-disclaimer {
+    text-align: center;
+    font-size: 12px;
+    color: @color-gray-400;
+    margin-top: 12px;
+  }
+  
+  /* Remove old conflicting styles */
+  .page-content, .column-left, .column-right, .scrollable-module {
+    all: unset;
+  }
+  
+  /* Map specific styles */
+  .main-map-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  .cluster-map-img {
+    width: 100%;
+    border-radius: 4px;
+    margin-top: 16px;
+  }
+  
+  .cluster-descriptions {
+    margin-top: 24px;
+  }
+  
+  .cluster-descriptions h4 {
+    margin-bottom: 12px;
+  }
+  
+  .cluster-descriptions p {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 8px;
+    color: #4a5568;
+  }
+  
+  /* Clear login page specific styles that might conflict */
+  .login-container {
+    width: 350px;
+    margin: 20px auto 0 auto;
+    position: static;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    padding: 32px 28px 24px 28px;
+  }
+  .login-container h2 {
+    text-align: center;
+    margin-bottom: 24px;
+    color: @color-text-primary;
+  }
+  .form-group {
+    margin-bottom: 18px;
+  }
+  .form-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    color: #555;
+  }
+  .form-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    font-size: 15px;
+    box-sizing: border-box;
+    transition: border 0.2s;
+  }
+  .form-group input:focus {
+    border-color: #409eff;
+    outline: none;
+  }
+  button[type="submit"] {
+    width: 100%;
+    padding: 10px 0;
+    background: @color-accent;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  button[type="submit"]:hover {
+    background: #449a57;
+  }
+  .links {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 14px;
+  }
+  .links a {
+    color: @color-accent;
+    text-decoration: none;
+    margin: 0 4px;
+  }
+  .links a:hover {
+    text-decoration: underline;
+  }
+  .login-error-message {
+    margin-top: 16px;
+    text-align: center;
+    color: #e74c3c;
+    min-height: 20px;
+    font-size: 14px;
+  }
+  
+  .page-content.wide {
+    max-width: none !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box;
+  }
+  
+  .account-settings-main.wide {
+    max-width: 1200px;
+    width: 100% !important;
+    margin: 20px auto 0 auto;
+    box-sizing: border-box;
+  }
+  
+  .user-info-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background: @color-gray-50;
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .user-info-left {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-left: -30px;
+  }
+  .user-avatar-large-img {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid @color-gray-200;
+  }
+  .user-info-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .user-info-name-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .user-info-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: @color-text-primary;
+  }
+  .user-info-registered {
+    font-size: 14px;
+    color: @color-text-secondary;
+  }
+  
+  .settings-modules {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .settings-card {
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin-bottom: 32px;
+    margin-top: -20px;
+  }
+  
+  .settings-group-list {
+    all: unset;
+  }
+  .settings-group {
+    all: unset;
+  }
+  
+  .settings-group-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #22223b;
+    margin-bottom: 18px;
+  }
+  .settings-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 0;
+    border-bottom: 1px solid @color-gray-100;
+  }
+  .settings-group .settings-item:last-child {
+    border-bottom: none;
+  }
+  .settings-item-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .settings-item-title {
+    font-size: 15px;
+    color: #22223b;
+    font-weight: 500;
+  }
+  .settings-item-desc {
+    font-size: 13px;
+    color: #8a8fa3;
+    margin-top: 2px;
+  }
+  .settings-item-action {
+    font-size: 15px;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .settings-link {
+    color: @color-accent;
+    font-size: 14px;
+    text-decoration: none;
+    margin-left: 6px;
+  }
+  .settings-link:hover { text-decoration: underline; }
+  
+  .btn {
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: @color-accent;
+    color: #fff;
+  }
+  .btn-primary:hover { background: #449a57; }
+  .btn-secondary {
+    background: @color-gray-100;
+    color: #334155;
+    border: 1px solid @color-gray-200;
+  }
+  .btn-secondary:hover { background: @color-gray-200; }
+  
+  .lang-select {
+    padding: 4px 8px;
+    border-radius: 5px;
+    border: 1px solid @color-gray-300;
+    background: @color-gray-50;
+    font-size: 14px;
+  }
+  
+  
+  /* Modal Styles */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1001;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+  }
+  
+  .modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 0;
+    border: none;
+    width: 90%;
+    max-width: 420px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    animation-name: animatetop;
+    animation-duration: 0.4s
+  }
+  
+  @keyframes animatetop {
+    from {top: -100px; opacity: 0}
+    to {top: 0; opacity: 1}
+  }
+  
+  .modal-header {
+    padding: 24px 28px;
+    background-color: #fff;
+    color: @color-text-primary;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    position: relative;
+    border-bottom: 1px solid @color-gray-100;
+  }
+  
+  .modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
+  
+  .close-btn {
+    color: #94a3b8;
+    float: right;
+    font-size: 24px;
+    font-weight: normal;
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  
+  .close-btn:hover,
+  .close-btn:focus {
+    color: @color-text-primary;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .modal-body {
+    padding: 28px;
+  }
+  
+  .modal-footer {
+    padding: 20px 28px;
+    background-color: #fff;
+    text-align: right;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+  }
+  
+  .page-content {
+    display: flex;
+    gap: 12px;
+    padding: 18px;
+    margin: 0 auto;
+    height: calc(100vh - 64px);
+    box-sizing: border-box;
+  }
+  
+  .column-left {
+    flex: 0 0 55%; /* Left column takes 55% of the width */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Hide overflow */
+    padding: 12px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  
+  .column-right {
+    flex: 1; /* Right column takes the remaining space */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Hide overflow */
+    padding: 12px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  
+  /* 强制覆盖定价分组switch按钮样式，确保还原图片switch视觉 */
+  .pricing-switcher {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 0 !important;
+  margin-bottom: 32px !important;
+  background: none !important;
+  }
+  .pricing-switch-btn {
+  background: #fff !important;
+  color: #222 !important;
+  border: 1.5px solid #222 !important;
+  border-right: none !important;
+  border-radius: 8px 0 0 8px !important;
+  padding: 7px 32px !important;
+  font-size: 1.08rem !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: background 0.18s, color 0.18s, border 0.18s !important;
+  outline: none !important;
+  box-shadow: none !important;
+  position: relative !important;
+  z-index: 1 !important;
+  min-width: 120px !important;
+  }
+  .pricing-switch-btn:last-child {
+  border-radius: 0 8px 8px 0 !important;
+  border-right: 1.5px solid #222 !important;
+  }
+  .pricing-switch-btn.active {
+  background: #222 !important;
+  color: #fff !important;
+  border-color: #222 !important;
+  z-index: 2 !important;
+  }
+  
+  /* 恢复 business 分组下套餐卡片间距为 0.6rem，与 personal 分组一致 */
+  .pricing-group[data-group="business"] .pricing-grid {
+  gap: 0.6rem !important;
+  }
+  
+  /* 仅增大 personal 分组下套餐卡片间距为 2.5rem */
+  .pricing-group[data-group="personal"] .pricing-grid {
+  gap: 2.5rem !important;
+  }
+  
+  /* 修复弹窗无法显示问题，确保show时弹窗可见 */
+  .modal.show, .settings-modal.modal.show {
+  display: flex !important;
+  }
+  
+  /* 修复 settings-modal 弹窗内容错乱，确保内容横向居中、层级最高 */
+  
+  #newsfeed, #motivation, #features, #pricing {
+    scroll-margin-top: 80px;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 0;
+  }
+  #features > h2, #pricing > h2 {
+    font-size: 2.25rem;
+    margin-bottom: 1.5rem;
+    color: @color-gray-900;
+    text-align: left;
+    font-weight: 700;
+  }
+  
+  .settings-panel[data-panel="subscription"] .settings-card,
+  .settings-panel[data-panel="preference"] .settings-card {
+  margin-top: 10px;
+  }

@@ -1,0 +1,451 @@
+@import '@/styles/variables.less';
+
+/* 继承create页面的header样式 */
+.detail-page-container {
+  background: #ffffff;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.detail-header {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.detail-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: @color-text-primary;
+  margin: 0;
+}
+
+.detail-subtitle {
+  font-size: 14px;
+  color: @color-text-secondary;
+  margin: 0 0 16px 0;
+}
+
+.detail-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.detail-action-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: @color-gray-700;
+}
+
+.back-to-list-button {
+  background: @color-gray-100;
+  color: @color-gray-700;
+  border: 1px solid @color-gray-300;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.back-to-list-button:hover {
+  background: @color-gray-200;
+  border-color: @color-gray-400;
+}
+
+/* 内容区域样式，继承results组件样式 */
+.detail-content {
+  border-radius: 8px;
+  padding: 20px;
+  margin: 0 auto;
+}
+
+.results-section h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: @color-text-primary;
+  margin: 0 0 24px 0;
+}
+
+.results-section > div {
+  margin-bottom: 32px;
+}
+
+.results-section h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: @color-gray-700;
+  margin: 0 0 16px 0;
+}
+
+.results-section h4 {
+  font-size: 14px;
+  font-weight: 500;
+  color: @color-gray-600;
+  margin: 0 0 12px 0;
+}
+
+/* Configuration Information */
+.configuration-info {
+  margin-bottom: 32px;
+}
+
+.configuration-table {
+  border: 1px solid @color-gray-200;
+  border-radius: 8px;
+  padding: 0 16px 16px 16px;
+}
+
+.configuration-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  gap: 24px;
+}
+
+.configuration-row:last-child {
+  padding-bottom: 0;
+}
+
+.config-label {
+  font-size: 14px;
+  color: @color-gray-600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.config-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: @color-text-primary;
+}
+
+.config-value .compound-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.config-value .compound-item {
+  font-size: 14px;
+  color: @color-text-primary;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+/* System Properties */
+.properties-table {
+  border: 1px solid @color-gray-200;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.property-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+}
+
+.property-row:last-child {
+  padding-bottom: 0;
+}
+
+.property-name {
+  font-size: 14px;
+  color: @color-gray-600;
+}
+
+.property-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: @color-text-primary;
+}
+
+/* Cluster Analysis */
+.cluster-table {
+  border: 1px solid @color-gray-200;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.cluster-table .table-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  padding: 12px 16px;
+  background: @color-gray-200;
+  font-size: 14px;
+  font-weight: 500;
+  color: @color-gray-700;
+}
+
+.cluster-table .table-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  padding: 12px 16px;
+  align-items: center;
+}
+
+/* Diffusion Coefficient */
+.diffusion-table {
+  border: 1px solid @color-gray-200;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.diffusion-table .table-header {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 16px;
+  padding: 12px 16px;
+  background: @color-gray-200;
+  font-size: 14px;
+  font-weight: 500;
+  color: @color-gray-700;
+}
+
+.diffusion-table .table-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 16px;
+  padding: 12px 16px;
+  align-items: center;
+}
+
+.table-row:last-child {
+  padding-bottom: 12px;
+}
+
+.table-row span {
+  font-size: 14px;
+  color: @color-gray-600;
+}
+
+.category-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  width: 44px;
+  min-height: 20px;
+  border: 1px solid transparent;
+}
+
+.category-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tip-icon-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 20px;
+  width: 20px;
+}
+
+.tip-icon {
+  color: @color-gray-500;
+  cursor: help;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tip-icon:hover {
+  color: @color-gray-700;
+}
+
+/* Chart Sections */
+.chart-section {
+  margin-bottom: 24px;
+}
+
+.chart-image-container {
+  border: 1px solid @color-gray-200;
+  border-radius: 8px;
+  padding: 16px;
+  background: #ffffff;
+  text-align: center;
+}
+
+.chart-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.chart-placeholder {
+  background: @color-gray-50;
+  border: 1px solid @color-gray-200;
+  border-radius: 8px;
+  padding: 48px 24px;
+  text-align: center;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.chart-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.chart-placeholder p {
+  font-size: 16px;
+  color: @color-gray-500;
+  margin: 4px 0;
+}
+
+.chart-subtitle {
+  font-size: 14px !important;
+  color: @color-gray-400 !important;
+}
+
+/* Analysis File */
+.file-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid @color-gray-200;
+  border-radius: 8px;
+  padding: 16px;
+  gap: 16px;
+}
+
+.file-text {
+  flex: 1;
+}
+
+.file-text p {
+  margin: 0 0 4px 0;
+}
+
+.file-text .file-details {
+  margin: 0;
+}
+
+.file-text p {
+  font-size: 14px;
+  color: @color-gray-600;
+}
+
+.file-details {
+  font-size: 12px !important;
+  color: @color-gray-500 !important;
+}
+
+.download-btn {
+  background: @color-gray-800;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.download-btn:hover {
+  background: @color-gray-900;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .detail-page-container {
+    padding: 16px;
+  }
+
+  .detail-header {
+    margin-bottom: 16px;
+  }
+
+  .detail-actions {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .back-to-list-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .configuration-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .config-label {
+    font-weight: 600;
+  }
+
+  .config-value {
+    width: 100%;
+  }
+
+  .config-value .compound-list {
+    justify-content: flex-start;
+  }
+
+  .cluster-table .table-header,
+  .cluster-table .table-row {
+    grid-template-columns: 60px 80px 1fr;
+  }
+
+  .diffusion-table .table-header,
+  .diffusion-table .table-row {
+    grid-template-columns: 80px 1fr;
+  }
+
+  .chart-placeholder {
+    padding: 32px 16px;
+    min-height: 150px;
+  }
+
+  .chart-icon {
+    font-size: 36px;
+    margin-bottom: 12px;
+  }
+
+  .file-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .download-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.formulation-title-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { MaterialsInput } from '@materialsproject/mp-react-components';
 import { useTranslation } from 'react-i18next';
-import './third.css';
+import './third.less';
 import { authFetch, getAPIUrl } from '@/utils';
 import { raiseResponseError } from '@/utils/errorHelpers';
 import { useAuthStore } from '@/models/useAuth';

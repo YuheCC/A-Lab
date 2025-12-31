@@ -4,7 +4,7 @@ import feedbackSvg from '@/assets/svg/feedback.svg';
 import { submitFeedback } from '@/services/feedback';
 import { validateFile } from '@/services/file';
 import { useMessage } from '@/components/MessageProvider';
-import './feedback.css';
+import './feedback.less';
 
 interface FeedbackForm {
     type: string;

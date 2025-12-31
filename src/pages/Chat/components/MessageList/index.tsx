@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import MessageEdit from '../MessageEdit';
-import './MessageList.css';
+import './MessageList.less';
 import { InlineMoleculeRenderer } from '@/components/InlineMoleculeRenderer/index.js';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import {
@@ -462,8 +462,8 @@ const MessageList: FC<MessageListProps> = ({
   // 渲染带按钮的系统消息
   const renderBotMessageWithButton = (message: Message, buttonText: string) => {
     return (
-      <div className="message-wrapper bot">
-        <div className="message">
+      <div className="chat__message-wrapper chat__message-wrapper--bot">
+        <div className="chat__message chat__message--bot">
           <InlineMoleculeRenderer content={message.content} onMoleculeClick={forwardMoleculeClick} />
           <button
             className="molecule-btn"
@@ -498,7 +498,7 @@ const MessageList: FC<MessageListProps> = ({
     // 如果正在编辑，显示编辑组件
     if (editingMessageId === message.id && isUserMessage(message)) {
       return (
-        <div key={message.id} className="message-wrapper user">
+        <div key={message.id} className="chat__message-wrapper chat__message-wrapper--user">
           <MessageEdit
             originalText={message.content}
             onSave={(newText) => handleEditMessage(message.id, newText)}
@@ -510,10 +510,10 @@ const MessageList: FC<MessageListProps> = ({
 
     if (isUserMessage(message)) {
       return (
-        <div key={message.id} className="message-wrapper user">
+        <div key={message.id} className="chat__message-wrapper chat__message-wrapper--user">
           <div className="message-container">
             {renderSavedTimestamp(message)}
-            <div className="message">
+            <div className="chat__message chat__message--user">
               {message.content}
             </div>
           </div>
@@ -523,15 +523,15 @@ const MessageList: FC<MessageListProps> = ({
     } else if (isAssistantMessage(message) || isSystemMessage(message)) {
       // system消息按assistant样式展示
       return (
-        <div key={message.id} className="message-wrapper bot">
+        <div key={message.id} className="chat__message-wrapper chat__message-wrapper--bot">
           {isAssistantMessage(message) && thinkingTarget && thinkingTarget.id === message.id && (!message.content || String(message.content).trim() === '') ? (
-            <div className="message">
+            <div className="chat__message chat__message--bot">
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ fontVariantNumeric: 'tabular-nums', color: '#6b7280' }}>{thinkingElapsedLabel}</span>
               </div>
             </div>
           ) : (
-            <div className="message">
+            <div className="chat__message chat__message--bot">
               {isAssistantMessage(message) && (
                 <ToolStatsDisplay toolStats={message.toolStats} />
               )}

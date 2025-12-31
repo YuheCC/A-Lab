@@ -1,0 +1,377 @@
+@import '@/styles/variables.less';
+
+/* 反馈弹窗样式 */
+.feedback-modal {
+    display: none;
+    position: fixed;
+    z-index: 1002;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.feedback-modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 10px;
+}
+
+.feedback-modal-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow: hidden;
+    animation: feedbackModalSlideIn 0.3s ease-out;
+    transform: translateY(10px);
+}
+
+@keyframes feedbackModalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.feedback-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid @color-gray-200;
+}
+
+.feedback-modal-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    color: @color-gray-800;
+}
+
+.feedback-modal-title svg {
+    color: @color-gray-500;
+}
+
+.feedback-modal-close {
+    background: none;
+    border: none;
+    color: @color-gray-500;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.feedback-modal-close:hover {
+    background-color: @color-gray-100;
+    color: @color-gray-700;
+}
+
+.feedback-modal-body {
+    padding: 24px;
+    max-height: 60vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.feedback-form-group {
+    margin-bottom: 20px;
+}
+
+.feedback-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: @color-gray-700;
+    margin-bottom: 6px;
+}
+
+.required {
+    color: #ef4444;
+}
+
+.feedback-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid @color-gray-300;
+    border-radius: 8px;
+    font-size: 14px;
+    color: @color-gray-700;
+    background-color: white;
+    transition: border-color 0.2s ease;
+}
+
+.feedback-select:focus {
+    outline: none;
+    border-color: @color-accent;
+    box-shadow: 0 0 0 3px rgba(86, 178, 106, 0.1);
+}
+
+.feedback-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px;
+    border: 1px solid @color-gray-300;
+    border-radius: 8px;
+    font-size: 14px;
+    color: @color-gray-700;
+    background-color: white;
+    resize: vertical;
+    font-family: inherit;
+    transition: border-color 0.2s ease;
+}
+
+.feedback-textarea:focus {
+    outline: none;
+    border-color: @color-accent;
+    box-shadow: 0 0 0 3px rgba(86, 178, 106, 0.1);
+}
+
+.feedback-textarea::placeholder {
+    color: @color-gray-400;
+}
+
+.feedback-upload-area {
+    border: 2px dashed @color-gray-300;
+    border-radius: 8px;
+    padding: 32px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: @color-gray-50;
+}
+
+.feedback-upload-area:hover {
+    border-color: @color-accent;
+    background-color: #f0fdf4;
+}
+
+.feedback-upload-area svg {
+    color: @color-gray-500;
+    margin-bottom: 8px;
+}
+
+.feedback-upload-area span {
+    display: block;
+    font-size: 14px;
+    color: @color-gray-500;
+}
+
+.feedback-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid @color-gray-300;
+    border-radius: 8px;
+    font-size: 14px;
+    color: @color-gray-700;
+    background-color: white;
+    transition: border-color 0.2s ease;
+}
+
+.feedback-input:focus {
+    outline: none;
+    border-color: @color-accent;
+    box-shadow: 0 0 0 3px rgba(86, 178, 106, 0.1);
+}
+
+.feedback-input::placeholder {
+    color: @color-gray-400;
+}
+
+.feedback-modal-footer {
+    display: flex;
+    gap: 12px;
+    padding: 20px 24px;
+    border-top: 1px solid @color-gray-200;
+    background-color: @color-gray-50;
+}
+
+.feedback-btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 80px;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.feedback-btn-secondary {
+    background-color: white;
+    color: @color-gray-700;
+    border: 1px solid @color-gray-300;
+    flex: 0 0 auto;
+}
+
+.feedback-btn-secondary:hover {
+    background-color: @color-gray-50;
+    border-color: @color-gray-400;
+}
+
+.feedback-btn-primary {
+    background-color: @color-accent;
+    color: white;
+    margin-left: auto;
+    flex: 1;
+    max-width: 120px;
+}
+
+.feedback-btn-primary:hover {
+    background-color: #4a9c5a;
+}
+
+.feedback-btn-primary:disabled {
+    background-color: @color-gray-400;
+    cursor: not-allowed;
+}
+
+/* 文件上传预览 */
+.feedback-upload-area.has-file {
+    border-color: @color-accent;
+    background-color: #f0fdf4;
+}
+
+.feedback-upload-area.has-file svg,
+.feedback-upload-area.has-file span {
+    color: @color-accent;
+}
+
+/* 错误提示 */
+.feedback-error {
+    color: #ef4444;
+    font-size: 12px;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.feedback-error::before {
+    content: "⚠";
+    font-size: 14px;
+}
+
+/* 旋转动画 */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 上传消息样式 */
+.feedback-upload-message {
+    border-radius: 4px;
+    padding: 8px;
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.feedback-upload-message.success {
+    background-color: #f0f9ff;
+    border: 1px solid #0ea5e9;
+    color: #0c4a6e;
+}
+
+.feedback-upload-message.error {
+    background-color: #fef2f2;
+    border: 1px solid #ef4444;
+    color: #991b1b;
+}
+
+/* Loading spinner样式 */
+.feedback-loading-spinner {
+    animation: spin 1s linear infinite;
+    margin-right: 8px;
+}
+
+.feedback-loading-spinner .opacity-25 {
+    opacity: 0.25;
+}
+
+.feedback-loading-spinner .opacity-75 {
+    opacity: 0.75;
+}
+
+/* 图片预览样式 */
+.image-preview-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-preview {
+    max-width: 100%;
+    max-height: 120px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    object-fit: contain;
+}
+
+.image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    color: white;
+    padding: 8px;
+    border-radius: 0 0 8px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.image-name {
+    font-size: 12px;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    margin-right: 8px;
+}
+
+.remove-image-btn {
+    background: rgba(239, 68, 68, 0.9);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.remove-image-btn:hover {
+    background: rgba(239, 68, 68, 1);
+}
+
+/* 上传区域有文件时的样式调整 */
+.feedback-upload-area.has-file {
+    border: 2px solid #10b981;
+    background-color: #f0fdf4;
+}

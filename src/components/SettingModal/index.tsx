@@ -1,6 +1,6 @@
 import { useState, useImperativeHandle, forwardRef, useContext } from "react";
 import { useAuthStore } from "@/models/useAuth";
-import './settingModal.css';
+import './settingModal.less';
 import { useTranslation } from "react-i18next";
 import { verifyRedeemCode, sendEducationCode } from "@/services/auth";
 import { useMessage } from "@/components/MessageProvider";

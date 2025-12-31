@@ -1,6 +1,6 @@
 import { Kekule } from 'kekule';
 import 'kekule/theme/default';
-import './MolEditor.css';
+import './MolEditor.less';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AtomIcon, Download } from 'lucide-react';
 import InfoTooltip from '@/components/InfoTooltip';

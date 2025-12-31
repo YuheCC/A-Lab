@@ -1,6 +1,6 @@
 import type { RuntimeConfig } from '@umijs/max';
 import "@/locales/i18n"
-import "./app.css"
+import "./app.less"
 import { MessageProvider } from './components/MessageProvider';
 import '@/utils/echartsInit'; // 初始化 ECharts 组件
 

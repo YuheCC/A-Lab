@@ -22,7 +22,7 @@ import { getHistoryList, deleteHistory, isMockRecord } from './model';
 import { getModelList as getModelListFromModel, getBaseModelList } from '@/pages/Design/model';
 import { type ModelListItem } from '@/services/model/training';
 import { formatUTCDateTime } from '@/utils/dateUtils';
-import './PredictionTool.css';
+import './PredictionTool.less';
 import { normalizeServerDate } from '@/utils/messageUtils';
 
 interface FileRecord {

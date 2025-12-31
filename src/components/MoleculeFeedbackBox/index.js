@@ -4,7 +4,7 @@ import { authFetch, getAPIUrl } from '../../utils.js';
 import { buildAutoFetchURL } from '@/services/config/autoFetch';
 import { ThumbsDown, ThumbsUp } from 'lucide-react';
 
-import './MoleculeFeedbackBox.css';
+import './MoleculeFeedbackBox.less';
 
 const API_URL = getAPIUrl();
 

@@ -1,0 +1,260 @@
+@import '@/styles/variables.less';
+
+/* MessageList 组件样式 */
+
+.message-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.message-list button:focus {
+  outline: none;
+}
+
+/* 消息包装器样式已移至ChatStyles.less，使用BEM格式 (.chat__message-wrapper) */
+
+.message-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.chat__message-wrapper--user .message-container {
+  align-items: flex-end;
+}
+
+/* 消息内容样式已移至ChatStyles.less，使用BEM格式 (.chat__message) */
+
+.tool-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: @color-gray-500;
+}
+
+.tool-stats__item {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+}
+
+.tool-stats__label {
+  font-weight: 500;
+}
+
+.tool-stats__value {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 化学分子样式 */
+.chemical-molecule {
+  color: @color-accent;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.chemical-molecule:hover {
+  background-color: #e8f5e8;
+}
+
+/* 消息操作按钮 */
+.message-actions {
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.chat__message-wrapper:hover .message-actions,
+.chat__message-wrapper--user:hover .message-actions,
+.chat__message-wrapper--bot:hover .message-actions {
+  opacity: 1;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background-color: @color-gray-100;
+  color: @color-gray-500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.action-btn:hover {
+  background-color: @color-gray-200;
+  color: @color-gray-700;
+}
+
+.action-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* 复制按钮成功状态 */
+.copy-btn.success {
+  color: @color-accent;
+}
+
+/* 重新生成按钮 */
+.regenerate-btn:hover {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+/* 分子按钮 */
+.molecule-btn {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: @color-accent;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.molecule-btn:hover {
+  background-color: #4a9d5a;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .chat__message {
+    max-width: 90%;
+    font-size: 13px;
+  }
+
+  .message-actions {
+    opacity: 1;
+  }
+  
+  .action-btn {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .action-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* 滚动条样式 */
+.message-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.message-list::-webkit-scrollbar-track {
+  background: @color-gray-100;
+  border-radius: 3px;
+}
+
+.message-list::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.message-list::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 动画效果 */
+.chat__message-wrapper {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ExtraData 补充信息样式 */
+.extra-data-wrapper {
+  margin-top: 12px;
+}
+
+.extra-data-section {
+  border: 1px solid @color-gray-300;
+  border-radius: 6px;
+  margin-top: 8px;
+  background-color: #f9f9f9;
+  overflow: hidden;
+}
+
+.extra-data-header {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 12px;
+  user-select: none;
+  background-color: @color-gray-100;
+  border-bottom: 1px solid @color-gray-200;
+  transition: background-color 0.2s ease;
+}
+
+.extra-data-header:hover {
+  background-color: @color-gray-200;
+}
+
+.extra-data-header span {
+  margin-left: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  color: @color-gray-700;
+}
+
+.extra-data-content {
+  padding: 12px;
+  background-color: white;
+  /* 移除 white-space: pre-wrap，让内容正常渲染 */
+  font-size: 13px;
+  line-height: 1.5;
+  color: @color-gray-600;
+  border-top: 1px solid @color-gray-200;
+}
+
+/* 多个 ExtraData 之间的间距 */
+.extra-data-section:first-child {
+  margin-top: 12px;
+}
+
+/* 消息时间戳样式（可选） */
+.message-timestamp {
+  font-size: 11px;
+  color: @color-gray-400;
+  margin-top: 4px;
+  text-align: right;
+}
+
+.chat__message-wrapper--user .message-timestamp {
+  text-align: right;
+  align-self: flex-end;
+  margin-bottom: 4px;
+}
+
+.chat__message-wrapper--bot .message-timestamp {
+  text-align: left;
+} 

@@ -10,7 +10,7 @@ import { isColumnVisibleForUser } from '@/constants/columnAccess';
 import { ENABLE_CASRN_DISPLAY } from '@/constants/featureFlags';
 import rehypeRaw from 'rehype-raw';
 import { createLlmGradeProp, ReasoningModal } from '@/components/LlmGrade';
-import './InlineMoleculeRenderer.css';
+import './InlineMoleculeRenderer.less';
 
 const renderAnionCommercialScore = (score) => {
   if (score === null || score === undefined) {

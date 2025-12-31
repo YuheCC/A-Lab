@@ -8,8 +8,8 @@ import { getBatterySystemList, predictPerformance, requestLLMAnalysisStream, typ
 import { useAuthStore } from '@/models/useAuth';
 import streamSSE from '@/components/StreamSSE';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D.js';
-import './PredictionModule.css';
-import './PerformanceTooltip.css';
+import './PredictionModule.less';
+import './PerformanceTooltip.less';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 import CustomSelect from './CustomSelect';
 import { PricingContext } from '@/layouts/index';

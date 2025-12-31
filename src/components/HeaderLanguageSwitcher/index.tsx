@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import './HeaderLanguageSwitcher.css';
+import './HeaderLanguageSwitcher.less';
 
 const HeaderLanguageSwitcher = () => {
   const { i18n } = useTranslation();

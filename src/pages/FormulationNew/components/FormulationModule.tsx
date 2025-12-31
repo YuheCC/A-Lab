@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { runMDSimulation, MDRunParams } from '@/services/formulation/md';
 import ResultTip from '@/components/ResultTip';
-import './FormulationModule.css';
+import './FormulationModule.less';
 import { useNavigate } from '@umijs/max';
 import { formatIonDisplay } from '../utils';
 import { PricingContext } from '@/layouts/index';

@@ -1,3 +1,5 @@
+@import '@/styles/variables.less';
+
 // 导入公共模型详情页面样式
 @import "@/styles/model-detail-page.less";
 
@@ -26,7 +28,7 @@
   }
 
   &:disabled {
-    background-color: #9ca3af;
+    background-color: @color-gray-400;
     cursor: not-allowed;
     opacity: 0.6;
   }
@@ -67,13 +69,13 @@
 
   .view-detail-btn {
     color: #000;
-    border-color: #e5e7eb;
+    border-color: @color-gray-200;
     text-transform: none;
     font-weight: 500;
     
     &:hover {
-      background-color: #f9fafb;
-      border-color: #d1d5db;
+      background-color: @color-gray-50;
+      border-color: @color-gray-300;
     }
   }
 }
@@ -152,17 +154,17 @@
       .metric-box {
         padding: 20px;
         border-radius: 8px;
-        border: 1px solid #e5e7eb;
+        border: 1px solid @color-gray-200;
 
         &.base-model {
-          background: #f9fafb;
+          background: @color-gray-50;
 
           .model-label {
-            color: #6b7280;
+            color: @color-gray-500;
           }
 
           .model-value {
-            color: #111827;
+            color: @color-gray-900;
           }
         }
 
@@ -171,7 +173,7 @@
           border-color: #86efac;
 
           .model-label {
-            color: #6b7280;
+            color: @color-gray-500;
           }
 
           .model-value {

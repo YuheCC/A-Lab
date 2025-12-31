@@ -1,10 +1,12 @@
+@import '@/styles/variables.less';
+
 // 使用 .manufacturing-container 作为父级选择器,提高样式优先级,避免被覆盖
 .manufacturing-container .module-nav-sidebar {
   flex: 0 0 320px; // 固定宽度,不伸缩,避免页面切换时宽度抖动
   width: 320px;
   box-sizing: border-box; // 让 width 包含 padding 和 border，保证总宽度为 320px
-  background: #f9fafb;
-  border-right: 1px solid #e5e7eb;
+  background: @color-gray-50;
+  border-right: 1px solid @color-gray-200;
   padding: 24px 16px;
   min-height: calc(100vh - 64px);
 
@@ -19,7 +21,7 @@
       gap: 12px;
       padding: 16px;
       background: #ffffff;
-      border: 1px solid #e5e7eb;
+      border: 1px solid @color-gray-200;
       border-radius: 8px;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -30,7 +32,7 @@
         flex-shrink: 0;
         width: 20px;
         height: 20px;
-        color: #64748b;
+        color: @color-text-secondary;
         transition: color 0.3s ease;
       }
 
@@ -38,28 +40,28 @@
         flex: 1;
         font-size: 14px;
         font-weight: 500;
-        color: #1e293b;
+        color: @color-text-primary;
         line-height: 1.4;
         word-break: keep-all;
         white-space: normal;
       }
 
       &:hover {
-        border-color: #56B26A;
+        border-color: @color-accent;
         box-shadow: 0 2px 8px rgba(86, 178, 106, 0.1);
 
         .nav-icon {
-          color: #56B26A;
+          color: @color-accent;
         }
       }
 
       &.active {
         background: #f0fdf4;
-        border-color: #56B26A;
+        border-color: @color-accent;
         box-shadow: 0 2px 8px rgba(86, 178, 106, 0.15);
 
         .nav-icon {
-          color: #56B26A;
+          color: @color-accent;
         }
 
         .nav-text {
@@ -97,7 +99,7 @@
     min-height: auto;
     padding: 16px;
     border-right: none;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid @color-gray-200;
 
     .module-navigation {
       flex-direction: row;

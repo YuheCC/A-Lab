@@ -1,0 +1,377 @@
+@import '@/styles/variables.less';
+
+.introduction-new-container {
+  padding: 0 30px;
+  margin: 0 auto;
+  max-width: 1200px;
+  animation: fadeInPanel 0.3s ease-out;
+}
+
+@keyframes fadeInPanel {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Function Introduction Section */
+.function-intro-section {
+  padding: 0 0 10px 0;
+}
+
+.content-section {
+  padding: 40px 0px 10px 0px;
+}
+
+.section-title {
+  font-size: 28px;
+  font-weight: 400;
+  color: @color-text-primary;
+  margin: 0 0 24px 0;
+  line-height: 1.2;
+  position: relative;
+  padding-bottom: 16px;
+}
+
+.group-title {
+  font-size: 24px;
+}
+
+.section-description {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #475569;
+  margin: 0 0 32px 0;
+  max-width: 100%;
+}
+
+.content-description {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #475569;
+  margin: 0 0 20px 0;
+  max-width: 100%;
+}
+
+.content-description:last-child {
+  margin-bottom: 0;
+}
+
+/* Content Layout */
+.content-layout {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.content-text {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Image Sections */
+.content-image-section {
+  text-align: center;
+  margin: 32px 0 0 0;
+}
+
+.content-layout .content-image-section {
+  flex: 1;
+  margin: 0;
+  max-width: 500px;
+}
+
+.content-image {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.image-caption {
+  font-size: 14px;
+  color: @color-text-secondary;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-top: 12px;
+}
+
+/* Properties Section */
+.properties-table-container {
+  margin: 32px auto;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.properties-note {
+  margin-top: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: @color-gray-50;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 16px 24px;
+}
+
+.note-text {
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.6;
+  margin: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.contact-team-button {
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.contact-team-button:hover {
+  background: @color-gray-700;
+}
+
+/* Group Header */
+.group-header {
+  margin-bottom: 60px;
+}
+
+.group-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: @color-text-secondary;
+  letter-spacing: 1px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* Property Items */
+.property-item {
+  display: grid;
+  grid-template-columns: 60px 240px 1fr;
+  gap: 32px;
+  margin-bottom: 32px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid @color-gray-200;
+  align-items: start;
+}
+
+.property-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.property-number {
+  font-size: 20px;
+  font-weight: 300;
+  color: #94a3b8;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.property-content {
+  display: contents;
+}
+
+.property-title {
+  font-size: 20px;
+  font-weight: 400;
+  color: @color-text-primary;
+  margin: 0;
+  line-height: 1.3;
+  padding-top: 2px;
+}
+
+.property-description {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #475569;
+  margin: 0;
+}
+
+/* Property Description Wrapper for nested content */
+.property-description-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.property-description-wrapper .property-description {
+  margin-bottom: 24px;
+}
+
+/* Cluster Types */
+.cluster-type {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  align-items: flex-start;
+}
+
+.cluster-type:last-of-type {
+  margin-bottom: 32px;
+}
+
+.cluster-badge {
+  background: @color-gray-100;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 4px;
+  min-width: 60px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.cluster-details {
+  flex: 1;
+}
+
+.cluster-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: @color-text-primary;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+.cluster-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: @color-text-secondary;
+  margin: 0;
+}
+
+/* Cluster Illustration */
+.cluster-illustration {
+  text-align: center;
+}
+
+.cluster-image {
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.cluster-summary {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #475569;
+  margin: 24px 0 0 0;
+}
+
+/* Property Image Section */
+.property-image-section {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.property-image {
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.image-description {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #475569;
+  margin: 16px 0 0 0;
+  text-align: left;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .function-intro-section,
+  .content-section {
+    padding: 24px 0;
+    margin-bottom: 32px;
+  }
+
+  .section-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .section-description,
+  .content-description {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .content-layout {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .content-image {
+    max-width: 100%;
+  }
+
+  .image-caption {
+    font-size: 13px;
+  }
+
+  .properties-note {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 20px;
+  }
+
+  .contact-team-button {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .function-intro-section,
+  .content-section {
+    padding: 20px 0;
+  }
+
+  .section-title {
+    font-size: 22px;
+    margin-bottom: 16px;
+  }
+
+  .section-description,
+  .content-description {
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+
+  .content-layout {
+    gap: 20px;
+  }
+
+  .image-caption {
+    font-size: 12px;
+  }
+
+  .properties-note {
+    padding: 14px 16px;
+  }
+}
