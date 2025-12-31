@@ -222,10 +222,12 @@ const FullNavLayoutInner = () => {
           }}
         >
           <FavoriteContext.Provider value={{ moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites }}>
-              <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100%' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
                 <Header />
                 <ErrorBoundary>
-                  <div className={`${getMainContainerClassName()} ${language}-page`}>
+                  <div
+                    className={`${getMainContainerClassName()} ${language}-page`}
+                  >
                       <Outlet />
                   </div>
                 </ErrorBoundary>

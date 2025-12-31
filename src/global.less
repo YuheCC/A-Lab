@@ -143,7 +143,7 @@
   flex: 1;
   min-height: 0; /* Prevent flex item from growing beyond parent */
   background-color: @color-gray-100;
-  overflow: hidden; /* Prevent scrolling issues */
+  overflow: auto; /* 允许垂直和横向滚动 */
   position: relative;
 }
 
@@ -1252,15 +1252,23 @@
   background-color: #0052a3;
 }
 
-.chat-container.main-container, 
-.predict-container.main-container, 
-.formulation-container.main-container, 
+.chat-container.main-container,
+.predict-container.main-container,
+.formulation-container.main-container,
 .formulation-create-container.main-container,
 .manufacturing-container.main-container {
   margin: 0;
   padding: 0;
-  min-height: calc(100vh - 116px);
-  height: auto;
+  min-height: calc(100vh - 64px); /* 最小高度 = 视口 - Header */
+  height: calc(100vh - 64px); /* 固定高度，确保占满屏幕 */
+  overflow: auto; /* 允许垂直和横向滚动 */
+}
+
+.formulation-container.main-container,
+.predict-container.main-container,
+.formulation-create-container.main-container,
+.manufacturing-container.main-container {
+  background-color: #ffffff;
 }
 
 /* ==================== 跨页面共享样式 ==================== */

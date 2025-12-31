@@ -6,14 +6,15 @@
     height: 100vh;
     overflow: hidden;
   }
-  
+
   .main-container {
-    flex: 1;
+    flex: 1 1 0%;
     overflow: auto;
     display: flex;
     flex-direction: column;
+    min-height: 0;
   }
-  
+
   .App-header, .navbar {
     flex-shrink: 0;
   }
@@ -96,7 +97,9 @@
     height: 64px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Softer shadow */
     border-bottom: 1px solid @color-gray-200; /* Subtle border */
-    position: relative;
+    position: sticky; /* 改为 sticky，滚动时固定在顶部 */
+    top: 0;
+    flex-shrink: 0; /* 防止被压缩 */
     z-index: 1000;
   }
   .logo-container {
