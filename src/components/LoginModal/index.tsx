@@ -5,6 +5,8 @@ import { X } from 'lucide-react';
 import { useAuthStore } from "@/models/useAuth";
 import './LoginModal.less';
 import { PricingContext } from "@/layouts";
+import { ReactComponent as EyeIcon } from '@/assets/svg/eye.svg';
+import { ReactComponent as EyeOffIcon } from '@/assets/svg/eyeOff.svg';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -19,6 +21,7 @@ const LoginModal = ({ isOpen, onClose, redirectPath, onLogin }: LoginModalProps)
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   
   const navigate = useNavigate();
   const { isLoading, login } = useAuthStore();
@@ -203,15 +206,26 @@ const LoginModal = ({ isOpen, onClose, redirectPath, onLogin }: LoginModalProps)
 
             <div className="login-modal-form-group">
               <label htmlFor="password">{t('auth.form.password')}</label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={t('auth.form.password')}
-                required
-                disabled={isLoading}
-              />
+              <div className="login-modal-password-wrapper">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder={t('auth.form.password')}
+                  required
+                  disabled={isLoading}
+                />
+                <button
+                  type="button"
+                  className="login-modal-password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "隐藏密码" : "显示密码"}
+                  disabled={isLoading}
+                >
+                  {showPassword ? <EyeIcon /> : <EyeOffIcon />}
+                </button>
+              </div>
             </div>
 
             <div className="login-modal-form-group login-modal-terms-checkbox">

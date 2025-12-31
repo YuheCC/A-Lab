@@ -3,6 +3,8 @@ import { useNavigate, useSearchParams } from "umi";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/models/useAuth";
 import './Login.less';
+import { ReactComponent as EyeIcon } from '@/assets/svg/eye.svg';
+import { ReactComponent as EyeOffIcon } from '@/assets/svg/eyeOff.svg';
 
 // Login component
 const AuthPage = () => {
@@ -11,6 +13,7 @@ const AuthPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   
   const navigate = useNavigate();
   const { isLoading, login } = useAuthStore();
@@ -82,14 +85,24 @@ const AuthPage = () => {
 
           <div className="form-group">
             <label htmlFor="password">{t('auth.form.password')}</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder={t('auth.form.password')}
-              required
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={t('auth.form.password')}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "隐藏密码" : "显示密码"}
+              >
+                {showPassword ? <EyeIcon /> : <EyeOffIcon />}
+              </button>
+            </div>
           </div>
 
           <div className="form-group terms-checkbox">

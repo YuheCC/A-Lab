@@ -156,6 +156,52 @@
   opacity: 0.7;
 }
 
+/* Password Input Wrapper */
+.login-modal-password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.login-modal-password-wrapper input {
+  padding-right: 40px;
+}
+
+.login-modal-password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 0;
+  color: #6c757d;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-modal-password-toggle:hover:not(:disabled) {
+  color: @color-accent;
+}
+
+.login-modal-password-toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.login-modal-password-toggle:focus {
+  outline: none;
+}
+
+.login-modal-password-toggle svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
 /* Terms Checkbox */
 .login-modal-terms-checkbox {
   margin-bottom: 20px;
