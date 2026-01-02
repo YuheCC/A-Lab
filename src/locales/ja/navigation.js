@@ -9,6 +9,8 @@ export default {
     favorites: "お気に入り",
     predict: "予測",
     design: "デザイン",
+    electrolyte: "電解質",
+    electrode: "電極",
     about: "概要",
     formulation: "配方",
     manufacturing: "生産検査",

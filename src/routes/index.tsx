@@ -56,23 +56,31 @@ export default  [
     },
     {
         path: '/design',
-        component: "Design"
+        redirect: '/design/electrolyte'
     },
     {
-        path: '/design/create',
-        component: "Design/create"
+        path: '/design/electrolyte',
+        component: "Design/Electrolyte"
     },
     {
-        path: '/design/record',
-        component: "Design/record"
+        path: '/design/electrolyte/create',
+        component: "Design/Electrolyte/create"
     },
     {
-        path: '/design/model-detail',
-        component: "Design/model-detail"
+        path: '/design/electrolyte/record',
+        component: "Design/Electrolyte/record"
     },
     {
-        path: '/design/train',
-        component: "Design/train"
+        path: '/design/electrolyte/model-detail',
+        component: "Design/Electrolyte/model-detail"
+    },
+    {
+        path: '/design/electrolyte/train',
+        component: "Design/Electrolyte/train"
+    },
+    {
+        path: '/design/electrode',
+        component: "Design/Electrode"
     },
     {
         path: "/formulate",

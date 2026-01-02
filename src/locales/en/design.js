@@ -305,5 +305,40 @@ export default {
         modelSelect: "Model Select",
         noModel: "No model information",
         weightPercentage: "Weight Percentage"
+    },
+    // Electrode Module
+    electrode: {
+        title: "Impact of electrode on cell performances",
+        subtitle: "Predict impact of electrode materials on cell performance metrics (cycle life, coulombic efficiency, rate performance) with an AI model trained on SES internal experimental data",
+        features: {
+            resultPrediction: {
+                title: "Result Prediction",
+                description: "Predict cell performance"
+            },
+            trendAnalysis: {
+                title: "Trend Analysis",
+                description: "Predict parameter trends"
+            },
+            optimize: {
+                title: "Optimize",
+                description: "Optimize electrode parameters"
+            },
+            train: {
+                title: "Train",
+                description: "Train custom model"
+            }
+        },
+        tabs: {
+            introduction: "Introduction",
+            records: "Records",
+            models: "Models"
+        },
+        introduction: {
+            overview: "The electrode module includes four main functions:",
+            function1: "1. Result Prediction: Predict battery performance based on electrode material selection and parameter settings",
+            function2: "2. Trend Analysis: Preset electrode formulation information, set one or more parameters as variables, and predict how battery performance changes as these parameters vary",
+            function3: "3. Optimize: By defining target battery performance metrics, reverse-engineer and recommend appropriate electrode material selections and parameters",
+            function4: "4. Train: Enable users to train custom models"
+        }
     }
 };

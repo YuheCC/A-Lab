@@ -334,15 +334,15 @@ const DesignPage: React.FC<DesignPageProps> = () => {
   }, []);
 
   const handleNewDesign = () => {
-    window.open('/design/create', '_blank');
+    window.open('/design/electrolyte/create', '_blank');
   };
 
   const handleTrain = () => {
-    navigate('/design/train');
+    navigate('/design/electrolyte/train');
   };
 
   const handleViewDetails = (id: string) => {
-    navigate(`/design/record?id=${id}`);
+    navigate(`/design/electrolyte/record?id=${id}`);
   };
 
   const handleDeleteRecord = async (id: string) => {
@@ -729,7 +729,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                             ) : (
                               <a
                                 className="model-name-link"
-                                onClick={() => navigate(`/design/model-detail?id=${model.id}`)}
+                                onClick={() => navigate(`/design/electrolyte/model-detail?id=${model.id}`)}
                               >
                                 {model.model_name}
                               </a>

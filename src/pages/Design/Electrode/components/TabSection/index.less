@@ -1,0 +1,40 @@
+@import '@/styles/variables.less';
+
+.tab-section {
+  &__header {
+    display: flex;
+    gap: @spacing-xl;
+    border-bottom: 1px solid @color-border;
+  }
+
+  &__button {
+    padding: @spacing-sm 0;
+    font-size: @font-size-base;
+    color: @color-text-secondary;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: @transition-fast;
+    font-weight: @font-weight-normal;
+
+    &.active {
+      color: @color-accent;
+      border-bottom-color: @color-accent;
+    }
+
+    &.disabled {
+      color: @color-text-muted;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    &:not(.disabled):hover {
+      color: @color-accent;
+    }
+  }
+
+  &__content {
+    padding: @spacing-xl 0;
+  }
+}

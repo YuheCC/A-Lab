@@ -305,5 +305,40 @@ export default {
         modelSelect: "모델 선택",
         noModel: "모델 정보 없음",
         weightPercentage: "중량 백분율"
+    },
+    // Electrode Module
+    electrode: {
+        title: "전극이 배터리 성능에 미치는 영향",
+        subtitle: "SES 내부 실험 데이터로 학습한 AI 모델을 통해 전극 재료가 배터리 성능 지표(사이클 수명, 쿨롱 효율, 레이트 성능)에 미치는 영향 예측",
+        features: {
+            resultPrediction: {
+                title: "결과 예측",
+                description: "배터리 성능 예측"
+            },
+            trendAnalysis: {
+                title: "트렌드 분석",
+                description: "매개변수 트렌드 예측"
+            },
+            optimize: {
+                title: "최적화",
+                description: "전극 매개변수 최적화"
+            },
+            train: {
+                title: "학습",
+                description: "사용자 정의 모델 학습"
+            }
+        },
+        tabs: {
+            introduction: "소개",
+            records: "기록",
+            models: "모델"
+        },
+        introduction: {
+            overview: "전극 모듈에는 네 가지 주요 기능이 포함되어 있습니다:",
+            function1: "1. 결과 예측: 전극 재료 선택 및 매개변수 설정을 기반으로 배터리 성능 예측",
+            function2: "2. 트렌드 분석: 전극 배합 정보를 사전 설정하고 하나 이상의 매개변수를 변수로 설정하여 이러한 매개변수 변화에 따른 배터리 성능 변화 추세 예측",
+            function3: "3. 최적화: 목표 배터리 성능 지표를 정의하여 역으로 적절한 전극 재료 선택 및 매개변수 추천",
+            function4: "4. 학습: 사용자가 사용자 정의 모델을 학습할 수 있도록 함"
+        }
     }
 };

@@ -305,5 +305,40 @@ export default {
         modelSelect: "モデル選択",
         noModel: "モデル情報なし",
         weightPercentage: "重量パーセンテージ"
+    },
+    // Electrode Module
+    electrode: {
+        title: "電極が電池性能に与える影響",
+        subtitle: "SES内部実験データで学習したAIモデルで、電極材料が電池性能指標（サイクル寿命、クーロン効率、レート性能）に与える影響を予測",
+        features: {
+            resultPrediction: {
+                title: "結果予測",
+                description: "電池性能を予測"
+            },
+            trendAnalysis: {
+                title: "トレンド分析",
+                description: "パラメータトレンドを予測"
+            },
+            optimize: {
+                title: "最適化",
+                description: "電極パラメータを最適化"
+            },
+            train: {
+                title: "トレーニング",
+                description: "カスタムモデルをトレーニング"
+            }
+        },
+        tabs: {
+            introduction: "紹介",
+            records: "記録",
+            models: "モデル"
+        },
+        introduction: {
+            overview: "電極モジュールには4つの主要機能があります：",
+            function1: "1. 結果予測：電極材料の選択とパラメータ設定に基づいて電池性能を予測",
+            function2: "2. トレンド分析：電極配合情報を事前設定し、1つ以上のパラメータを変数として設定し、これらのパラメータの変化に伴う電池性能の変化傾向を予測",
+            function3: "3. 最適化：目標とする電池性能指標を定義することで、逆算して適切な電極材料の選択とパラメータを推奨",
+            function4: "4. トレーニング：ユーザーがカスタムモデルをトレーニングできるようにする"
+        }
     }
 };

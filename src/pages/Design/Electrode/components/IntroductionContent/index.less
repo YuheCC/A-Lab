@@ -1,0 +1,27 @@
+@import '@/styles/variables.less';
+
+.introduction-content {
+  background: white;
+  padding: @spacing-xl;
+  border-radius: @radius-lg;
+
+  &__title {
+    font-size: @font-size-md;
+    color: @color-text-primary;
+    margin-bottom: @spacing-xl;
+    font-weight: @font-weight-normal;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: @spacing-xl;
+  }
+
+  &__item {
+    font-size: @font-size-md;
+    color: @color-text-primary;
+    line-height: @line-height-relaxed;
+    margin: 0;
+  }
+}

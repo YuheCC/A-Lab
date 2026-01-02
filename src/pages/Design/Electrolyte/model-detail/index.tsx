@@ -78,13 +78,13 @@ const DesignModelDetailPage: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate('/design?tab=models');
+    navigate('/design/electrolyte?tab=models');
   };
 
   const handleViewRecord = (recordId: string) => {
     // Remove 'DS-' prefix if present
     const id = recordId.toString().replace('DS-', '');
-    navigate(`/design/record?id=${id}`);
+    navigate(`/design/electrolyte/record?id=${id}`);
   };
 
   const handleOnlineModel = async () => {

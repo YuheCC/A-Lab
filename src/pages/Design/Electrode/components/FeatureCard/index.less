@@ -1,0 +1,45 @@
+@import '@/styles/variables.less';
+
+.feature-card {
+  background: white;
+  border: 1px solid @color-border;
+  border-radius: @radius-lg;
+  padding: @spacing-lg;
+  cursor: pointer;
+  transition: @transition-fast;
+  display: flex;
+  gap: @spacing-md;
+
+  &:hover {
+    box-shadow: @shadow-md;
+  }
+
+  &__icon-wrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: @radius-lg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__title {
+    font-size: @font-size-base;
+    color: @color-text-primary;
+    font-weight: @font-weight-normal;
+  }
+
+  &__description {
+    font-size: @font-size-sm;
+    color: @color-text-secondary;
+    line-height: @line-height-normal;
+  }
+}

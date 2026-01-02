@@ -1,0 +1,41 @@
+@import '@/styles/variables.less';
+
+#electrode-page {
+  padding: @spacing-xl @spacing-2xl;
+  min-height: calc(100vh - 116px);
+}
+
+.electrode-page {
+  &__header {
+    margin-bottom: @spacing-2xl;
+  }
+
+  &__title {
+    font-size: @font-size-xl;
+    font-weight: @font-weight-bold;
+    color: @color-text-primary;
+    margin: 0 0 @spacing-md 0;
+  }
+
+  &__subtitle {
+    font-size: @font-size-base;
+    color: @color-text-secondary;
+    line-height: @line-height-normal;
+    margin: 0;
+  }
+
+  &__feature-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: @spacing-lg;
+    margin-bottom: @spacing-2xl;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}

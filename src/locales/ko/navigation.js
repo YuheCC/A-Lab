@@ -9,6 +9,8 @@ export default {
     favorites: "즐겨찾기",
     predict: "예측",
     design: "디자인",
+    electrolyte: "전해질",
+    electrode: "전극",
     formulation: "조합",
     manufacturing: "생산 검사",
     about: "소개",

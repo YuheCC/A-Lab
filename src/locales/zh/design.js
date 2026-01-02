@@ -305,5 +305,40 @@ export default {
         modelSelect: "模型选择",
         noModel: "无模型信息",
         weightPercentage: "重量百分比"
+    },
+    // Electrode Module
+    electrode: {
+        title: "电极对电池性能的影响",
+        subtitle: "通过在SES内部实验数据上训练的AI模型，预测电极材料对电池性能指标（循环寿命、库仑效率、倍率性能）的影响",
+        features: {
+            resultPrediction: {
+                title: "结果预测",
+                description: "预测电池性能"
+            },
+            trendAnalysis: {
+                title: "趋势分析",
+                description: "预测参数趋势"
+            },
+            optimize: {
+                title: "优化",
+                description: "优化电极参数"
+            },
+            train: {
+                title: "训练",
+                description: "训练自定义模型"
+            }
+        },
+        tabs: {
+            introduction: "简介",
+            records: "记录",
+            models: "模型"
+        },
+        introduction: {
+            overview: "电极模块包含四个主要功能：",
+            function1: "1. 结果预测：基于电极材料选择和参数设置预测电池性能",
+            function2: "2. 趋势分析：预设电极配方信息，将一个或多个参数设为变量，预测随这些参数变化电池性能的变化趋势",
+            function3: "3. 优化：通过定义目标电池性能指标，反向推导并推荐合适的电极材料选择和参数",
+            function4: "4. 训练：允许用户训练自定义模型"
+        }
     }
 };
