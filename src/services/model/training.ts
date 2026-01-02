@@ -331,11 +331,6 @@ export const trainModel = async (params: TrainModelParams): Promise<TrainModelRe
     // Don't set Content-Type, request.ts will handle it automatically
   }) as RequestResponse<TrainModelResponse>;
 
-  if (response.ok === false) {
-    const errorData: any = response.data;
-    throw new Error(errorData?.message || errorData?.detail || JSON.stringify(response.data) || 'Train model failed');
-  }
-
   return response.data;
 };
 
@@ -392,11 +387,6 @@ export const deployModel = async (params: DeployModelParams): Promise<DeployMode
     },
   }) as RequestResponse<DeployModelResponse>;
 
-  if (response.ok === false) {
-    const errorData: any = response.data;
-    throw new Error(errorData?.message || errorData?.detail || JSON.stringify(response.data) || 'Deploy model failed');
-  }
-
   return response.data;
 };
 
@@ -414,11 +404,6 @@ export const undeployModel = async (params: UndeployModelParams): Promise<Undepl
     },
   }) as RequestResponse<UndeployModelResponse>;
 
-  if (response.ok === false) {
-    const errorData: any = response.data;
-    throw new Error(errorData?.message || errorData?.detail || JSON.stringify(response.data) || 'Undeploy model failed');
-  }
-
   return response.data;
 };
 
@@ -435,11 +420,6 @@ export const removeModel = async (params: RemoveModelParams): Promise<RemoveMode
       namespace: params.namespace,
     },
   }) as RequestResponse<RemoveModelResponse>;
-
-  if (response.ok === false) {
-    const errorData: any = response.data;
-    throw new Error(errorData?.message || errorData?.detail || JSON.stringify(response.data) || 'Remove model failed');
-  }
 
   return response.data;
 };
@@ -460,11 +440,6 @@ export const modelPredict = async (params: ModelPredictParams): Promise<ModelPre
     data: formData,
     // Don't set Content-Type, request.ts will handle it automatically
   }) as RequestResponse<ModelPredictResponse[]>;
-
-  if (response.ok === false) {
-    const errorData: any = response.data;
-    throw new Error(errorData?.message || errorData?.detail || JSON.stringify(response.data) || 'Model prediction failed');
-  }
 
   return response.data;
 };

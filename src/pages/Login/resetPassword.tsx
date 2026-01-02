@@ -57,18 +57,13 @@ const ResetPasswordPage = () => {
     setLoading(true);
 
     try {
-      const response: any = await resetPasswordByToken({
+      await resetPasswordByToken({
         token: token,
         password: newPassword,
       });
 
-      if (response.ok === false) {
-        setError(response?.data?.detail || t('auth.resetPassword.messages.defaultError'));
-        return;
-      }
-
       setSuccess(t('auth.resetPassword.messages.defaultSuccess'));
-      
+
       // Clear form
       setNewPassword('');
       setConfirmPassword('');
@@ -80,7 +75,7 @@ const ResetPasswordPage = () => {
 
     } catch (err: any) {
       console.error('Reset password error:', err);
-      setError(err.detail || t('auth.resetPassword.messages.defaultError'));
+      setError(err.msg || t('auth.resetPassword.messages.defaultError'));
     } finally {
       setLoading(false);
     }

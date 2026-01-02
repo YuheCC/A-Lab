@@ -180,20 +180,6 @@ class MoleculeService {
 
       const { default: request } = await import('@/services/request');
       const resp = await request(`${baseUrl}?${params.toString()}`, { method: 'GET' });
-      // Check response status using axios format
-      if ((resp as any).ok === false || resp.status >= 400) {
-        const errorData = resp.data;
-        // 根据错误内容判断是否为不合法的 SMILES
-        if (errorData?.message && typeof errorData.message === 'string') {
-          const errorMsg = errorData.message.toLowerCase();
-          console.log(errorMsg);
-          if (errorMsg.includes('invalid')) {
-            throw new Error('Invalid SMILES string');
-          }
-        }
-        throw new Error(errorData?.detail || errorData?.message || `HTTP ${resp.status}`);
-      }
-
       const data = resp.data;
       console.log(data);
       // 检查响应状态和错误信息
@@ -218,13 +204,14 @@ class MoleculeService {
       const moleculeData = data.molecule_details[0];
       return this.mapMoleculeDetailsToMoleculeDetails(moleculeData, name);
       
-    } catch (err) {
-      // 如果是无效的 SMILES 错误，直接抛出而不使用 mock 数据
-      if (err instanceof Error && err.message === 'Invalid SMILES string') {
-        throw err;
+    } catch (err: any) {
+      // 根据错误信息判断是否为不合法的 SMILES
+      const errorMsg = (err.msg || err.message || '').toLowerCase();
+      if (errorMsg.includes('invalid')) {
+        throw new Error('Invalid SMILES string');
       }
-      
-      // 其他错误使用 mock fallback - 使用与实际API结构相似的mock数据
+
+      // 其他错误直接抛出
       throw err;
     }
   }
@@ -241,7 +228,6 @@ class MoleculeService {
         method: 'GET',
         params: { name, type },
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP ${resp.status}`);
       return (resp.data?.items || []) as SimilarMolecule[];
     } catch (err) {
       // mock fallback (same content as original hardcoded list)

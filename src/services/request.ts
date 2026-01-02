@@ -39,7 +39,10 @@ axiosInstance.interceptors.request.use((config) => {
 axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
-        if(error.response?.status === 401 && window.location.pathname !== '/login') {
+        const status = error.response?.status;
+
+        // 401 处理（未授权）
+        if (status === 401 && window.location.pathname !== '/login') {
             localStorage.removeItem('token');
             localStorage.removeItem('username');
             localStorage.removeItem('permissions');
@@ -56,18 +59,32 @@ axiosInstance.interceptors.response.use(
                 window.location.href = '/login?redirect=' + encodeURIComponent(current);
             }
         }
-        
+
         // 402 处理 - 弹出 pricing 浮层（GET 请求除外）
         const method = (error.config?.method || 'GET').toUpperCase();
-        if(error.response?.status === 402 && method !== 'GET') {
-            const permission = error.response.data?.required_permission || null;
+        if (status === 402 && method !== 'GET') {
+            const permission = error.response?.data?.required_permission || null;
             triggerPricingModal(permission);
         }
-        
-        return Promise.resolve({
-            ok: false,
-            ...error.response,
-        });
+
+        // 统一错误信息提取，优先级：detail > message > msg > error > 默认消息
+        const errorData = error.response?.data;
+        const msg =
+            errorData?.detail ||
+            errorData?.message ||
+            errorData?.msg ||
+            errorData?.error ||
+            error.message ||
+            'Request failed';
+
+        // 创建标准化错误对象
+        const standardError = new Error(msg);
+        (standardError as any).msg = msg;
+        (standardError as any).status = status;
+        (standardError as any).response = error.response;
+        (standardError as any).data = errorData;
+
+        return Promise.reject(standardError);
     }
 );
 

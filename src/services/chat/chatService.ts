@@ -136,7 +136,6 @@ export class ChatService {
         method: 'POST',
         data: { message, mode, chatId },
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       const data = resp.data;
       return {
         content: data.content,
@@ -160,7 +159,6 @@ export class ChatService {
         method: 'POST',
         data: { messageId },
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       const data = resp.data;
       return {
         content: data.content,
@@ -242,7 +240,6 @@ export class ChatService {
         },
         method: 'GET',
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
 
       const list = Array.isArray(resp.data) ? resp.data : [];
       return list
@@ -273,7 +270,6 @@ export class ChatService {
         },
         method: 'GET',
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       console.log('resp.data', resp.data);
       return (resp.data || [])?.map((item: any) => ({
         ...item,
@@ -313,7 +309,6 @@ export class ChatService {
           id: chatId,
         },
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       const data = resp.data;
       
       // 映射后端消息数据到前端格式
@@ -337,7 +332,6 @@ export class ChatService {
         method: 'POST',
         data: { chat_name: title },
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       return resp.data;
     } catch (error) {
       console.error('Failed to create chat:', error);
@@ -351,14 +345,13 @@ export class ChatService {
       const url = this.buildEndpoint('messageNew');
       const resp = await request(url, {
         method: 'POST',
-        data: { 
-            chat_id: chatId, 
+        data: {
+            chat_id: chatId,
             model,
             content: message,
             role: 'user',
         },
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       return resp.data;
     } catch (error) {
       console.error('Failed to new message:', error);
@@ -372,15 +365,14 @@ export class ChatService {
       const url = this.buildEndpoint('messageUpdate');
       const resp = await request(url, {
         method: 'POST',
-        data: { 
+        data: {
             id: messageId,
-            chat_id: chatId, 
+            chat_id: chatId,
             model,
             content: message,
             role: 'user',
         },
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       return resp.data;
     } catch (error) {
       console.error('Failed to update message:', error);
@@ -396,10 +388,10 @@ export class ChatService {
       const url = this.buildEndpoint('llmAsk');
       const resp = await request(url, {
         method: 'POST',
-        data: { 
-          chat_id: chatId, 
+        data: {
+          chat_id: chatId,
           answer_id: answerId,
-          messages, 
+          messages,
           session_id: sessionId,
           model,
           ragEnabled,
@@ -411,7 +403,6 @@ export class ChatService {
           llm_compute_power: extraOptions?.llmComputePower,
         },
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       return resp.data;
     } catch (error) {
       console.error('Failed to trigger message as user:', error);
@@ -449,7 +440,6 @@ export class ChatService {
         method: 'POST',
         data: payload,
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       return resp.data;
     } catch (error) {
       console.error('Failed to trigger message as deep space:', error);
@@ -487,7 +477,6 @@ export class ChatService {
         method: 'POST',
         data: payload,
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       return resp.data;
     } catch (error) {
       console.error('Failed to trigger message as claritai:', error);
@@ -528,13 +517,12 @@ export class ChatService {
       const url = this.buildEndpoint('list');
       const resp = await request(url, {
         method: 'GET',
-        params: { 
-          search_text: query, 
+        params: {
+          search_text: query,
           limit: 10,
           pinned: false,
         },
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       const list = resp.data || [];
       return (list || [])?.map((item: any) => ({
         ...item,

@@ -80,9 +80,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 });
                 return;
             }
-            if (response?.ok === false) {
-                throw new Error(response?.data?.detail || 'Failed to verify authentication');
-            }
             const data = response.data;
 
             localStorage.setItem('username', data.username);
@@ -154,10 +151,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             if (data.email) {
                 localStorage.setItem('email', data.email);
             }
-            return { success: response?.ok !== false, data: data, message: data.message || data.detail || "" };
-            
+            return { success: true, data: data, message: data.message || data.detail || "" };
+
         } catch (error) {
-            const errorMessage = (error as any)?.detail || 'Authentication failed';
+            const errorMessage = (error as any)?.msg || 'Authentication failed';
             set({ isLoading: false, error: errorMessage });
             return { success: false, error: errorMessage }
         }
@@ -195,10 +192,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 error: null,
             })
 
-            return { success: response?.ok !== false, data: data, message: data.message || data.detail || "" };
+            return { success: true, data: data, message: data.message || data.detail || "" };
 
         } catch (error) {
-            const errorMessage = (error as any)?.detail || 'Network error occurred';
+            const errorMessage = (error as any)?.msg || 'Network error occurred';
             set({
                 error: errorMessage,
                 isLoading: false
@@ -218,10 +215,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 error: null,
             })
 
-            return { success: response?.ok !== false, data: data, message: data.message || data.detail || "" };
+            return { success: true, data: data, message: data.message || data.detail || "" };
 
         } catch (error) {
-            const errorMessage = (error as any)?.detail || 'Network error occurred';
+            const errorMessage = (error as any)?.msg || 'Network error occurred';
             set({
                 error: errorMessage,
                 isLoading: false
@@ -241,10 +238,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 error: null,
             })
 
-            return { success: response?.ok !== false, data: data, message: data.message || data.detail || "" };
+            return { success: true, data: data, message: data.message || data.detail || "" };
 
         } catch (error) {
-            const errorMessage = (error as any)?.detail || 'Network error occurred';
+            const errorMessage = (error as any)?.msg || 'Network error occurred';
             set({
                 error: errorMessage,
                 isLoading: false
