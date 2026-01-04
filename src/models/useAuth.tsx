@@ -15,7 +15,7 @@ interface AuthState {
     userInfo: any | null;
     isAdvancedTier: boolean;
     organization_name: string | null;
-    login: (data: { username: string, password: string }) => Promise<{ success: boolean, error?: string | undefined, data?: any }>;
+    login: (data: { username: string, password: string }) => Promise<{ success: boolean, error?: string | undefined, message?: string, data?: any }>;
     register: (data: { username: string, email: string, first_name: string, last_name: string, organization_name: string, password: string }) => Promise<{ success: boolean, message?: any, error?: string, data?: any }>;
     verifyCode: (data: { verify_id: string, code: string }) => Promise<{ success: boolean, message?: any, error?: string, data?: any }>;
     verifyForgotPassword: (data: { verify_id: string, code: string }) => Promise<{ success: boolean, message?: any, error?: string, data?: any }>;
@@ -156,7 +156,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         } catch (error) {
             const errorMessage = (error as any)?.msg || 'Authentication failed';
             set({ isLoading: false, error: errorMessage });
-            return { success: false, error: errorMessage }
+            return { success: false, error: errorMessage, message: errorMessage }
         }
     },
 
@@ -200,7 +200,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 error: errorMessage,
                 isLoading: false
             });
-            return { success: false, error: errorMessage }
+            return { success: false, error: errorMessage, message: errorMessage }
         }
     },
 
@@ -223,7 +223,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 error: errorMessage,
                 isLoading: false
             });
-            return { success: false, error: errorMessage }
+            return { success: false, error: errorMessage, message: errorMessage }
         }
     },
 
@@ -246,7 +246,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 error: errorMessage,
                 isLoading: false
             });
-            return { success: false, error: errorMessage }
+            return { success: false, error: errorMessage, message: errorMessage }
         }
     },
 
