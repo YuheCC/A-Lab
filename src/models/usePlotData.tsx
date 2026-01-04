@@ -350,9 +350,6 @@ export const useAnionsPlotDataStore = create<AnionsPlotDataStore>((set) => ({
     data: [],
 
     fetchData: async () => {
-        console.log('fetchData anions');
-        console.log('anionsIsFetching', anionsIsFetching);
-        console.log('anionsFetchDataCompleted', anionsFetchDataCompleted);
         // 如果正在获取数据或已经完成，则跳过
         if (anionsIsFetching || anionsFetchDataCompleted) {
             return;
@@ -396,8 +393,6 @@ export const useAnionsPlotDataStore = create<AnionsPlotDataStore>((set) => ({
         }
     },
     fetchInitialData: async () => {
-        console.log('fetchInitialData anions');
-        console.log('anionsIsFetching', anionsIsFetching);
         // 如果正在获取数据，则跳过
         if (anionsIsFetching) {
             return;
