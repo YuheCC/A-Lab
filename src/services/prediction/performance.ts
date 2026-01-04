@@ -1,6 +1,7 @@
 import request from "@/services/request";
 import { urlConfig } from "@/services/config/urlConfig";
 import { getPerformanceEndpoint } from "./endpoints";
+import { sseRequest } from "@/services/sseRequest";
 
 // 电池系统相关接口
 export async function getBatterySystemList(params?: any) {
