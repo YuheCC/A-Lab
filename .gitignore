@@ -20,3 +20,5 @@ CLAUDE.md
 .npm-cache
 .DS_Store
 *.bak*
+.cursor/
+.claude/
