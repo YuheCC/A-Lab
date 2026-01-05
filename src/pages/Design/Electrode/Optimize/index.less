@@ -1,0 +1,238 @@
+@import '@/styles/variables.less';
+
+// 外层容器
+.electrode-optimize-container {
+  background: #ffffff;
+  min-height: calc(100vh - 66px);
+  padding: @spacing-xl;
+}
+
+// 标题和返回按钮区域
+.electrode-optimize-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.electrode-optimize-title {
+  font-size: @font-size-xl;
+  font-weight: @font-weight-semibold;
+  color: @color-text-primary;
+  margin: 0;
+}
+
+.electrode-optimize-back-btn {
+  background: none;
+  border: 1px solid @color-gray-200;
+  border-radius: @radius-md;
+  padding: @spacing-sm @spacing-lg;
+  font-size: @font-size-base;
+  font-weight: @font-weight-medium;
+  color: @color-gray-700;
+  cursor: pointer;
+  transition: @transition-fast;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    border-color: @color-accent;
+    color: @color-accent;
+  }
+}
+
+// 内容容器
+.electrode-optimize-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+// Section 区域
+.electrode-optimize-section {
+  margin-bottom: @spacing-2xl;
+}
+
+.electrode-optimize-section-title {
+  font-size: @font-size-lg;
+  font-weight: @font-weight-semibold;
+  color: @color-gray-800;
+  margin: 0 0 @spacing-xl 0;
+}
+
+// 表单容器（卡片样式）
+.electrode-optimize-form-container {
+  background: #ffffff;
+  border: 1px solid @color-gray-200;
+  border-radius: @radius-xl;
+  padding: @spacing-2xl;
+}
+
+.electrode-optimize-form-item {
+  margin-bottom: @spacing-xl;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.electrode-optimize-label {
+  display: block;
+  font-size: @font-size-base;
+  font-weight: @font-weight-medium;
+  color: @color-gray-700;
+  margin-bottom: @spacing-sm;
+}
+
+.electrode-optimize-select {
+  width: 100%;
+
+  :global {
+    .ant-select-selector {
+      height: 38px !important;
+      border-radius: @radius-md !important;
+      border-color: @color-gray-200 !important;
+      padding: 0 @spacing-md !important;
+      display: flex !important;
+      align-items: center !important;
+
+      .ant-select-selection-placeholder {
+        line-height: 38px !important;
+      }
+
+      .ant-select-selection-item {
+        line-height: 38px !important;
+      }
+    }
+
+    .ant-select-selector:hover {
+      border-color: @color-accent !important;
+    }
+
+    &.ant-select-focused .ant-select-selector {
+      border-color: @color-accent !important;
+      box-shadow: 0 0 0 3px rgba(86, 178, 106, 0.1) !important;
+    }
+  }
+}
+
+// 参数区域
+.electrode-optimize-parameters {
+  margin-top: @spacing-2xl;
+  display: flex;
+  flex-direction: column;
+  gap: @spacing-xl;
+}
+
+// Calculate 按钮
+.electrode-optimize-calculate-btn-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: @spacing-2xl;
+}
+
+.electrode-optimize-calculate-btn {
+  background-color: @color-primary !important;
+  height: 40px;
+  padding: 0 @spacing-2xl;
+  border-radius: @radius-lg !important;
+  border: none !important;
+  font-size: @font-size-base;
+  font-weight: @font-weight-medium;
+  transition: @transition-fast;
+
+  &:hover {
+    background-color: #111827 !important;
+  }
+
+  &:focus {
+    background-color: @color-primary !important;
+  }
+}
+
+// 表格样式
+.electrode-optimize-table {
+  :global {
+    .ant-table {
+      font-size: @font-size-base;
+
+      thead th {
+        background: @color-gray-50;
+        color: @color-gray-700;
+        font-weight: @font-weight-semibold;
+        padding: @spacing-md @spacing-lg;
+        border-bottom: 1px solid @color-gray-200;
+      }
+
+      tbody td {
+        padding: @spacing-lg;
+        border-bottom: 1px solid @color-gray-100;
+        color: @color-gray-800;
+      }
+
+      tbody tr:hover {
+        background: @color-gray-50;
+      }
+
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+    }
+  }
+
+  // Details 链接样式
+  .details-link {
+    color: @color-accent;
+    cursor: pointer;
+    font-weight: @font-weight-medium;
+    text-decoration: none;
+    transition: color @transition-fast;
+
+    &:hover {
+      color: darken(@color-accent, 10%);
+      text-decoration: underline;
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 1024px) {
+  .electrode-optimize-container {
+    padding: @spacing-lg;
+  }
+}
+
+@media (max-width: 768px) {
+  .electrode-optimize-form-container {
+    padding: @spacing-xl;
+  }
+
+  .electrode-optimize-table {
+    overflow-x: auto;
+
+    :global {
+      .ant-table {
+        min-width: 800px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .electrode-optimize-container {
+    padding: @spacing-md;
+  }
+
+  .electrode-optimize-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: @spacing-md;
+  }
+
+  .electrode-optimize-back-btn {
+    align-self: flex-end;
+  }
+}

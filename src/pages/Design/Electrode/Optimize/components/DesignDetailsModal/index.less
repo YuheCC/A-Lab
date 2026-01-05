@@ -1,0 +1,153 @@
+@import '@/styles/variables.less';
+
+.design-details-modal {
+  // Modal 整体样式
+  :global {
+    .ant-modal-content {
+      border-radius: @radius-xl;
+    }
+
+    .ant-modal-header {
+      border-bottom: 1px solid @color-gray-200;
+      padding: @spacing-lg @spacing-xl;
+
+      .ant-modal-title {
+        font-size: 18px;
+        font-weight: @font-weight-semibold;
+        color: @color-gray-800;
+      }
+    }
+
+    .ant-modal-body {
+      padding: @spacing-2xl @spacing-xl;
+    }
+
+    .ant-modal-close {
+      top: @spacing-lg;
+      right: @spacing-lg;
+    }
+  }
+
+  // 加载状态
+  .design-details-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+  }
+
+  // 内容区域
+  .design-details-content {
+    // 两列布局
+    .design-details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: @spacing-2xl;
+    }
+
+    // 单列样式
+    .design-details-column {
+      display: flex;
+      flex-direction: column;
+      gap: @spacing-lg;
+    }
+
+    // 子标题
+    .design-details-subtitle {
+      font-size: @font-size-md;
+      font-weight: @font-weight-semibold;
+      color: @color-gray-700;
+      margin: @spacing-lg 0 @spacing-sm 0;
+    }
+
+    // 参数组容器
+    .design-details-parameters {
+      display: flex;
+      flex-direction: column;
+      gap: @spacing-xs;
+      background: @color-gray-50;
+      padding: @spacing-lg;
+      border-radius: @radius-lg;
+
+      // 参数区域的输入框：水平布局（label 左，value 右）
+      .readonly-input-wrapper {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: @spacing-xl;
+        padding: @spacing-xs 0;
+
+        label {
+          font-size: @font-size-base;
+          font-weight: @font-weight-normal;
+          color: @color-gray-700;
+        }
+
+        :global {
+          .ant-input {
+            width: 140px;
+            background: #ffffff;
+            border: 1px solid @color-gray-200;
+            border-radius: @radius-md;
+            color: @color-gray-800;
+            font-size: @font-size-base;
+            padding: @spacing-sm @spacing-md;
+            cursor: not-allowed;
+            text-align: right;
+            font-weight: @font-weight-normal;
+
+            &:focus {
+              border-color: @color-gray-200;
+              box-shadow: none;
+            }
+
+            &:hover {
+              border-color: @color-gray-200;
+            }
+          }
+        }
+      }
+    }
+
+    // 顶部字段（Cell Design 等）：保持垂直布局
+    & > .readonly-input-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: @spacing-sm;
+
+      label {
+        font-size: @font-size-sm;
+        font-weight: @font-weight-medium;
+        color: @color-gray-700;
+      }
+
+      :global {
+        .ant-input {
+          background: @color-gray-50;
+          border: 1px solid @color-gray-200;
+          border-radius: @radius-md;
+          color: @color-gray-700;
+          font-size: @font-size-base;
+          padding: @spacing-sm @spacing-md;
+          cursor: not-allowed;
+
+          &:focus {
+            border-color: @color-gray-200;
+            box-shadow: none;
+          }
+
+          &:hover {
+            border-color: @color-gray-200;
+          }
+        }
+      }
+    }
+  }
+
+  // 响应式：平板及以下单列显示
+  @media (max-width: 768px) {
+    .design-details-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+}

@@ -87,6 +87,10 @@ export default  [
         component: "Design/Electrode/Predict"
     },
     {
+        path: '/design/electrode/optimize',
+        component: "Design/Electrode/Optimize"
+    },
+    {
         path: "/formulate",
         component: "FormulationNew"
     },

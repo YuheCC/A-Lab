@@ -23,6 +23,10 @@ const ElectrodePage: React.FC = () => {
     navigate('/design/electrode/predict');
   };
 
+  const handleNavigateToOptimize = () => {
+    navigate('/design/electrode/optimize');
+  };
+
   return (
     <div id="electrode-page">
       <div className="electrode-page__header">
@@ -53,6 +57,7 @@ const ElectrodePage: React.FC = () => {
           title={t('design.electrode.features.optimize.title')}
           description={t('design.electrode.features.optimize.description')}
           iconBgColor="#dcfce7"
+          onClick={handleNavigateToOptimize}
         />
         <FeatureCard
           icon={<img src={ICONS.train} alt="" style={{ width: 20, height: 20 }} />}

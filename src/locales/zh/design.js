@@ -371,6 +371,35 @@ export default {
             specificED: "比能量密度",
             jellyRollThickness: "卷芯厚度",
             volumetricED: "体积能量密度"
+        },
+        optimize: {
+            title: "逆向设计",
+            back: "返回",
+            designTargets: "设计目标",
+            cellDesign: "电池设计",
+            selectCellDesign: "选择电池设计",
+            anodeActiveMaterial: "负极活性材料",
+            cathodeActiveMaterial: "正极活性材料",
+            selectMaterial: "选择材料",
+            designCapacity: "设计容量",
+            specificEnergy: "比能量",
+            thickness: "厚度",
+            volumetricEnergyDensity: "体积能量密度",
+            calculate: "计算",
+            designRecommendations: "设计推荐",
+            rank: "排名",
+            actions: "操作",
+            details: "详情",
+            designDetails: "设计详情",
+            npRatio: "N/P 比",
+            cathodeParameters: "正极参数",
+            anodeParameters: "负极参数",
+            messages: {
+                fillAllFields: "请填写所有必填字段",
+                calculateSuccess: "推荐计算成功",
+                calculateError: "推荐计算失败",
+                loadDetailsError: "加载详情失败"
+            }
         }
     }
 };

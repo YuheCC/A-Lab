@@ -339,6 +339,35 @@ export default {
             function2: "2. トレンド分析：電極配合情報を事前設定し、1つ以上のパラメータを変数として設定し、これらのパラメータの変化に伴う電池性能の変化傾向を予測",
             function3: "3. 最適化：目標とする電池性能指標を定義することで、逆算して適切な電極材料の選択とパラメータを推奨",
             function4: "4. トレーニング：ユーザーがカスタムモデルをトレーニングできるようにする"
+        },
+        optimize: {
+            title: "逆設計",
+            back: "戻る",
+            designTargets: "設計目標",
+            cellDesign: "セル設計",
+            selectCellDesign: "セル設計を選択",
+            anodeActiveMaterial: "負極活物質",
+            cathodeActiveMaterial: "正極活物質",
+            selectMaterial: "材料を選択",
+            designCapacity: "設計容量",
+            specificEnergy: "比エネルギー",
+            thickness: "厚さ",
+            volumetricEnergyDensity: "体積エネルギー密度",
+            calculate: "計算",
+            designRecommendations: "設計推奨",
+            rank: "ランク",
+            actions: "操作",
+            details: "詳細",
+            designDetails: "設計詳細",
+            npRatio: "N/P 比",
+            cathodeParameters: "正極パラメータ",
+            anodeParameters: "負極パラメータ",
+            messages: {
+                fillAllFields: "すべての必須フィールドを入力してください",
+                calculateSuccess: "推奨が正常に計算されました",
+                calculateError: "推奨の計算に失敗しました",
+                loadDetailsError: "詳細の読み込みに失敗しました"
+            }
         }
     }
 };

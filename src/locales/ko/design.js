@@ -339,6 +339,35 @@ export default {
             function2: "2. 트렌드 분석: 전극 배합 정보를 사전 설정하고 하나 이상의 매개변수를 변수로 설정하여 이러한 매개변수 변화에 따른 배터리 성능 변화 추세 예측",
             function3: "3. 최적화: 목표 배터리 성능 지표를 정의하여 역으로 적절한 전극 재료 선택 및 매개변수 추천",
             function4: "4. 학습: 사용자가 사용자 정의 모델을 학습할 수 있도록 함"
+        },
+        optimize: {
+            title: "역설계",
+            back: "뒤로",
+            designTargets: "설계 목표",
+            cellDesign: "셀 설계",
+            selectCellDesign: "셀 설계 선택",
+            anodeActiveMaterial: "음극 활물질",
+            cathodeActiveMaterial: "양극 활물질",
+            selectMaterial: "재료 선택",
+            designCapacity: "설계 용량",
+            specificEnergy: "비에너지",
+            thickness: "두께",
+            volumetricEnergyDensity: "체적 에너지 밀도",
+            calculate: "계산",
+            designRecommendations: "설계 추천",
+            rank: "순위",
+            actions: "작업",
+            details: "세부정보",
+            designDetails: "설계 세부정보",
+            npRatio: "N/P 비율",
+            cathodeParameters: "양극 매개변수",
+            anodeParameters: "음극 매개변수",
+            messages: {
+                fillAllFields: "모든 필수 필드를 입력하세요",
+                calculateSuccess: "추천이 성공적으로 계산되었습니다",
+                calculateError: "추천 계산에 실패했습니다",
+                loadDetailsError: "세부정보 로드에 실패했습니다"
+            }
         }
     }
 };

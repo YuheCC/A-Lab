@@ -371,6 +371,35 @@ export default {
             specificED: "Specific Energy Density",
             jellyRollThickness: "Jelly Roll Thickness",
             volumetricED: "Volumetric Energy Density"
+        },
+        optimize: {
+            title: "Inverse Design",
+            back: "Back",
+            designTargets: "Design Targets",
+            cellDesign: "Cell Design",
+            selectCellDesign: "Select cell design",
+            anodeActiveMaterial: "Anode Active Material",
+            cathodeActiveMaterial: "Cathode Active Material",
+            selectMaterial: "Select material",
+            designCapacity: "Design Capacity",
+            specificEnergy: "Specific Energy",
+            thickness: "Thickness",
+            volumetricEnergyDensity: "Volumetric Energy Density",
+            calculate: "Calculate",
+            designRecommendations: "Design Recommendations",
+            rank: "Rank",
+            actions: "Actions",
+            details: "Details",
+            designDetails: "Design Details",
+            npRatio: "N/P Ratio",
+            cathodeParameters: "Cathode Parameters",
+            anodeParameters: "Anode Parameters",
+            messages: {
+                fillAllFields: "Please fill in all required fields",
+                calculateSuccess: "Recommendations calculated successfully",
+                calculateError: "Failed to calculate recommendations",
+                loadDetailsError: "Failed to load design details"
+            }
         }
     }
 };
