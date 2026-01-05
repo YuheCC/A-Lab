@@ -1,0 +1,30 @@
+@import '@/styles/variables.less';
+
+.result-display {
+  &__label {
+    font-size: 14px;
+    font-weight: @font-weight-medium;
+    color: @color-gray-600;
+    margin-bottom: 8px;
+  }
+
+  &__value-wrapper {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  &__value {
+    font-size: 30px;
+    font-weight: @font-weight-normal;
+    color: @color-text-primary;
+    line-height: 36px;
+  }
+
+  &__unit {
+    font-size: 14px;
+    font-weight: @font-weight-normal;
+    color: @color-gray-600;
+    line-height: 20px;
+  }
+}

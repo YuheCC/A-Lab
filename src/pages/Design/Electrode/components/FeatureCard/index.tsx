@@ -6,16 +6,21 @@ interface FeatureCardProps {
   title: string;
   description: string;
   iconBgColor: string;
+  onClick?: () => void;
 }
 
 const FeatureCard: React.FC<FeatureCardProps> = ({
   icon,
   title,
   description,
-  iconBgColor
+  iconBgColor,
+  onClick
 }) => {
   return (
-    <div className="feature-card">
+    <div
+      className={`feature-card ${onClick ? 'feature-card--clickable' : ''}`}
+      onClick={onClick}
+    >
       <div className="feature-card__icon-wrapper" style={{ backgroundColor: iconBgColor }}>
         {icon}
       </div>

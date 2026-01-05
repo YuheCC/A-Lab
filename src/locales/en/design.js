@@ -339,6 +339,38 @@ export default {
             function2: "2. Trend Analysis: Preset electrode formulation information, set one or more parameters as variables, and predict how battery performance changes as these parameters vary",
             function3: "3. Optimize: By defining target battery performance metrics, reverse-engineer and recommend appropriate electrode material selections and parameters",
             function4: "4. Train: Enable users to train custom models"
+        },
+        predict: {
+            title: "Result Prediction",
+            back: "Back",
+            electrodeDesign: "Electrode Design",
+            cellDesign: "Cell Design",
+            selectCellDesign: "Select cell design",
+            anodeActiveMaterial: "Anode Active Material",
+            cathodeActiveMaterial: "Cathode Active Material",
+            selectMaterial: "Select material",
+            anodeParameters: "Anode Parameters",
+            cathodeParameters: "Cathode Parameters",
+            binder1: "Binder 1 (wt.%)",
+            binder2: "Binder 2 (wt.%)",
+            binder3: "Binder 3 (wt.%)",
+            conductiveCarbon: "Conductive Carbon (wt.%)",
+            cnt: "CNT (wt.%)",
+            pressDensity: "Press Density (g/cc)",
+            arealLoading: "Areal Loading (mAh/cm²)",
+            dimension: "Dimension",
+            width: "Width (mm)",
+            length: "Length (mm)",
+            layers: "Layers",
+            enterWidth: "Enter width",
+            enterLength: "Enter length",
+            enterLayers: "Enter layers",
+            calculate: "Calculate",
+            cellPerformance: "Cell Performance Prediction",
+            designCapacity: "Design Capacity",
+            specificED: "Specific E.D.",
+            jellyRollThickness: "Jelly Roll Thickness",
+            volumetricED: "Volumetric E.D."
         }
     }
 };

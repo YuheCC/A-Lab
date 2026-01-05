@@ -6,7 +6,7 @@ import '@/utils/echartsInit'; // 初始化 ECharts 组件
 
 // 运行时配置
 export const app: RuntimeConfig = {
-    
+
 };
 
 // 导出配置（如果需要默认导出）

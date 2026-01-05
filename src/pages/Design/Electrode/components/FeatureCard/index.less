@@ -5,13 +5,17 @@
   border: 1px solid @color-border;
   border-radius: @radius-lg;
   padding: @spacing-lg;
-  cursor: pointer;
   transition: @transition-fast;
   display: flex;
   gap: @spacing-md;
 
-  &:hover {
-    box-shadow: @shadow-md;
+  &--clickable {
+    cursor: pointer;
+
+    &:hover {
+      box-shadow: @shadow-md;
+      border-color: @color-primary;
+    }
   }
 
   &__icon-wrapper {

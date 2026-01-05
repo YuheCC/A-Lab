@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from '@umijs/max';
 import FeatureCard from './components/FeatureCard';
 import TabSection from './components/TabSection';
 import IntroductionContent from './components/IntroductionContent';
@@ -15,7 +16,12 @@ const ICONS = {
 
 const ElectrodePage: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('introduction');
+
+  const handleNavigateToPredict = () => {
+    navigate('/design/electrode/predict');
+  };
 
   return (
     <div id="electrode-page">
@@ -34,6 +40,7 @@ const ElectrodePage: React.FC = () => {
           title={t('design.electrode.features.resultPrediction.title')}
           description={t('design.electrode.features.resultPrediction.description')}
           iconBgColor="#dbeafe"
+          onClick={handleNavigateToPredict}
         />
         <FeatureCard
           icon={<img src={ICONS.trendAnalysis} alt="" style={{ width: 20, height: 20 }} />}

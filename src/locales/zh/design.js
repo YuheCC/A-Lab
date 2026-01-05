@@ -339,6 +339,38 @@ export default {
             function2: "2. 趋势分析：预设电极配方信息，将一个或多个参数设为变量，预测随这些参数变化电池性能的变化趋势",
             function3: "3. 优化：通过定义目标电池性能指标，反向推导并推荐合适的电极材料选择和参数",
             function4: "4. 训练：允许用户训练自定义模型"
+        },
+        predict: {
+            title: "结果预测",
+            back: "返回",
+            electrodeDesign: "电极设计",
+            cellDesign: "电池设计",
+            selectCellDesign: "请选择电池设计",
+            anodeActiveMaterial: "阳极活性材料",
+            cathodeActiveMaterial: "阴极活性材料",
+            selectMaterial: "请选择材料",
+            anodeParameters: "阳极参数",
+            cathodeParameters: "阴极参数",
+            binder1: "粘结剂 1 (wt.%)",
+            binder2: "粘结剂 2 (wt.%)",
+            binder3: "粘结剂 3 (wt.%)",
+            conductiveCarbon: "导电碳 (wt.%)",
+            cnt: "碳纳米管 (wt.%)",
+            pressDensity: "压实密度 (g/cc)",
+            arealLoading: "面密度 (mAh/cm²)",
+            dimension: "尺寸",
+            width: "宽度 (mm)",
+            length: "长度 (mm)",
+            layers: "层数",
+            enterWidth: "请输入宽度",
+            enterLength: "请输入长度",
+            enterLayers: "请输入层数",
+            calculate: "计算",
+            cellPerformance: "电池性能预测",
+            designCapacity: "设计容量",
+            specificED: "比能量密度",
+            jellyRollThickness: "卷芯厚度",
+            volumetricED: "体积能量密度"
         }
     }
 };

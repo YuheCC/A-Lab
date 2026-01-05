@@ -12,6 +12,20 @@ export default defineConfig({
   alias: {
     '@': path.resolve(__dirname, '../src'),
   },
+  // 纯 UmiJS 需要显式启用 antd 插件
+  plugins: ['@umijs/plugins/dist/antd'],
+  // Ant Design 5.x 主题配置
+  antd: {
+    theme: {
+      token: {
+        colorPrimary: '#56B26A',      // 主题色（绿色）
+        colorLink: '#56B26A',         // 链接色
+        colorSuccess: '#56B26A',      // 成功色
+        borderRadius: 6,              // 基础圆角
+        fontSize: 14,                 // 基础字号
+      },
+    },
+  },
   define: {
     // Environment configuration
     'ENVIRONMENT': 'production',
