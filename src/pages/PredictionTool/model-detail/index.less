@@ -24,7 +24,7 @@
   margin-top: 16px;
 
   &:hover:not(:disabled) {
-    background-color: #333333;
+    background-color: @color-text-primary;
   }
 
   &:disabled {
@@ -56,7 +56,7 @@
 
       .label {
         font-size: 14px;
-        color: #6c757d;
+        color: @color-gray-500;
       }
 
       .value {
@@ -100,12 +100,12 @@
 
     .dataset-label {
       font-size: 14px;
-      color: #6c757d;
+      color: @color-gray-500;
       min-width: 120px;
     }
 
     .dataset-link {
-      color: #10b981;
+      color: @color-link;
       text-decoration: none;
       font-size: 14px;
       position: relative;
@@ -115,7 +115,7 @@
         content: '↓';
         position: absolute;
         left: 0;
-        color: #10b981;
+        color: @color-link;
       }
 
       &:hover {
