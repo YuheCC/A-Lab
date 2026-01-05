@@ -176,20 +176,20 @@
 
   .nav-dropdown {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 4px);
     left: 50%;
-    transform: translateX(-50%);
-    min-width: max-content;
-    max-width: 300px;
+    transform: translateX(-50%) translateY(-10px);
+    min-width: 200px;
     background: #ffffff;
-    border: 1px solid @color-gray-300;
-    border-radius: 8px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    border: 1px solid @color-border-light;
+    border-radius: @radius-xl;
+    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.15);
     z-index: 10000;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
-    margin-top: 8px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 0;
+    overflow: hidden;
     pointer-events: none;
   }
 
@@ -197,11 +197,11 @@
   .nav-dropdown::before {
     content: '';
     position: absolute;
-    top: -8px;
+    top: -12px;
     left: 50%;
     transform: translateX(-50%);
-    width: 80%;
-    height: 8px;
+    width: 100%;
+    height: 12px;
     background: transparent;
     pointer-events: auto;
     z-index: 1;
@@ -211,17 +211,15 @@
   .nav-dropdown-container.hovered .nav-dropdown {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%) translateY(0px);
+    transform: translateX(-50%) translateY(0);
     pointer-events: auto;
-    transition-delay: 0s;
   }
 
   .nav-dropdown:hover {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%) translateY(0px);
+    transform: translateX(-50%) translateY(0);
     pointer-events: auto;
-    transition-delay: 0s;
   }
 
   /* 使用更精确的hover状态控制 */
@@ -229,7 +227,7 @@
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition-delay: 0.15s;
+    transition-delay: 0.1s;
   }
   
   .nav-dropdown-container.disabled:hover .nav-dropdown {
@@ -240,36 +238,35 @@
   
   .nav-dropdown .dropdown-item {
     display: block;
-    padding: 16px;
-    color: @color-gray-600;
+    padding: 12px 16px;
+    color: @color-text-primary;
     text-decoration: none;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 1.4;
-    border-radius: 6px;
-    transition: all 0.2s ease;
+    font-size: @font-size-base;
+    font-weight: 500;
+    border-radius: 0;
+    transition: all 0.15s ease;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     position: relative;
-    border: 1px solid transparent;
+    /* margin-bottom removed */
   }
+  
+  /* removed .nav-dropdown .dropdown-item:last-child rule as margin is gone */
   
   .nav-dropdown .dropdown-item:hover {
     background-color: @color-gray-50;
-    color: @color-gray-900;
-    border-color: @color-gray-200;
+    color: @color-accent;
   }
   
   .nav-dropdown .dropdown-item.active {
-    background-color: #ecfdf5;
-    color: @color-accent;
-    font-weight: 500;
-    border-color: #bbf7d0;
+    background-color: @color-positive-light-bg;
+    color: @color-accent; /* Fixed: dark green text for readability */
+    font-weight: 600;
   }
   
   .nav-dropdown .dropdown-item.disabled {
-    color: @color-gray-400 !important;
+    color: @color-text-muted !important;
     cursor: not-allowed;
     opacity: 0.6;
     pointer-events: none;
@@ -277,15 +274,6 @@
   
   .nav-dropdown .dropdown-item.disabled:hover {
     background-color: transparent !important;
-    border-color: transparent !important;
-  }
-  
-  .nav-dropdown .dropdown-item:first-child {
-    margin-top: 0;
-  }
-  
-  .nav-dropdown .dropdown-item:last-child {
-    margin-bottom: 0;
   }
   
   /* User Actions Styles */
@@ -315,26 +303,33 @@
   
   /* User Dropdown Styles */
   .user-dropdown {
-    display: none; /* Hidden by default */
     position: absolute;
-    top: 50px; /* Position below the avatar */
+    top: calc(100% + 8px); /* Position below the avatar */
     right: 0;
-    width: 300px;
-    background: #fff;
-    border: 1px solid @color-gray-200;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    padding: 8px;
+    width: 280px;
+    background: #ffffff;
+    border: 1px solid @color-border-light;
+    border-radius: @radius-xl;
+    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.15);
+    padding: 0;
+    overflow: hidden;
     z-index: 1100;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .user-dropdown.show {
-    display: block; /* Show when active */
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
   }
   .user-info {
     display: flex;
     align-items: center;
-    padding: 12px;
-    border-bottom: 1px solid @color-gray-100;
+    padding: 12px 16px;
+    border-bottom: 1px solid @color-border-light;
+    margin-bottom: 4px;
   }
   .user-avatar-large {
     margin-right: 12px;
@@ -368,19 +363,28 @@
     display: flex; /* Use flexbox for icon alignment */
     align-items: center;
     gap: 12px; /* Space between icon and text */
-    padding: 10px 12px;
-    color: #334155;
+    padding: 12px 16px;
+    color: @color-text-primary;
     text-decoration: none;
-    border-radius: 6px;
-    transition: background-color 0.2s;
-    font-size: 15px;
+    border-radius: 0;
+    transition: all 0.15s ease;
+    font-size: @font-size-base;
+    font-weight: 500;
+    /* margin-bottom removed */
   }
+  /* removed .dropdown-item:last-child rule */
   .item-icon {
     width: 20px;
     height: 20px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
   }
   .dropdown-item:hover {
-    background-color: @color-gray-100;
+    background-color: @color-gray-50;
+    color: @color-accent;
+  }
+  .dropdown-item:hover .item-icon {
+    opacity: 1;
   }
   
   /* Chat Layout Styles */
