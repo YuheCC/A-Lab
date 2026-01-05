@@ -23,24 +23,19 @@ const ForgotPasswordPage = () => {
     setSuccess('');
 
     try {
-      const response: any = await sendForgotPasswordCode({
+      await sendForgotPasswordCode({
         email: email,
       });
 
-      if(response.ok === false) {
-        setError(response?.data?.detail || t('auth.forgotPassword.messages.defaultError'));
-        return;
-      }
-
       // Clear form after successful submission
       setEmail('');
-      
+
       // Show success message with instructions
       setSuccess(t('auth.forgotPassword.messages.resetLinkSent'));
     }
     catch (err: any) {
       console.error('Password reset request error:', err);
-      setError(err.detail || t('auth.forgotPassword.messages.defaultError'));
+      setError(err.msg || t('auth.forgotPassword.messages.defaultError'));
     } finally {
       setLoading(false);
     }

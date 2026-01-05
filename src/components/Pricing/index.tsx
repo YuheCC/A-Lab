@@ -198,18 +198,14 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
         edu_email: educationEmail.trim(),
       });
       const { data } = response;
-      if(response.ok === false) {
-        error(data.detail || t('settings.education.error'));
-        return;
-      }
       setShowEducationModal(false);
       setEducationEmail('');
       success(t('settings.education.success'));
-      
+
       navigate(`/verify-education?id=${data.verify_id}`);
 
     } catch (err: any) {
-      error(err.detail || t('settings.education.error'));
+      error(err.msg || t('settings.education.error'));
     } finally {
       setIsSendingEducation(false);
     }

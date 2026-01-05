@@ -83,10 +83,6 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
                     method: 'GET',
                 });
 
-                if ((response as any).ok === false || response.status >= 400) {
-                    throw new Error(t('thirdSearch.searchRequestFailed', { status: response.status }));
-                }
-
                 const data = response.data;
                 
                 // 新的分页响应格式：data包含data和total_count

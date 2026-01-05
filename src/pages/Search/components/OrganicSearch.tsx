@@ -122,7 +122,15 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
     const [node, setNode] = useState<any>(null);
     const { moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites } = useContext(FavoriteContext);
 
-    const { data, loading, error } = usePlotDataStore();
+    const { data, loading, error, fetchData, fetchInitialData } = usePlotDataStore();
+
+    // 组件挂载时获取数据（如果为空）
+    useEffect(() => {
+        if (data.length === 0) {
+            fetchInitialData();
+            fetchData();
+        }
+    }, [data.length, fetchData, fetchInitialData]);
 
     const searchInputRef = useRef<any>(null);
 

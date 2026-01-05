@@ -98,12 +98,9 @@ export const predict = async (params: PredictParams): Promise<HistoryDetailRespo
 
   const taskId = response?.data?.id;
 
-  if (!taskId && (response.status !== 401 && response.status !== 402)) {
+  // request 会在 401/402 时自动抛出错误，这里只需检查 taskId
+  if (!taskId) {
     throw new Error('预测任务创建失败，未返回任务ID');
-  }
-
-  if(!taskId) {
-    return null;
   }
 
   // 2. 轮询获取结果

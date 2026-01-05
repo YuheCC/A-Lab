@@ -155,16 +155,17 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const [node, setNode] = useState<any>(null);
     const { moleculeFavoriteStatus, handleAddToFavorites } = useContext(FavoriteContext);
 
-    const { data, loading, error, fetchData } = useAnionsPlotDataStore();
+    const { data, loading, error, fetchData, fetchInitialData } = useAnionsPlotDataStore();
 
     const searchInputRef = useRef<any>(null);
 
-    // 组件挂载时获取数据
+    // 组件挂载时获取数据（如果为空）
     useEffect(() => {
         if (data.length === 0) {
+            fetchInitialData();
             fetchData();
         }
-    }, [data.length, fetchData]);
+    }, [data.length, fetchData, fetchInitialData]);
 
     const [searchResults, setsearchResults] = useState<string[] | null>(null);
     const [lastSearch, setLastSearch] = useState<string | null>(null);

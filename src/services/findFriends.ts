@@ -72,10 +72,6 @@ export async function findFriends<T = any>(options: FindFriendsOptions): Promise
     headers: { 'Content-Type': 'application/json' },
   });
 
-  if ((response as any).ok === false || response.status >= 400) {
-    throw new Error(`Failed to fetch similar molecules: HTTP ${response.status}`);
-  }
-
   const data = response.data;
   const molecules: T[] = data.similar_molecules || [];
   const messages: string[] = Array.isArray(data.messages)
