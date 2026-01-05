@@ -368,9 +368,9 @@ export default {
             calculate: "Calculate",
             cellPerformance: "Cell Performance Prediction",
             designCapacity: "Design Capacity",
-            specificED: "Specific E.D.",
+            specificED: "Specific Energy Density",
             jellyRollThickness: "Jelly Roll Thickness",
-            volumetricED: "Volumetric E.D."
+            volumetricED: "Volumetric Energy Density"
         }
     }
 };
