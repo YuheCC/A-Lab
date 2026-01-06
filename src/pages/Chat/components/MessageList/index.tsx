@@ -138,8 +138,9 @@ interface MessageListProps {
 
 import { useChatContext } from '../../context/ChatContext';
 import FeedbackBox from '@/components/FeedbackBox/index.js';
-import { ThumbsUp, ThumbsDown } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Download } from 'lucide-react';
 import { useAuthStore } from '@/models/useAuth';
+import { chatService } from '@/services/chat/chatService';
 
 const MessageList: FC<MessageListProps> = ({
   messages =  [],
@@ -164,6 +165,7 @@ const MessageList: FC<MessageListProps> = ({
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [showFeedbackBox, setShowFeedbackBox] = useState(false);
   const [feedbackData, setFeedbackData] = useState<any>(null);
+  const [downloadingMessageId, setDownloadingMessageId] = useState<string | null>(null);
   const userPermissions = useAuthStore(state => state.userPermissions);
   const isAdmin = userPermissions === 'admin';
 
@@ -371,6 +373,18 @@ const MessageList: FC<MessageListProps> = ({
     setEditingMessageId(messageId);
   };
 
+  // 处理下载 PDF
+  const handleDownloadPdf = async (messageId: string) => {
+    try {
+      setDownloadingMessageId(messageId);
+      await chatService.downloadMessagePdf(messageId);
+    } catch (error) {
+      console.error('Failed to download PDF:', error);
+    } finally {
+      setDownloadingMessageId(null);
+    }
+  };
+
   // InlineMoleculeRenderer 将负责解析与高亮分子及 hover 浮层
 
   // 渲染消息操作按钮
@@ -428,6 +442,16 @@ const MessageList: FC<MessageListProps> = ({
               <rect x="8" y="8" width="12" height="16" rx="2" stroke="currentColor" fill="none"/>
             </svg>
           )}
+        </button>
+
+        {/* 下载 PDF 按钮 */}
+        <button
+          className="action-btn download-btn"
+          onClick={() => handleDownloadPdf(message.id)}
+          title={t('chatbox.chat.downloadPdf') || 'Download PDF'}
+          disabled={downloadingMessageId === message.id}
+        >
+          <Download size={16} />
         </button>
 
         {/* 编辑按钮 - 仅最后一条用户消息显示 */}

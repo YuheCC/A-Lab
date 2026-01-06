@@ -565,6 +565,35 @@ export class ChatService {
       return false;
     }
   }
+
+  /**
+   * 下载消息的 PDF 文件
+   * @param messageId - 消息ID
+   */
+  async downloadMessagePdf(messageId: string): Promise<void> {
+    try {
+      const url = this.buildEndpoint('downloadPdf');
+      const resp = await request(url, {
+        method: 'POST',
+        data: { messageId },
+        responseType: 'blob',
+      });
+
+      // 创建下载链接
+      const blob = new Blob([resp.data], { type: 'application/pdf' });
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `message_${messageId}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error('Failed to download message PDF:', error);
+      throw error;
+    }
+  }
 }
 
 export const chatService = ChatService.getInstance();
