@@ -3,10 +3,10 @@ import type { Environment } from '../config/types';
 
 export const FORMULATION_MD_ENDPOINTS: EndpointConfig<Record<string, string>> = {
   default: {
-    run: '/api/md/run',
-    historyList: '/api/md/history/list',
-    historyDetail: '/api/md/history/detail',
-    historyDelete: '/api/md/history/delete',
+    run: '/api/formulate/run',
+    historyList: '/api/formulate/history/list',
+    historyDetail: '/api/formulate/history/detail',
+    historyDelete: '/api/formulate/history/delete',
   },
   us: {
     run: '/api/formulate/run',

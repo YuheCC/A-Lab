@@ -23,19 +23,16 @@ import type { Environment } from '../config/types';
 export const CHAT_ENDPOINTS = {
   // Default configuration (used for all environments unless overridden)
   default: {
-    send: '/chat/send',
-    regenerate: '/chat/regenerate',
-    list: '/api/chat/list',
-    detail: '/api/chat/detail',
-    create: '/api/chat/new',
-    messageNew: '/api/chat/message/new',
-    messageUpdate: '/api/chat/message/update',
-    llmAsk: '/api/llm/ask',
-    multiAgent: '/api/llm/multi-agent',
-    multiAgentClarify: '/api/llm/multi-agent/clarify',
-    save: '/chat/save',
-    delete: '/api/chat/delete',
-    update: '/api/chat/update',
+    send: '/api/llm/chat/send',
+    regenerate: '/api/llm/chat/regenerate',
+    list: '/api/llm/chat/list',
+    detail: '/api/llm/chat/detail',
+    create: '/api/llm/chat/new',
+    messageNew: '/api/llm/chat/message/new',
+    messageUpdate: '/api/llm/chat/message/update',
+    save: '/api/llm/chat/save',
+    delete: '/api/llm/chat/delete',
+    update: '/api/llm/chat/update',
   },
   us: {
     send: '/api/llm/chat/send',
@@ -73,7 +70,7 @@ export const CHAT_SSE_ENDPOINTS = {
 // WebSocket configuration
 export const CHAT_WS_ENDPOINTS = {
   default: {
-    path: '/ws/socket.io',
+    path: '/api/llm/ws/socket.io',
     namespace: '/chat',
   },
   box: {
