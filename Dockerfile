@@ -20,11 +20,16 @@ COPY . .
 ARG BUILD_ENV=production
 
 # 根据环境构建应用
-RUN if [ "$BUILD_ENV" = "staging" ]; then \
-      pnpm run build:staging; \
-    else \
-      pnpm run build; \
-    fi
+RUN case "$BUILD_ENV" in \
+      staging) \
+        pnpm run build:staging ;; \
+      box) \
+        pnpm run build:box ;; \
+      us) \
+        pnpm run build:us ;; \
+      *) \
+        pnpm run build ;; \
+    esac
 
 # 多阶段构建 - 第二阶段：运行时镜像
 FROM m.daocloud.io/docker.io/library/nginx:alpine
