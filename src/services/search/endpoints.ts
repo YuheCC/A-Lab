@@ -8,7 +8,7 @@ import type { Environment } from '../config/types';
 export const SEARCH_ENDPOINTS = {
   // Default configuration
   default: {
-    thirdSearch: '/api/sse/search',
+    thirdSearch: '/api/search/sse/search',
   },
   us: {
     thirdSearch: '/api/search/sse/search',
