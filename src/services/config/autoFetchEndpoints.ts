@@ -15,6 +15,12 @@ export const AUTO_FETCH_ENDPOINTS: EndpointConfig<Record<string, string>> = {
     favoritesDelete: '/api/user/favorites-delete',
     moleculeImage: '/api/search/molecule_image',
     queryLimit: '/api/user/query_limit',
+    chatHistory: '/chat-history',
+    chatHistoryDetail: '/chat-history',
+    chatHistoryDelete: '/chat-history/delete',
+    findFriendWithImage: '/api/llm/find-friend-with-image',
+    feedback: '/api/feedback',
+    moleculeDetails: '/api/molecule_details',
     // Auth
     login: '/api/user/login',
     register: '/api/user/register',
