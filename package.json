@@ -8,14 +8,14 @@
     "build:prod": "umi build",
     "build:box": "cross-env UMI_ENV=box umi build",
     "build:us": "cross-env UMI_ENV=us umi build",
-    "build:dev": "cross-env UMI_ENV=dev umi build",
+    "build:dev": "cross-env UMI_ENV=development umi build",
     "postinstall": "umi setup",
     "setup": "umi setup",
     "start": "npm run dev",
     "start:prod": "umi dev",
     "start:box": "cross-env UMI_ENV=box umi dev",
     "start:us": "cross-env UMI_ENV=us umi dev",
-    "start:dev": "cross-env UMI_ENV=dev umi dev"
+    "start:dev": "cross-env UMI_ENV=development umi dev"
   },
   "dependencies": {
     "@deck.gl/core": "^9.1.12",
