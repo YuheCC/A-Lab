@@ -300,7 +300,7 @@ const MessageList: FC<MessageListProps> = ({
   };
 
   const getSavedAtLabel = useCallback((message: Message): string | null => {
-    if (!isAdmin || (!isUserMessage(message) && !isAssistantMessage(message))) {
+    if ((!isUserMessage(message) && !isAssistantMessage(message))) {
       return null;
     }
     const raw = (message as any)?.savedAt
