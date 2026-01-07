@@ -540,10 +540,10 @@ const MessageList: FC<MessageListProps> = ({
       return (
         <div key={message.id} className="chat__message-wrapper chat__message-wrapper--user">
           <div className="message-container">
-            {renderSavedTimestamp(message)}
             <div className="chat__message chat__message--user">
               {message.content}
             </div>
+            {renderSavedTimestamp(message)}
           </div>
           {renderMessageActions(message)}
         </div>
