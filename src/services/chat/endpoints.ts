@@ -36,6 +36,7 @@ export const CHAT_ENDPOINTS = {
     save: '/api/llm/chat/save',
     delete: '/api/llm/chat/delete',
     update: '/api/llm/chat/update',
+    downloadPdf: '/api/llm/chat/message/download-pdf',
   },
   us: {
     send: '/api/llm/chat/send',
@@ -48,6 +49,7 @@ export const CHAT_ENDPOINTS = {
     save: '/api/llm/chat/save',
     delete: '/api/llm/chat/delete',
     update: '/api/llm/chat/update',
+    downloadPdf: '/api/llm/chat/message/download-pdf',
   },
   // box 环境使用旧的 /api/llm/chat 路径
   box: {
@@ -61,6 +63,7 @@ export const CHAT_ENDPOINTS = {
     save: '/api/llm/chat/save',
     delete: '/api/llm/chat/delete',
     update: '/api/llm/chat/update',
+    downloadPdf: '/api/llm/chat/message/download-pdf',
   },
 };
 

@@ -138,8 +138,9 @@ interface MessageListProps {
 
 import { useChatContext } from '../../context/ChatContext';
 import FeedbackBox from '@/components/FeedbackBox/index.js';
-import { ThumbsUp, ThumbsDown } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Download, Loader2 } from 'lucide-react';
 import { useAuthStore } from '@/models/useAuth';
+import { chatService } from '@/services/chat/chatService';
 
 const MessageList: FC<MessageListProps> = ({
   messages =  [],
@@ -164,6 +165,7 @@ const MessageList: FC<MessageListProps> = ({
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [showFeedbackBox, setShowFeedbackBox] = useState(false);
   const [feedbackData, setFeedbackData] = useState<any>(null);
+  const [downloadingMessageId, setDownloadingMessageId] = useState<string | null>(null);
   const userPermissions = useAuthStore(state => state.userPermissions);
   const isAdmin = userPermissions === 'admin';
 
@@ -298,7 +300,7 @@ const MessageList: FC<MessageListProps> = ({
   };
 
   const getSavedAtLabel = useCallback((message: Message): string | null => {
-    if (!isAdmin || (!isUserMessage(message) && !isAssistantMessage(message))) {
+    if ((!isUserMessage(message) && !isAssistantMessage(message))) {
       return null;
     }
     const raw = (message as any)?.savedAt
@@ -371,6 +373,18 @@ const MessageList: FC<MessageListProps> = ({
     setEditingMessageId(messageId);
   };
 
+  // 处理下载 PDF
+  const handleDownloadPdf = async (messageId: string) => {
+    try {
+      setDownloadingMessageId(messageId);
+      await chatService.downloadMessagePdf(messageId);
+    } catch (error) {
+      console.error('Failed to download PDF:', error);
+    } finally {
+      setDownloadingMessageId(null);
+    }
+  };
+
   // InlineMoleculeRenderer 将负责解析与高亮分子及 hover 浮层
 
   // 渲染消息操作按钮
@@ -427,6 +441,20 @@ const MessageList: FC<MessageListProps> = ({
               <rect x="4" y="4" width="12" height="16" rx="2" stroke="currentColor" fill="none"/>
               <rect x="8" y="8" width="12" height="16" rx="2" stroke="currentColor" fill="none"/>
             </svg>
+          )}
+        </button>
+
+        {/* 下载 PDF 按钮 */}
+        <button
+          className={`action-btn download-btn ${downloadingMessageId === message.id ? 'loading' : ''}`}
+          onClick={() => handleDownloadPdf(message.id)}
+          title={t('chatbox.chat.downloadPdf') || 'Download PDF'}
+          disabled={downloadingMessageId === message.id}
+        >
+          {downloadingMessageId === message.id ? (
+            <Loader2 size={16} className="spinner" />
+          ) : (
+            <Download size={16} />
           )}
         </button>
 
@@ -512,48 +540,50 @@ const MessageList: FC<MessageListProps> = ({
       return (
         <div key={message.id} className="chat__message-wrapper chat__message-wrapper--user">
           <div className="message-container">
-            {renderSavedTimestamp(message)}
             <div className="chat__message chat__message--user">
               {message.content}
             </div>
+            {renderSavedTimestamp(message)}
+            {renderMessageActions(message)}
           </div>
-          {renderMessageActions(message)}
         </div>
       );
     } else if (isAssistantMessage(message) || isSystemMessage(message)) {
       // system消息按assistant样式展示
       return (
         <div key={message.id} className="chat__message-wrapper chat__message-wrapper--bot">
-          {isAssistantMessage(message) && thinkingTarget && thinkingTarget.id === message.id && (!message.content || String(message.content).trim() === '') ? (
-            <div className="chat__message chat__message--bot">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontVariantNumeric: 'tabular-nums', color: '#6b7280' }}>{thinkingElapsedLabel}</span>
+          <div className="message-container">
+            {isAssistantMessage(message) && thinkingTarget && thinkingTarget.id === message.id && (!message.content || String(message.content).trim() === '') ? (
+              <div className="chat__message chat__message--bot">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontVariantNumeric: 'tabular-nums', color: '#6b7280' }}>{thinkingElapsedLabel}</span>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="chat__message chat__message--bot">
-              {isAssistantMessage(message) && (
-                <ToolStatsDisplay toolStats={message.toolStats} />
-              )}
-              <InlineMoleculeRenderer content={message.content} onMoleculeClick={forwardMoleculeClick} />
-              {/* 渲染extraData - 仅助手消息显示 */}
-              {(() => {
-                if (!isAssistantMessage(message) || !message.extraData) return null;
-                const filteredEntries = Object.entries(message.extraData as Record<string, any>)
-                  .filter(([key]) => key !== 'tool_stats' && key !== 'toolStats');
-                if (filteredEntries.length === 0) return null;
-                const filteredData = Object.fromEntries(filteredEntries);
-                return (
-                  <SupplementalData
-                    data={filteredData as Record<string, any>}
-                    onMoleculeClick={forwardMoleculeClick}
-                  />
-                );
-              })()}
-            </div>
-          )}
-          {renderSavedTimestamp(message)}
-          {renderMessageActions(message)}
+            ) : (
+              <div className="chat__message chat__message--bot">
+                {isAssistantMessage(message) && (
+                  <ToolStatsDisplay toolStats={message.toolStats} />
+                )}
+                <InlineMoleculeRenderer content={message.content} onMoleculeClick={forwardMoleculeClick} />
+                {/* 渲染extraData - 仅助手消息显示 */}
+                {(() => {
+                  if (!isAssistantMessage(message) || !message.extraData) return null;
+                  const filteredEntries = Object.entries(message.extraData as Record<string, any>)
+                    .filter(([key]) => key !== 'tool_stats' && key !== 'toolStats');
+                  if (filteredEntries.length === 0) return null;
+                  const filteredData = Object.fromEntries(filteredEntries);
+                  return (
+                    <SupplementalData
+                      data={filteredData as Record<string, any>}
+                      onMoleculeClick={forwardMoleculeClick}
+                    />
+                  );
+                })()}
+              </div>
+            )}
+            {renderSavedTimestamp(message)}
+            {renderMessageActions(message)}
+          </div>
         </div>
       );
     }
@@ -576,6 +606,7 @@ const MessageList: FC<MessageListProps> = ({
           responseContent={feedbackData.responseContent}
           contextContent1={feedbackData.contextContent1}
           queryType="normal_chat"
+          useMultiAgent={false}
           onClose={() => setShowFeedbackBox(false)}
         />
       )}

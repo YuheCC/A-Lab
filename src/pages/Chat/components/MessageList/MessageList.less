@@ -20,12 +20,15 @@
 .message-container {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
+  width: 100%;
 }
 
 .chat__message-wrapper--user .message-container {
   align-items: flex-end;
+}
+
+.chat__message-wrapper--bot .message-container {
+  align-items: flex-start;
 }
 
 /* 消息内容样式已移至ChatStyles.less，使用BEM格式 (.chat__message) */
@@ -73,6 +76,19 @@
   gap: 8px;
   opacity: 0;
   transition: opacity 0.2s ease;
+  position: static;
+  margin: 0;
+  padding: 0;
+}
+
+.chat__message-wrapper--user .message-actions {
+  align-self: flex-end;
+  justify-content: flex-end;
+}
+
+.chat__message-wrapper--bot .message-actions {
+  align-self: flex-start;
+  justify-content: flex-start;
 }
 
 .chat__message-wrapper:hover .message-actions,
@@ -81,7 +97,8 @@
   opacity: 1;
 }
 
-.action-btn {
+.message-list .action-btn,
+.message-actions .action-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -93,28 +110,50 @@
   color: @color-gray-500;
   cursor: pointer;
   transition: all 0.2s ease;
-  padding: 0;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
-.action-btn:hover {
+.message-list .action-btn:hover,
+.message-actions .action-btn:hover {
   background-color: @color-gray-200;
   color: @color-gray-700;
 }
 
-.action-btn svg {
+.message-list .action-btn svg,
+.message-actions .action-btn svg {
   width: 16px;
   height: 16px;
 }
 
 /* 复制按钮成功状态 */
-.copy-btn.success {
+.message-actions .copy-btn.success {
   color: @color-accent;
 }
 
 /* 重新生成按钮 */
-.regenerate-btn:hover {
+.message-actions .regenerate-btn:hover {
   background-color: #fef3c7;
   color: #d97706;
+}
+
+/* 下载按钮 loading 状态 */
+.message-actions .download-btn.loading {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.message-actions .download-btn .spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* 分子按钮 */
@@ -241,18 +280,19 @@
   margin-top: 12px;
 }
 
-/* 消息时间戳样式（可选） */
+/* 消息时间戳样式 */
 .message-timestamp {
   font-size: 11px;
   color: @color-gray-400;
-  margin-top: 4px;
-  text-align: right;
+  margin-top: 10px;
+  padding: 0;
+  width: 100%;
+  line-height: 1;
+  display: block;
 }
 
 .chat__message-wrapper--user .message-timestamp {
   text-align: right;
-  align-self: flex-end;
-  margin-bottom: 4px;
 }
 
 .chat__message-wrapper--bot .message-timestamp {

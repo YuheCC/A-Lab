@@ -26,7 +26,7 @@ show_help() {
 
 选项:
     -p, --platform PLATFORM   指定平台 (amd64|arm64)，默认: arm64
-    -e, --env ENV            构建环境 (production|staging)，默认: production
+    -e, --env ENV            构建环境 (production|staging|box|us)，默认: production
     -r, --registry REGISTRY  镜像仓库地址，默认: 不推送
     -t, --tag TAG           额外的tag，默认只使用时间戳
     --push                  构建后推送到仓库
@@ -47,6 +47,12 @@ show_help() {
 
     # 构建 staging 环境镜像
     $0 -e staging
+
+    # 构建 box 环境镜像
+    $0 -e box
+
+    # 构建 us 环境镜像
+    $0 -e us
 
     # 构建并添加额外的 latest tag
     $0 -t latest
@@ -115,9 +121,9 @@ case $PLATFORM in
 esac
 
 # 验证构建环境
-if [[ "$BUILD_ENV" != "production" && "$BUILD_ENV" != "staging" ]]; then
+if [[ "$BUILD_ENV" != "production" && "$BUILD_ENV" != "staging" && "$BUILD_ENV" != "box" && "$BUILD_ENV" != "us" ]]; then
     print_error "不支持的构建环境: $BUILD_ENV"
-    print_error "支持的环境: production, staging"
+    print_error "支持的环境: production, staging, box, us"
     exit 1
 fi
 

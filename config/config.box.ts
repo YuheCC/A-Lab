@@ -1,6 +1,15 @@
 import { defineConfig } from "umi";
 import path from "path";
 
+// 根据环境判断 URL
+const isDev = process.env.NODE_ENV === 'development';
+const baseUrl = isDev ? 'http://10.10.106.51' : '/';
+
+console.log('[config.box.ts] Loading BOX environment config');
+console.log('[config.box.ts] NODE_ENV:', process.env.NODE_ENV);
+console.log('[config.box.ts] UMI_ENV:', process.env.UMI_ENV);
+console.log('[config.box.ts] baseUrl:', baseUrl);
+
 export default defineConfig({
   alias: {
     '@': path.resolve(__dirname, '../src'),
@@ -8,8 +17,8 @@ export default defineConfig({
   define: {
     // Environment configuration
     'ENVIRONMENT': 'box',
-    'BASE_URL': 'http://10.10.106.51',
-    'WS_BASE_URL': 'http://10.10.106.51',
+    'BASE_URL': baseUrl,
+    'WS_BASE_URL': baseUrl,
 
     // Feature flags
     'ShowFindFriendsAdvancedOptions': true,
