@@ -9,7 +9,7 @@ import 'dayjs/locale/zh-cn';
 import 'dayjs/locale/en';
 import 'dayjs/locale/ja';
 import 'dayjs/locale/ko';
-import { Activity, X, RefreshCw, Plus } from 'lucide-react';
+import { Activity, X, RefreshCw } from 'lucide-react';
 import { getHistoryList, deleteHistory, getModelList as getModelListFromModel, getBaseModelList, removeModel } from './model';
 import { type ModelListItem } from '@/services/model/training';
 import { formatUTCDateTime } from '@/utils/dateUtils';
@@ -438,7 +438,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
         gap={16}
       >
         <FeatureCard
-          icon={<Plus size={20} />}
+          icon={<img src="/design/electrolyte/icon-new-design.svg" alt="New Design" style={{ width: 24, height: 24 }} />}
           title={t('design.history.newDesign', 'New Design')}
           description={t('design.electrolyte.features.newDesign.description', 'Create a new electrolyte design')}
           iconBgColor="#dbeafe"
