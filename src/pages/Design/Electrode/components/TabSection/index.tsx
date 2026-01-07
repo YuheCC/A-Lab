@@ -17,8 +17,8 @@ const TabSection: React.FC<TabSectionProps> = ({
 
   const tabs = [
     { key: 'introduction', label: t('design.electrode.tabs.introduction'), disabled: false },
-    { key: 'records', label: t('design.electrode.tabs.records'), disabled: true },
-    { key: 'models', label: t('design.electrode.tabs.models'), disabled: true }
+    { key: 'records', label: t('design.electrode.tabs.records'), disabled: false },
+    // { key: 'models', label: t('design.electrode.tabs.models'), disabled: true }
   ];
 
   return (

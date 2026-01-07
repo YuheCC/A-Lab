@@ -320,7 +320,7 @@ export default {
                 description: "パラメータトレンドを予測"
             },
             optimize: {
-                title: "最適化",
+                title: "逆設計",
                 description: "電極パラメータを最適化"
             },
             train: {
@@ -368,6 +368,23 @@ export default {
                 calculateError: "推奨の計算に失敗しました",
                 loadDetailsError: "詳細の読み込みに失敗しました"
             }
+        },
+        records: {
+            resultPrediction: "結果予測",
+            trendAnalysis: "トレンド分析",
+            inverseDesign: "逆設計",
+            searchPlaceholder: "記録IDを検索",
+            selectDate: "日付を選択",
+            showing: "{{count}} / {{total}} 件の記録を表示",
+            refresh: "更新",
+            recordId: "記録ID",
+            cellDesign: "セル設計",
+            cathode: "正極活物質",
+            anode: "負極活物質",
+            createdTime: "作成時刻",
+            actions: "操作",
+            viewResults: "結果を表示",
+            noRecords: "記録が見つかりません"
         }
     }
 };

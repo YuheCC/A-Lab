@@ -4,6 +4,7 @@ import { useNavigate } from '@umijs/max';
 import FeatureCard from './components/FeatureCard';
 import TabSection from './components/TabSection';
 import IntroductionContent from './components/IntroductionContent';
+import RecordsContent from './components/RecordsContent';
 import './index.less';
 
 // 本地图标路径
@@ -46,12 +47,12 @@ const ElectrodePage: React.FC = () => {
           iconBgColor="#dbeafe"
           onClick={handleNavigateToPredict}
         />
-        <FeatureCard
+        {/* <FeatureCard
           icon={<img src={ICONS.trendAnalysis} alt="" style={{ width: 20, height: 20 }} />}
           title={t('design.electrode.features.trendAnalysis.title')}
           description={t('design.electrode.features.trendAnalysis.description')}
           iconBgColor="#f3e8ff"
-        />
+        /> */}
         <FeatureCard
           icon={<img src={ICONS.optimize} alt="" style={{ width: 20, height: 20 }} />}
           title={t('design.electrode.features.optimize.title')}
@@ -69,6 +70,7 @@ const ElectrodePage: React.FC = () => {
 
       <TabSection activeTab={activeTab} onTabChange={setActiveTab}>
         {activeTab === 'introduction' && <IntroductionContent />}
+        {activeTab === 'records' && <RecordsContent />}
       </TabSection>
     </div>
   );

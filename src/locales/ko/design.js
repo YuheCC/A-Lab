@@ -320,7 +320,7 @@ export default {
                 description: "매개변수 트렌드 예측"
             },
             optimize: {
-                title: "최적화",
+                title: "역설계",
                 description: "전극 매개변수 최적화"
             },
             train: {
@@ -368,6 +368,23 @@ export default {
                 calculateError: "추천 계산에 실패했습니다",
                 loadDetailsError: "세부정보 로드에 실패했습니다"
             }
+        },
+        records: {
+            resultPrediction: "결과 예측",
+            trendAnalysis: "트렌드 분석",
+            inverseDesign: "역설계",
+            searchPlaceholder: "기록 ID 검색",
+            selectDate: "날짜 선택",
+            showing: "{{count}} / {{total}} 건의 기록 표시",
+            refresh: "새로고침",
+            recordId: "기록 ID",
+            cellDesign: "셀 설계",
+            cathode: "양극 활물질",
+            anode: "음극 활물질",
+            createdTime: "생성 시간",
+            actions: "작업",
+            viewResults: "결과 보기",
+            noRecords: "기록을 찾을 수 없습니다"
         }
     }
 };

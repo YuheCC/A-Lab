@@ -1,0 +1,238 @@
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { Radio } from 'antd';
+import { RefreshCw } from 'lucide-react';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useTranslation } from 'react-i18next';
+import dayjs, { Dayjs } from 'dayjs';
+import { MOCK_RECORDS, ElectrodeRecord } from '../../mockData';
+import './index.less';
+
+const RecordsContent: React.FC = () => {
+  const { t } = useTranslation();
+
+  // 二级 Tab 状态
+  const [activeSubTab, setActiveSubTab] = useState('result-prediction');
+
+  // 搜索和过滤状态
+  const [searchKeyword, setSearchKeyword] = useState<string>('');
+  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [debouncedSearchKeyword, setDebouncedSearchKeyword] = useState<string>('');
+
+  // 数据状态
+  const [records, setRecords] = useState<ElectrodeRecord[]>(MOCK_RECORDS);
+
+  // 防抖 timer
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // 防抖搜索
+  useEffect(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    debounceTimerRef.current = setTimeout(() => {
+      setDebouncedSearchKeyword(searchKeyword);
+    }, 500);
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [searchKeyword]);
+
+  // 过滤后的记录
+  const filteredRecords = useMemo(() => {
+    return records.filter((record) => {
+      // ID 搜索
+      if (
+        debouncedSearchKeyword &&
+        !record.id.toLowerCase().includes(debouncedSearchKeyword.toLowerCase())
+      ) {
+        return false;
+      }
+
+      // 日期过滤
+      if (selectedDate) {
+        const recordDate = dayjs(record.createdTime, 'YYYY/MM/DD HH:mm:ss').format('YYYY-MM-DD');
+        if (recordDate !== selectedDate) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [records, debouncedSearchKeyword, selectedDate]);
+
+  // 刷新数据
+  const handleRefresh = () => {
+    // 模拟 API 调用
+    setTimeout(() => {
+      setRecords(MOCK_RECORDS);
+    }, 500);
+  };
+
+  // 获取 dayjs locale
+  const getDayjsLocale = () => {
+    const lang = localStorage.getItem('language') || 'zh';
+    return lang === 'zh' ? 'zh-cn' : 'en';
+  };
+
+  return (
+    <div className="records-content">
+      {/* 二级 Tab（Radio.Group）*/}
+      <div className="records-tabs">
+        <Radio.Group
+          value={activeSubTab}
+          onChange={(e) => setActiveSubTab(e.target.value)}
+          buttonStyle="solid"
+          className="records-radio-group"
+        >
+          <Radio.Button value="result-prediction">
+            {t('design.electrode.records.resultPrediction', 'Result Prediction')}
+          </Radio.Button>
+          <Radio.Button value="trend-analysis">
+            {t('design.electrode.records.trendAnalysis', 'Trend Analysis')}
+          </Radio.Button>
+          <Radio.Button value="inverse-design">
+            {t('design.electrode.records.inverseDesign', 'Inverse Design')}
+          </Radio.Button>
+        </Radio.Group>
+      </div>
+
+      {/* 搜索和过滤器（同一行）*/}
+      <div className="records-filters">
+        {/* ID 搜索框 */}
+        <input
+          type="text"
+          className="records-search-input"
+          value={searchKeyword}
+          onChange={(e) => setSearchKeyword(e.target.value)}
+          placeholder={t('design.electrode.records.searchPlaceholder', 'Search record ID')}
+        />
+
+        {/* 日期选择器 */}
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={getDayjsLocale()}>
+          <DatePicker
+            className="records-date-filter"
+            value={selectedDate ? dayjs(selectedDate) : null}
+            onChange={(date: Dayjs | null) => {
+              setSelectedDate(date ? date.format('YYYY-MM-DD') : '');
+            }}
+            enableAccessibleFieldDOMStructure={false}
+            slotProps={{
+              textField: {
+                placeholder: t('design.electrode.records.selectDate', '年/月/日'),
+                size: 'small',
+                fullWidth: true,
+                sx: {
+                  minWidth: 140,
+                  maxWidth: 180,
+                  '& .MuiInputBase-root': {
+                    height: 32,
+                    minHeight: 32,
+                    fontSize: 13,
+                    borderRadius: '6px',
+                  },
+                  '& .MuiInputBase-input': {
+                    padding: '0 10px',
+                    height: 32,
+                    lineHeight: '32px',
+                    fontSize: 13,
+                    color: '#374151',
+                    boxSizing: 'border-box',
+                    '&::placeholder': {
+                      color: '#9ca3af',
+                      opacity: 1,
+                    },
+                  },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#d1d5dc',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#9ca3af',
+                  },
+                  '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#56B26A',
+                    borderWidth: 1,
+                  },
+                  '& .MuiInputAdornment-root': {
+                    height: 32,
+                    maxHeight: 32,
+                    marginLeft: 0,
+                  },
+                  '& .MuiIconButton-root': {
+                    padding: '4px',
+                  },
+                },
+              },
+            }}
+          />
+        </LocalizationProvider>
+
+        {/* 刷新按钮 */}
+        <button
+          className="design-refresh-button"
+          onClick={handleRefresh}
+          aria-label={t('design.electrode.records.refresh', 'Refresh')}
+        >
+          <RefreshCw size={16} />
+        </button>
+      </div>
+
+      {/* 记录计数 */}
+      {/* <div className="records-count-text">
+        {t('design.electrode.records.showing', 'Showing {{count}} of {{total}} records', {
+          count: filteredRecords.length,
+          total: records.length,
+        })}
+      </div> */}
+
+      {/* 表格列表 */}
+      <div className="records-table-wrapper">
+        <table className="records-table">
+          <thead>
+            <tr>
+              <th>{t('design.electrode.records.recordId', 'Record ID')}</th>
+              <th>{t('design.electrode.records.cellDesign', 'Cell Design')}</th>
+              <th>{t('design.electrode.records.cathode', 'Cathode Active Material')}</th>
+              <th>{t('design.electrode.records.anode', 'Anode Active Material')}</th>
+              <th>{t('design.electrode.records.createdTime', 'Created Time')}</th>
+              <th>{t('design.electrode.records.actions', 'Actions')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredRecords.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="no-data">
+                  {t('design.electrode.records.noRecords', 'No records found.')}
+                </td>
+              </tr>
+            ) : (
+              filteredRecords.map((record) => (
+                <tr key={record.id}>
+                  <td className="record-id">{record.id}</td>
+                  <td>{record.cellDesign}</td>
+                  <td>{record.cathode}</td>
+                  <td>{record.anode}</td>
+                  <td className="created-date">{record.createdTime}</td>
+                  <td className="actions-cell">
+                    <button
+                      className="view-button"
+                      onClick={() => window.location.href = `/design/electrode/record/${record.id}`}
+                    >
+                      {t('design.electrode.records.viewResults', 'View Results')}
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+export default RecordsContent;

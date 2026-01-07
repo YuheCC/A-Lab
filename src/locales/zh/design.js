@@ -320,7 +320,7 @@ export default {
                 description: "预测参数趋势"
             },
             optimize: {
-                title: "优化",
+                title: "逆向设计",
                 description: "优化电极参数"
             },
             train: {
@@ -400,6 +400,23 @@ export default {
                 calculateError: "推荐计算失败",
                 loadDetailsError: "加载详情失败"
             }
+        },
+        records: {
+            resultPrediction: "结果预测",
+            trendAnalysis: "趋势分析",
+            inverseDesign: "逆向设计",
+            searchPlaceholder: "搜索记录 ID",
+            selectDate: "年/月/日",
+            showing: "显示 {{count}} / {{total}} 条记录",
+            refresh: "刷新",
+            recordId: "记录 ID",
+            cellDesign: "电池设计",
+            cathode: "阴极活性材料",
+            anode: "阳极活性材料",
+            createdTime: "创建时间",
+            actions: "操作",
+            viewResults: "查看结果",
+            noRecords: "暂无记录"
         }
     }
 };

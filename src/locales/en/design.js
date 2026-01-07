@@ -320,7 +320,7 @@ export default {
                 description: "Predict parameter trends"
             },
             optimize: {
-                title: "Optimize",
+                title: "Inverse Design",
                 description: "Optimize electrode parameters"
             },
             train: {
@@ -400,6 +400,23 @@ export default {
                 calculateError: "Failed to calculate recommendations",
                 loadDetailsError: "Failed to load design details"
             }
+        },
+        records: {
+            resultPrediction: "Result Prediction",
+            trendAnalysis: "Trend Analysis",
+            inverseDesign: "Inverse Design",
+            searchPlaceholder: "Search record ID",
+            selectDate: "Select Date",
+            showing: "Showing {{count}} of {{total}} records",
+            refresh: "Refresh",
+            recordId: "Record ID",
+            cellDesign: "Cell Design",
+            cathode: "Cathode Active Material",
+            anode: "Anode Active Material",
+            createdTime: "Created Time",
+            actions: "Actions",
+            viewResults: "View Results",
+            noRecords: "No records found."
         }
     }
 };
