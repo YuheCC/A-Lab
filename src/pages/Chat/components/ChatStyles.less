@@ -599,16 +599,14 @@ body.chat-page-body {
 .chat {
     &__message-wrapper {
         display: flex;
+        flex-direction: column;
         margin-bottom: 30px;
 
         &--user {
-            justify-content: flex-end;
-            position: relative;
+            align-items: flex-end;
         }
 
         &--bot {
-            justify-content: flex-start;
-            flex-direction: column;
             align-items: flex-start;
         }
     }
@@ -644,15 +642,7 @@ body.chat-page-body {
     }
 }
 
-/* 用户消息容器样式 */
-.message-container {
-    position: relative;
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-end;
-    width: 100%;
-    margin-bottom: 20px;
-}
+/* 用户消息容器样式已移至 MessageList.less，使用统一样式 */
 
 /* 编辑按钮容器样式 */
 .edit-btn-container {
@@ -763,33 +753,11 @@ body.chat-page-body {
     text-decoration-color: #449a57;
 }
 
-/* 消息操作按钮样式 */
-.message-actions {
-    display: flex;
-    gap: 8px;
-    opacity: 0;
-    transition: opacity 0.2s;
-    justify-content: flex-end;
-    align-self: flex-end;
-    position: absolute;
-    bottom: -8px;
-    right: 0;
-}
+/* 消息操作按钮样式已移至 MessageList.less，使用统一样式 */
 
 .chat__message-wrapper--bot:hover .message-actions,
 .chat__message-wrapper--user:hover .message-actions {
     opacity: 1;
-}
-
-/* 机器人消息的操作按钮样式 - 放在回答下方，靠左侧 */
-.chat__message-wrapper--bot .message-actions {
-    position: static;
-    justify-content: flex-start;
-    align-self: flex-start;
-    margin-top: -8px;
-    margin-left: 0;
-    bottom: auto;
-    right: auto;
 }
 
 .action-btn {

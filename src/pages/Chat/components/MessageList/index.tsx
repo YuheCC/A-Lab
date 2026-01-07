@@ -544,44 +544,46 @@ const MessageList: FC<MessageListProps> = ({
               {message.content}
             </div>
             {renderSavedTimestamp(message)}
+            {renderMessageActions(message)}
           </div>
-          {renderMessageActions(message)}
         </div>
       );
     } else if (isAssistantMessage(message) || isSystemMessage(message)) {
       // system消息按assistant样式展示
       return (
         <div key={message.id} className="chat__message-wrapper chat__message-wrapper--bot">
-          {isAssistantMessage(message) && thinkingTarget && thinkingTarget.id === message.id && (!message.content || String(message.content).trim() === '') ? (
-            <div className="chat__message chat__message--bot">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontVariantNumeric: 'tabular-nums', color: '#6b7280' }}>{thinkingElapsedLabel}</span>
+          <div className="message-container">
+            {isAssistantMessage(message) && thinkingTarget && thinkingTarget.id === message.id && (!message.content || String(message.content).trim() === '') ? (
+              <div className="chat__message chat__message--bot">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontVariantNumeric: 'tabular-nums', color: '#6b7280' }}>{thinkingElapsedLabel}</span>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="chat__message chat__message--bot">
-              {isAssistantMessage(message) && (
-                <ToolStatsDisplay toolStats={message.toolStats} />
-              )}
-              <InlineMoleculeRenderer content={message.content} onMoleculeClick={forwardMoleculeClick} />
-              {/* 渲染extraData - 仅助手消息显示 */}
-              {(() => {
-                if (!isAssistantMessage(message) || !message.extraData) return null;
-                const filteredEntries = Object.entries(message.extraData as Record<string, any>)
-                  .filter(([key]) => key !== 'tool_stats' && key !== 'toolStats');
-                if (filteredEntries.length === 0) return null;
-                const filteredData = Object.fromEntries(filteredEntries);
-                return (
-                  <SupplementalData
-                    data={filteredData as Record<string, any>}
-                    onMoleculeClick={forwardMoleculeClick}
-                  />
-                );
-              })()}
-            </div>
-          )}
-          {renderSavedTimestamp(message)}
-          {renderMessageActions(message)}
+            ) : (
+              <div className="chat__message chat__message--bot">
+                {isAssistantMessage(message) && (
+                  <ToolStatsDisplay toolStats={message.toolStats} />
+                )}
+                <InlineMoleculeRenderer content={message.content} onMoleculeClick={forwardMoleculeClick} />
+                {/* 渲染extraData - 仅助手消息显示 */}
+                {(() => {
+                  if (!isAssistantMessage(message) || !message.extraData) return null;
+                  const filteredEntries = Object.entries(message.extraData as Record<string, any>)
+                    .filter(([key]) => key !== 'tool_stats' && key !== 'toolStats');
+                  if (filteredEntries.length === 0) return null;
+                  const filteredData = Object.fromEntries(filteredEntries);
+                  return (
+                    <SupplementalData
+                      data={filteredData as Record<string, any>}
+                      onMoleculeClick={forwardMoleculeClick}
+                    />
+                  );
+                })()}
+              </div>
+            )}
+            {renderSavedTimestamp(message)}
+            {renderMessageActions(message)}
+          </div>
         </div>
       );
     }
@@ -604,6 +606,7 @@ const MessageList: FC<MessageListProps> = ({
           responseContent={feedbackData.responseContent}
           contextContent1={feedbackData.contextContent1}
           queryType="normal_chat"
+          useMultiAgent={false}
           onClose={() => setShowFeedbackBox(false)}
         />
       )}
