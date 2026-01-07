@@ -117,6 +117,25 @@
   color: #d97706;
 }
 
+/* 下载按钮 loading 状态 */
+.download-btn.loading {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.download-btn .spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* 分子按钮 */
 .molecule-btn {
   margin-top: 10px;

@@ -138,7 +138,7 @@ interface MessageListProps {
 
 import { useChatContext } from '../../context/ChatContext';
 import FeedbackBox from '@/components/FeedbackBox/index.js';
-import { ThumbsUp, ThumbsDown, Download } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Download, Loader2 } from 'lucide-react';
 import { useAuthStore } from '@/models/useAuth';
 import { chatService } from '@/services/chat/chatService';
 
@@ -446,12 +446,16 @@ const MessageList: FC<MessageListProps> = ({
 
         {/* 下载 PDF 按钮 */}
         <button
-          className="action-btn download-btn"
+          className={`action-btn download-btn ${downloadingMessageId === message.id ? 'loading' : ''}`}
           onClick={() => handleDownloadPdf(message.id)}
           title={t('chatbox.chat.downloadPdf') || 'Download PDF'}
           disabled={downloadingMessageId === message.id}
         >
-          <Download size={16} />
+          {downloadingMessageId === message.id ? (
+            <Loader2 size={16} className="spinner" />
+          ) : (
+            <Download size={16} />
+          )}
         </button>
 
         {/* 编辑按钮 - 仅最后一条用户消息显示 */}

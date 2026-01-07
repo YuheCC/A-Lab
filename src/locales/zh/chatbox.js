@@ -20,6 +20,7 @@ export default {
         dislike: "点踩",
         editQuestion: "编辑问题",
         copy: "复制",
+        downloadPdf: "下载 PDF",
         regenerate: "重新生成",
         sendFailed: "发送消息失败，请稍后重试。",
         regenerateFailed: "重新生成失败，请稍后重试。",
