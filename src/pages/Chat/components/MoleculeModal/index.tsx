@@ -126,8 +126,10 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const [numResults, setNumResults] = useState(30);
     const [extraRequests, setExtraRequests] = useState('');
     const defaultCompute = useMemo(() => {
-        return 'Disabled';
-    }, []);
+        if (["admin", "enterprise", "joint"].includes(userPermissions || '')) return 'High';
+        if (["team", "explorer"].includes(userPermissions || '')) return 'Medium';
+        return 'Low';
+    }, [userPermissions]);
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
     const [showHypothetical, setShowHypothetical] = useState(false);
     const [prioritizePublished, setPrioritizePublished] = useState(true);
@@ -789,7 +791,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             </div>
                         </div>
                     )}
-                    {/* <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                    <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                         <span style={{ whiteSpace: 'nowrap' }}>{t('search.intelligentFindFriendsLabel')}</span>
                         <InfoTooltip
                             title={(
@@ -851,6 +853,31 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
                         </select>
                     </div>
+                    <textarea
+                        value={extraRequests}
+                        onChange={(e) => {
+                            if (isFindFriendsLocked) {
+                                handleLockedAction();
+                                return;
+                            }
+                            setExtraRequests(e.target.value);
+                        }}
+                        placeholder={t('search.extraRequestsPlaceholder')}
+                        className="ff-advanced-textarea"
+                        readOnly={isFindFriendsLocked}
+                        onMouseDown={(event) => {
+                            if (isFindFriendsLocked) {
+                                event.preventDefault();
+                                handleLockedAction();
+                            }
+                        }}
+                        style={{
+                            marginTop: '12px',
+                            backgroundColor: isFindFriendsLocked ? '#f1f5f9' : undefined,
+                            color: isFindFriendsLocked ? '#94a3b8' : undefined,
+                            cursor: isFindFriendsLocked ? 'not-allowed' : 'text',
+                        }}
+                    />
                     <div
                         role="button"
                         tabIndex={0}
@@ -876,7 +903,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     >
                         <span>{t('search.advancedOptions')}</span>
                         {showAdvanced ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                    </div> */}
+                    </div>
                     {showAdvanced && (
                         <FindFriendAdvancedOptions
                             selectedMolType={selectedMoleculeType}
