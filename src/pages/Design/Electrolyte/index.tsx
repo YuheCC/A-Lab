@@ -17,6 +17,7 @@ import DesignIntroduction from './components/DesignIntroduction';
 import Pagination from '@/components/Pagination';
 import CollapsibleText from '@/components/CollapsibleText';
 import FeatureCard from '../components/FeatureCard';
+import FeatureCardGroup from '../components/FeatureCardGroup';
 import './index.less';
 
 interface HistoryRecord {
@@ -427,7 +428,15 @@ const DesignPage: React.FC<DesignPageProps> = () => {
         </CollapsibleText>
       </div>
 
-      <div className="design-feature-cards">
+      <FeatureCardGroup 
+        columns={{
+          default: 1,
+          sm: 2,
+          md: 2,
+          lg: 4
+        }}
+        gap={16}
+      >
         <FeatureCard
           icon={<Plus size={20} />}
           title={t('design.history.newDesign', 'New Design')}
@@ -442,7 +451,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
           iconBgColor="#dcfce7"
           onClick={handleTrain}
         />
-      </div>
+      </FeatureCardGroup>
 
       <div className="design-tool-table-container">
         <div className="design-tabs-header">

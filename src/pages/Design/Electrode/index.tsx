@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@umijs/max';
 import FeatureCard from '../components/FeatureCard';
+import FeatureCardGroup from '../components/FeatureCardGroup';
 import TabSection from './components/TabSection';
 import IntroductionContent from './components/IntroductionContent';
 import RecordsContent from './components/RecordsContent';
@@ -39,7 +40,14 @@ const ElectrodePage: React.FC = () => {
         </p>
       </div>
 
-      <div className="electrode-page__feature-cards">
+      <FeatureCardGroup 
+        columns={{
+          default: 1,
+          sm: 2,
+          lg: 4,
+        }}
+        gap={16}
+      >
         <FeatureCard
           icon={<img src={ICONS.resultPrediction} alt="" style={{ width: 20, height: 20 }} />}
           title={t('design.electrode.features.resultPrediction.title')}
@@ -67,7 +75,7 @@ const ElectrodePage: React.FC = () => {
           iconBgColor="#fef3c6"
           disabled={true}
         />
-      </div>
+      </FeatureCardGroup>
 
       <TabSection activeTab={activeTab} onTabChange={setActiveTab}>
         {activeTab === 'introduction' && <IntroductionContent />}
