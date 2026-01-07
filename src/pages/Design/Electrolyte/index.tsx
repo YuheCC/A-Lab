@@ -9,13 +9,14 @@ import 'dayjs/locale/zh-cn';
 import 'dayjs/locale/en';
 import 'dayjs/locale/ja';
 import 'dayjs/locale/ko';
-import { Activity, X, RefreshCw } from 'lucide-react';
+import { Activity, X, RefreshCw, Plus } from 'lucide-react';
 import { getHistoryList, deleteHistory, getModelList as getModelListFromModel, getBaseModelList, removeModel } from './model';
 import { type ModelListItem } from '@/services/model/training';
 import { formatUTCDateTime } from '@/utils/dateUtils';
 import DesignIntroduction from './components/DesignIntroduction';
 import Pagination from '@/components/Pagination';
 import CollapsibleText from '@/components/CollapsibleText';
+import FeatureCard from '../components/FeatureCard';
 import './index.less';
 
 interface HistoryRecord {
@@ -426,14 +427,21 @@ const DesignPage: React.FC<DesignPageProps> = () => {
         </CollapsibleText>
       </div>
 
-      <div className="design-action-section">
-        <button className="new-design-button" onClick={handleNewDesign}>
-          + {t('design.history.newDesign', 'New Design')}
-        </button>
-        <button className="train-button" onClick={handleTrain}>
-          <Activity size={16} />
-          {t('design.history.train', 'Train')}
-        </button>
+      <div className="design-feature-cards">
+        <FeatureCard
+          icon={<Plus size={20} />}
+          title={t('design.history.newDesign', 'New Design')}
+          description={t('design.electrolyte.features.newDesign.description', 'Create a new electrolyte design')}
+          iconBgColor="#dbeafe"
+          onClick={handleNewDesign}
+        />
+        <FeatureCard
+          icon={<Activity size={20} />}
+          title={t('design.history.train', 'Train')}
+          description={t('design.electrolyte.features.train.description', 'Train a new model')}
+          iconBgColor="#dcfce7"
+          onClick={handleTrain}
+        />
       </div>
 
       <div className="design-tool-table-container">

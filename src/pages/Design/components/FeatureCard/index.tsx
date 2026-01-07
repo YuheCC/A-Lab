@@ -7,6 +7,7 @@ interface FeatureCardProps {
   description: string;
   iconBgColor: string;
   onClick?: () => void;
+  disabled?: boolean;
 }
 
 const FeatureCard: React.FC<FeatureCardProps> = ({
@@ -14,12 +15,19 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   title,
   description,
   iconBgColor,
-  onClick
+  onClick,
+  disabled = false
 }) => {
+  const handleClick = () => {
+    if (!disabled && onClick) {
+      onClick();
+    }
+  };
+
   return (
     <div
-      className={`feature-card ${onClick ? 'feature-card--clickable' : ''}`}
-      onClick={onClick}
+      className={`feature-card ${onClick && !disabled ? 'feature-card--clickable' : ''} ${disabled ? 'feature-card--disabled' : ''}`}
+      onClick={handleClick}
     >
       <div className="feature-card__icon-wrapper" style={{ backgroundColor: iconBgColor }}>
         {icon}

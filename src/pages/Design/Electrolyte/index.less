@@ -23,47 +23,18 @@
     margin: 0;
   }
 
-  .design-action-section {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    margin: 12px 24px 8px 0px;
-    gap: 16px;
-  }
+  .design-feature-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: @spacing-lg;
+    margin-bottom: @spacing-xl;
 
-  .new-design-button {
-    background: @color-gray-800;
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 16px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
-
-    &:hover {
-      background: @color-gray-700;
+    @media (max-width: 1200px) {
+      grid-template-columns: repeat(2, 1fr);
     }
-  }
 
-  .train-button {
-    background: #ffffff;
-    color: @color-gray-700;
-    border: 1px solid #d1d5dc;
-    border-radius: 8px;
-    padding: 10px 16px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    &:hover {
-      background: @color-gray-100;
-      border-color: @color-gray-400;
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
     }
   }
 

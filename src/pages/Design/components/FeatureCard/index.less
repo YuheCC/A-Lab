@@ -18,6 +18,28 @@
     }
   }
 
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    &:hover {
+      box-shadow: none;
+      border-color: @color-border;
+    }
+
+    .feature-card__title {
+      color: @color-text-disabled;
+    }
+
+    .feature-card__description {
+      color: @color-text-disabled;
+    }
+
+    .feature-card__icon-wrapper {
+      opacity: 0.6;
+    }
+  }
+
   &__icon-wrapper {
     width: 40px;
     height: 40px;

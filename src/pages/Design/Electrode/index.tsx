@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@umijs/max';
-import FeatureCard from './components/FeatureCard';
+import FeatureCard from '../components/FeatureCard';
 import TabSection from './components/TabSection';
 import IntroductionContent from './components/IntroductionContent';
 import RecordsContent from './components/RecordsContent';
@@ -65,6 +65,7 @@ const ElectrodePage: React.FC = () => {
           title={t('design.electrode.features.train.title')}
           description={t('design.electrode.features.train.description')}
           iconBgColor="#fef3c6"
+          disabled={true}
         />
       </div>
 
