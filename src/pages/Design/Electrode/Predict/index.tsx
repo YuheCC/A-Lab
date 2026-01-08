@@ -27,23 +27,23 @@ const PredictPage: React.FC = () => {
   const [cathodeActiveMaterial, setCathodeActiveMaterial] = useState('NCM811');
 
   // 阳极参数 - 重命名为描述性名称
-  const [anodeCMC, setAnodeCMC] = useState(0.8);                 // 原 anodeBinder1
-  const [anodeSBR, setAnodeSBR] = useState(0.8);                 // 原 anodeBinder2
-  const [anodePAA, setAnodePAA] = useState(0.8);                 // 原 anodeBinder3
-  const [anodeSuperP, setAnodeSuperP] = useState(0.8);           // 原 anodeConductiveCarbon
-  const [anodeSWCNT, setAnodeSWCNT] = useState(0.8);             // 原 anodeCNT
-  const [anodePressDensity, setAnodePressDensity] = useState(0.8); // 保持不变
-  const [anodeSCBI, setAnodeSCBI] = useState(0);                 // 新增 - 计算字段
-  const [anodeGrSI, setAnodeGrSI] = useState(0);                 // 新增 - 计算字段
-  const [anodeArealLoading, setAnodeArealLoading] = useState(0.8); // 新增 - 输入字段
+  const [anodeCMC, setAnodeCMC] = useState(1.52);                 // 原 anodeBinder1
+  const [anodeSBR, setAnodeSBR] = useState(2.21);                 // 原 anodeBinder2
+  const [anodePAA, setAnodePAA] = useState(2.33);                 // 原 anodeBinder3
+  const [anodeSuperP, setAnodeSuperP] = useState(1.4);            // 原 anodeConductiveCarbon (KS-6)
+  const [anodeSWCNT, setAnodeSWCNT] = useState(0.41);             // 原 anodeCNT
+  const [anodePressDensity, setAnodePressDensity] = useState(1.5); // 保持不变
+  const [anodeSCBI, setAnodeSCBI] = useState(0);                  // 新增 - 计算字段
+  const [anodeGrSI, setAnodeGrSI] = useState(0);                  // 新增 - 计算字段
+  const [anodeArealLoading, setAnodeArealLoading] = useState(0);  // 新增 - 输入字段（由 cathode loading 计算）
 
   // 阴极参数 - 重命名为描述性名称
-  const [cathodeKF9700, setCathodeKF9700] = useState(0.8);       // 原 cathodeBinder1
-  const [cathodeCN01Y, setCathodeCN01Y] = useState(0.8);         // 原 cathodeCNT
-  const [cathodeSuperC65, setCathodeSuperC65] = useState(0.8);   // 原 cathodeConductiveCarbon
-  const [cathodeArealLoading, setCathodeArealLoading] = useState(0.8); // 保持不变
-  const [cathodePressDensity, setCathodePressDensity] = useState(0.8); // 保持不变
-  const [cathodeNCMA, setCathodeNCMA] = useState(0);             // 新增 - 计算字段
+  const [cathodeKF9700, setCathodeKF9700] = useState(1.24);       // 原 cathodeBinder1
+  const [cathodeCN01Y, setCathodeCN01Y] = useState(0.5);          // 原 cathodeCNT
+  const [cathodeSuperC65, setCathodeSuperC65] = useState(2.04);   // 原 cathodeConductiveCarbon (CB)
+  const [cathodeArealLoading, setCathodeArealLoading] = useState(2.93); // 保持不变
+  const [cathodePressDensity, setCathodePressDensity] = useState(3.52); // 保持不变
+  const [cathodeNCMA, setCathodeNCMA] = useState(0);              // 新增 - 计算字段
 
   // 尺寸参数
   const [width, setWidth] = useState('');
