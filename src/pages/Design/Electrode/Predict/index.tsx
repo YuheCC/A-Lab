@@ -212,6 +212,7 @@ const PredictPage: React.FC = () => {
                   {t('design.electrode.predict.npRatio', 'NP Ratio')}
                 </label>
                 <Input
+                  disabled={true}
                   type="number"
                   value={npRatio}
                   onChange={(e) => setNpRatio(e.target.value)}
