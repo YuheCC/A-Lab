@@ -246,7 +246,7 @@ const PredictPage: React.FC = () => {
 
                 <div className="electrode-predict-parameters-container">
                 <ParameterInput
-                  label="KF-9700 (wt.%)"
+                  label={t('design.electrode.predict.kf9700', 'KF-9700 (wt.%)')}
                   value={cathodeKF9700}
                   onChange={setCathodeKF9700}
                   min={cathodeRanges.cathodeKF9700?.min}
@@ -254,7 +254,7 @@ const PredictPage: React.FC = () => {
                   step={0.1}
                 />
                 <ParameterInput
-                  label="CN-01Y (wt.%)"
+                  label={t('design.electrode.predict.cn01y', 'CN-01Y (wt.%)')}
                   value={cathodeCN01Y}
                   onChange={setCathodeCN01Y}
                   min={cathodeRanges.cathodeCN01Y?.min}
@@ -262,7 +262,7 @@ const PredictPage: React.FC = () => {
                   step={0.1}
                 />
                 <ParameterInput
-                  label="Super C65 (wt.%)"
+                  label={t('design.electrode.predict.superC65', 'Super C65 (wt.%)')}
                   value={cathodeSuperC65}
                   onChange={setCathodeSuperC65}
                   min={cathodeRanges.cathodeSuperC65?.min}
@@ -270,7 +270,7 @@ const PredictPage: React.FC = () => {
                   step={0.1}
                 />
                 <ParameterInput
-                  label="Active material NCM-A (%)"
+                  label={t('design.electrode.predict.cathodeActiveMaterialLabel', 'Active material NCM-A (%)')}
                   value={cathodeNCMA}
                   onChange={setCathodeNCMA}
                   min={0}
@@ -327,7 +327,7 @@ const PredictPage: React.FC = () => {
 
                 <div className="electrode-predict-parameters-container">
                 <ParameterInput
-                  label="CMC (wt.%)"
+                  label={t('design.electrode.predict.cmc', 'CMC (wt.%)')}
                   value={anodeCMC}
                   onChange={setAnodeCMC}
                   min={anodeRanges.anodeCMC?.min}
@@ -335,7 +335,7 @@ const PredictPage: React.FC = () => {
                   step={0.1}
                 />
                 <ParameterInput
-                  label="SBR (wt.%)"
+                  label={t('design.electrode.predict.sbr', 'SBR (wt.%)')}
                   value={anodeSBR}
                   onChange={setAnodeSBR}
                   min={anodeRanges.anodeSBR?.min}
@@ -343,7 +343,7 @@ const PredictPage: React.FC = () => {
                   step={0.1}
                 />
                 <ParameterInput
-                  label="PAA (wt.%)"
+                  label={t('design.electrode.predict.paa', 'PAA (wt.%)')}
                   value={anodePAA}
                   onChange={setAnodePAA}
                   min={anodeRanges.anodePAA?.min}
@@ -351,7 +351,7 @@ const PredictPage: React.FC = () => {
                   step={0.1}
                 />
                 <ParameterInput
-                  label="Super P (wt.%)"
+                  label={t('design.electrode.predict.superP', 'Super P (wt.%)')}
                   value={anodeSuperP}
                   onChange={setAnodeSuperP}
                   min={anodeRanges.anodeSuperP?.min}
@@ -359,7 +359,7 @@ const PredictPage: React.FC = () => {
                   step={0.1}
                 />
                 <ParameterInput
-                  label="SWCNT (wt.%)"
+                  label={t('design.electrode.predict.swcnt', 'SWCNT (wt.%)')}
                   value={anodeSWCNT}
                   onChange={setAnodeSWCNT}
                   min={anodeRanges.anodeSWCNT?.min}
@@ -367,7 +367,7 @@ const PredictPage: React.FC = () => {
                   step={0.01}
                 />
                 <ParameterInput
-                  label="Active material-1 SC-B-I (%)"
+                  label={t('design.electrode.predict.activeMaterial1', 'Active material-1 SC-B-I (%)')}
                   value={anodeSCBI}
                   onChange={setAnodeSCBI}
                   min={0}
@@ -376,7 +376,7 @@ const PredictPage: React.FC = () => {
                   disabled={true}  // 置灰 - 计算字段
                 />
                 <ParameterInput
-                  label="Active material-2 Gr-S-I (%)"
+                  label={t('design.electrode.predict.activeMaterial2', 'Active material-2 Gr-S-I (%)')}
                   value={anodeGrSI}
                   onChange={setAnodeGrSI}
                   min={0}
@@ -385,7 +385,7 @@ const PredictPage: React.FC = () => {
                   disabled={true}  // 置灰 - 计算字段
                 />
                 <ParameterInput
-                  label="Areal Loading (mAh/cm²)"
+                  label={t('design.electrode.predict.anodeArealLoading', 'Areal Loading (mAh/cm²)')}
                   value={anodeArealLoading}
                   onChange={setAnodeArealLoading}
                   min={0}

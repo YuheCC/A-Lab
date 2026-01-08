@@ -370,7 +370,22 @@ export default {
             designCapacity: "Design Capacity",
             specificED: "Specific Energy Density",
             jellyRollThickness: "Jelly Roll Thickness",
-            volumetricED: "Volumetric Energy Density"
+            volumetricED: "Volumetric Energy Density",
+            calculateError: "Failed to calculate prediction",
+            npRatio: "NP Ratio",
+            enterNpRatio: "Enter NP ratio",
+            activeMaterial1: "Active material-1 SC-B-I (%)",
+            activeMaterial2: "Active material-2 Gr-S-I (%)",
+            anodeArealLoading: "Areal Loading (mAh/cm²)",
+            cathodeActiveMaterialLabel: "Active material NCM-A (%)",
+            kf9700: "KF-9700 (wt.%)",
+            cn01y: "CN-01Y (wt.%)",
+            superC65: "Super C65 (wt.%)",
+            cmc: "CMC (wt.%)",
+            sbr: "SBR (wt.%)",
+            paa: "PAA (wt.%)",
+            superP: "Super P (wt.%)",
+            swcnt: "SWCNT (wt.%)"
         },
         optimize: {
             title: "Inverse Design",
