@@ -421,6 +421,17 @@ export default {
             actions: "操作",
             viewResults: "查看结果",
             noRecords: "暂无记录"
+        },
+        validation: {
+            parameterRange: "{{label}} 必须在 {{min}} 到 {{max}} 之间",
+            selectCathodeMaterial: "请选择阴极活性材料",
+            selectAnodeMaterial: "请选择阳极活性材料",
+            cathodeConductiveSum: "Super C65 + CN-01Y 的总和必须大于 0.8",
+            cmcGreaterThanSwcnt: "CMC 必须大于 SWCNT",
+            anodeConductiveSum: "Super P (KS-6) + SWCNT 的总和必须大于 0.005",
+            fillAllDimensions: "请填写所有尺寸参数",
+            ratioSmallWidth: "宽度不超过 100 时，长宽比必须在 0.2 到 1 之间。",
+            ratioLargeWidth: "宽度在 100 到 1000 之间时，长宽比必须保持在 0.1 到 0.5 之间。"
         }
     }
 };

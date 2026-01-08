@@ -385,6 +385,17 @@ export default {
             actions: "작업",
             viewResults: "결과 보기",
             noRecords: "기록을 찾을 수 없습니다"
+        },
+        validation: {
+            parameterRange: "{{label}}은(는) {{min}}에서 {{max}} 사이여야 합니다",
+            selectCathodeMaterial: "양극 활물질을 선택하세요",
+            selectAnodeMaterial: "음극 활물질을 선택하세요",
+            cathodeConductiveSum: "Super C65 + CN-01Y의 합계는 0.8보다 커야 합니다",
+            cmcGreaterThanSwcnt: "CMC는 SWCNT보다 커야 합니다",
+            anodeConductiveSum: "Super P (KS-6) + SWCNT의 합계는 0.005보다 커야 합니다",
+            fillAllDimensions: "모든 치수 매개변수를 입력하세요",
+            ratioSmallWidth: "폭이 100을 초과하지 않는 경우, 종횡비는 0.2에서 1 범위 내에 있어야 합니다.",
+            ratioLargeWidth: "폭이 100에서 1000 사이인 경우, 종횡비는 0.1에서 0.5 사이를 유지해야 합니다."
         }
     }
 };

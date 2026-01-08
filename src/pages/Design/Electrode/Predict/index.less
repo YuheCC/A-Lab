@@ -124,6 +124,22 @@
   }
 }
 
+// 错误提示样式
+.electrode-predict-error-message {
+  margin-top: 8px;
+  color: #ff4d4f;
+  font-size: 13px;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  
+  &::before {
+    content: '⚠';
+    margin-right: 6px;
+    font-size: 14px;
+  }
+}
+
 .electrode-predict-subsection-title {
   font-size: 16px;
   font-weight: @font-weight-medium;
