@@ -3,29 +3,27 @@
 #electrode-page {
   padding: @spacing-xl @spacing-2xl;
   min-height: calc(100vh - 116px);
+
+  // FeatureCardGroup margin，与 Electrolyte 页面保持一致
+  .feature-card-group {
+    margin-bottom: @spacing-xl; // 24px
+  }
 }
 
 .electrode-page {
   &__header {
-    margin-bottom: @spacing-2xl;
+    margin-bottom: @spacing-lg; // 16px，与 Electrolyte 页面保持一致
   }
 
   &__title {
-    font-size: @font-size-xl;
-    font-weight: @font-weight-bold;
+    font-size: @font-size-xl; // 24px
+    font-weight: 600; // 与 Electrolyte 页面保持一致
     color: @color-text-primary;
-    margin: 0 0 @spacing-md 0;
+    margin: 0 0 @spacing-sm 0; // 8px，与 Electrolyte 页面保持一致
   }
 
+  // CollapsibleText 组件自带完整样式，无需额外定义
   &__subtitle {
-    font-size: @font-size-base;
-    color: @color-text-secondary;
-    line-height: @line-height-normal;
-    margin: 0;
-  }
-
-  // FeatureCardGroup margin
-  .feature-card-group {
-    margin-bottom: @spacing-2xl;
+    // 保留 className 用于可能的扩展
   }
 }

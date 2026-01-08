@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@umijs/max';
 import { LeftOutlined } from '@ant-design/icons';
-import { Button, Select, Input, Slider } from 'antd';
+import { Button, Select, Input, Slider, message } from 'antd';
 import ParameterInput from './components/ParameterInput';
 import ResultDisplay from './components/ResultDisplay';
+import * as electrodeModel from '../model';
 import './index.less';
 
 const { Option } = Select;
@@ -38,17 +39,71 @@ const PredictPage: React.FC = () => {
   const [length, setLength] = useState('');
   const [layers, setLayers] = useState('');
 
-  // 预测结果
-  const [results, setResults] = useState({
-    designCapacity: 45.2,
-    specificED: 285,
-    jellyRollThickness: 8.5,
-    volumetricED: 680,
-  });
+  // Loading 状态
+  const [loading, setLoading] = useState(false);
 
-  const handleCalculate = () => {
-    // TODO: 调用 API 进行计算
-    console.log('Calculate prediction');
+  // 预测结果（初始值设为 null，等待计算）
+  const [results, setResults] = useState<electrodeModel.ElectrodeModelResult | null>(null);
+
+  const handleCalculate = async () => {
+    // 验证表单数据
+    if (!cellDesign) {
+      message.warning(t('design.electrode.predict.selectCellDesignWarning', 'Please select cell design'));
+      return;
+    }
+    if (!anodeActiveMaterial) {
+      message.warning(t('design.electrode.predict.selectAnodeMaterialWarning', 'Please select anode active material'));
+      return;
+    }
+    if (!cathodeActiveMaterial) {
+      message.warning(t('design.electrode.predict.selectCathodeMaterialWarning', 'Please select cathode active material'));
+      return;
+    }
+    if (!width || !length || !layers) {
+      message.warning(t('design.electrode.predict.enterDimensionWarning', 'Please enter all dimension values'));
+      return;
+    }
+
+    // 构建 model params（打平的结构）
+    const modelParams: electrodeModel.ElectrodeModelParams = {
+      anodeBinder1,
+      anodeBinder2,
+      anodeBinder3,
+      anodeConductiveCarbon,
+      anodeCNT,
+      anodePressDensity,
+      cathodeBinder1,
+      cathodeCNT,
+      cathodeConductiveCarbon,
+      cathodeArealLoading,
+      cathodePressDensity,
+      width: parseFloat(width),
+      length: parseFloat(length),
+      layers: parseInt(layers, 10),
+    };
+
+    // 构建 API 请求参数
+    const requestParams = electrodeModel.buildPredictParams(
+      {
+        cellDesign,
+        cathodeActiveMaterial,
+        anodeActiveMaterial,
+        modelParams,
+      },
+      electrodeModel.PageType.RESULT_PREDICTION,
+    );
+
+    setLoading(true);
+    try {
+      const response = await electrodeModel.predictElectrodePerformance(requestParams);
+      setResults(response.model_result);
+      message.success(t('design.electrode.predict.calculateSuccess', 'Calculation completed successfully'));
+    } catch (error) {
+      message.error(t('design.electrode.predict.calculateError', 'Failed to calculate prediction'));
+      console.error('[PredictPage] Calculate error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleGoBack = () => {
@@ -246,6 +301,7 @@ const PredictPage: React.FC = () => {
                 type="primary"
                 size="large"
                 onClick={handleCalculate}
+                loading={loading}
                 className="electrode-predict-calculate-btn"
               >
                 {t('design.electrode.predict.calculate', 'Calculate')}
@@ -261,28 +317,34 @@ const PredictPage: React.FC = () => {
           </h2>
 
           <div className="electrode-predict-results-container">
-            <div className="electrode-predict-results-grid">
-            <ResultDisplay
-              label={t('design.electrode.predict.designCapacity', 'Design Capacity')}
-              value={results.designCapacity}
-              unit="Ah"
-            />
-            <ResultDisplay
-              label={t('design.electrode.predict.specificED', 'Specific E.D.')}
-              value={results.specificED}
-              unit="Wh/kg"
-            />
-            <ResultDisplay
-              label={t('design.electrode.predict.jellyRollThickness', 'Jelly Roll Thickness')}
-              value={results.jellyRollThickness}
-              unit="mm"
-            />
-            <ResultDisplay
-              label={t('design.electrode.predict.volumetricED', 'Volumetric E.D.')}
-              value={results.volumetricED}
-                unit="Wh/L"
-              />
-            </div>
+            {results ? (
+              <div className="electrode-predict-results-grid">
+                <ResultDisplay
+                  label={t('design.electrode.predict.designCapacity', 'Design Capacity')}
+                  value={results.designCapacity}
+                  unit="Ah"
+                />
+                <ResultDisplay
+                  label={t('design.electrode.predict.specificED', 'Specific E.D.')}
+                  value={results.specificED}
+                  unit="Wh/kg"
+                />
+                <ResultDisplay
+                  label={t('design.electrode.predict.jellyRollThickness', 'Jelly Roll Thickness')}
+                  value={results.jellyRollThickness}
+                  unit="mm"
+                />
+                <ResultDisplay
+                  label={t('design.electrode.predict.volumetricED', 'Volumetric E.D.')}
+                  value={results.volumetricED}
+                  unit="Wh/L"
+                />
+              </div>
+            ) : (
+              <div className="electrode-predict-no-results">
+                <p>{t('design.electrode.predict.noResults', 'Click "Calculate" to see prediction results')}</p>
+              </div>
+            )}
           </div>
         </div>
         </div>

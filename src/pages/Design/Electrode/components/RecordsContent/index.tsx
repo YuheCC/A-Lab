@@ -1,11 +1,12 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { Radio } from 'antd';
-import { RefreshCw } from 'lucide-react';
+import { Radio, message, Spin } from 'antd';
+import { RefreshCw, Trash2 } from 'lucide-react';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useTranslation } from 'react-i18next';
 import dayjs, { Dayjs } from 'dayjs';
-import { MOCK_RECORDS, ElectrodeRecord } from '../../mockData';
+import * as electrodeModel from '../../model';
+import type { ElectrodeHistoryItem } from '../../model';
 import './index.less';
 
 const RecordsContent: React.FC = () => {
@@ -20,10 +21,69 @@ const RecordsContent: React.FC = () => {
   const [debouncedSearchKeyword, setDebouncedSearchKeyword] = useState<string>('');
 
   // 数据状态
-  const [records, setRecords] = useState<ElectrodeRecord[]>(MOCK_RECORDS);
+  const [records, setRecords] = useState<ElectrodeHistoryItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [total, setTotal] = useState<number>(0);
 
   // 防抖 timer
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // 将 activeSubTab 映射到 type 参数
+  const getTypeFromSubTab = (subTab: string): electrodeModel.PageType => {
+    switch (subTab) {
+      case 'result-prediction':
+        return electrodeModel.PageType.RESULT_PREDICTION;
+      case 'inverse-design':
+        return electrodeModel.PageType.INVERSE_DESIGN;
+      case 'trend-analysis':
+        return electrodeModel.PageType.RESULT_PREDICTION; // 假设使用正向预测
+      default:
+        return electrodeModel.PageType.RESULT_PREDICTION;
+    }
+  };
+
+  // 格式化 Record ID（将数字 id 格式化为 RP-XXX）
+  const formatRecordId = (id: number): string => {
+    return `RP-${String(id).padStart(3, '0')}`;
+  };
+
+  // 加载记录列表
+  const loadRecords = async () => {
+    setLoading(true);
+    try {
+      const response = await electrodeModel.getElectrodeHistoryList({
+        type: getTypeFromSubTab(activeSubTab),
+        page: 1,
+        page_size: 100,
+        // 可选过滤参数
+        ...(selectedDate && { created_at: selectedDate }),
+        ...(debouncedSearchKeyword && { id: parseInt(debouncedSearchKeyword.replace(/\D/g, ''), 10) }),
+      });
+      setRecords(response.data);
+      setTotal(response.total);
+    } catch (error) {
+      message.error(t('design.electrode.records.loadError', 'Failed to load records'));
+      console.error('[RecordsContent] Load records error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 删除记录
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await electrodeModel.deleteElectrodeHistory({ id });
+      if (response.success) {
+        message.success(t('design.electrode.records.deleteSuccess', 'Record deleted successfully'));
+        loadRecords(); // 重新加载列表
+      } else {
+        message.error(t('design.electrode.records.deleteError', 'Failed to delete record'));
+      }
+    } catch (error) {
+      message.error(t('design.electrode.records.deleteError', 'Failed to delete record'));
+      console.error('[RecordsContent] Delete record error:', error);
+    }
+  };
 
   // 防抖搜索
   useEffect(() => {
@@ -42,35 +102,15 @@ const RecordsContent: React.FC = () => {
     };
   }, [searchKeyword]);
 
-  // 过滤后的记录
-  const filteredRecords = useMemo(() => {
-    return records.filter((record) => {
-      // ID 搜索
-      if (
-        debouncedSearchKeyword &&
-        !record.id.toLowerCase().includes(debouncedSearchKeyword.toLowerCase())
-      ) {
-        return false;
-      }
-
-      // 日期过滤
-      if (selectedDate) {
-        const recordDate = dayjs(record.createdTime, 'YYYY/MM/DD HH:mm:ss').format('YYYY-MM-DD');
-        if (recordDate !== selectedDate) {
-          return false;
-        }
-      }
-
-      return true;
-    });
-  }, [records, debouncedSearchKeyword, selectedDate]);
+  // 监听 Tab、搜索关键词、日期变化，自动加载数据
+  useEffect(() => {
+    loadRecords();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSubTab, debouncedSearchKeyword, selectedDate]);
 
   // 刷新数据
   const handleRefresh = () => {
-    // 模拟 API 调用
-    setTimeout(() => {
-      setRecords(MOCK_RECORDS);
-    }, 500);
+    loadRecords();
   };
 
   // 获取 dayjs locale
@@ -80,9 +120,10 @@ const RecordsContent: React.FC = () => {
   };
 
   return (
-    <div className="records-content">
-      {/* 二级 Tab（Radio.Group）*/}
-      <div className="records-tabs">
+    <Spin spinning={loading}>
+      <div className="records-content">
+        {/* 二级 Tab（Radio.Group）*/}
+        <div className="records-tabs">
         <Radio.Group
           value={activeSubTab}
           onChange={(e) => setActiveSubTab(e.target.value)}
@@ -203,20 +244,24 @@ const RecordsContent: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredRecords.length === 0 ? (
+            {records.length === 0 ? (
               <tr>
                 <td colSpan={6} className="no-data">
                   {t('design.electrode.records.noRecords', 'No records found.')}
                 </td>
               </tr>
             ) : (
-              filteredRecords.map((record) => (
+              records.map((record) => (
                 <tr key={record.id}>
-                  <td className="record-id">{record.id}</td>
-                  <td>{record.cellDesign}</td>
-                  <td>{record.cathode}</td>
-                  <td>{record.anode}</td>
-                  <td className="created-date">{record.createdTime}</td>
+                  <td className="record-id">{formatRecordId(record.id)}</td>
+                  <td>{record.cell_design}</td>
+                  <td>{record.cathode_active_material}</td>
+                  <td>{record.anode_active_material}</td>
+                  <td className="created-date">
+                    {record.created_at
+                      ? dayjs(record.created_at).format('YYYY/MM/DD HH:mm:ss')
+                      : '-'}
+                  </td>
                   <td className="actions-cell">
                     <button
                       className="view-button"
@@ -232,6 +277,7 @@ const RecordsContent: React.FC = () => {
         </table>
       </div>
     </div>
+    </Spin>
   );
 };
 

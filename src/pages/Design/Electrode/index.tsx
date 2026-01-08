@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@umijs/max';
+import CollapsibleText from '@/components/CollapsibleText';
 import FeatureCard from '../components/FeatureCard';
 import FeatureCardGroup from '../components/FeatureCardGroup';
 import TabSection from './components/TabSection';
@@ -35,9 +36,9 @@ const ElectrodePage: React.FC = () => {
         <h1 className="electrode-page__title">
           {t('design.electrode.title')}
         </h1>
-        <p className="electrode-page__subtitle">
+        <CollapsibleText className="electrode-page__subtitle">
           {t('design.electrode.subtitle')}
-        </p>
+        </CollapsibleText>
       </div>
 
       <FeatureCardGroup 
