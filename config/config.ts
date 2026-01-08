@@ -38,6 +38,8 @@ export default defineConfig({
     // External service URLs
     'explorer_url': "https://buy.stripe.com/6oE165fCb3Tf0qA5kl",
     'team_url': "https://buy.stripe.com/dR67utfCb3TffludQS",
+
+    'process.env': process.env,
   },
   // 禁用 esbuild 来规避冲突问题
   esbuildMinifyIIFE: false,
