@@ -4,6 +4,7 @@ import { RefreshCw, Trash2 } from 'lucide-react';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from '@umijs/max';
 import dayjs, { Dayjs } from 'dayjs';
 import * as electrodeModel from '../../model';
 import type { ElectrodeHistoryItem } from '../../model';
@@ -11,6 +12,7 @@ import './index.less';
 
 const RecordsContent: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   // 二级 Tab 状态
   const [activeSubTab, setActiveSubTab] = useState('result-prediction');
@@ -57,7 +59,7 @@ const RecordsContent: React.FC = () => {
         page_size: 100,
         // 可选过滤参数
         ...(selectedDate && { created_at: selectedDate }),
-        ...(debouncedSearchKeyword && { id: parseInt(debouncedSearchKeyword.replace(/\D/g, ''), 10) }),
+        ...(debouncedSearchKeyword && { id: debouncedSearchKeyword.replace(/\D/g, '') }),
       });
       setRecords(response.data);
       setTotal(response.total);
@@ -265,7 +267,7 @@ const RecordsContent: React.FC = () => {
                   <td className="actions-cell">
                     <button
                       className="view-button"
-                      onClick={() => window.location.href = `/design/electrode/record/${record.id}`}
+                      onClick={() => navigate(`/design/electrode/predict/detail/${record.id}`)}
                     >
                       {t('design.electrode.records.viewResults', 'View Results')}
                     </button>

@@ -91,6 +91,10 @@ export default  [
         component: "Design/Electrode/Optimize"
     },
     {
+        path: '/design/electrode/predict/detail/:id',
+        component: "Design/Electrode/Predict/Detail"
+    },
+    {
         path: "/formulate",
         component: "FormulationNew"
     },
