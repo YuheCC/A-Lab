@@ -19,20 +19,24 @@ const PredictPage: React.FC = () => {
   const [anodeActiveMaterial, setAnodeActiveMaterial] = useState('');
   const [cathodeActiveMaterial, setCathodeActiveMaterial] = useState('');
 
-  // 阳极参数
-  const [anodeBinder1, setAnodeBinder1] = useState(0.8);
-  const [anodeBinder2, setAnodeBinder2] = useState(0.8);
-  const [anodeBinder3, setAnodeBinder3] = useState(0.8);
-  const [anodeConductiveCarbon, setAnodeConductiveCarbon] = useState(0.8);
-  const [anodeCNT, setAnodeCNT] = useState(0.8);
-  const [anodePressDensity, setAnodePressDensity] = useState(0.8);
+  // 阳极参数 - 重命名为描述性名称
+  const [anodeCMC, setAnodeCMC] = useState(0.8);                 // 原 anodeBinder1
+  const [anodeSBR, setAnodeSBR] = useState(0.8);                 // 原 anodeBinder2
+  const [anodePAA, setAnodePAA] = useState(0.8);                 // 原 anodeBinder3
+  const [anodeSuperP, setAnodeSuperP] = useState(0.8);           // 原 anodeConductiveCarbon
+  const [anodeSWCNT, setAnodeSWCNT] = useState(0.8);             // 原 anodeCNT
+  const [anodePressDensity, setAnodePressDensity] = useState(0.8); // 保持不变
+  const [anodeSCBI, setAnodeSCBI] = useState(0);                 // 新增 - 计算字段
+  const [anodeGrSI, setAnodeGrSI] = useState(0);                 // 新增 - 计算字段
+  const [anodeArealLoading, setAnodeArealLoading] = useState(0.8); // 新增 - 输入字段
 
-  // 阴极参数
-  const [cathodeBinder1, setCathodeBinder1] = useState(0.8);
-  const [cathodeCNT, setCathodeCNT] = useState(0.8);
-  const [cathodeConductiveCarbon, setCathodeConductiveCarbon] = useState(0.8);
-  const [cathodeArealLoading, setCathodeArealLoading] = useState(0.8);
-  const [cathodePressDensity, setCathodePressDensity] = useState(0.8);
+  // 阴极参数 - 重命名为描述性名称
+  const [cathodeKF9700, setCathodeKF9700] = useState(0.8);       // 原 cathodeBinder1
+  const [cathodeCN01Y, setCathodeCN01Y] = useState(0.8);         // 原 cathodeCNT
+  const [cathodeSuperC65, setCathodeSuperC65] = useState(0.8);   // 原 cathodeConductiveCarbon
+  const [cathodeArealLoading, setCathodeArealLoading] = useState(0.8); // 保持不变
+  const [cathodePressDensity, setCathodePressDensity] = useState(0.8); // 保持不变
+  const [cathodeNCMA, setCathodeNCMA] = useState(0);             // 新增 - 计算字段
 
   // 尺寸参数
   const [width, setWidth] = useState('');
@@ -66,17 +70,21 @@ const PredictPage: React.FC = () => {
 
     // 构建 model params（打平的结构）
     const modelParams: electrodeModel.ElectrodeModelParams = {
-      anodeBinder1,
-      anodeBinder2,
-      anodeBinder3,
-      anodeConductiveCarbon,
-      anodeCNT,
-      anodePressDensity,
-      cathodeBinder1,
-      cathodeCNT,
-      cathodeConductiveCarbon,
-      cathodeArealLoading,
-      cathodePressDensity,
+      anodeCMC,              // 重命名
+      anodeSBR,              // 重命名
+      anodePAA,              // 重命名
+      anodeSuperP,           // 重命名
+      anodeSWCNT,            // 重命名
+      anodePressDensity,     // 保持不变
+      anodeSCBI,             // 新增
+      anodeGrSI,             // 新增
+      anodeArealLoading,     // 新增
+      cathodeKF9700,         // 重命名
+      cathodeCN01Y,          // 重命名
+      cathodeSuperC65,       // 重命名
+      cathodeArealLoading,   // 保持不变
+      cathodePressDensity,   // 保持不变
+      cathodeNCMA,           // 新增
       width: parseFloat(width),
       length: parseFloat(length),
       layers: parseInt(layers, 10),
@@ -151,59 +159,6 @@ const PredictPage: React.FC = () => {
 
             {/* 阳极和阴极区域 */}
             <div className="electrode-predict-electrode-grid">
-              {/* 阳极区域 */}
-              <div className="electrode-predict-electrode-section">
-                <label className="electrode-predict-label">
-                {t('design.electrode.predict.anodeActiveMaterial', 'Anode Active Material')}
-              </label>
-              <Select
-                value={anodeActiveMaterial}
-                onChange={setAnodeActiveMaterial}
-                  placeholder={t('design.electrode.predict.selectMaterial', 'Select material')}
-                  className="electrode-predict-select"
-                >
-                  <Option value="material1">Material 1</Option>
-                  <Option value="material2">Material 2</Option>
-                </Select>
-
-                <h3 className="electrode-predict-subsection-title">
-                  {t('design.electrode.predict.anodeParameters', 'Anode Parameters')}
-                </h3>
-
-                <div className="electrode-predict-parameters-container">
-                <ParameterInput
-                  label={t('design.electrode.predict.binder1', 'Binder 1 (wt.%)')}
-                  value={anodeBinder1}
-                  onChange={setAnodeBinder1}
-                />
-                <ParameterInput
-                  label={t('design.electrode.predict.binder2', 'Binder 2 (wt.%)')}
-                  value={anodeBinder2}
-                  onChange={setAnodeBinder2}
-                />
-                <ParameterInput
-                  label={t('design.electrode.predict.binder3', 'Binder 3 (wt.%)')}
-                  value={anodeBinder3}
-                  onChange={setAnodeBinder3}
-                />
-                <ParameterInput
-                  label={t('design.electrode.predict.conductiveCarbon', 'Conductive Carbon (wt.%)')}
-                  value={anodeConductiveCarbon}
-                  onChange={setAnodeConductiveCarbon}
-                />
-                <ParameterInput
-                  label={t('design.electrode.predict.cnt', 'CNT (wt.%)')}
-                  value={anodeCNT}
-                  onChange={setAnodeCNT}
-                />
-                <ParameterInput
-                  label={t('design.electrode.predict.pressDensity', 'Press Density (g/cc)')}
-                  value={anodePressDensity}
-                    onChange={setAnodePressDensity}
-                  />
-                </div>
-              </div>
-
               {/* 阴极区域 */}
               <div className="electrode-predict-electrode-section">
                 <label className="electrode-predict-label">
@@ -225,19 +180,25 @@ const PredictPage: React.FC = () => {
 
                 <div className="electrode-predict-parameters-container">
                 <ParameterInput
-                  label={t('design.electrode.predict.binder1', 'Binder 1 (wt.%)')}
-                  value={cathodeBinder1}
-                  onChange={setCathodeBinder1}
+                  label="KF-9700 (wt.%)"
+                  value={cathodeKF9700}
+                  onChange={setCathodeKF9700}
                 />
                 <ParameterInput
-                  label={t('design.electrode.predict.cnt', 'CNT (wt.%)')}
-                  value={cathodeCNT}
-                  onChange={setCathodeCNT}
+                  label="CN-01Y (wt.%)"
+                  value={cathodeCN01Y}
+                  onChange={setCathodeCN01Y}
                 />
                 <ParameterInput
-                  label={t('design.electrode.predict.conductiveCarbon', 'Conductive Carbon (wt.%)')}
-                  value={cathodeConductiveCarbon}
-                  onChange={setCathodeConductiveCarbon}
+                  label="Super C65 (wt.%)"
+                  value={cathodeSuperC65}
+                  onChange={setCathodeSuperC65}
+                />
+                <ParameterInput
+                  label="Active material NCM-A (%)"
+                  value={cathodeNCMA}
+                  onChange={setCathodeNCMA}
+                  disabled={true}  // 置灰 - 计算字段
                 />
                 <ParameterInput
                   label={t('design.electrode.predict.arealLoading', 'Areal Loading (mAh/cm²)')}
@@ -247,8 +208,79 @@ const PredictPage: React.FC = () => {
                 <ParameterInput
                   label={t('design.electrode.predict.pressDensity', 'Press Density (g/cc)')}
                   value={cathodePressDensity}
-                    onChange={setCathodePressDensity}
-                  />
+                  onChange={setCathodePressDensity}
+                />
+                </div>
+              </div>
+
+              {/* 阳极区域 */}
+              <div className="electrode-predict-electrode-section">
+                <label className="electrode-predict-label">
+                {t('design.electrode.predict.anodeActiveMaterial', 'Anode Active Material')}
+              </label>
+              <Select
+                value={anodeActiveMaterial}
+                onChange={setAnodeActiveMaterial}
+                  placeholder={t('design.electrode.predict.selectMaterial', 'Select material')}
+                  className="electrode-predict-select"
+                >
+                  <Option value="material1">Material 1</Option>
+                  <Option value="material2">Material 2</Option>
+                </Select>
+
+                <h3 className="electrode-predict-subsection-title">
+                  {t('design.electrode.predict.anodeParameters', 'Anode Parameters')}
+                </h3>
+
+                <div className="electrode-predict-parameters-container">
+                <ParameterInput
+                  label="CMC (wt.%)"
+                  value={anodeCMC}
+                  onChange={setAnodeCMC}
+                />
+                <ParameterInput
+                  label="SBR (wt.%)"
+                  value={anodeSBR}
+                  onChange={setAnodeSBR}
+                />
+                <ParameterInput
+                  label="PAA (wt.%)"
+                  value={anodePAA}
+                  onChange={setAnodePAA}
+                />
+                <ParameterInput
+                  label="Super P (wt.%)"
+                  value={anodeSuperP}
+                  onChange={setAnodeSuperP}
+                />
+                <ParameterInput
+                  label="SWCNT (wt.%)"
+                  value={anodeSWCNT}
+                  onChange={setAnodeSWCNT}
+                />
+                <ParameterInput
+                  label="Active material-1 SC-B-I (%)"
+                  value={anodeSCBI}
+                  onChange={setAnodeSCBI}
+                  disabled={true}  // 置灰 - 计算字段
+                />
+                <ParameterInput
+                  label="Active material-2 Gr-S-I (%)"
+                  value={anodeGrSI}
+                  onChange={setAnodeGrSI}
+                  disabled={true}  // 置灰 - 计算字段
+                />
+                <ParameterInput
+                  label="Areal Loading (mAh/cm²)"
+                  value={anodeArealLoading}
+                  onChange={setAnodeArealLoading}
+                  disabled={true}  // 置灰 - 计算字段
+                />
+                <ParameterInput
+                  label={t('design.electrode.predict.pressDensity', 'Press Density (g/cc)')}
+                  value={anodePressDensity}
+                  onChange={setAnodePressDensity}
+                />
                 </div>
               </div>
             </div>

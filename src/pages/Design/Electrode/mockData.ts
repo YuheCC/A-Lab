@@ -55,17 +55,24 @@ export const MOCK_HISTORY_DATA: ElectrodeHistoryItem[] = [
     cathode_active_material: 'LiFePO4',
     anode_active_material: 'Graphite',
     model_params: {
-      anodeBinder1: 0.8,
-      anodeBinder2: 0.8,
-      anodeBinder3: 0,
-      anodeConductiveCarbon: 1.2,
-      anodeCNT: 0,
-      anodePressDensity: 1.5,
-      cathodeBinder1: 2.0,
-      cathodeCNT: 0.5,
-      cathodeConductiveCarbon: 1.5,
-      cathodeArealLoading: 15.0,
-      cathodePressDensity: 3.5,
+      // 阳极参数 - 重命名
+      anodeCMC: 0.8,                  // CMC (wt.%)
+      anodeSBR: 0.8,                  // SBR (wt.%)
+      anodePAA: 0,                    // PAA (wt.%)
+      anodeSuperP: 1.2,               // Super P (wt.%)
+      anodeSWCNT: 0,                  // SWCNT (wt.%)
+      anodePressDensity: 1.5,         // Press Density (g/cc)
+      anodeSCBI: 11.3,                // Active material-1 SC-B-I (%) ← 新增
+      anodeGrSI: 82.6,                // Active material-2 Gr-S-I (%) ← 新增
+      anodeArealLoading: 4.11,        // Areal Loading (mAh/cm²) ← 新增
+      // 阴极参数 - 重命名
+      cathodeKF9700: 2.0,             // KF-9700 (wt.%)
+      cathodeCN01Y: 0.5,              // CN-01Y (wt.%)
+      cathodeSuperC65: 1.5,           // Super C65 (wt.%)
+      cathodeArealLoading: 15.0,      // Areal Loading (mAh/cm²)
+      cathodePressDensity: 3.5,       // Press Density (g/cc)
+      cathodeNCMA: 96.0,              // Active material NCM-A (%) ← 新增
+      // 尺寸参数
       width: 100,
       length: 200,
       layers: 50,
@@ -85,17 +92,21 @@ export const MOCK_HISTORY_DATA: ElectrodeHistoryItem[] = [
     cathode_active_material: 'NMC811',
     anode_active_material: 'Silicon-Graphite',
     model_params: {
-      anodeBinder1: 1.0,
-      anodeBinder2: 1.0,
-      anodeBinder3: 0.5,
-      anodeConductiveCarbon: 1.5,
-      anodeCNT: 0.3,
+      anodeCMC: 1.0,
+      anodeSBR: 1.0,
+      anodePAA: 0.5,
+      anodeSuperP: 1.5,
+      anodeSWCNT: 0.3,
       anodePressDensity: 1.6,
-      cathodeBinder1: 2.5,
-      cathodeCNT: 0.8,
-      cathodeConductiveCarbon: 2.0,
+      anodeSCBI: 10.0,
+      anodeGrSI: 80.0,
+      anodeArealLoading: 5.0,
+      cathodeKF9700: 2.5,
+      cathodeCN01Y: 0.8,
+      cathodeSuperC65: 2.0,
       cathodeArealLoading: 18.0,
       cathodePressDensity: 3.8,
+      cathodeNCMA: 94.0,
       width: 120,
       length: 250,
       layers: 60,
@@ -115,17 +126,21 @@ export const MOCK_HISTORY_DATA: ElectrodeHistoryItem[] = [
     cathode_active_material: 'LCO',
     anode_active_material: 'Graphite',
     model_params: {
-      anodeBinder1: 0.9,
-      anodeBinder2: 0.9,
-      anodeBinder3: 0,
-      anodeConductiveCarbon: 1.3,
-      anodeCNT: 0.2,
+      anodeCMC: 0.9,
+      anodeSBR: 0.9,
+      anodePAA: 0,
+      anodeSuperP: 1.3,
+      anodeSWCNT: 0.2,
       anodePressDensity: 1.55,
-      cathodeBinder1: 2.2,
-      cathodeCNT: 0.6,
-      cathodeConductiveCarbon: 1.8,
+      anodeSCBI: 12.0,
+      anodeGrSI: 83.0,
+      anodeArealLoading: 4.5,
+      cathodeKF9700: 2.2,
+      cathodeCN01Y: 0.6,
+      cathodeSuperC65: 1.8,
       cathodeArealLoading: 16.5,
       cathodePressDensity: 3.6,
+      cathodeNCMA: 95.0,
       width: 110,
       length: 220,
       layers: 55,

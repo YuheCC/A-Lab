@@ -39,7 +39,7 @@ export interface DesignRecommendation {
 
 // 正极参数
 export interface CathodeParameters {
-  binder1: string; // KF-0700 (wt.%)
+  binder1: string; // KF-9700 (wt.%)
   binder2: string; // CN-01Y (wt.%)
   conductiveCarbon: string; // Super C65 (wt.%)
   activeMaterial: string; // NCM-A (%)
@@ -53,9 +53,9 @@ export interface AnodeParameters {
   binder2: string; // SBR (wt.%)
   binder3: string; // PAA (wt.%)
   conductiveCarbon1: string; // Super P (wt.%)
-  conductiveCarbon2: string; // 5WCNT (wt.%)
-  activeMaterial1: string; // SC-B-i (%)
-  activeMaterial2: string; // Gr-S-i (%)
+  conductiveCarbon2: string; // SWCNT (wt.%)
+  activeMaterial1: string; // Active material-1 SC-B-I (%)
+  activeMaterial2: string; // Active material-2 Gr-S-I (%)
   arealLoading: string; // Areal Loading (mAh/cm²)
   pressDensity: string; // Press Density (g/cc)
 }
