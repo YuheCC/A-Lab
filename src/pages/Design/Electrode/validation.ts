@@ -87,6 +87,14 @@ export const anodeParameterRanges: Record<string, ParameterRange> = {
     min: 1.28,
     max: 1.5,
   },
+  // Areal Loading根据公式计算: cathode_loading / 0.9142 * 1.07 * 0.878
+  // 基于cathode的范围 [2.91, 5.3] 计算得出
+  anodeArealLoading: {
+    key: 'anodeArealLoading',
+    label: 'Areal Loading (mAh/cm²)',
+    min: Number((2.91 / 0.9142 * 1.07 * 0.878).toFixed(2)), // ≈ 2.99
+    max: Number((5.3 / 0.9142 * 1.07 * 0.878).toFixed(2)),  // ≈ 5.45
+  },
 };
 
 // 尺寸参数范围

@@ -72,6 +72,30 @@ const PredictPage: React.FC = () => {
     }
   }, [cellDesign]);
 
+  // 联动逻辑1: Cathode的Active material NCM-A = 100 - (KF-9700 + CN-01Y + Super C65)
+  useEffect(() => {
+    const calculatedNCMA = 100 - (cathodeKF9700 + cathodeCN01Y + cathodeSuperC65);
+    setCathodeNCMA(Number(calculatedNCMA.toFixed(2)));
+  }, [cathodeKF9700, cathodeCN01Y, cathodeSuperC65]);
+
+  // 联动逻辑2: Anode的Active material = 100 - (CMC + SBR + PAA + Super P + SWCNT)
+  // Active material-1 (SC-B-I) = 计算值 × 12%
+  // Active material-2 (Gr-S-I) = 计算值 × 88%
+  useEffect(() => {
+    const totalActiveMaterial = 100 - (anodeCMC + anodeSBR + anodePAA + anodeSuperP + anodeSWCNT);
+    const scbi = totalActiveMaterial * 0.12;
+    const grsi = totalActiveMaterial * 0.88;
+    
+    setAnodeSCBI(Number(scbi.toFixed(2)));
+    setAnodeGrSI(Number(grsi.toFixed(2)));
+  }, [anodeCMC, anodeSBR, anodePAA, anodeSuperP, anodeSWCNT]);
+
+  // 联动逻辑3: Anode的Areal Loading = cathode_loading / 0.9142 * 1.07 * 0.878，保留两位小数
+  useEffect(() => {
+    const calculatedAnodeLoading = (cathodeArealLoading / 0.9142) * 1.07 * 0.878;
+    setAnodeArealLoading(Number(calculatedAnodeLoading.toFixed(2)));
+  }, [cathodeArealLoading]);
+
   // 使用统一的默认参数范围（不根据材料动态调整）
   const cathodeRanges = cathodeParameterRanges;
   const anodeRanges = anodeParameterRanges;
@@ -389,8 +413,8 @@ const PredictPage: React.FC = () => {
                   label={t('design.electrode.predict.anodeArealLoading', 'Areal Loading (mAh/cm²)')}
                   value={anodeArealLoading}
                   onChange={setAnodeArealLoading}
-                  min={0}
-                  max={10}
+                  min={anodeRanges.anodeArealLoading?.min}
+                  max={anodeRanges.anodeArealLoading?.max}
                   step={0.01}
                   disabled={true}  // 置灰 - 计算字段
                 />
