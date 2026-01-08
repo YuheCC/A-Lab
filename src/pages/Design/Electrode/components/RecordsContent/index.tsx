@@ -6,6 +6,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@umijs/max';
 import dayjs, { Dayjs } from 'dayjs';
+import { formatUTCDateTime } from '@/utils/dateUtils';
 import * as electrodeModel from '../../model';
 import type { ElectrodeHistoryItem } from '../../model';
 import './index.less';
@@ -73,6 +74,10 @@ const RecordsContent: React.FC = () => {
 
   // 删除记录
   const handleDelete = async (id: number) => {
+    if (!confirm(t('design.electrode.records.deleteConfirm', 'Are you sure you want to delete this record?'))) {
+      return;
+    }
+
     try {
       const response = await electrodeModel.deleteElectrodeHistory({ id });
       if (response.success) {
@@ -135,9 +140,9 @@ const RecordsContent: React.FC = () => {
           <Radio.Button value="result-prediction">
             {t('design.electrode.records.resultPrediction', 'Result Prediction')}
           </Radio.Button>
-          <Radio.Button value="trend-analysis">
+          {/* <Radio.Button value="trend-analysis">
             {t('design.electrode.records.trendAnalysis', 'Trend Analysis')}
-          </Radio.Button>
+          </Radio.Button> */}
           <Radio.Button value="inverse-design">
             {t('design.electrode.records.inverseDesign', 'Inverse Design')}
           </Radio.Button>
@@ -260,16 +265,20 @@ const RecordsContent: React.FC = () => {
                   <td>{record.cathode_active_material}</td>
                   <td>{record.anode_active_material}</td>
                   <td className="created-date">
-                    {record.created_at
-                      ? dayjs(record.created_at).format('YYYY/MM/DD HH:mm:ss')
-                      : '-'}
+                    {formatUTCDateTime(record.created_at, { showSeconds: true }) || '-'}
                   </td>
                   <td className="actions-cell">
                     <button
-                      className="view-button"
+                      className="action-button view-button"
                       onClick={() => navigate(`/design/electrode/predict/detail/${record.id}`)}
                     >
                       {t('design.electrode.records.viewResults', 'View Results')}
+                    </button>
+                    <button
+                      className="action-button delete-button"
+                      onClick={() => handleDelete(record.id)}
+                    >
+                      {t('design.electrode.records.delete', 'Delete')}
                     </button>
                   </td>
                 </tr>

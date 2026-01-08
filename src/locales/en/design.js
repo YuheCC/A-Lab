@@ -431,6 +431,11 @@ export default {
             createdTime: "Created Time",
             actions: "Actions",
             viewResults: "View Results",
+            delete: "Delete",
+            deleteConfirm: "Are you sure you want to delete this record?",
+            deleteSuccess: "Record deleted successfully",
+            deleteError: "Failed to delete record",
+            loadError: "Failed to load records",
             noRecords: "No records found."
         },
         validation: {

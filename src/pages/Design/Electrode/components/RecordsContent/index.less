@@ -177,22 +177,31 @@
   .actions-cell {
     white-space: nowrap;
 
-    .view-button {
+    .action-button {
+      border: none;
+      background: none;
       color: @color-gray-500;
       font-size: 12px;
       font-weight: 500;
-      text-decoration: none;
       cursor: pointer;
-      transition: all 0.2s;
       padding: 4px 8px;
       border-radius: 4px;
-      border: none;
-      background: none;
+      margin-right: 8px;
+      transition: color 0.2s;
 
-      &:hover {
-        color: @color-gray-800;
-        background: @color-gray-100;
+      &:last-child {
+        margin-right: 0;
       }
+    }
+
+    .view-button:hover {
+      color: @color-gray-800;
+      background: @color-gray-100;
+    }
+
+    .delete-button:hover {
+      color: #dc2626;
+      background: #fee2e2;
     }
   }
 

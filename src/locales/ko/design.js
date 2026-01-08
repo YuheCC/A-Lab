@@ -431,6 +431,11 @@ export default {
             createdTime: "생성 시간",
             actions: "작업",
             viewResults: "결과 보기",
+            delete: "삭제",
+            deleteConfirm: "이 기록을 삭제하시겠습니까?",
+            deleteSuccess: "기록이 성공적으로 삭제되었습니다",
+            deleteError: "기록 삭제에 실패했습니다",
+            loadError: "기록 로드에 실패했습니다",
             noRecords: "기록을 찾을 수 없습니다"
         },
         validation: {

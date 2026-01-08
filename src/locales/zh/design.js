@@ -431,6 +431,11 @@ export default {
             createdTime: "创建时间",
             actions: "操作",
             viewResults: "查看结果",
+            delete: "删除",
+            deleteConfirm: "确定要删除这条记录吗？",
+            deleteSuccess: "记录删除成功",
+            deleteError: "删除记录失败",
+            loadError: "加载记录失败",
             noRecords: "暂无记录"
         },
         validation: {

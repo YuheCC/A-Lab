@@ -431,6 +431,11 @@ export default {
             createdTime: "作成時刻",
             actions: "操作",
             viewResults: "結果を表示",
+            delete: "削除",
+            deleteConfirm: "この記録を削除してもよろしいですか？",
+            deleteSuccess: "記録が正常に削除されました",
+            deleteError: "記録の削除に失敗しました",
+            loadError: "記録の読み込みに失敗しました",
             noRecords: "記録が見つかりません"
         },
         validation: {
