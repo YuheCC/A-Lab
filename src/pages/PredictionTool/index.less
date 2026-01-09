@@ -25,41 +25,7 @@
     gap: 16px;
   }
 
-  .new-prediction-button {
-    background: @color-gray-800;
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 16px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
-
-    &:hover {
-      background: @color-gray-700;
-    }
-  }
-
-  .train-button {
-    background: #ffffff;
-    color: @color-gray-700;
-    border: 1px solid #d1d5dc;
-    border-radius: 8px;
-    padding: 10px 16px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    &:hover {
-      background: @color-gray-100;
-      border-color: @color-gray-400;
-    }
-  }
+  // 按钮样式已迁移到 @/components/Button 组件中
 
   .prediction-tool-table-container {
     overflow-x: hidden;

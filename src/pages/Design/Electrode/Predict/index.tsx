@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@umijs/max';
 import { LeftOutlined } from '@ant-design/icons';
-import { Button, Select, Input, Slider } from 'antd';
+import { Select, Input } from 'antd';
+import Button from '@/components/Button';
 import ParameterInput from './components/ParameterInput';
 import ResultDisplay from './components/ResultDisplay';
 import * as electrodeModel from '../model';
-import { 
+import {
   validateElectrodeParameters,
   cathodeParameterRanges,
   anodeParameterRanges,
@@ -495,7 +496,7 @@ const PredictPage: React.FC = () => {
             {/* Calculate 按钮 */}
             <div className="electrode-predict-calculate-btn-wrapper">
               <Button
-                type="primary"
+                variant="primary"
                 size="large"
                 onClick={handleCalculate}
                 loading={loading}

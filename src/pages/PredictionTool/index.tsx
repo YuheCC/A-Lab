@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams, useLocation } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -10,6 +10,7 @@ import 'dayjs/locale/en';
 import 'dayjs/locale/ja';
 import 'dayjs/locale/ko';
 import { Activity, X, RefreshCw } from 'lucide-react';
+import Button from '@/components/Button';
 import { getHistoryList, deleteHistory, getModelList, getBaseModelList, isMockModel, removeModel } from './model';
 import { formatUTCDateTime } from '@/utils/dateUtils';
 import Introduction from './components/Introduction';
@@ -450,13 +451,12 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
       </div>
 
       <div className="prediction-action-section">
-        <button className="new-prediction-button" onClick={handleNewPrediction}>
+        <Button variant="primary" onClick={handleNewPrediction}>
           + {t('predictionTool.history.newPrediction', 'New Prediction')}
-        </button>
-        <button className="train-button" onClick={handleTrain}>
-          <Activity size={16} />
+        </Button>
+        <Button variant="secondary" leftIcon={<Activity size={16} />} onClick={handleTrain}>
           {t('predictionTool.history.train', 'Train')}
-        </button>
+        </Button>
       </div>
 
       <div className="prediction-tool-table-container">
