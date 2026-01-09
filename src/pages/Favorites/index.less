@@ -130,29 +130,32 @@
     min-width: 80px;
 
     &.show-analysis-button {
-      background-color: @color-primary;
+      background-color: @color-accent;
       color: white;
-
-      &:hover {
-        background-color: #0d8aee;
-      }
     }
 
-    &.delete-selected-button {
+    &.bulk-delete-button {
       background-color: @color-danger;
       color: white;
 
       &:hover {
-        background-color: #c82333;
+        background-color: darken(@color-danger, 10%);
+      }
+
+      &:disabled {
+        background-color: @color-gray-300;
+        cursor: not-allowed;
       }
     }
 
-    &.back-button {
-      background-color: @color-success;
-      color: white;
+    &.back-to-search-button {
+      background-color: white;
+      color: @color-text-primary;
+      border: 1px solid @color-gray-300 !important;
 
       &:hover {
-        background-color: #4a9e5f;
+        background-color: @color-gray-100;
+        border-color: @color-gray-400 !important;
       }
     }
   }
