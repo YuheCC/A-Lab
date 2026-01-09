@@ -345,6 +345,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             console.error('全局WebSocket错误:', error);
             setWsConnected(false);
             setIsLoading(false);
+            // Don't show error message to user when websocket disconnects
+            /*
             let errorMessage = t('chatbox.chat.sendFailed');
             if ((error as any).message && (error as any).message.includes('timeout')) {
                 errorMessage = t('chatbox.errors.connectionTimeout');
@@ -352,6 +354,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 errorMessage = t('chatbox.errors.serverConnectionFailed');
             }
             addBotMessage(errorMessage, false);
+            */
         });
 
         const unsubscribeMessage = globalWebSocketManager.onMessage((raw) => {
