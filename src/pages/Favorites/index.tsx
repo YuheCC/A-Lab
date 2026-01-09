@@ -615,17 +615,6 @@ const FavoritesGrid = () => {
                   className="bulk-delete-button"
                   onClick={handleBulkDeleteFavorites}
                   disabled={bulkDeleteLoading}
-                  style={{
-                    backgroundColor: bulkDeleteLoading ? '#ccc' : '#dc3545',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    padding: '8px 16px',
-                    cursor: bulkDeleteLoading ? 'not-allowed' : 'pointer',
-                    marginLeft: '10px',
-                    fontSize: '14px',
-                    fontWeight: 'bold'
-                  }}
                 >
                   {bulkDeleteLoading ? t('favorites.bulkDeleting') : `${t('favorites.bulkDelete')} (${selectedMolecules.length})`}
                 </button>
@@ -634,17 +623,6 @@ const FavoritesGrid = () => {
               <button
                 className="back-to-search-button"
                 onClick={() => navigate('/search')}
-                style={{
-                  backgroundColor: '#56b26a',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  padding: '8px 16px',
-                  cursor: 'pointer',
-                  marginLeft: '10px',
-                  fontSize: '14px',
-                  fontWeight: 'bold'
-                }}
               >
                 {t('favorites.backToSearch')}
               </button>
