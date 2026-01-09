@@ -5,7 +5,7 @@
 ## 特性
 
 - 🎨 **多种变体**：支持 primary、secondary、outlined、text、danger 五种样式
-- 📏 **灵活尺寸**：提供 small、medium、large 三种尺寸
+- 📏 **灵活尺寸**：提供 small、medium、mlarge、large 四种尺寸
 - ⚡ **状态管理**：支持 loading、disabled 等状态
 - 🎯 **图标支持**：可添加左侧或右侧图标
 - ♿ **无障碍**：符合 WAI-ARIA 规范
@@ -42,6 +42,9 @@ import Button from '@/components/Button';
 
 // Medium 按钮（高度 40px，默认）
 <Button size="medium">中等按钮</Button>
+
+// Medium-Large 按钮（高度 44px）
+<Button size="mlarge">中大按钮</Button>
 
 // Large 按钮（高度 48px）
 <Button size="large">大按钮</Button>
@@ -92,7 +95,7 @@ import { PlusIcon, DownloadIcon } from 'lucide-react';
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | variant | `'primary' \| 'secondary' \| 'outlined' \| 'text' \| 'danger'` | `'primary'` | 按钮变体 |
-| size | `'small' \| 'medium' \| 'large'` | `'medium'` | 按钮尺寸 |
+| size | `'small' \| 'medium' \| 'mlarge' \| 'large'` | `'medium'` | 按钮尺寸（32px / 40px / 44px / 48px） |
 | loading | `boolean` | `false` | 是否显示加载状态 |
 | disabled | `boolean` | `false` | 是否禁用 |
 | fullWidth | `boolean` | `false` | 是否占满父容器宽度 |
@@ -189,6 +192,10 @@ import Button from '@/components/Button';
 ```
 
 ## 更新日志
+
+### v1.1.0 (2026-01-09)
+- 新增 mlarge 尺寸（高度 44px），在 medium 和 large 之间提供更多选择
+- 现在支持 4 种尺寸：small (32px)、medium (40px)、mlarge (44px)、large (48px)
 
 ### v1.0.0 (2026-01-09)
 - 初始版本

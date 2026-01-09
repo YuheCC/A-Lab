@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo, useContext } from 're
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mui/material';
 import { Info, ArrowUp, ArrowDown } from 'lucide-react';
+import Button from '@/components/Button';
 import { ArrowUpIcon, ArrowDownIcon } from '@/components/PerformanceBadge';
 import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
 import { getBatterySystemList, predictPerformance, requestLLMAnalysisStream, type PerformancePredictionResponse, type LLMAnalysisStreamRequest } from '@/services/prediction/performance';
@@ -1240,13 +1241,16 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
             )}
           </div>
 
-          <button 
-            className={`pm-calculate-btn ${showResults ? 'pm-calculated' : ''} ${isCalculating ? 'pm-calculating' : ''} ${isInvalidSmiles ? 'pm-disabled' : ''}`}
+          <Button
+            variant="primary"
+            size="mlarge"
+            loading={isCalculating}
             onClick={handleCalculate}
-            disabled={isCalculating || showResults}
+            disabled={isCalculating || showResults || isInvalidSmiles}
+            className="pm-calculate-btn"
           >
-            {isCalculating ? t('performance.ui.calculating') : t('performance.calculate.button')}
-          </button>
+            {t('performance.calculate.button')}
+          </Button>
 
           {calculationError && (
             <div className="pm-calculation-error">
@@ -1441,13 +1445,16 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
               })()}
 
               <div className="pm-llm-button-section">
-                <button
-                  className={`pm-llm-analysis-btn ${isAnalyzing ? 'pm-analyzing' : ''} ${hasAnalysisResult ? 'pm-analyzed' : ''}`}
+                <Button
+                  variant="primary"
+                  size="large"
+                  loading={isAnalyzing}
                   onClick={handleLLMAnalysis}
                   disabled={isAnalyzing || !predictionResults || hasAnalysisResult || !isHighTier}
+                  className="pm-llm-analysis-btn"
                 >
-                  {isAnalyzing ? t('performance.ui.analyzing') : t('performance.llmAnalysis.button')}
-                </button>
+                  {t('performance.llmAnalysis.button')}
+                </Button>
 
                 {analysisError && (
                   <div className="pm-analysis-error">

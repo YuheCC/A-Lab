@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@umijs/max';
 import { LeftOutlined } from '@ant-design/icons';
-import { Button, Select, Table } from 'antd';
+import { Select, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import Button from '@/components/Button';
 import { useMessage } from '@/components/MessageProvider';
 import ParameterInput from '../Predict/components/ParameterInput';
 import DesignDetailsModal from './components/DesignDetailsModal';
@@ -237,7 +238,7 @@ const OptimizePage: React.FC = () => {
             {/* Calculate 按钮 */}
             <div className="electrode-optimize-calculate-btn-wrapper">
               <Button
-                type="primary"
+                variant="primary"
                 size="large"
                 onClick={handleCalculate}
                 loading={loading}

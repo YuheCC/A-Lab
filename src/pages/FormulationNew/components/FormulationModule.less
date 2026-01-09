@@ -224,60 +224,11 @@
 .formulation-container .submit-section {
   padding: 24px 0;
   background: #ffffff;
+  display: flex;
+  justify-content: center;
 }
 
-.formulation-container .submit-btn {
-  background: @color-gray-800;
-  color: #ffffff;
-  border: none;
-  border-radius: 6px;
-  padding: 12px 24px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  display: block;
-  margin: 0 auto;
-  position: relative;
-  min-width: 180px;
-}
-
-.formulation-container .submit-btn:hover:not(:disabled) {
-  background: @color-gray-900;
-}
-
-.formulation-container .submit-btn:active:not(:disabled) {
-  background: #0f172a;
-}
-
-.formulation-container .submit-btn.calculating {
-  background: @color-gray-800;
-  cursor: not-allowed;
-  color: #ffffff;
-}
-
-.formulation-container .submit-btn.calculating::after {
-  content: '...';
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  animation: dots 1.5s linear infinite;
-}
-
-.formulation-container .submit-btn.calculated,
-.formulation-container .submit-btn.disabled,
-.formulation-container .submit-btn:disabled {
-  background: @color-gray-500;
-  cursor: not-allowed;
-  color: #ffffff;
-}
-
-@keyframes dots {
-  0%, 20% { opacity: 0; }
-  40% { opacity: 1; }
-  60%, 100% { opacity: 0; }
-}
+// 按钮样式已迁移到 @/components/Button 组件中
 
 /* Solvent Configuration Styles */
 .formulation-container .smiles-input-row {

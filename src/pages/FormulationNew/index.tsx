@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
+import Button from '@/components/Button';
 import { deleteMDHistory, MDHistoryItem } from '@/services/formulation/md';
 import { getHistoryList, isMockRecord } from './model';
 import './index.less';
@@ -137,9 +138,9 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
   return (
     <div className="formulation-new-container">
       <div className="formulation-action-section">
-        <button className="new-analysis-button" onClick={handleNewAnalysis}>
+        <Button variant="primary" onClick={handleNewAnalysis}>
           + {t('formulation.history.newAnalysis', 'New Analysis')}
-        </button>
+        </Button>
       </div>
 
       <div className="formulation-new-table-container">

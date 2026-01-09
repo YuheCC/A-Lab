@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
+import Button from '@/components/Button';
 import { runMDSimulation, MDRunParams } from '@/services/formulation/md';
 import ResultTip from '@/components/ResultTip';
 import './FormulationModule.less';
@@ -671,13 +672,15 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
 
       {/* Submit Configuration Button */}
       <div className="submit-section">
-        <button
-          className={`submit-btn ${isCalculating ? 'calculating' : ''}`}
+        <Button
+          variant="primary"
+          size="mlarge"
+          loading={isCalculating}
           onClick={handleCalculate}
           disabled={isCalculating || !isValidConfiguration() || !isValidSolventConfiguration()}
         >
-          {isCalculating ? t('formulation.ui.calculating', 'Calculating...') : t('formulation.submit.button', 'Submit Configuration')}
-        </button>
+          {t('formulation.submit.button', 'Submit Configuration')}
+        </Button>
       </div>
 
     </div>

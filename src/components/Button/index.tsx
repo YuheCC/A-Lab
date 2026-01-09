@@ -2,7 +2,7 @@ import React from 'react';
 import './index.less';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outlined' | 'text' | 'danger';
-export type ButtonSize = 'small' | 'medium' | 'large';
+export type ButtonSize = 'small' | 'medium' | 'mlarge' | 'large';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /**
@@ -19,6 +19,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
    * 按钮尺寸
    * - small: 小按钮（高度 32px）
    * - medium: 中等按钮（高度 40px，默认）
+   * - mlarge: 中大按钮（高度 44px）
    * - large: 大按钮（高度 48px）
    */
   size?: ButtonSize;

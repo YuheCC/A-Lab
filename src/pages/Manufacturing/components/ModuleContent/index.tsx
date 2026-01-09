@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import Button from '@/components/Button';
 import type { ModuleType } from '../ModuleNav';
 import StepIndicator from '../StepIndicator';
 import Consistency from '../Consistency';
@@ -227,12 +228,18 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeModule }) => {
           )}
 
           <div className="intro-actions">
-            <button className="btn-primary start-demo-btn" onClick={handleStartDemo}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                <path d="M6 4l4 4-4 4"/>
-              </svg>
+            <Button
+              variant="primary"
+              size="mlarge"
+              onClick={handleStartDemo}
+              rightIcon={
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M6 4l4 4-4 4"/>
+                </svg>
+              }
+            >
               {t('manufacturing.buttons.startDemo')}
-            </button>
+            </Button>
             <button className="btn-secondary contact-sales-btn">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M2 3h12c.55 0 1 .45 1 1v8c0 .55-.45 1-1 1H2c-.55 0-1-.45-1-1V4c0-.55.45-1 1-1z"/>
@@ -260,12 +267,18 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeModule }) => {
               <h3 className="upload-title">{t('manufacturing.upload.title')}</h3>
               <p className="upload-desc">{t('manufacturing.upload.description')}</p>
               <div className="upload-buttons">
-                <button className="btn-primary" onClick={handleUseDemoData}>
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                    <path d="M6 4l4 4-4 4"/>
-                  </svg>
+                <Button
+                  variant="primary"
+                  size="mlarge"
+                  onClick={handleUseDemoData}
+                  rightIcon={
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M6 4l4 4-4 4"/>
+                    </svg>
+                  }
+                >
                   {t('manufacturing.upload.useDemoData')}
-                </button>
+                </Button>
               </div>
               {/* <button className="btn-link">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
@@ -410,12 +423,17 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeModule }) => {
                     </svg>
                     {t('manufacturing.result.backToIntro')}
                   </button>
-                  <button className="btn-primary">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                      <path d="M8 2v10m-4-6l4-4 4 4"/>
-                    </svg>
+                  <Button
+                    variant="primary"
+                    size="mlarge"
+                    leftIcon={
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 2v10m-4-6l4-4 4 4"/>
+                      </svg>
+                    }
+                  >
                     {t('manufacturing.result.exportReport')}
-                  </button>
+                  </Button>
                 </div>
               </>
             )}

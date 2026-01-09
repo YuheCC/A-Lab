@@ -203,61 +203,13 @@
   background: rgba(59, 130, 246, 0.1);
 }
 
-/* 计算按钮基础样式 */
+/* 计算按钮布局 */
 .pm-calculate-btn {
-  background: @color-gray-800;
-  color: #ffffff;
-  border: none;
-  border-radius: 6px;
-  padding: 12px 24px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
   display: block;
   margin: 0 auto;
-  position: relative;
 }
 
-/* 正常状态可点击 */
-.pm-calculate-btn:hover:not(:disabled) {
-  background: @color-gray-900;
-}
-
-.pm-calculate-btn:active:not(:disabled) {
-  background: #0f172a;
-}
-
-/* Loading状态 */
-.pm-calculate-btn.pm-calculating {
-  background: @color-gray-800;
-  cursor: not-allowed;
-  color: #ffffff;
-}
-
-.pm-calculate-btn.pm-calculating::after {
-  content: '...';
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  animation: pm-dots 1.5s linear infinite;
-}
-
-/* 置灰状态（已计算） */
-.pm-calculate-btn.pm-calculated,
-.pm-calculate-btn.pm-disabled,
-.pm-calculate-btn:disabled {
-  background: @color-gray-500;
-  cursor: not-allowed;
-  color: #ffffff;
-}
-
-@keyframes pm-dots {
-  0%, 20% { opacity: 0; }
-  40% { opacity: 1; }
-  60%, 100% { opacity: 0; }
-}
+// 按钮样式已迁移到 @/components/Button 组件中
 
 .pm-results-section {
   margin-top: 32px;
@@ -647,51 +599,9 @@
   margin-top: 24px;
 }
 
-/* LLM分析按钮基础样式 */
+/* LLM分析按钮样式已迁移到 @/components/Button 组件中 */
 .pm-llm-analysis-btn {
-  background: @color-gray-800;
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  position: relative;
-}
-
-/* 正常状态可点击 */
-.pm-llm-analysis-btn:hover:not(:disabled) {
-  background: @color-gray-900;
-}
-
-.pm-llm-analysis-btn:active:not(:disabled) {
-  background: #0f172a;
-}
-
-/* Loading状态 */
-.pm-llm-analysis-btn.pm-analyzing {
-  background: @color-gray-800;
-  cursor: not-allowed;
-  color: #ffffff;
-}
-
-.pm-llm-analysis-btn.pm-analyzing::after {
-  content: '...';
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  animation: pm-dots 1.5s linear infinite;
-}
-
-/* 置灰状态（已分析、禁用） */
-.pm-llm-analysis-btn.pm-analyzed,
-.pm-llm-analysis-btn:disabled {
-  background: @color-gray-500;
-  cursor: not-allowed;
-  color: #ffffff;
+  // 如有需要，可在此添加特定的布局样式
 }
 
 .pm-llm-analysis-section {
