@@ -343,7 +343,7 @@
 /* Favorites button styles - Used in NodePopup component */
 .favorites-button {
   padding: 10px 20px;
-  background-color: #ff9800;
+  background-color: @color-action-favorite;
   color: white;
   border: none;
   border-radius: 4px;
@@ -356,18 +356,18 @@
 }
 
 .favorites-button:hover {
-  background-color: #f57c00;
+  background-color: @color-action-favorite-hover;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
 .favorites-button:active {
-  background-color: #e65100;
+  background-color: @color-action-favorite-active;
   transform: translateY(0);
 }
 
 .favorites-button:disabled {
-  background-color: #cccccc;
+  background-color: @color-action-favorite-disabled;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
