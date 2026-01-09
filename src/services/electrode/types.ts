@@ -118,31 +118,8 @@ export interface ElectrodeHistoryListParams {
 }
 
 /**
- * 历史记录项（API 原始响应 - 包含 JSON 字符串）
- * History Item Raw (API Response with JSON Strings)
- */
-export interface ElectrodeHistoryItemRaw {
-  /** 记录 ID */
-  id: number;
-  /** Cell Design */
-  cell_design: string;
-  /** 正极活性材料 */
-  cathode_active_material: string;
-  /** 负极活性材料 */
-  anode_active_material: string;
-  /** 模型参数（JSON 字符串） */
-  model_params: string;
-  /** 模型结果（JSON 字符串） */
-  model_result: string;
-  /** 创建时间 */
-  created_at?: string;
-  /** 更新时间 */
-  updated_at?: string;
-}
-
-/**
- * 历史记录项（解析后 - 供前端使用）
- * History Item Parsed (For Frontend Use)
+ * 历史记录项（API 直接响应）
+ * History Item (Direct API Response)
  */
 export interface ElectrodeHistoryItem {
   /** 记录 ID */
@@ -153,9 +130,9 @@ export interface ElectrodeHistoryItem {
   cathode_active_material: string;
   /** 负极活性材料 */
   anode_active_material: string;
-  /** 模型参数（解析后的对象） */
+  /** 模型参数（对象） */
   model_params: ElectrodeModelParams;
-  /** 模型结果（解析后的对象） */
+  /** 模型结果（对象） */
   model_result: ElectrodeModelResult;
   /** 创建时间 */
   created_at?: string;
@@ -186,8 +163,8 @@ export interface ElectrodeHistoryDetailParams {
 }
 
 /**
- * 历史记录详情响应（解析后）
- * History Detail Response (Parsed)
+ * 历史记录详情响应
+ * History Detail Response
  */
 export interface ElectrodeHistoryDetailResponse extends ElectrodeHistoryItem {}
 
@@ -228,30 +205,19 @@ export interface ElectrodeModelPredictParams {
   cathode_active_material: string;
   /** 负极活性材料 */
   anode_active_material: string;
-  /** 模型参数（JSON 字符串 - 序列化后的 ElectrodeModelParams） */
-  model_params: string;
+  /** 模型参数（对象） */
+  model_params: ElectrodeModelParams;
   /** 页面类型：1=正向预测, 2=反向设计 */
   type: ElectrodePageType;
 }
 
 /**
- * 性能预测响应（API 原始响应 - 包含 JSON 字符串）
- * Model Predict Response Raw (API Response with JSON String)
- */
-export interface ElectrodeModelPredictResponseRaw {
-  /** 预测结果 ID */
-  id: number;
-  /** 模型结果（JSON 字符串） */
-  model_result: string;
-}
-
-/**
- * 性能预测响应（解析后）
- * Model Predict Response Parsed
+ * 性能预测响应（API 直接响应）
+ * Model Predict Response (Direct API Response)
  */
 export interface ElectrodeModelPredictResponse {
   /** 预测结果 ID */
   id: number;
-  /** 模型结果（解析后的对象） */
+  /** 模型结果（对象） */
   model_result: ElectrodeModelResult;
 }

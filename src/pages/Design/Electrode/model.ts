@@ -10,7 +10,6 @@ import type {
   ElectrodeHistoryListParams,
   ElectrodeHistoryListResponse,
   ElectrodeHistoryItem,
-  ElectrodeHistoryItemRaw,
   ElectrodeHistoryDetailParams,
   ElectrodeHistoryDetailResponse,
   ElectrodeHistoryDeleteParams,
@@ -32,58 +31,15 @@ import type {
 const USE_MOCK = process.env.REACT_APP_USE_ELECTRODE_MOCK === 'true';
 
 // ============================================
-// 辅助函数：JSON 解析
-// ============================================
-
-/**
- * 安全解析 JSON 字符串
- * Safe JSON Parse
- *
- * @param jsonString - JSON 字符串
- * @param defaultValue - 解析失败时的默认值
- * @returns 解析后的对象
- */
-function safeJSONParse<T>(jsonString: string, defaultValue: T): T {
-  try {
-    return JSON.parse(jsonString) as T;
-  } catch (error) {
-    console.error('[ElectrodeModel] JSON parse error:', error);
-    console.error('[ElectrodeModel] Failed to parse:', jsonString);
-    return defaultValue;
-  }
-}
-
-/**
- * 将原始历史记录项转换为解析后的格式
- * Parse History Item from Raw to Parsed Format
- *
- * @param raw - API 返回的原始记录（包含 JSON 字符串）
- * @returns 解析后的记录（包含对象）
- */
-function parseHistoryItem(raw: ElectrodeHistoryItemRaw): ElectrodeHistoryItem {
-  return {
-    ...raw,
-    model_params: safeJSONParse<ElectrodeModelParams>(
-      raw.model_params,
-      {} as ElectrodeModelParams,
-    ),
-    model_result: safeJSONParse<ElectrodeModelResult>(
-      raw.model_result,
-      {} as ElectrodeModelResult,
-    ),
-  };
-}
-
-// ============================================
 // Model 层 API（数据处理 + Mock）
 // ============================================
 
 /**
- * 获取电极性能历史记录列表（带数据解析）
- * Get Electrode Performance History List (With Data Parsing)
+ * 获取电极性能历史记录列表
+ * Get Electrode Performance History List
  *
  * @param params - 查询参数
- * @returns 历史记录列表（解析后的数据）
+ * @returns 历史记录列表
  */
 export async function getElectrodeHistoryList(
   params: ElectrodeHistoryListParams,
@@ -124,20 +80,15 @@ export async function getElectrodeHistoryList(
   }
 
   // 真实 API 调用
-  const rawResponse = await electrodeService.getElectrodeHistoryList(params);
-
-  return {
-    total: rawResponse.total,
-    data: rawResponse.data.map(parseHistoryItem),
-  };
+  return await electrodeService.getElectrodeHistoryList(params);
 }
 
 /**
- * 获取电极性能历史记录详情（带数据解析）
- * Get Electrode Performance History Detail (With Data Parsing)
+ * 获取电极性能历史记录详情
+ * Get Electrode Performance History Detail
  *
  * @param params - 查询参数
- * @returns 历史记录详情（解析后的数据）
+ * @returns 历史记录详情
  */
 export async function getElectrodeHistoryDetail(
   params: ElectrodeHistoryDetailParams,
@@ -155,8 +106,7 @@ export async function getElectrodeHistoryDetail(
   }
 
   // 真实 API 调用
-  const rawResponse = await electrodeService.getElectrodeHistoryDetail(params);
-  return parseHistoryItem(rawResponse);
+  return await electrodeService.getElectrodeHistoryDetail(params);
 }
 
 /**
@@ -187,11 +137,11 @@ export async function deleteElectrodeHistory(
 }
 
 /**
- * 电极性能预测（带数据解析）
- * Electrode Performance Prediction (With Data Parsing)
+ * 电极性能预测
+ * Electrode Performance Prediction
  *
  * @param params - 预测参数
- * @returns 预测结果（解析后的数据）
+ * @returns 预测结果
  */
 export async function predictElectrodePerformance(
   params: ElectrodeModelPredictParams,
@@ -207,15 +157,7 @@ export async function predictElectrodePerformance(
   }
 
   // 真实 API 调用
-  const rawResponse = await electrodeService.predictElectrodePerformance(params);
-
-  return {
-    id: rawResponse.id,
-    model_result: safeJSONParse<ElectrodeModelResult>(
-      rawResponse.model_result,
-      {} as ElectrodeModelResult,
-    ),
-  };
+  return await electrodeService.predictElectrodePerformance(params);
 }
 
 // ============================================
@@ -243,7 +185,7 @@ export function buildPredictParams(
     cell_design: formData.cellDesign,
     cathode_active_material: formData.cathodeActiveMaterial,
     anode_active_material: formData.anodeActiveMaterial,
-    model_params: JSON.stringify(formData.modelParams),
+    model_params: formData.modelParams,
     type: pageType,
   };
 }
