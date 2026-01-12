@@ -391,3 +391,13 @@ export function getParameterMax(key: string): number | undefined {
   };
   return allRanges[key]?.max;
 }
+
+/**
+ * 导出区域验证函数，用于组件实时验证
+ * 这些函数已在 validateElectrodeParameters 中使用，现在导出供外部使用
+ */
+export {
+  validateCathodeParameters,
+  validateAnodeParameters,
+  validateDimensionParameters
+};

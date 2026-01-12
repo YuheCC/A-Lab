@@ -9,10 +9,14 @@ import ResultDisplay from './components/ResultDisplay';
 import * as electrodeModel from '../model';
 import {
   validateElectrodeParameters,
+  validateCathodeParameters,
+  validateAnodeParameters,
+  validateDimensionParameters,
   cathodeParameterRanges,
   anodeParameterRanges,
   dimensionParameterRanges,
 } from '../validation';
+import { useDebounce } from '@/hooks/useDebounce';
 import './index.less';
 
 const { Option } = Select;
@@ -62,6 +66,30 @@ const PredictPage: React.FC = () => {
   const [anodeError, setAnodeError] = useState<string>('');
   const [dimensionError, setDimensionError] = useState<string>('');
 
+  // ============ 防抖值 - 用于优化实时验证性能 ============
+
+  // Cathode 可编辑字段防抖（5个）
+  const debouncedCathodeKF9700 = useDebounce(cathodeKF9700, 300);
+  const debouncedCathodeCN01Y = useDebounce(cathodeCN01Y, 300);
+  const debouncedCathodeSuperC65 = useDebounce(cathodeSuperC65, 300);
+  const debouncedCathodeArealLoading = useDebounce(cathodeArealLoading, 300);
+  const debouncedCathodePressDensity = useDebounce(cathodePressDensity, 300);
+  // cathodeNCMA 是计算字段，不需要防抖
+
+  // Anode 可编辑字段防抖（6个）
+  const debouncedAnodeCMC = useDebounce(anodeCMC, 300);
+  const debouncedAnodeSBR = useDebounce(anodeSBR, 300);
+  const debouncedAnodePAA = useDebounce(anodePAA, 300);
+  const debouncedAnodeSuperP = useDebounce(anodeSuperP, 300);
+  const debouncedAnodeSWCNT = useDebounce(anodeSWCNT, 300);
+  const debouncedAnodePressDensity = useDebounce(anodePressDensity, 300);
+  // anodeSCBI、anodeGrSI、anodeArealLoading 是计算字段，不需要防抖
+
+  // Dimension 字段防抖（3个）
+  const debouncedWidth = useDebounce(width, 300);
+  const debouncedLength = useDebounce(length, 300);
+  const debouncedLayers = useDebounce(layers, 300);
+
   // 根据 Cell Design 设置 NP Ratio 默认值
   useEffect(() => {
     if (cellDesign === 'Balanced') {
@@ -97,17 +125,109 @@ const PredictPage: React.FC = () => {
     setAnodeArealLoading(Number(calculatedAnodeLoading.toFixed(2)));
   }, [cathodeArealLoading]);
 
+  // ============ 实时验证 useEffect ============
+
+  // 实时验证 Cathode 参数
+  useEffect(() => {
+    // 构建 cathode 参数对象
+    const cathodeParams = {
+      cathodeActiveMaterial,
+      cathodeKF9700: debouncedCathodeKF9700,
+      cathodeCN01Y: debouncedCathodeCN01Y,
+      cathodeSuperC65: debouncedCathodeSuperC65,
+      cathodeArealLoading: debouncedCathodeArealLoading,
+      cathodePressDensity: debouncedCathodePressDensity,
+    };
+
+    // 执行验证
+    const error = validateCathodeParameters(cathodeParams, t);
+
+    // 更新错误状态（null 转为空字符串）
+    setCathodeError(error || '');
+  }, [
+    cathodeActiveMaterial,
+    debouncedCathodeKF9700,
+    debouncedCathodeCN01Y,
+    debouncedCathodeSuperC65,
+    debouncedCathodeArealLoading,
+    debouncedCathodePressDensity,
+    t,
+  ]);
+
+  // 实时验证 Anode 参数
+  useEffect(() => {
+    // 构建 anode 参数对象
+    const anodeParams = {
+      anodeActiveMaterial,
+      anodeCMC: debouncedAnodeCMC,
+      anodeSBR: debouncedAnodeSBR,
+      anodePAA: debouncedAnodePAA,
+      anodeSuperP: debouncedAnodeSuperP,
+      anodeSWCNT: debouncedAnodeSWCNT,
+      anodePressDensity: debouncedAnodePressDensity,
+    };
+
+    // 执行验证
+    const error = validateAnodeParameters(anodeParams, t);
+
+    // 更新错误状态
+    setAnodeError(error || '');
+  }, [
+    anodeActiveMaterial,
+    debouncedAnodeCMC,
+    debouncedAnodeSBR,
+    debouncedAnodePAA,
+    debouncedAnodeSuperP,
+    debouncedAnodeSWCNT,
+    debouncedAnodePressDensity,
+    t,
+  ]);
+
+  // 实时验证 Dimension 参数
+  useEffect(() => {
+    // 如果 dimension 字段都为空（初始状态），则不进行验证
+    // 只有用户开始输入后才进行实时验证
+    if (!debouncedWidth && !debouncedLength && !debouncedLayers) {
+      return;
+    }
+
+    // 构建 dimension 参数对象
+    const dimensionParams = {
+      width: debouncedWidth,
+      length: debouncedLength,
+      layers: debouncedLayers,
+    };
+
+    // 执行验证
+    const error = validateDimensionParameters(dimensionParams, t);
+
+    // 更新错误状态
+    setDimensionError(error || '');
+  }, [
+    debouncedWidth,
+    debouncedLength,
+    debouncedLayers,
+    t,
+  ]);
+
   // 使用统一的默认参数范围（不根据材料动态调整）
   const cathodeRanges = cathodeParameterRanges;
   const anodeRanges = anodeParameterRanges;
 
   const handleCalculate = async () => {
-    // 清空之前的错误
-    setCathodeError('');
-    setAnodeError('');
-    setDimensionError('');
+    // 首先检查实时验证的错误状态
+    // 如果存在任何错误，直接返回，不执行计算
+    if (cathodeError || anodeError || dimensionError) {
+      console.warn('[PredictPage] Validation failed:', {
+        cathodeError,
+        anodeError,
+        dimensionError,
+      });
+      return;
+    }
 
-    // 使用验证配置进行参数验证
+    // 二次验证（防御性编程，确保数据一致性）
+    // 这是为了防止状态异步更新导致的问题
     const validationResult = validateElectrodeParameters({
       cathodeActiveMaterial,
       cathodeKF9700,
@@ -127,7 +247,7 @@ const PredictPage: React.FC = () => {
       layers,
     }, t);
 
-    // 如果验证失败，设置错误信息
+    // 如果二次验证失败，更新错误状态
     if (!validationResult.isValid) {
       if (validationResult.errors.cathode) {
         setCathodeError(validationResult.errors.cathode);
@@ -138,6 +258,7 @@ const PredictPage: React.FC = () => {
       if (validationResult.errors.dimension) {
         setDimensionError(validationResult.errors.dimension);
       }
+      console.error('[PredictPage] Double-check validation failed');
       return;
     }
 

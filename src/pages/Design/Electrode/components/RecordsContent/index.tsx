@@ -99,7 +99,7 @@ const RecordsContent: React.FC = () => {
     }
 
     try {
-      const response = await electrodeModel.deleteElectrodeHistory({ id });
+      await electrodeModel.deleteElectrodeHistory({ id });
       message.success(t('design.electrode.records.deleteSuccess', 'Record deleted successfully'));
       loadRecords(); // 重新加载列表
     } catch (error) {
