@@ -312,7 +312,7 @@ export default {
         subtitle: "Predict impact of electrode materials on cell performance metrics (cycle life, coulombic efficiency, rate performance) with an AI model trained on SES internal experimental data",
         features: {
             resultPrediction: {
-                title: "Result Prediction",
+                title: "Performance Prediction",
                 description: "Predict cell performance"
             },
             trendAnalysis: {
@@ -341,11 +341,11 @@ export default {
             function4: "4. Train: Enable users to train custom models"
         },
         predict: {
-            title: "Result Prediction",
+            title: "Performance Prediction",
             back: "Back",
             electrodeDesign: "Electrode Design",
-            cellDesign: "Cell Design",
-            selectCellDesign: "Select cell design",
+            cellDesign: "Cell Type",    
+            selectCellDesign: "Select cell type",
             anodeActiveMaterial: "Anode Active Material",
             cathodeActiveMaterial: "Cathode Active Material",
             selectMaterial: "Select material",
@@ -358,7 +358,7 @@ export default {
             cnt: "CNT (wt.%)",
             pressDensity: "Press Density (g/cc)",
             arealLoading: "Areal Loading (mAh/cm²)",
-            dimension: "Dimension",
+            dimension: "Cathode Dimensions",
             width: "Width (mm)",
             length: "Length (mm)",
             layers: "Layers",
@@ -374,25 +374,25 @@ export default {
             calculateError: "Failed to calculate prediction",
             npRatio: "NP Ratio",
             enterNpRatio: "Enter NP ratio",
-            activeMaterial1: "Active material-1 SC-B-I (%)",
-            activeMaterial2: "Active material-2 Gr-S-I (%)",
+            activeMaterial1: "Active Material SiC (wt.%)",
+            activeMaterial2: "Active Material Graphite (wt.%)",
             anodeArealLoading: "Areal Loading (mAh/cm²)",
-            cathodeActiveMaterialLabel: "Active material NCM-A (%)",
-            kf9700: "KF-9700 (wt.%)",
-            cn01y: "CN-01Y (wt.%)",
-            superC65: "Super C65 (wt.%)",
+            cathodeActiveMaterialLabel: "Active material (wt.%)",
+            kf9700: "PVDF (wt.%)",
+            cn01y: "CNT (wt.%)",
+            superC65: "Carbon Black (wt.%)",
             cmc: "CMC (wt.%)",
             sbr: "SBR (wt.%)",
             paa: "PAA (wt.%)",
-            superP: "Super P (wt.%)",
-            swcnt: "SWCNT (wt.%)"
+            superP: "Carbon Black (wt.%)",
+            swcnt: "CNT (wt.%)"
         },
         optimize: {
             title: "Inverse Design",
             back: "Back",
             designTargets: "Design Targets",
-            cellDesign: "Cell Design",
-            selectCellDesign: "Select cell design",
+            cellDesign: "Cell Type",
+            selectCellDesign: "Select cell type",
             anodeActiveMaterial: "Anode Active Material",
             cathodeActiveMaterial: "Cathode Active Material",
             selectMaterial: "Select material",
@@ -417,7 +417,7 @@ export default {
             }
         },
         records: {
-            resultPrediction: "Result Prediction",
+            resultPrediction: "Performance Prediction",
             trendAnalysis: "Trend Analysis",
             inverseDesign: "Inverse Design",
             searchPlaceholder: "Search record ID",
@@ -426,7 +426,7 @@ export default {
             refresh: "Refresh",
             reset: "Reset",
             recordId: "Record ID",
-            cellDesign: "Cell Design",
+            cellDesign: "Cell Type",
             cathode: "Cathode Active Material",
             anode: "Anode Active Material",
             createdTime: "Created Time",
