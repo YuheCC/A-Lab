@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Radio, message, Spin } from 'antd';
-import { RefreshCw, Trash2 } from 'lucide-react';
+import { RefreshCw, Trash2, RotateCcw } from 'lucide-react';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useTranslation } from 'react-i18next';
@@ -140,6 +140,12 @@ const RecordsContent: React.FC = () => {
     loadRecords();
   };
 
+  // 重置所有过滤条件
+  const handleReset = () => {
+    setSearchKeyword('');
+    setSelectedDate('');
+  };
+
   // 获取 dayjs locale
   const getDayjsLocale = () => {
     const lang = localStorage.getItem('language') || 'zh';
@@ -238,6 +244,15 @@ const RecordsContent: React.FC = () => {
             }}
           />
         </LocalizationProvider>
+
+        {/* 重置按钮 */}
+        <button
+          className="design-refresh-button"
+          onClick={handleReset}
+          aria-label={t('design.electrode.records.reset', 'Reset')}
+        >
+          <RotateCcw size={16} />
+        </button>
 
         {/* 刷新按钮 */}
         <button
