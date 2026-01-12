@@ -424,6 +424,7 @@ export default {
             selectDate: "날짜 선택",
             showing: "{{count}} / {{total}} 건의 기록 표시",
             refresh: "새로고침",
+            reset: "초기화",
             recordId: "기록 ID",
             cellDesign: "셀 설계",
             cathode: "양극 활물질",

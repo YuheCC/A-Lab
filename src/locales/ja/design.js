@@ -424,6 +424,7 @@ export default {
             selectDate: "日付を選択",
             showing: "{{count}} / {{total}} 件の記録を表示",
             refresh: "更新",
+            reset: "リセット",
             recordId: "記録ID",
             cellDesign: "セル設計",
             cathode: "正極活物質",

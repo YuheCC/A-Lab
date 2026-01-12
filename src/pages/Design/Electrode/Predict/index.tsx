@@ -278,7 +278,6 @@ const PredictPage: React.FC = () => {
                   onChange={setCathodeKF9700}
                   min={cathodeRanges.cathodeKF9700?.min}
                   max={cathodeRanges.cathodeKF9700?.max}
-                  step={0.1}
                 />
                 <ParameterInput
                   label={t('design.electrode.predict.cn01y', 'CN-01Y (wt.%)')}
@@ -286,7 +285,6 @@ const PredictPage: React.FC = () => {
                   onChange={setCathodeCN01Y}
                   min={cathodeRanges.cathodeCN01Y?.min}
                   max={cathodeRanges.cathodeCN01Y?.max}
-                  step={0.1}
                 />
                 <ParameterInput
                   label={t('design.electrode.predict.superC65', 'Super C65 (wt.%)')}
@@ -294,7 +292,6 @@ const PredictPage: React.FC = () => {
                   onChange={setCathodeSuperC65}
                   min={cathodeRanges.cathodeSuperC65?.min}
                   max={cathodeRanges.cathodeSuperC65?.max}
-                  step={0.1}
                 />
                 <ParameterInput
                   label={t('design.electrode.predict.cathodeActiveMaterialLabel', 'Active material NCM-A (%)')}
@@ -302,7 +299,6 @@ const PredictPage: React.FC = () => {
                   onChange={setCathodeNCMA}
                   min={0}
                   max={100}
-                  step={0.1}
                   disabled={true}  // 置灰 - 计算字段
                 />
                 <ParameterInput
@@ -311,7 +307,6 @@ const PredictPage: React.FC = () => {
                   onChange={setCathodeArealLoading}
                   min={cathodeRanges.cathodeArealLoading?.min}
                   max={cathodeRanges.cathodeArealLoading?.max}
-                  step={0.01}
                 />
                 <ParameterInput
                   label={t('design.electrode.predict.pressDensity', 'Press Density (g/cc)')}
@@ -319,7 +314,6 @@ const PredictPage: React.FC = () => {
                   onChange={setCathodePressDensity}
                   min={cathodeRanges.cathodePressDensity?.min}
                   max={cathodeRanges.cathodePressDensity?.max}
-                  step={0.01}
                 />
                 </div>
                 
@@ -359,7 +353,6 @@ const PredictPage: React.FC = () => {
                   onChange={setAnodeCMC}
                   min={anodeRanges.anodeCMC?.min}
                   max={anodeRanges.anodeCMC?.max}
-                  step={0.1}
                 />
                 <ParameterInput
                   label={t('design.electrode.predict.sbr', 'SBR (wt.%)')}
@@ -367,7 +360,6 @@ const PredictPage: React.FC = () => {
                   onChange={setAnodeSBR}
                   min={anodeRanges.anodeSBR?.min}
                   max={anodeRanges.anodeSBR?.max}
-                  step={0.1}
                 />
                 <ParameterInput
                   label={t('design.electrode.predict.paa', 'PAA (wt.%)')}
@@ -375,7 +367,6 @@ const PredictPage: React.FC = () => {
                   onChange={setAnodePAA}
                   min={anodeRanges.anodePAA?.min}
                   max={anodeRanges.anodePAA?.max}
-                  step={0.1}
                 />
                 <ParameterInput
                   label={t('design.electrode.predict.superP', 'Super P (wt.%)')}
@@ -383,7 +374,6 @@ const PredictPage: React.FC = () => {
                   onChange={setAnodeSuperP}
                   min={anodeRanges.anodeSuperP?.min}
                   max={anodeRanges.anodeSuperP?.max}
-                  step={0.1}
                 />
                 <ParameterInput
                   label={t('design.electrode.predict.swcnt', 'SWCNT (wt.%)')}
@@ -391,7 +381,6 @@ const PredictPage: React.FC = () => {
                   onChange={setAnodeSWCNT}
                   min={anodeRanges.anodeSWCNT?.min}
                   max={anodeRanges.anodeSWCNT?.max}
-                  step={0.01}
                 />
                 <ParameterInput
                   label={t('design.electrode.predict.activeMaterial1', 'Active material-1 SC-B-I (%)')}
@@ -399,7 +388,6 @@ const PredictPage: React.FC = () => {
                   onChange={setAnodeSCBI}
                   min={0}
                   max={100}
-                  step={0.1}
                   disabled={true}  // 置灰 - 计算字段
                 />
                 <ParameterInput
@@ -408,7 +396,6 @@ const PredictPage: React.FC = () => {
                   onChange={setAnodeGrSI}
                   min={0}
                   max={100}
-                  step={0.1}
                   disabled={true}  // 置灰 - 计算字段
                 />
                 <ParameterInput
@@ -417,7 +404,6 @@ const PredictPage: React.FC = () => {
                   onChange={setAnodeArealLoading}
                   min={anodeRanges.anodeArealLoading?.min}
                   max={anodeRanges.anodeArealLoading?.max}
-                  step={0.01}
                   disabled={true}  // 置灰 - 计算字段
                 />
                 <ParameterInput
@@ -426,7 +412,6 @@ const PredictPage: React.FC = () => {
                   onChange={setAnodePressDensity}
                   min={anodeRanges.anodePressDensity?.min}
                   max={anodeRanges.anodePressDensity?.max}
-                  step={0.01}
                 />
                 </div>
                 

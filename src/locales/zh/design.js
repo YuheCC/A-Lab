@@ -424,6 +424,7 @@ export default {
             selectDate: "年/月/日",
             showing: "显示 {{count}} / {{total}} 条记录",
             refresh: "刷新",
+            reset: "重置",
             recordId: "记录 ID",
             cellDesign: "电池设计",
             cathode: "阴极活性材料",

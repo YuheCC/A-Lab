@@ -100,12 +100,8 @@ const RecordsContent: React.FC = () => {
 
     try {
       const response = await electrodeModel.deleteElectrodeHistory({ id });
-      if (response.success) {
-        message.success(t('design.electrode.records.deleteSuccess', 'Record deleted successfully'));
-        loadRecords(); // 重新加载列表
-      } else {
-        message.error(t('design.electrode.records.deleteError', 'Failed to delete record'));
-      }
+      message.success(t('design.electrode.records.deleteSuccess', 'Record deleted successfully'));
+      loadRecords(); // 重新加载列表
     } catch (error) {
       message.error(t('design.electrode.records.deleteError', 'Failed to delete record'));
       console.error('[RecordsContent] Delete record error:', error);
