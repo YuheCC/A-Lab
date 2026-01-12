@@ -6,10 +6,14 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@umijs/max';
 import dayjs, { Dayjs } from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { formatUTCDateTime } from '@/utils/dateUtils';
 import * as electrodeModel from '../../model';
 import type { ElectrodeHistoryItem } from '../../model';
 import './index.less';
+
+// 扩展 dayjs 以支持 UTC
+dayjs.extend(utc);
 
 const RecordsContent: React.FC = () => {
   const { t } = useTranslation();
@@ -54,12 +58,28 @@ const RecordsContent: React.FC = () => {
   const loadRecords = async () => {
     setLoading(true);
     try {
+      // 处理日期参数：将本地时区的日期转换为 UTC 时间范围
+      let createdAtParam = '';
+      if (selectedDate) {
+        const date = dayjs(selectedDate);
+        // 获取当天的开始时间（00:00:00）和结束时间（23:59:59）
+        const startOfDay = date.startOf('day');
+        const endOfDay = date.endOf('day');
+
+        // 转换为 UTC 时间
+        const startUTC = startOfDay.utc().format('YYYY-MM-DD HH:mm:ss');
+        const endUTC = endOfDay.utc().format('YYYY-MM-DD HH:mm:ss');
+
+        // 用逗号拼接两个时间点
+        createdAtParam = `${startUTC},${endUTC}`;
+      }
+
       const response = await electrodeModel.getElectrodeHistoryList({
         type: getTypeFromSubTab(activeSubTab),
         page: 1,
         page_size: 100,
         // 可选过滤参数
-        ...(selectedDate && { created_at: selectedDate }),
+        ...(createdAtParam && { created_at: createdAtParam }),
         ...(debouncedSearchKeyword && { id: debouncedSearchKeyword.replace(/\D/g, '') }),
       });
       setRecords(response.data);
