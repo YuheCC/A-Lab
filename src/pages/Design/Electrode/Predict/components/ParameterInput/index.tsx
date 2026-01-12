@@ -18,7 +18,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
   onChange,
   min = 0,
   max = 10,
-  step = 0.1,
+  step = 0.01,
   disabled = false,
 }) => {
   const handleSliderChange = (newValue: number) => {
