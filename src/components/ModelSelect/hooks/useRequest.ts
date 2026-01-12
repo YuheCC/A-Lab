@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ModelSelectOption, ModelSelectGroup } from '../types';
-import { useDebounce } from './useDebounce';
+import { useDebounce } from '@/hooks/useDebounce';
 
 /**
  * 异步数据加载 Hook
