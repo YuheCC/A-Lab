@@ -167,6 +167,7 @@ const PredictPage: React.FC = () => {
     const requestParams = electrodeModel.buildPredictParams(
       {
         cellDesign,
+        npRatio,
         cathodeActiveMaterial,
         anodeActiveMaterial,
         modelParams,

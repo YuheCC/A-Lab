@@ -97,8 +97,9 @@ const DetailPage: React.FC = () => {
     );
   }
 
-  const { cell_design, cathode_active_material, anode_active_material, model_params, model_result } = data;
-  const npRatio = getNpRatio(cell_design);
+  const { cell_design, np_ratio, cathode_active_material, anode_active_material, model_params, model_result } = data;
+  // 优先使用 API 返回的 np_ratio，如果没有则根据 cell_design 计算（向后兼容）
+  const npRatio = np_ratio || getNpRatio(cell_design);
 
   return (
     <div className="electrode-predict-container">

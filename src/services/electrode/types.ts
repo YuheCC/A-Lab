@@ -126,6 +126,8 @@ export interface ElectrodeHistoryItem {
   id: number;
   /** Cell Design */
   cell_design: string;
+  /** NP Ratio */
+  np_ratio?: string;
   /** 正极活性材料 */
   cathode_active_material: string;
   /** 负极活性材料 */
@@ -201,6 +203,8 @@ export interface ElectrodeHistoryDeleteResponse {
 export interface ElectrodeModelPredictParams {
   /** Cell Design */
   cell_design: string;
+  /** NP Ratio */
+  np_ratio: string;
   /** 正极活性材料 */
   cathode_active_material: string;
   /** 负极活性材料 */

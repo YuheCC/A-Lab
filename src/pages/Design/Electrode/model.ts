@@ -31,6 +31,26 @@ import type {
 const USE_MOCK = process.env.REACT_APP_USE_ELECTRODE_MOCK === 'true';
 
 // ============================================
+// 辅助函数 - 数据处理
+// ============================================
+
+/**
+ * 格式化 model_result，将所有数字字段保留2位小数
+ * Format model_result to keep 2 decimal places for all number fields
+ *
+ * @param result - 原始模型结果
+ * @returns 格式化后的模型结果
+ */
+function formatModelResult(result: ElectrodeModelResult): ElectrodeModelResult {
+  return {
+    designCapacity: Number(result.designCapacity.toFixed(2)),
+    specificED: Number(result.specificED.toFixed(2)),
+    jellyRollThickness: Number(result.jellyRollThickness.toFixed(2)),
+    volumetricED: Number(result.volumetricED.toFixed(2)),
+  };
+}
+
+// ============================================
 // Model 层 API（数据处理 + Mock）
 // ============================================
 
@@ -102,11 +122,20 @@ export async function getElectrodeHistoryDetail(
       throw new Error(`Record not found: ${params.id}`);
     }
 
-    return mockItem;
+    return {
+      ...mockItem,
+      model_result: formatModelResult(mockItem.model_result),
+    };
   }
 
   // 真实 API 调用
-  return await electrodeService.getElectrodeHistoryDetail(params);
+  const response = await electrodeService.getElectrodeHistoryDetail(params);
+
+  // 格式化 model_result，保留2位小数
+  return {
+    ...response,
+    model_result: formatModelResult(response.model_result),
+  };
 }
 
 /**
@@ -152,12 +181,18 @@ export async function predictElectrodePerformance(
 
     return {
       id: Math.floor(Math.random() * 10000),
-      model_result: MOCK_PREDICT_RESULT,
+      model_result: formatModelResult(MOCK_PREDICT_RESULT),
     };
   }
 
   // 真实 API 调用
-  return await electrodeService.predictElectrodePerformance(params);
+  const response = await electrodeService.predictElectrodePerformance(params);
+
+  // 格式化 model_result，保留2位小数
+  return {
+    ...response,
+    model_result: formatModelResult(response.model_result),
+  };
 }
 
 // ============================================
@@ -175,6 +210,7 @@ export async function predictElectrodePerformance(
 export function buildPredictParams(
   formData: {
     cellDesign: string;
+    npRatio: string;
     cathodeActiveMaterial: string;
     anodeActiveMaterial: string;
     modelParams: ElectrodeModelParams;
@@ -183,6 +219,7 @@ export function buildPredictParams(
 ): ElectrodeModelPredictParams {
   return {
     cell_design: formData.cellDesign,
+    np_ratio: formData.npRatio,
     cathode_active_material: formData.cathodeActiveMaterial,
     anode_active_material: formData.anodeActiveMaterial,
     model_params: formData.modelParams,
