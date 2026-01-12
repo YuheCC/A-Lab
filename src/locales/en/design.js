@@ -424,6 +424,7 @@ export default {
             selectDate: "Select Date",
             showing: "Showing {{count}} of {{total}} records",
             refresh: "Refresh",
+            reset: "Reset",
             recordId: "Record ID",
             cellDesign: "Cell Design",
             cathode: "Cathode Active Material",
