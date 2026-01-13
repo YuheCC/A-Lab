@@ -368,7 +368,7 @@ export default {
             calculate: "计算",
             cellPerformance: "电池性能预测",
             designCapacity: "设计容量",
-            specificED: "比能量密度",
+            specificED: "重量能量密度",
             jellyRollThickness: "卷芯厚度",
             volumetricED: "体积能量密度",
             calculateError: "计算预测失败",
@@ -385,7 +385,8 @@ export default {
             sbr: "SBR (wt.%)",
             paa: "PAA (wt.%)",
             superP: "Carbon Black (wt.%)",
-            swcnt: "CNT (wt.%)"
+            swcnt: "CNT (wt.%)",
+            rateCapability: "倍率性能 (1C-5C)"
         },
         optimize: {
             title: "逆向设计",
@@ -397,7 +398,7 @@ export default {
             cathodeActiveMaterial: "正极活性材料",
             selectMaterial: "选择材料",
             designCapacity: "设计容量",
-            specificEnergy: "比能量",
+            specificEnergy: "重量能量密度",
             thickness: "厚度",
             volumetricEnergyDensity: "体积能量密度",
             calculate: "计算",

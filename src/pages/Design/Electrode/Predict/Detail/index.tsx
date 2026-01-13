@@ -5,6 +5,7 @@ import { LeftOutlined } from '@ant-design/icons';
 import { Select, Input, Spin, message } from 'antd';
 import ParameterInput from '../components/ParameterInput';
 import ResultDisplay from '../components/ResultDisplay';
+import RateCapabilityChart from '../components/RateCapabilityChart';
 import * as electrodeModel from '../../model';
 import type { ElectrodeHistoryItem } from '../../model';
 import './index.less';
@@ -411,6 +412,9 @@ const DetailPage: React.FC = () => {
                   unit="Wh/L"
                 />
               </div>
+
+              {/* Rate Capability 图表 */}
+              <RateCapabilityChart />
             </div>
           </div>
         </div>

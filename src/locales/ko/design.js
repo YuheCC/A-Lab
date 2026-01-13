@@ -368,7 +368,7 @@ export default {
             calculate: "계산",
             cellPerformance: "배터리 성능 예측",
             designCapacity: "설계 용량",
-            specificED: "비에너지 밀도",
+            specificED: "중량 에너지 밀도",
             jellyRollThickness: "젤리롤 두께",
             volumetricED: "체적 에너지 밀도",
             calculateError: "예측 계산 실패",
@@ -385,7 +385,8 @@ export default {
             sbr: "SBR (wt.%)",
             paa: "PAA (wt.%)",
             superP: "Carbon Black (wt.%)",
-            swcnt: "CNT (wt.%)"
+            swcnt: "CNT (wt.%)",
+            rateCapability: "속도 성능 (1C-5C)"
         },
         optimize: {
             title: "역설계",
@@ -397,7 +398,7 @@ export default {
             cathodeActiveMaterial: "양극 활물질",
             selectMaterial: "재료 선택",
             designCapacity: "설계 용량",
-            specificEnergy: "비에너지",
+            specificEnergy: "중량 에너지 밀도",
             thickness: "두께",
             volumetricEnergyDensity: "체적 에너지 밀도",
             calculate: "계산",
