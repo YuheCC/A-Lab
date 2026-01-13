@@ -407,7 +407,7 @@ export default {
             actions: "Actions",
             details: "Details",
             designDetails: "Design Details",
-            npRatio: "N/P Ratio",
+            npRatio: "NP Ratio",
             cathodeParameters: "Cathode Parameters",
             anodeParameters: "Anode Parameters",
             messages: {
