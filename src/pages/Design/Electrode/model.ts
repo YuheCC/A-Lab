@@ -43,10 +43,10 @@ const USE_MOCK = process.env.REACT_APP_USE_ELECTRODE_MOCK === 'true';
  */
 function formatModelResult(result: ElectrodeModelResult): ElectrodeModelResult {
   return {
-    designCapacity: Number(result.designCapacity.toFixed(2)),
-    specificED: Number(result.specificED.toFixed(2)),
-    jellyRollThickness: Number(result.jellyRollThickness.toFixed(2)),
-    volumetricED: Number(result.volumetricED.toFixed(2)),
+    designCapacity: Number(result.designCapacity?.toFixed(2)),
+    specificED: Number(result.specificED?.toFixed(2)),
+    jellyRollThickness: Number(result.jellyRollThickness?.toFixed(2)),
+    volumetricED: Number(result.volumetricED?.toFixed(2)),
   };
 }
 
