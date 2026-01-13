@@ -444,9 +444,9 @@ export default {
             parameterRange: "{{label}} must be between {{min}} and {{max}}",
             selectCathodeMaterial: "Please select cathode active material",
             selectAnodeMaterial: "Please select anode active material",
-            cathodeConductiveSum: "The sum of Super C65 + CN-01Y must be greater than 0.8",
-            cmcGreaterThanSwcnt: "CMC must be greater than SWCNT",
-            anodeConductiveSum: "The sum of Super P (KS-6) + SWCNT must be greater than 0.005",
+            cathodeConductiveSum: "The sum of Carbon Black + CNT must be greater than 0.8",
+            cmcGreaterThanSwcnt: "CMC must be greater than CNT",
+            anodeConductiveSum: "The sum of Carbon Black + CNT must be greater than 0.005",
             fillAllDimensions: "Please fill in all dimension parameters",
             ratioSmallWidth: "For widths not exceeding 100, the aspect ratio must range from 0.2 to 1.",
             ratioLargeWidth: "For widths between 100 and 1000, the aspect ratio must be maintained between 0.1 and 0.5."

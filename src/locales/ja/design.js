@@ -444,9 +444,9 @@ export default {
             parameterRange: "{{label}} は {{min}} から {{max}} の間である必要があります",
             selectCathodeMaterial: "正極活物質を選択してください",
             selectAnodeMaterial: "負極活物質を選択してください",
-            cathodeConductiveSum: "Super C65 + CN-01Y の合計は 0.8 より大きくなければなりません",
-            cmcGreaterThanSwcnt: "CMC は SWCNT より大きくなければなりません",
-            anodeConductiveSum: "Super P (KS-6) + SWCNT の合計は 0.005 より大きくなければなりません",
+            cathodeConductiveSum: "Carbon Black + CNT の合計は 0.8 より大きくなければなりません",
+            cmcGreaterThanSwcnt: "CMC は CNT より大きくなければなりません",
+            anodeConductiveSum: "Carbon Black + CNT の合計は 0.005 より大きくなければなりません",
             fillAllDimensions: "すべての寸法パラメータを入力してください",
             ratioSmallWidth: "幅が100を超えない場合、アスペクト比は0.2から1の範囲内である必要があります。",
             ratioLargeWidth: "幅が100から1000の間の場合、アスペクト比は0.1から0.5の間に維持する必要があります。"

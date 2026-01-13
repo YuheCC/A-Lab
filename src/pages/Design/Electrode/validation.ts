@@ -19,19 +19,19 @@ export type AnodeMaterialType = 'Graphite' | 'Gr' | '12% Si' | '30% Si' | 'Silic
 export const cathodeParameterRanges: Record<string, ParameterRange> = {
   cathodeKF9700: {
     key: 'cathodeKF9700',
-    label: 'KF-9700 (wt.%)',
+    label: 'PVDF (wt.%)',
     min: 0.8,
     max: 2.5,
   },
   cathodeCN01Y: {
     key: 'cathodeCN01Y',
-    label: 'CN-01Y (wt.%)',
+    label: 'CNT (wt.%)',
     min: 0,
     max: 2,
   },
   cathodeSuperC65: {
     key: 'cathodeSuperC65',
-    label: 'Super C65 (wt.%)',
+    label: 'Carbon Black (wt.%)',
     min: 0,
     max: 3,
   },
@@ -71,13 +71,13 @@ export const anodeParameterRanges: Record<string, ParameterRange> = {
   },
   anodeSuperP: {
     key: 'anodeSuperP',
-    label: 'Super P (wt.%) / KS-6',
+    label: 'Carbon Black (wt.%)',
     min: 0,
     max: 2.0,
   },
   anodeSWCNT: {
     key: 'anodeSWCNT',
-    label: 'SWCNT (wt.%)',
+    label: 'CNT (wt.%)',
     min: 0.05,
     max: 1.2,
   },
@@ -204,14 +204,14 @@ function validateCathodeParameters(params: ElectrodeParameters, t?: TranslateFun
     return rangeErrors[0]; // 返回第一个错误
   }
 
-  // 规则1: (CB)cathode Conductive Carbon + (CN-01Y)cathode CNT > 0.8
+  // 规则1: Carbon Black (导电碳) + CNT (碳纳米管) > 0.8
   const cathodeSuperC65 = params.cathodeSuperC65 || 0;
   const cathodeCN01Y = params.cathodeCN01Y || 0;
-  
+
   if (cathodeSuperC65 + cathodeCN01Y <= 0.8) {
-    return t 
+    return t
       ? t('design.electrode.validation.cathodeConductiveSum')
-      : 'Super C65 + CN-01Y 的总和必须大于 0.8';
+      : 'Carbon Black + CNT 的总和必须大于 0.8';
   }
 
   return null;
@@ -247,18 +247,18 @@ function validateAnodeParameters(params: ElectrodeParameters, t?: TranslateFunct
   const anodeSWCNT = params.anodeSWCNT || 0;
   const anodeSuperP = params.anodeSuperP || 0;
 
-  // 规则2: (CMC)anode Binder2 > (SWCNT)anode CNT
+  // 规则2: CMC (粘合剂) > CNT (碳纳米管)
   if (anodeCMC <= anodeSWCNT) {
-    return t 
+    return t
       ? t('design.electrode.validation.cmcGreaterThanSwcnt')
-      : 'CMC 必须大于 SWCNT';
+      : 'CMC 必须大于 CNT';
   }
 
-  // 规则3: (KS-6)anode Conductive Carbon + (SWCNT)anode CNT > 0.005
+  // 规则3: Carbon Black (导电碳) + CNT (碳纳米管) > 0.005
   if (anodeSuperP + anodeSWCNT <= 0.005) {
-    return t 
+    return t
       ? t('design.electrode.validation.anodeConductiveSum')
-      : 'Super P (KS-6) + SWCNT 的总和必须大于 0.005';
+      : 'Carbon Black + CNT 的总和必须大于 0.005';
   }
 
   return null;
