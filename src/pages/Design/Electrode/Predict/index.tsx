@@ -6,6 +6,7 @@ import { Select, Input } from 'antd';
 import Button from '@/components/Button';
 import ParameterInput from './components/ParameterInput';
 import ResultDisplay from './components/ResultDisplay';
+import RateCapabilityChart from './components/RateCapabilityChart';
 import * as electrodeModel from '../model';
 import {
   validateElectrodeParameters,
@@ -457,10 +458,10 @@ const PredictPage: React.FC = () => {
                   placeholder={t('design.electrode.predict.selectMaterial', 'Select material')}
                   className="electrode-predict-select"
                 >
-                  <Option value="12% Si">12% Si</Option>
-                  <Option value="30% Si" disabled>30% Si</Option>
-                  <Option value="Si" disabled>Si</Option>
-                  <Option value="Gr" disabled>Gr</Option>                
+                  <Option value="12% Si">12% SiC / 88% Graphite</Option>
+                  <Option value="30% Si" disabled>30% SiC / 70% Graphite</Option>
+                  <Option value="Si" disabled>SiC</Option>
+                  <Option value="Gr" disabled>Graphite</Option>                
                 </Select>
 
                 <h3 className="electrode-predict-subsection-title">
@@ -645,6 +646,9 @@ const PredictPage: React.FC = () => {
                   unit="Wh/L"
                 />
               </div>
+
+              {/* Rate Capability 图表 */}
+              <RateCapabilityChart />
             </div>
           </div>
         )}

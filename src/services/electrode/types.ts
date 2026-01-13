@@ -22,17 +22,90 @@ export enum ElectrodePageType {
 // 模型参数和结果（核心类型）
 // ============================================
 
+// --------------------------------------------
+// 后端 API DTO 定义（Backend API DTOs）
+// --------------------------------------------
+
 /**
- * 电极模型输入参数（打平的一级对象）
- * Electrode Model Input Parameters (Flattened Structure)
+ * 电极模型输入参数 - 后端 API 定义
+ * Electrode Model Input Parameters - Backend API Definition
  *
  * 通过参数名前缀区分阴阳极参数：
  * - anode*: 阳极参数
  * - cathode*: 阴极参数
  * - width/length/layers: 尺寸参数
  */
+export interface ElectrodeModelParamsDTO {
+  // ========== 阳极参数 (Anode Parameters) ==========
+  /** CMC (wt.%) */
+  anode_binder1_wt: number;
+  /** SBR (wt.%) */
+  anode_binder2_wt: number;
+  /** PAA (wt.%) */
+  anode_binder3_wt: number;
+  /** Super P (wt.%) */
+  anode_conductive_carbon_wt: number;
+  /** SWCNT (wt.%) */
+  anode_cnt_wt: number;
+  /** Press Density (g/cc) */
+  anode_press_density: number;
+  /** Active material-1 SC-B-I (%) */
+  anodeSCBI: number;
+  /** Active material-2 Gr-S-I (%) */
+  anodeGrSI: number;
+  /** Areal Loading (mAh/cm²) */
+  anode_areal_loading: number;
+
+  // ========== 阴极参数 (Cathode Parameters) ==========
+  /** KF-9700 (wt.%) */
+  cathode_binder_wt: number;
+  /** CN-01Y (wt.%) */
+  cathode_cnt_wt: number;
+  /** Super C65 (wt.%) */
+  cathode_conductive_carbon_wt: number;
+  /** Areal Loading (mAh/cm²) */
+  cathode_areal_loading: number;
+  /** Press Density (g/cc) */
+  cathode_press_density: number;
+  /** Active material NCM-A (%) */
+  cathode_NCMA: number;
+
+  // ========== 尺寸参数 (Dimension Parameters) ==========
+  /** Width (mm) */
+  width: number;
+  /** Length (mm) */
+  length: number;
+  /** Layers */
+  layers: number;
+}
+
+/**
+ * 电极模型预测结果 - 后端 API 定义
+ * Electrode Model Prediction Result - Backend API Definition
+ */
+export interface ElectrodeModelResultDTO {
+  /** Design Capacity (Ah) */
+  design_capacity: number;
+  /** Specific Energy Density (Wh/kg) */
+  specific_ED: number;
+  /** Jelly Roll Thickness (mm) */
+  jelly_roll_thickness: number;
+  /** Volumetric Energy Density (Wh/L) */
+  volumetric_ED: number;
+}
+
+// --------------------------------------------
+// 前端业务模型定义（Frontend Business Models）
+// --------------------------------------------
+
+/**
+ * 电极模型输入参数 - 前端业务模型
+ * Electrode Model Input Parameters - Frontend Business Model
+ *
+ * 使用驼峰命名，便于前端业务逻辑使用
+ */
 export interface ElectrodeModelParams {
-  // ========== 阳极参数 (Anode Parameters) - 描述性命名 ==========
+  // ========== 阳极参数 (Anode Parameters) ==========
   /** CMC (wt.%) */
   anodeCMC: number;
   /** SBR (wt.%) */
@@ -52,7 +125,7 @@ export interface ElectrodeModelParams {
   /** Areal Loading (mAh/cm²) */
   anodeArealLoading: number;
 
-  // ========== 阴极参数 (Cathode Parameters) - 描述性命名 ==========
+  // ========== 阴极参数 (Cathode Parameters) ==========
   /** KF-9700 (wt.%) */
   cathodeKF9700: number;
   /** CN-01Y (wt.%) */
@@ -76,8 +149,10 @@ export interface ElectrodeModelParams {
 }
 
 /**
- * 电极模型预测结果（打平的一级对象）
- * Electrode Model Prediction Result (Flattened Structure)
+ * 电极模型预测结果 - 前端业务模型
+ * Electrode Model Prediction Result - Frontend Business Model
+ *
+ * 使用驼峰命名，便于前端业务逻辑使用
  */
 export interface ElectrodeModelResult {
   /** Design Capacity (Ah) */
@@ -225,3 +300,4 @@ export interface ElectrodeModelPredictResponse {
   /** 模型结果（对象） */
   model_result: ElectrodeModelResult;
 }
+

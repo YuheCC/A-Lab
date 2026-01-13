@@ -368,7 +368,7 @@ export default {
             calculate: "Calculate",
             cellPerformance: "Cell Performance Prediction",
             designCapacity: "Design Capacity",
-            specificED: "Specific Energy Density",
+            specificED: "Gravimetric Energy Density",
             jellyRollThickness: "Jelly Roll Thickness",
             volumetricED: "Volumetric Energy Density",
             calculateError: "Failed to calculate prediction",
@@ -385,7 +385,8 @@ export default {
             sbr: "SBR (wt.%)",
             paa: "PAA (wt.%)",
             superP: "Carbon Black (wt.%)",
-            swcnt: "CNT (wt.%)"
+            swcnt: "CNT (wt.%)",
+            rateCapability: "Rate Capability (1C-5C)"
         },
         optimize: {
             title: "Inverse Design",
@@ -397,7 +398,7 @@ export default {
             cathodeActiveMaterial: "Cathode Active Material",
             selectMaterial: "Select material",
             designCapacity: "Design Capacity",
-            specificEnergy: "Specific Energy",
+            specificEnergy: "Gravimetric Energy Density",
             thickness: "Thickness",
             volumetricEnergyDensity: "Volumetric Energy Density",
             calculate: "Calculate",

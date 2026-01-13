@@ -1,0 +1,60 @@
+@import '@/styles/variables.less';
+
+.rate-capability-chart-container {
+  margin-top: 32px;
+}
+
+// 标题样式 - 与 ResultDisplay 保持一致
+.rate-capability-chart-label {
+  font-size: 14px;
+  font-weight: @font-weight-medium;
+  color: @color-gray-600;
+  margin-bottom: 12px;
+}
+
+.rate-capability-chart-wrapper {
+  position: relative;
+  background: #ffffff;
+  // 移除边框
+  // border: 1px solid @color-gray-200;
+  // border-radius: 12px;
+  // padding: 24px;
+  overflow: hidden;
+  // 限制最大宽度并居中显示
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+// Coming Soon 蒙层
+.rate-capability-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.rate-capability-overlay-content {
+  text-align: center;
+}
+
+.rate-capability-overlay-text {
+  font-size: 24px;
+  font-weight: @font-weight-medium;
+  color: @color-gray-500;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .rate-capability-overlay-text {
+    font-size: 20px;
+  }
+}
