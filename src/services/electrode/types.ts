@@ -193,8 +193,8 @@ export interface ElectrodeHistoryListParams {
 }
 
 /**
- * 历史记录项（API 直接响应）
- * History Item (Direct API Response)
+ * 历史记录项（API 直接响应）- type=1 正向预测
+ * History Item (Direct API Response) - type=1 Result Prediction
  */
 export interface ElectrodeHistoryItem {
   /** 记录 ID */
@@ -211,6 +211,8 @@ export interface ElectrodeHistoryItem {
   model_params: ElectrodeModelParams;
   /** 模型结果（对象） */
   model_result: ElectrodeModelResult;
+  /** 页面类型：1=正向预测, 2=反向设计 */
+  type?: ElectrodePageType;
   /** 创建时间 */
   created_at?: string;
   /** 更新时间 */
@@ -299,5 +301,188 @@ export interface ElectrodeModelPredictResponse {
   id: number;
   /** 模型结果（对象） */
   model_result: ElectrodeModelResult;
+}
+
+// ============================================
+// 反向设计优化类型（Optimize / Inverse Design）
+// ============================================
+
+/**
+ * Optimize 模型参数（区间模式） - 后端 DTO
+ * Optimize Model Parameters (Range Mode) - Backend DTO
+ *
+ * 用于反向设计（type=2）时的输入参数，
+ * 部分参数使用区间 [min, max] 格式
+ */
+export interface OptimizeModelParamsDTO {
+  /** Width (mm) */
+  width: number;
+  /** Length (mm) */
+  length: number;
+  /** Layers */
+  layers: number;
+  /** Design Capacity (Ah) - 区间 [min, max] */
+  design_capacity: [number, number];
+  /** Specific Energy Density (Wh/kg) - 区间 [min, max] */
+  specific_ED: [number, number];
+  /** Jelly Roll Thickness (mm) - 区间 [min, max] */
+  jelly_roll_thickness: [number, number];
+  /** Volumetric Energy Density (Wh/L) - 区间 [min, max] */
+  volumetric_ED: [number, number];
+}
+
+/**
+ * 电极反向设计优化请求参数
+ * Electrode Optimize Request Parameters
+ *
+ * 用于 type=2（INVERSE_DESIGN）场景
+ */
+export interface ElectrodeOptimizeParams {
+  /** Cell Design */
+  cell_design: string;
+  /** NP Ratio */
+  np_ratio: string;
+  /** 正极活性材料 */
+  cathode_active_material: string;
+  /** 负极活性材料 */
+  anode_active_material: string;
+  /** 页面类型：2=反向设计 */
+  type: ElectrodePageType;
+  /** 模型参数（区间模式） */
+  model_params: OptimizeModelParamsDTO;
+}
+
+/**
+ * Optimize 结果项 - 后端 DTO
+ * Optimize Result Item - Backend DTO
+ *
+ * 反向设计返回的单条推荐结果
+ */
+export interface OptimizeResultItemDTO {
+  // ========== 阴极参数 (Cathode Parameters) ==========
+  /** KF-9700 (wt.%) */
+  cathode_binder_wt: number;
+  /** CN-01Y (wt.%) */
+  cathode_cnt_wt: number;
+  /** Super C65 (wt.%) */
+  cathode_conductive_carbon_wt: number;
+  /** Areal Loading (mAh/cm²) */
+  cathode_areal_loading: number;
+  /** Press Density (g/cc) */
+  cathode_press_density: number;
+
+  // ========== 阳极参数 (Anode Parameters) ==========
+  /** CMC (wt.%) */
+  anode_binder1_wt: number;
+  /** SBR (wt.%) */
+  anode_binder2_wt: number;
+  /** PAA (wt.%) */
+  anode_binder3_wt: number;
+  /** Super P (wt.%) */
+  anode_conductive_carbon_wt: number;
+  /** SWCNT (wt.%) */
+  anode_cnt_wt: number;
+  /** Press Density (g/cc) */
+  anode_press_density: number;
+
+  // ========== 尺寸参数 (Dimension Parameters) ==========
+  /** Width (mm) */
+  width: number;
+  /** Length (mm) */
+  length: number;
+  /** Layers */
+  layers: number;
+
+  // ========== 结果参数 (Result Parameters) ==========
+  /** Design Capacity (Ah) */
+  design_capacity: number;
+  /** Specific Energy Density (Wh/kg) */
+  specific_ED: number;
+  /** Jelly Roll Thickness (mm) */
+  jelly_roll_thickness: number;
+  /** Volumetric Energy Density (Wh/L) */
+  volumetric_ED: number;
+}
+
+/**
+ * Optimize API 响应 - 后端 DTO
+ * Optimize API Response - Backend DTO
+ *
+ * 反向设计 API 返回的完整响应结构
+ */
+export interface ElectrodeOptimizeResponseDTO {
+  /** 记录 ID */
+  id: number;
+  /** Cell Design */
+  cell_design: string;
+  /** NP Ratio */
+  np_ratio: string;
+  /** 正极活性材料 */
+  cathode_active_material: string;
+  /** 负极活性材料 */
+  anode_active_material: string;
+  /** 页面类型：2=反向设计 */
+  type: number;
+  /** 模型参数 */
+  model_params: OptimizeModelParamsDTO;
+  /** 模型结果数组 - 多条推荐结果 */
+  model_result: OptimizeResultItemDTO[];
+  /** 创建时间 */
+  created_at?: string;
+  /** 更新时间 */
+  updated_at?: string;
+  /** 用户 ID */
+  user_id?: number;
+}
+
+/**
+ * Optimize 历史记录项 - type=2 反向设计
+ * Optimize History Item - type=2 Inverse Design
+ *
+ * 与 ElectrodeHistoryItem 类似，但 model_result 是数组
+ */
+export interface OptimizeHistoryItem {
+  /** 记录 ID */
+  id: number;
+  /** Cell Design */
+  cell_design: string;
+  /** NP Ratio */
+  np_ratio?: string;
+  /** 正极活性材料 */
+  cathode_active_material: string;
+  /** 负极活性材料 */
+  anode_active_material: string;
+  /** 页面类型：2=反向设计 */
+  type: ElectrodePageType;
+  /** 模型参数（区间模式） */
+  model_params: OptimizeModelParamsDTO;
+  /** 模型结果数组 - 多条推荐结果 */
+  model_result: OptimizeResultItemDTO[];
+  /** 创建时间 */
+  created_at?: string;
+  /** 更新时间 */
+  updated_at?: string;
+  /** 用户 ID */
+  user_id?: number;
+}
+
+/**
+ * 通用历史记录详情响应（联合类型）
+ * Universal History Detail Response (Union Type)
+ *
+ * 根据 type 字段区分数据结构：
+ * - type=1: ElectrodeHistoryItem
+ * - type=2: OptimizeHistoryItem
+ */
+export type UniversalHistoryDetailResponse = ElectrodeHistoryItem | OptimizeHistoryItem;
+
+/**
+ * 类型守卫：判断是否为 Optimize 历史记录
+ * Type Guard: Check if it's an Optimize History Item
+ */
+export function isOptimizeHistoryItem(
+  item: UniversalHistoryDetailResponse,
+): item is OptimizeHistoryItem {
+  return item.type === ElectrodePageType.INVERSE_DESIGN;
 }
 
