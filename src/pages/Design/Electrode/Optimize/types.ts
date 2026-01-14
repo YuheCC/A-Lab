@@ -3,12 +3,16 @@
 // 设计目标表单数据
 export interface DesignTargetsFormData {
   cellDesign: string;
+  npRatio: string; // NP Ratio (Auto-filled)
   anodeActiveMaterial: string;
   cathodeActiveMaterial: string;
-  designCapacity: number;
-  specificEnergy: number;
-  thickness: number;
-  volumetricEnergyDensity: number;
+  width: string; // Cathode Width (mm)
+  length: string; // Cathode Length (mm)
+  layers: string; // Cathode Layers
+  designCapacity: number; // Design Capacity (Ah)
+  specificEnergy: number; // Gravimetric Energy Density (Wh/kg)
+  thickness: number; // Jelly Roll Thickness (mm)
+  volumetricEnergyDensity: number; // Volumetric Energy Density (Wh/L)
 }
 
 // 参数范围配置
@@ -21,10 +25,10 @@ export interface ParameterRange {
 
 // 参数范围常量
 export const PARAMETER_RANGES: Record<string, ParameterRange> = {
-  designCapacity: { min: 0, max: 100, step: 1, default: 50 },
-  specificEnergy: { min: 0, max: 500, step: 10, default: 250 },
-  thickness: { min: 0, max: 20, step: 0.5, default: 10 },
-  volumetricEnergyDensity: { min: 0, max: 1000, step: 10, default: 500 },
+  designCapacity: { min: 0.01, max: 1900, step: 0.01, default: 950 },
+  specificEnergy: { min: 30, max: 340, step: 1, default: 185 },
+  thickness: { min: 0.4, max: 15, step: 0.1, default: 7.7 },
+  volumetricEnergyDensity: { min: 530, max: 1060, step: 1, default: 795 },
 };
 
 // 设计推荐结果（表格行）
