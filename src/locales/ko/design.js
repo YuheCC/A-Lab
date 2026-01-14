@@ -312,7 +312,7 @@ export default {
         subtitle: "SES 내부 실험 데이터로 학습한 AI 모델을 통해 전극 재료가 배터리 성능 지표(사이클 수명, 쿨롱 효율, 레이트 성능)에 미치는 영향 예측",
         features: {
             resultPrediction: {
-                title: "결과 예측",
+                title: "성능 예측",
                 description: "배터리 성능 예측"
             },
             trendAnalysis: {

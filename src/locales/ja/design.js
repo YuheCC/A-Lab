@@ -312,7 +312,7 @@ export default {
         subtitle: "SES内部実験データで学習したAIモデルで、電極材料が電池性能指標（サイクル寿命、クーロン効率、レート性能）に与える影響を予測",
         features: {
             resultPrediction: {
-                title: "結果予測",
+                title: "性能予測",
                 description: "電池性能を予測"
             },
             trendAnalysis: {

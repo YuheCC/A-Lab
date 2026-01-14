@@ -312,7 +312,7 @@ export default {
         subtitle: "通过在SES内部实验数据上训练的AI模型，预测电极材料对电池性能指标（循环寿命、库仑效率、倍率性能）的影响",
         features: {
             resultPrediction: {
-                title: "结果预测",
+                title: "性能预测",
                 description: "预测电池性能"
             },
             trendAnalysis: {
