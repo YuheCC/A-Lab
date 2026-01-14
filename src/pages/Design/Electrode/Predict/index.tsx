@@ -17,6 +17,13 @@ import {
   anodeParameterRanges,
   dimensionParameterRanges,
 } from '../validation';
+import {
+  CELL_DESIGN_OPTIONS,
+  CATHODE_ACTIVE_MATERIAL_OPTIONS,
+  ANODE_ACTIVE_MATERIAL_OPTIONS,
+  getNpRatioByCellDesign,
+  DEFAULT_VALUES,
+} from '../constants';
 import { useDebounce } from '@/hooks/useDebounce';
 import './index.less';
 
@@ -27,10 +34,10 @@ const PredictPage: React.FC = () => {
   const navigate = useNavigate();
 
   // 表单状态
-  const [cellDesign, setCellDesign] = useState('Balanced');
-  const [npRatio, setNpRatio] = useState('1.07');
-  const [anodeActiveMaterial, setAnodeActiveMaterial] = useState('12% Si');
-  const [cathodeActiveMaterial, setCathodeActiveMaterial] = useState('NCM811');
+  const [cellDesign, setCellDesign] = useState(DEFAULT_VALUES.cellDesign);
+  const [npRatio, setNpRatio] = useState(DEFAULT_VALUES.npRatio);
+  const [anodeActiveMaterial, setAnodeActiveMaterial] = useState(DEFAULT_VALUES.anodeActiveMaterial);
+  const [cathodeActiveMaterial, setCathodeActiveMaterial] = useState(DEFAULT_VALUES.cathodeActiveMaterial);
 
   // 阳极参数 - 重命名为描述性名称
   const [anodeCMC, setAnodeCMC] = useState(1.52);                 // 原 anodeBinder1
@@ -93,13 +100,8 @@ const PredictPage: React.FC = () => {
 
   // 根据 Cell Design 设置 NP Ratio 默认值
   useEffect(() => {
-    if (cellDesign === 'Balanced') {
-      setNpRatio('1.07');
-    } else if (cellDesign === 'High Energy') {
-      setNpRatio('1.05'); // 示例值，根据实际需求调整
-    } else if (cellDesign === 'High Power') {
-      setNpRatio('1.10'); // 示例值，根据实际需求调整
-    }
+    const newNpRatio = getNpRatioByCellDesign(cellDesign);
+    setNpRatio(newNpRatio);
   }, [cellDesign]);
 
   // 联动逻辑1: Cathode的Active material NCM-A = 100 - (KF-9700 + CN-01Y + Super C65)
@@ -349,9 +351,15 @@ const PredictPage: React.FC = () => {
                   placeholder={t('design.electrode.predict.selectCellDesign', 'Select cell design')}
                   className="electrode-predict-select"
                 >
-                  <Option value="Balanced">Balanced</Option>
-                  <Option value="High Energy" disabled>High Energy</Option>
-                  <Option value="High Power" disabled>High Power</Option>               
+                  {CELL_DESIGN_OPTIONS.map((option) => (
+                    <Option
+                      key={option.value}
+                      value={option.value}
+                      disabled={option.disabled}
+                    >
+                      {option.label}
+                    </Option>
+                  ))}
                 </Select>
               </div>
 
@@ -384,9 +392,15 @@ const PredictPage: React.FC = () => {
                   placeholder={t('design.electrode.predict.selectMaterial', 'Select material')}
                   className="electrode-predict-select"
                 >
-                  <Option value="NCM811">NCM811</Option>
-                  <Option value="NCM622" disabled>NCM622</Option>
-                  <Option value="LFP" disabled>LFP</Option>
+                  {CATHODE_ACTIVE_MATERIAL_OPTIONS.map((option) => (
+                    <Option
+                      key={option.value}
+                      value={option.value}
+                      disabled={option.disabled}
+                    >
+                      {option.label}
+                    </Option>
+                  ))}
                 </Select>
 
                 <h3 className="electrode-predict-subsection-title">
@@ -458,10 +472,15 @@ const PredictPage: React.FC = () => {
                   placeholder={t('design.electrode.predict.selectMaterial', 'Select material')}
                   className="electrode-predict-select"
                 >
-                  <Option value="12% Si">12% SiC / 88% Graphite</Option>
-                  <Option value="30% Si" disabled>30% SiC / 70% Graphite</Option>
-                  <Option value="Si" disabled>SiC</Option>
-                  <Option value="Gr" disabled>Graphite</Option>                
+                  {ANODE_ACTIVE_MATERIAL_OPTIONS.map((option) => (
+                    <Option
+                      key={option.value}
+                      value={option.value}
+                      disabled={option.disabled}
+                    >
+                      {option.label}
+                    </Option>
+                  ))}
                 </Select>
 
                 <h3 className="electrode-predict-subsection-title">

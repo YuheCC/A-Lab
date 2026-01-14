@@ -94,15 +94,24 @@ export const generateMockDetail = (id: string): DesignDetails => {
   const detailsMap: Record<number, DesignDetails> = {
     1: {
       rank: 1,
+      // Performance Prediction
+      designCapacity: 85,
+      gravimetricEnergyDensity: 280,
+      thickness: 5.2,
+      volumetricEnergy: 720,
+      // Design
       cellDesign: 'Balanced',
       cathodeActiveMaterial: 'NCM811',
       anodeActiveMaterial: '12% Si',
+      width: 150,
+      length: 200,
+      layers: 12,
       npRatio: '1.07',
       cathodeParameters: {
-        binder1: '1.5', // KF-0700
-        binder2: '1', // CN-01Y
-        conductiveCarbon: '1.5', // Super C65
-        activeMaterial: '96', // NCM-A
+        binder1: '1.5', // PVDF
+        binder2: '1', // CNT
+        conductiveCarbon: '1.5', // Carbon black
+        activeMaterial: '96', // Active material
         arealLoading: '4', // mAh/cm²
         pressDensity: '3.4', // g/cc
       },
@@ -110,19 +119,26 @@ export const generateMockDetail = (id: string): DesignDetails => {
         binder1: '1.5', // CMC
         binder2: '1.5', // SBR
         binder3: '1.5', // PAA
-        conductiveCarbon1: '1', // Super P
-        conductiveCarbon2: '0.6', // 5WCNT
-        activeMaterial1: '12', // SC-B-i
-        activeMaterial2: '88', // Gr-S-i
+        conductiveCarbon1: '1', // Carbon black
+        conductiveCarbon2: '0.6', // CNT
+        activeMaterial1: '12', // SiC
+        activeMaterial2: '88', // Graphite
         arealLoading: '3.74', // mAh/cm²
         pressDensity: '1.4', // g/cc
       },
     },
     2: {
       rank: 2,
+      designCapacity: 75,
+      gravimetricEnergyDensity: 260,
+      thickness: 5.5,
+      volumetricEnergy: 680,
       cellDesign: 'Power',
       cathodeActiveMaterial: 'NCM622',
       anodeActiveMaterial: 'Graphite',
+      width: 145,
+      length: 195,
+      layers: 11,
       npRatio: '1.10',
       cathodeParameters: {
         binder1: '1.2',
@@ -146,9 +162,16 @@ export const generateMockDetail = (id: string): DesignDetails => {
     },
     3: {
       rank: 3,
+      designCapacity: 90,
+      gravimetricEnergyDensity: 295,
+      thickness: 4.9,
+      volumetricEnergy: 750,
       cellDesign: 'Energy',
       cathodeActiveMaterial: 'NCM811',
       anodeActiveMaterial: '15% Si',
+      width: 155,
+      length: 205,
+      layers: 13,
       npRatio: '1.05',
       cathodeParameters: {
         binder1: '1.6',
@@ -173,33 +196,39 @@ export const generateMockDetail = (id: string): DesignDetails => {
   };
 
   // 如果 rank 不在预定义的范围内，使用默认数据
-  return (
-    detailsMap[rank] ||
-    detailsMap[1] || {
-      rank,
-      cellDesign: 'Balanced',
-      cathodeActiveMaterial: 'NCM811',
-      anodeActiveMaterial: '12% Si',
-      npRatio: '1.07',
-      cathodeParameters: {
-        binder1: '1.5',
-        binder2: '1',
-        conductiveCarbon: '1.5',
-        activeMaterial: '96',
-        arealLoading: '4',
-        pressDensity: '3.4',
-      },
-      anodeParameters: {
-        binder1: '1.5',
-        binder2: '1.5',
-        binder3: '1.5',
-        conductiveCarbon1: '1',
-        conductiveCarbon2: '0.6',
-        activeMaterial1: '12',
-        activeMaterial2: '88',
-        arealLoading: '3.74',
-        pressDensity: '1.4',
-      },
-    }
-  );
+  const defaultDetail: DesignDetails = {
+    rank,
+    designCapacity: recommendation?.designCapacity || 85,
+    gravimetricEnergyDensity: recommendation?.specificEnergy || 280,
+    thickness: recommendation?.thickness || 5.2,
+    volumetricEnergy: recommendation?.volumetricEnergyDensity || 720,
+    cellDesign: 'Balanced',
+    cathodeActiveMaterial: 'NCM811',
+    anodeActiveMaterial: '12% Si',
+    width: 150,
+    length: 200,
+    layers: 12,
+    npRatio: '1.07',
+    cathodeParameters: {
+      binder1: '1.5',
+      binder2: '1',
+      conductiveCarbon: '1.5',
+      activeMaterial: '96',
+      arealLoading: '4',
+      pressDensity: '3.4',
+    },
+    anodeParameters: {
+      binder1: '1.5',
+      binder2: '1.5',
+      binder3: '1.5',
+      conductiveCarbon1: '1',
+      conductiveCarbon2: '0.6',
+      activeMaterial1: '12',
+      activeMaterial2: '88',
+      arealLoading: '3.74',
+      pressDensity: '1.4',
+    },
+  };
+
+  return detailsMap[rank] || defaultDetail;
 };

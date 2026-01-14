@@ -3,12 +3,16 @@
 // 设计目标表单数据
 export interface DesignTargetsFormData {
   cellDesign: string;
+  npRatio: string; // NP Ratio (Auto-filled)
   anodeActiveMaterial: string;
   cathodeActiveMaterial: string;
-  designCapacity: number;
-  specificEnergy: number;
-  thickness: number;
-  volumetricEnergyDensity: number;
+  width: string; // Cathode Width (mm)
+  length: string; // Cathode Length (mm)
+  layers: string; // Cathode Layers
+  designCapacity: [number, number]; // Design Capacity (Ah) - 区间
+  specificEnergy: [number, number]; // Gravimetric Energy Density (Wh/kg) - 区间
+  thickness: [number, number]; // Jelly Roll Thickness (mm) - 区间
+  volumetricEnergyDensity: [number, number]; // Volumetric Energy Density (Wh/L) - 区间
 }
 
 // 参数范围配置
@@ -16,15 +20,16 @@ export interface ParameterRange {
   min: number;
   max: number;
   step: number;
-  default: number;
+  default: [number, number]; // 区间模式：默认值为 [min, max]
+  minDiff: number; // 最小差值
 }
 
 // 参数范围常量
 export const PARAMETER_RANGES: Record<string, ParameterRange> = {
-  designCapacity: { min: 0, max: 100, step: 1, default: 50 },
-  specificEnergy: { min: 0, max: 500, step: 10, default: 250 },
-  thickness: { min: 0, max: 20, step: 0.5, default: 10 },
-  volumetricEnergyDensity: { min: 0, max: 1000, step: 10, default: 500 },
+  designCapacity: { min: 0.01, max: 1900, step: 0.01, default: [0.01, 1900], minDiff: 2 },
+  specificEnergy: { min: 30, max: 340, step: 0.01, default: [30, 340], minDiff: 50 },
+  thickness: { min: 0.4, max: 15, step: 0.01, default: [0.4, 15], minDiff: 3 },
+  volumetricEnergyDensity: { min: 530, max: 1060, step: 0.01, default: [530, 1060], minDiff: 40 },
 };
 
 // 设计推荐结果（表格行）
@@ -63,9 +68,18 @@ export interface AnodeParameters {
 // 设计详情数据
 export interface DesignDetails {
   rank: number;
+  // Performance Prediction
+  designCapacity: number; // mAh
+  gravimetricEnergyDensity: number; // Wh/kg
+  thickness: number; // mm
+  volumetricEnergy: number; // Wh/L
+  // Design
   cellDesign: string;
   cathodeActiveMaterial: string;
   anodeActiveMaterial: string;
+  width: number; // mm
+  length: number; // mm
+  layers: number;
   npRatio: string;
   cathodeParameters: CathodeParameters;
   anodeParameters: AnodeParameters;
