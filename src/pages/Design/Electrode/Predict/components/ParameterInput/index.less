@@ -55,6 +55,39 @@
     &:hover .ant-slider-track {
       background-color: @color-accent;
     }
+
+    // Range Slider 特殊样式
+    &--range {
+      .ant-slider-handle {
+        // 确保两个滑块样式一致
+        width: 16px;
+        height: 16px;
+        inset-block-start: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        margin-top: 0 !important;
+        border: 2px solid @color-accent !important;
+        border-radius: 50% !important;
+        background-color: #ffffff !important;
+
+        &::after {
+          display: none;
+        }
+
+        &:hover,
+        &:focus,
+        &.ant-slider-handle-dragging {
+          border-color: @color-accent !important;
+          box-shadow: 0 0 0 4px rgba(86, 178, 106, 0.1) !important;
+        }
+      }
+
+      // Range Slider 中间的 track
+      .ant-slider-track {
+        background-color: @color-accent;
+        height: 8px;
+        border-radius: 9999px;
+      }
+    }
   }
 
   &__number {
@@ -79,5 +112,26 @@
       color: @color-gray-700;
       padding: 4px 8px;
     }
+  }
+
+  // 区间模式样式
+  &__range-inputs {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    min-width: 180px;
+  }
+
+  &__range-separator {
+    color: @color-gray-500;
+    font-size: 12px;
+    padding: 0 4px;
+    user-select: none;
+  }
+
+  // 禁用状态
+  &--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }

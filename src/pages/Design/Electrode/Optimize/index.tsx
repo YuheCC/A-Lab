@@ -319,36 +319,44 @@ const OptimizePage: React.FC = () => {
               {/* 参数滑块 */}
               <div className="electrode-optimize-parameters">
                 <ParameterInput
+                  mode="range"
                   label={`${t('design.electrode.optimize.designCapacity')} (Ah)`}
-                  value={formData.designCapacity}
-                  onChange={(value) => setFormData({ ...formData, designCapacity: value })}
+                  rangeValue={formData.designCapacity}
+                  onRangeChange={(value) => setFormData({ ...formData, designCapacity: value })}
                   min={PARAMETER_RANGES.designCapacity.min}
                   max={PARAMETER_RANGES.designCapacity.max}
                   step={PARAMETER_RANGES.designCapacity.step}
+                  minDiff={PARAMETER_RANGES.designCapacity.minDiff}
                 />
                 <ParameterInput
+                  mode="range"
                   label={`${t('design.electrode.optimize.specificEnergy')} (Wh/kg)`}
-                  value={formData.specificEnergy}
-                  onChange={(value) => setFormData({ ...formData, specificEnergy: value })}
+                  rangeValue={formData.specificEnergy}
+                  onRangeChange={(value) => setFormData({ ...formData, specificEnergy: value })}
                   min={PARAMETER_RANGES.specificEnergy.min}
                   max={PARAMETER_RANGES.specificEnergy.max}
                   step={PARAMETER_RANGES.specificEnergy.step}
+                  minDiff={PARAMETER_RANGES.specificEnergy.minDiff}
                 />
                 <ParameterInput
+                  mode="range"
                   label={`${t('design.electrode.optimize.jellyRollThickness')} (mm)`}
-                  value={formData.thickness}
-                  onChange={(value) => setFormData({ ...formData, thickness: value })}
+                  rangeValue={formData.thickness}
+                  onRangeChange={(value) => setFormData({ ...formData, thickness: value })}
                   min={PARAMETER_RANGES.thickness.min}
                   max={PARAMETER_RANGES.thickness.max}
                   step={PARAMETER_RANGES.thickness.step}
+                  minDiff={PARAMETER_RANGES.thickness.minDiff}
                 />
                 <ParameterInput
+                  mode="range"
                   label={`${t('design.electrode.optimize.volumetricEnergyDensity')} (Wh/L)`}
-                  value={formData.volumetricEnergyDensity}
-                  onChange={(value) => setFormData({ ...formData, volumetricEnergyDensity: value })}
+                  rangeValue={formData.volumetricEnergyDensity}
+                  onRangeChange={(value) => setFormData({ ...formData, volumetricEnergyDensity: value })}
                   min={PARAMETER_RANGES.volumetricEnergyDensity.min}
                   max={PARAMETER_RANGES.volumetricEnergyDensity.max}
                   step={PARAMETER_RANGES.volumetricEnergyDensity.step}
+                  minDiff={PARAMETER_RANGES.volumetricEnergyDensity.minDiff}
                 />
               </div>
             </div>
