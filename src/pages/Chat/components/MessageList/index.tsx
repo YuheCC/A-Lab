@@ -11,6 +11,7 @@ import {
   isUserMessage,
   isAssistantMessage,
   isSystemMessage,
+  isDeepSpaceMessage,
 } from '@/utils/messageUtils';
 import type { ToolStats } from '@/utils/messageUtils';
 
@@ -445,18 +446,22 @@ const MessageList: FC<MessageListProps> = ({
         </button>
 
         {/* 下载 PDF 按钮 */}
-        <button
-          className={`action-btn download-btn ${downloadingMessageId === message.id ? 'loading' : ''}`}
-          onClick={() => handleDownloadPdf(message.id)}
-          title={t('chatbox.chat.downloadPdf') || 'Download PDF'}
-          disabled={downloadingMessageId === message.id}
-        >
-          {downloadingMessageId === message.id ? (
-            <Loader2 size={16} className="spinner" />
-          ) : (
-            <Download size={16} />
-          )}
-        </button>
+        {
+          isDeepSpaceMessage(message) && (
+            <button
+              className={`action-btn download-btn ${downloadingMessageId === message.id ? 'loading' : ''}`}
+              onClick={() => handleDownloadPdf(message.id)}
+              title={t('chatbox.chat.downloadPdf') || 'Download PDF'}
+              disabled={downloadingMessageId === message.id}
+            >
+              {downloadingMessageId === message.id ? (
+                <Loader2 size={16} className="spinner" />
+              ) : (
+                <Download size={16} />
+              )}
+            </button>
+          )
+        }
 
         {/* 编辑按钮 - 仅最后一条用户消息显示 */}
         {isUserMessage(message) && lastUserId === message.id && (

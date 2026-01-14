@@ -84,6 +84,15 @@ export const isAssistantMessage = (message: Message): boolean => {
 };
 
 /**
+ * 判断是否为deep space消息对象
+ * @param message 消息对象
+ * @returns boolean
+ */
+export const isDeepSpaceMessage = (message: Message): boolean => {
+  return message.msg_type === 'multi-agent';
+};
+
+/**
  * 判断是否为系统消息
  * @param message 消息对象
  * @returns boolean
