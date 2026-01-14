@@ -109,7 +109,7 @@ const OptimizePage: React.FC = () => {
   // 表格列配置
   const columns: ColumnsType<DesignRecommendation> = [
     {
-      title: t('design.electrode.optimize.rank'),
+      title: t('design.electrode.optimize.no'),
       dataIndex: 'rank',
       width: 80,
       align: 'center',
@@ -127,9 +127,9 @@ const OptimizePage: React.FC = () => {
       render: (value: number) => value.toFixed(0),
     },
     {
-      title: t('design.electrode.optimize.thickness') + ' (mm)',
+      title: t('design.electrode.optimize.jellyRollThickness') + ' (mm)',
       dataIndex: 'thickness',
-      width: 150,
+      width: 200,
       render: (value: number) => value.toFixed(1),
     },
     {
@@ -142,7 +142,7 @@ const OptimizePage: React.FC = () => {
       title: t('design.electrode.optimize.actions'),
       width: 100,
       render: (_: any, record: DesignRecommendation) => (
-        <a className="details-link" onClick={() => handleViewDetails(record)}>
+        <a className="electrode-optimize-details-link" onClick={() => handleViewDetails(record)}>
           {t('design.electrode.optimize.details')}
         </a>
       ),
@@ -365,7 +365,7 @@ const OptimizePage: React.FC = () => {
             <div className="electrode-optimize-calculate-btn-wrapper">
               <Button
                 variant="primary"
-                size="large"
+                size="mlarge"
                 onClick={handleCalculate}
                 loading={loading}
                 className="electrode-optimize-calculate-btn"

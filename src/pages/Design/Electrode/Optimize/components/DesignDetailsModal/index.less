@@ -1,35 +1,60 @@
 @import '@/styles/variables.less';
 
 .design-details-modal {
-  // Modal 整体样式
-  :global {
-    .ant-modal-content {
-      border-radius: @radius-xl;
-    }
+  // Modal 整体样式 
+  .ant-modal-content {
+    border-radius: 8px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  }
 
-    .ant-modal-header {
-      border-bottom: 1px solid @color-gray-200;
-      padding: @spacing-lg @spacing-xl;
+  .ant-modal-header {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 20px 24px;
+    flex-shrink: 0;
 
-      .ant-modal-title {
-        font-size: 18px;
-        font-weight: @font-weight-semibold;
-        color: @color-gray-800;
-      }
-    }
-
-    .ant-modal-body {
-      padding: @spacing-2xl @spacing-xl;
-    }
-
-    .ant-modal-close {
-      top: @spacing-lg;
-      right: @spacing-lg;
+    .ant-modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1a1a;
     }
   }
 
+  .ant-modal-body {
+    padding: 0 24px 24px 24px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: calc(90vh - 70px);
+
+    // 自定义滚动条样式
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #d9d9d9;
+      border-radius: 3px;
+
+      &:hover {
+        background: #bfbfbf;
+      }
+    }
+  }
+
+  .ant-modal-close {
+    top: 20px;
+    right: 24px;
+    color: #999;
+  }
+
   // 加载状态
-  .design-details-loading {
+  .designdetail-loading {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -37,117 +62,167 @@
   }
 
   // 内容区域
-  .design-details-content {
-    // 两列布局
-    .design-details-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: @spacing-2xl;
-    }
+  .designdetail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
 
-    // 单列样式
-    .design-details-column {
-      display: flex;
-      flex-direction: column;
-      gap: @spacing-lg;
-    }
+  // Section 样式
+  .designdetail-section {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+  }
 
-    // 子标题
-    .design-details-subtitle {
-      font-size: @font-size-md;
-      font-weight: @font-weight-semibold;
-      color: @color-gray-700;
-      margin: @spacing-lg 0 @spacing-sm 0;
-    }
+  .designdetail-section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 16px 0;
+  }
 
-    // 参数组容器
-    .design-details-parameters {
-      display: flex;
-      flex-direction: column;
-      gap: @spacing-xs;
-      background: @color-gray-50;
-      padding: @spacing-lg;
-      border-radius: @radius-lg;
+  // Performance Prediction 网格
+  .designdetail-performance-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
 
-      // 参数区域的输入框：水平布局（label 左，value 右）
-      .readonly-input-wrapper {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        align-items: center;
-        gap: @spacing-xl;
-        padding: @spacing-xs 0;
+  .designdetail-performance-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 
-        label {
-          font-size: @font-size-base;
-          font-weight: @font-weight-normal;
-          color: @color-gray-700;
-        }
+  .designdetail-performance-label {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.4;
+  }
 
-        :global {
-          .ant-input {
-            width: 140px;
-            background: #ffffff;
-            border: 1px solid @color-gray-200;
-            border-radius: @radius-md;
-            color: @color-gray-800;
-            font-size: @font-size-base;
-            padding: @spacing-sm @spacing-md;
-            cursor: not-allowed;
-            text-align: right;
-            font-weight: @font-weight-normal;
+  .designdetail-performance-value {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1a1a1a;
+    line-height: 1;
 
-            &:focus {
-              border-color: @color-gray-200;
-              box-shadow: none;
-            }
-
-            &:hover {
-              border-color: @color-gray-200;
-            }
-          }
-        }
-      }
-    }
-
-    // 顶部字段（Cell Design 等）：保持垂直布局
-    & > .readonly-input-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: @spacing-sm;
-
-      label {
-        font-size: @font-size-sm;
-        font-weight: @font-weight-medium;
-        color: @color-gray-700;
-      }
-
-      :global {
-        .ant-input {
-          background: @color-gray-50;
-          border: 1px solid @color-gray-200;
-          border-radius: @radius-md;
-          color: @color-gray-700;
-          font-size: @font-size-base;
-          padding: @spacing-sm @spacing-md;
-          cursor: not-allowed;
-
-          &:focus {
-            border-color: @color-gray-200;
-            box-shadow: none;
-          }
-
-          &:hover {
-            border-color: @color-gray-200;
-          }
-        }
-      }
+    .designdetail-performance-unit {
+      font-size: 14px;
+      font-weight: 400;
+      color: #666;
+      margin-left: 4px;
     }
   }
 
-  // 响应式：平板及以下单列显示
+  // Design 网格
+  .designdetail-design-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px 40px;
+  }
+
+  .designdetail-design-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .designdetail-design-info-label {
+    font-size: 13px;
+    color: #666;
+  }
+
+  .designdetail-design-info-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  // Cathode & Anode 并排布局
+  .designdetail-electrodes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .designdetail-electrode-section {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  .designdetail-electrode-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 16px 0;
+    padding-left: 12px;
+    border-left: 4px solid #1890ff;
+    position: relative;
+  }
+
+  .designdetail-cathode-title {
+    border-left-color: #1890ff;
+  }
+
+  .designdetail-anode-title {
+    border-left-color: #52c41a;
+  }
+
+  // 参数区域
+  .designdetail-parameters {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  // 参数项样式（类似 Ant Design Descriptions）
+  .designdetail-parameter-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+  }
+
+  .designdetail-parameter-label {
+    font-size: 14px;
+    font-weight: 400;
+    color: #666;
+    flex: 1;
+  }
+
+  .designdetail-parameter-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a1a1a;
+    text-align: right;
+    min-width: 80px;
+    padding-left: 24px;
+  }
+
+  // 响应式：平板及以下
+  @media (max-width: 1024px) {
+    .designdetail-performance-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .designdetail-design-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .designdetail-electrodes-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
   @media (max-width: 768px) {
-    .design-details-grid {
-      grid-template-columns: 1fr !important;
+    .designdetail-performance-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .designdetail-design-grid {
+      grid-template-columns: 1fr;
     }
   }
 }

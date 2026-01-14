@@ -413,7 +413,7 @@ export default {
             volumetricEnergyDensity: "체적 에너지 밀도",
             calculate: "계산",
             designRecommendations: "설계 추천",
-            rank: "순위",
+            no: "No.",
             actions: "작업",
             details: "세부정보",
             designDetails: "설계 세부정보",

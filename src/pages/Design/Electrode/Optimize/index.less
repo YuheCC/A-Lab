@@ -161,32 +161,30 @@
 .electrode-optimize-select {
   width: 100%;
 
-  :global {
-    .ant-select-selector {
-      height: 38px !important;
-      border-radius: @radius-md !important;
-      border-color: @color-gray-200 !important;
-      padding: 0 @spacing-md !important;
-      display: flex !important;
-      align-items: center !important;
+  .ant-select-selector {
+    height: 38px !important;
+    border-radius: @radius-md !important;
+    border-color: @color-gray-200 !important;
+    padding: 0 @spacing-md !important;
+    display: flex !important;
+    align-items: center !important;
 
-      .ant-select-selection-placeholder {
-        line-height: 38px !important;
-      }
-
-      .ant-select-selection-item {
-        line-height: 38px !important;
-      }
+    .ant-select-selection-placeholder {
+      line-height: 38px !important;
     }
 
-    .ant-select-selector:hover {
-      border-color: @color-accent !important;
+    .ant-select-selection-item {
+      line-height: 38px !important;
     }
+  }
 
-    &.ant-select-focused .ant-select-selector {
-      border-color: @color-accent !important;
-      box-shadow: 0 0 0 3px rgba(86, 178, 106, 0.1) !important;
-    }
+  .ant-select-selector:hover {
+    border-color: @color-accent !important;
+  }
+
+  &.ant-select-focused .ant-select-selector {
+    border-color: @color-accent !important;
+    box-shadow: 0 0 0 3px rgba(86, 178, 106, 0.1) !important;
   }
 }
 
@@ -209,36 +207,36 @@
 
 // 表格样式
 .electrode-optimize-table {
-  :global {
-    .ant-table {
-      font-size: @font-size-base;
+  // 表头样式
+  .ant-table-thead > tr > .ant-table-cell {
+    background: @color-gray-50 !important;
+    color: @color-gray-700 !important;
+    font-weight: @font-weight-semibold !important;
+    font-size: 12px !important;
+    padding: @spacing-md @spacing-lg !important;
+    border-bottom: 1px solid @color-gray-200 !important;
+  }
 
-      thead th {
-        background: @color-gray-50;
-        color: @color-gray-700;
-        font-weight: @font-weight-semibold;
-        padding: @spacing-md @spacing-lg;
-        border-bottom: 1px solid @color-gray-200;
-      }
+  // 表格内容样式
+  .ant-table {
+    tbody td {
+      padding: @spacing-lg;
+      border-bottom: 1px solid @color-gray-100;
+      color: @color-gray-800;
+      font-size: 12px;
+    }
 
-      tbody td {
-        padding: @spacing-lg;
-        border-bottom: 1px solid @color-gray-100;
-        color: @color-gray-800;
-      }
+    tbody tr:hover {
+      background: @color-gray-50;
+    }
 
-      tbody tr:hover {
-        background: @color-gray-50;
-      }
-
-      tbody tr:last-child td {
-        border-bottom: none;
-      }
+    tbody tr:last-child td {
+      border-bottom: none;
     }
   }
 
   // Details 链接样式
-  .details-link {
+  .electrode-optimize-details-link {
     color: @color-accent;
     cursor: pointer;
     font-weight: @font-weight-medium;
@@ -275,10 +273,8 @@
   .electrode-optimize-table {
     overflow-x: auto;
 
-    :global {
-      .ant-table {
-        min-width: 800px;
-      }
+    .ant-table {
+      min-width: 800px;
     }
   }
 }

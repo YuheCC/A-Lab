@@ -413,7 +413,7 @@ export default {
             volumetricEnergyDensity: "体积能量密度",
             calculate: "计算",
             designRecommendations: "设计推荐",
-            rank: "排名",
+            no: "序号",
             actions: "操作",
             details: "详情",
             designDetails: "设计详情",

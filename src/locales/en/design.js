@@ -413,7 +413,7 @@ export default {
             volumetricEnergyDensity: "Volumetric Energy Density",
             calculate: "Calculate",
             designRecommendations: "Design Recommendations",
-            rank: "Rank",
+            no: "No.",
             actions: "Actions",
             details: "Details",
             designDetails: "Design Details",

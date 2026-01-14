@@ -68,9 +68,18 @@ export interface AnodeParameters {
 // 设计详情数据
 export interface DesignDetails {
   rank: number;
+  // Performance Prediction
+  designCapacity: number; // mAh
+  gravimetricEnergyDensity: number; // Wh/kg
+  thickness: number; // mm
+  volumetricEnergy: number; // Wh/L
+  // Design
   cellDesign: string;
   cathodeActiveMaterial: string;
   anodeActiveMaterial: string;
+  width: number; // mm
+  length: number; // mm
+  layers: number;
   npRatio: string;
   cathodeParameters: CathodeParameters;
   anodeParameters: AnodeParameters;
