@@ -301,7 +301,11 @@ const RecordsContent: React.FC = () => {
                   <td className="actions-cell">
                     <button
                       className="action-button view-button"
-                      onClick={() => navigate(`/design/electrode/predict/detail/${record.id}`)}
+                      onClick={() => {
+                        // 根据当前 tab 决定跳转参数 type
+                        const type = activeSubTab === 'inverse-design' ? 2 : 1;
+                        navigate(`/design/electrode/detail/${record.id}?type=${type}`);
+                      }}
                     >
                       {t('design.electrode.records.viewResults', 'View Results')}
                     </button>
