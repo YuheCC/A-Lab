@@ -142,8 +142,8 @@ const PredictPage: React.FC = () => {
       cathodePressDensity: debouncedCathodePressDensity,
     };
 
-    // 执行验证
-    const error = validateCathodeParameters(cathodeParams, t);
+    // 执行验证（实时验证跳过空值检查，只检查范围和业务规则）
+    const error = validateCathodeParameters(cathodeParams, t, { skipEmptyCheck: true });
 
     // 更新错误状态（null 转为空字符串）
     setCathodeError(error || '');
@@ -170,8 +170,8 @@ const PredictPage: React.FC = () => {
       anodePressDensity: debouncedAnodePressDensity,
     };
 
-    // 执行验证
-    const error = validateAnodeParameters(anodeParams, t);
+    // 执行验证（实时验证跳过空值检查，只检查范围和业务规则）
+    const error = validateAnodeParameters(anodeParams, t, { skipEmptyCheck: true });
 
     // 更新错误状态
     setAnodeError(error || '');
@@ -188,12 +188,6 @@ const PredictPage: React.FC = () => {
 
   // 实时验证 Dimension 参数
   useEffect(() => {
-    // 如果 dimension 字段都为空（初始状态），则不进行验证
-    // 只有用户开始输入后才进行实时验证
-    if (!debouncedWidth && !debouncedLength && !debouncedLayers) {
-      return;
-    }
-
     // 构建 dimension 参数对象
     const dimensionParams = {
       width: debouncedWidth,
@@ -201,8 +195,8 @@ const PredictPage: React.FC = () => {
       layers: debouncedLayers,
     };
 
-    // 执行验证
-    const error = validateDimensionParameters(dimensionParams, t);
+    // 执行验证（实时验证跳过空值检查，只检查范围和业务规则）
+    const error = validateDimensionParameters(dimensionParams, t, { skipEmptyCheck: true });
 
     // 更新错误状态
     setDimensionError(error || '');

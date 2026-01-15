@@ -3,6 +3,11 @@
  * 用于 Predict 和 Optimize 页面的参数校验
  */
 
+// 验证选项接口
+export interface ValidationOptions {
+  skipEmptyCheck?: boolean;  // 是否跳过空值检查，默认 false（用于实时验证时只检查非空字段的范围和业务规则）
+}
+
 // 参数范围配置
 export interface ParameterRange {
   min: number;
@@ -14,6 +19,25 @@ export interface ParameterRange {
 // 材料类型定义
 export type CathodeMaterialType = 'NCM811' | 'NCM622' | 'NCM523' | 'LFP' | 'LCO' | 'NCA';
 export type AnodeMaterialType = 'Graphite' | 'Gr' | '12% Si' | '30% Si' | 'Silicon-Graphite' | 'SiOx';
+
+/**
+ * 严格判断字符串值是否为空（不会把 0 误识别为空）
+ * 用于材料选择等字符串类型字段
+ */
+function isEmptyString(value: string | undefined | null): boolean {
+  return value === undefined || value === null || value === '';
+}
+
+/**
+ * 判断数值是否为空（用于数字类型字段）
+ * 支持 number 和 string 类型（Input 组件可能返回字符串）
+ * 不会把 0 误识别为空
+ */
+function isEmptyNumber(value: number | string | undefined | null): boolean {
+  if (value === undefined || value === null) return true;
+  if (typeof value === 'string') return value.trim() === '';
+  return false;
+}
 
 // 阴极参数范围（默认范围）
 export const cathodeParameterRanges: Record<string, ParameterRange> = {
@@ -180,20 +204,31 @@ function checkParameterRange(
 
 /**
  * 验证阴极参数
+ * @param params 电极参数
+ * @param t 可选的翻译函数
+ * @param options 验证选项，skipEmptyCheck 为 true 时跳过空值检查
  */
-function validateCathodeParameters(params: ElectrodeParameters, t?: TranslateFunction): string | null {
-  // 检查是否选择了阴极材料
-  if (!params.cathodeActiveMaterial) {
-    return t 
+function validateCathodeParameters(
+  params: ElectrodeParameters,
+  t?: TranslateFunction,
+  options?: ValidationOptions,
+): string | null {
+  const skipEmptyCheck = options?.skipEmptyCheck ?? false;
+
+  // 检查是否选择了阴极材料（空值检查）
+  if (!skipEmptyCheck && isEmptyString(params.cathodeActiveMaterial)) {
+    return t
       ? t('design.electrode.validation.selectCathodeMaterial')
       : '请选择阴极活性材料';
   }
 
-  // 检查各参数范围
+  // 检查各参数范围（只检查非空值）
   const rangeErrors: string[] = [];
-  
+
   Object.entries(cathodeParameterRanges).forEach(([key, range]) => {
     const value = params[key as keyof ElectrodeParameters] as number;
+    // 如果值为空，跳过范围检查（空值检查在其他地方处理）
+    if (isEmptyNumber(value)) return;
     const error = checkParameterRange(value, range, t);
     if (error) {
       rangeErrors.push(error);
@@ -205,13 +240,17 @@ function validateCathodeParameters(params: ElectrodeParameters, t?: TranslateFun
   }
 
   // 规则1: Carbon Black (导电碳) + CNT (碳纳米管) > 0.8
-  const cathodeSuperC65 = params.cathodeSuperC65 || 0;
-  const cathodeCN01Y = params.cathodeCN01Y || 0;
+  // 使用 ?? 0 替代 || 0，避免 0 被替换
+  const cathodeSuperC65 = params.cathodeSuperC65 ?? 0;
+  const cathodeCN01Y = params.cathodeCN01Y ?? 0;
 
-  if (cathodeSuperC65 + cathodeCN01Y <= 0.8) {
-    return t
-      ? t('design.electrode.validation.cathodeConductiveSum')
-      : 'Carbon Black + CNT 的总和必须大于 0.8';
+  // 只有当两个值都非空时才检查业务规则
+  if (!isEmptyNumber(params.cathodeSuperC65) && !isEmptyNumber(params.cathodeCN01Y)) {
+    if (cathodeSuperC65 + cathodeCN01Y <= 0.8) {
+      return t
+        ? t('design.electrode.validation.cathodeConductiveSum')
+        : 'Carbon Black + CNT 的总和必须大于 0.8';
+    }
   }
 
   return null;
@@ -219,20 +258,31 @@ function validateCathodeParameters(params: ElectrodeParameters, t?: TranslateFun
 
 /**
  * 验证阳极参数
+ * @param params 电极参数
+ * @param t 可选的翻译函数
+ * @param options 验证选项，skipEmptyCheck 为 true 时跳过空值检查
  */
-function validateAnodeParameters(params: ElectrodeParameters, t?: TranslateFunction): string | null {
-  // 检查是否选择了阳极材料
-  if (!params.anodeActiveMaterial) {
-    return t 
+function validateAnodeParameters(
+  params: ElectrodeParameters,
+  t?: TranslateFunction,
+  options?: ValidationOptions,
+): string | null {
+  const skipEmptyCheck = options?.skipEmptyCheck ?? false;
+
+  // 检查是否选择了阳极材料（空值检查）
+  if (!skipEmptyCheck && isEmptyString(params.anodeActiveMaterial)) {
+    return t
       ? t('design.electrode.validation.selectAnodeMaterial')
       : '请选择阳极活性材料';
   }
 
-  // 检查各参数范围
+  // 检查各参数范围（只检查非空值）
   const rangeErrors: string[] = [];
-  
+
   Object.entries(anodeParameterRanges).forEach(([key, range]) => {
     const value = params[key as keyof ElectrodeParameters] as number;
+    // 如果值为空，跳过范围检查（空值检查在其他地方处理）
+    if (isEmptyNumber(value)) return;
     const error = checkParameterRange(value, range, t);
     if (error) {
       rangeErrors.push(error);
@@ -243,22 +293,29 @@ function validateAnodeParameters(params: ElectrodeParameters, t?: TranslateFunct
     return rangeErrors[0]; // 返回第一个错误
   }
 
-  const anodeCMC = params.anodeCMC || 0;
-  const anodeSWCNT = params.anodeSWCNT || 0;
-  const anodeSuperP = params.anodeSuperP || 0;
+  // 使用 ?? 0 替代 || 0，避免 0 被替换
+  const anodeCMC = params.anodeCMC ?? 0;
+  const anodeSWCNT = params.anodeSWCNT ?? 0;
+  const anodeSuperP = params.anodeSuperP ?? 0;
 
   // 规则2: CMC (粘合剂) > CNT (碳纳米管)
-  if (anodeCMC <= anodeSWCNT) {
-    return t
-      ? t('design.electrode.validation.cmcGreaterThanSwcnt')
-      : 'CMC 必须大于 CNT';
+  // 只有当两个值都非空时才检查业务规则
+  if (!isEmptyNumber(params.anodeCMC) && !isEmptyNumber(params.anodeSWCNT)) {
+    if (anodeCMC <= anodeSWCNT) {
+      return t
+        ? t('design.electrode.validation.cmcGreaterThanSwcnt')
+        : 'CMC 必须大于 CNT';
+    }
   }
 
   // 规则3: Carbon Black (导电碳) + CNT (碳纳米管) > 0.005
-  if (anodeSuperP + anodeSWCNT <= 0.005) {
-    return t
-      ? t('design.electrode.validation.anodeConductiveSum')
-      : 'Carbon Black + CNT 的总和必须大于 0.005';
+  // 只有当两个值都非空时才检查业务规则
+  if (!isEmptyNumber(params.anodeSuperP) && !isEmptyNumber(params.anodeSWCNT)) {
+    if (anodeSuperP + anodeSWCNT <= 0.005) {
+      return t
+        ? t('design.electrode.validation.anodeConductiveSum')
+        : 'Carbon Black + CNT 的总和必须大于 0.005';
+    }
   }
 
   return null;
@@ -266,55 +323,83 @@ function validateAnodeParameters(params: ElectrodeParameters, t?: TranslateFunct
 
 /**
  * 验证尺寸参数
+ * @param params 电极参数
+ * @param t 可选的翻译函数
+ * @param options 验证选项，skipEmptyCheck 为 true 时跳过空值检查
  */
-function validateDimensionParameters(params: ElectrodeParameters, t?: TranslateFunction): string | null {
-  const width = typeof params.width === 'string' ? parseFloat(params.width) : params.width;
-  const length = typeof params.length === 'string' ? parseFloat(params.length) : params.length;
-  const layers = typeof params.layers === 'string' ? parseInt(params.layers, 10) : params.layers;
+function validateDimensionParameters(
+  params: ElectrodeParameters,
+  t?: TranslateFunction,
+  options?: ValidationOptions,
+): string | null {
+  const skipEmptyCheck = options?.skipEmptyCheck ?? false;
 
-  // 检查是否填写了所有尺寸参数
-  if (!width || !length || !layers) {
-    return t 
+  // 解析值（支持 string 和 number 类型）
+  const widthRaw = params.width;
+  const lengthRaw = params.length;
+  const layersRaw = params.layers;
+
+  const width = typeof widthRaw === 'string' ? parseFloat(widthRaw) : widthRaw;
+  const length = typeof lengthRaw === 'string' ? parseFloat(lengthRaw) : lengthRaw;
+  const layers = typeof layersRaw === 'string' ? parseInt(layersRaw, 10) : layersRaw;
+
+  // 检查是否填写了所有尺寸参数（空值检查）
+  // 使用 isEmptyNumber 避免 0 被误识别为空
+  const widthEmpty = isEmptyNumber(widthRaw);
+  const lengthEmpty = isEmptyNumber(lengthRaw);
+  const layersEmpty = isEmptyNumber(layersRaw);
+
+  if (!skipEmptyCheck && (widthEmpty || lengthEmpty || layersEmpty)) {
+    return t
       ? t('design.electrode.validation.fillAllDimensions')
       : '请填写所有尺寸参数';
   }
 
-  // 检查 width 范围
-  const widthError = checkParameterRange(width, dimensionParameterRanges.width, t);
-  if (widthError) {
-    return widthError;
+  // 检查 width 范围（只检查非空值）
+  if (!widthEmpty && width !== undefined) {
+    const widthError = checkParameterRange(width, dimensionParameterRanges.width, t);
+    if (widthError) {
+      return widthError;
+    }
   }
 
-  // 检查 length 范围
-  const lengthError = checkParameterRange(length, dimensionParameterRanges.length, t);
-  if (lengthError) {
-    return lengthError;
+  // 检查 length 范围（只检查非空值）
+  if (!lengthEmpty && length !== undefined) {
+    const lengthError = checkParameterRange(length, dimensionParameterRanges.length, t);
+    if (lengthError) {
+      return lengthError;
+    }
   }
 
-  // 检查 layers 范围
-  const layersError = checkParameterRange(layers, dimensionParameterRanges.layers, t);
-  if (layersError) {
-    return layersError;
+  // 检查 layers 范围（只检查非空值）
+  if (!layersEmpty && layers !== undefined) {
+    const layersError = checkParameterRange(layers, dimensionParameterRanges.layers, t);
+    if (layersError) {
+      return layersError;
+    }
   }
 
   // 规则4: ratio = min(width, length) / max(width, length)
-  const minDimension = Math.min(width, length);
-  const maxDimension = Math.max(width, length);
-  const ratio = minDimension / maxDimension;
+  // 只有当 width 和 length 都非空时才检查长宽比规则
+  if (!widthEmpty && !lengthEmpty && width !== undefined && length !== undefined) {
+    const minDimension = Math.min(width, length);
+    const maxDimension = Math.max(width, length);
+    const ratio = minDimension / maxDimension;
 
-  if (width <= 100) {
-    // If width <= 100: 0.2 <= ratio <= 1
-    if (ratio < 0.2 || ratio > 1) {
-      return t 
-        ? t('design.electrode.validation.ratioSmallWidth')
-        : '宽度不超过 100 时，长宽比必须在 0.2 到 1 之间。';
-    }
-  } else if (width <= 1000) {
-    // If 100 < width <= 1000: 0.1 <= ratio <= 0.5
-    if (ratio < 0.1 || ratio > 0.5) {
-      return t 
-        ? t('design.electrode.validation.ratioLargeWidth')
-        : '宽度在 100 到 1000 之间时，长宽比必须保持在 0.1 到 0.5 之间。';
+    if (width <= 100) {
+      // If width <= 100: 0.2 <= ratio <= 1
+      if (ratio < 0.2 || ratio > 1) {
+        return t
+          ? t('design.electrode.validation.ratioSmallWidth')
+          : '宽度不超过 100 时，长宽比必须在 0.2 到 1 之间。';
+      }
+    } else if (width <= 1000) {
+      // If 100 < width <= 1000: 0.1 <= ratio <= 0.5
+      if (ratio < 0.1 || ratio > 0.5) {
+        return t
+          ? t('design.electrode.validation.ratioLargeWidth')
+          : '宽度在 100 到 1000 之间时，长宽比必须保持在 0.1 到 0.5 之间。';
+      }
     }
   }
 
@@ -325,28 +410,30 @@ function validateDimensionParameters(params: ElectrodeParameters, t?: TranslateF
  * 验证所有参数
  * @param params 电极参数
  * @param t 可选的翻译函数，用于多语言支持
+ * @param options 验证选项，skipEmptyCheck 为 true 时跳过空值检查
  * @returns 验证结果
  */
 export function validateElectrodeParameters(
   params: ElectrodeParameters,
   t?: TranslateFunction,
+  options?: ValidationOptions,
 ): ValidationResult {
   const errors: ValidationResult['errors'] = {};
 
   // 验证阴极参数
-  const cathodeError = validateCathodeParameters(params, t);
+  const cathodeError = validateCathodeParameters(params, t, options);
   if (cathodeError) {
     errors.cathode = cathodeError;
   }
 
   // 验证阳极参数
-  const anodeError = validateAnodeParameters(params, t);
+  const anodeError = validateAnodeParameters(params, t, options);
   if (anodeError) {
     errors.anode = anodeError;
   }
 
   // 验证尺寸参数
-  const dimensionError = validateDimensionParameters(params, t);
+  const dimensionError = validateDimensionParameters(params, t, options);
   if (dimensionError) {
     errors.dimension = dimensionError;
   }
