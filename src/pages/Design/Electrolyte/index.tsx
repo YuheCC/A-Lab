@@ -18,6 +18,7 @@ import Pagination from '@/components/Pagination';
 import CollapsibleText from '@/components/CollapsibleText';
 import FeatureCard from '../components/FeatureCard';
 import FeatureCardGroup from '../components/FeatureCardGroup';
+import TabSection from '@/components/TabSection';
 import './index.less';
 
 interface HistoryRecord {
@@ -155,6 +156,12 @@ const DesignPage: React.FC<DesignPageProps> = () => {
   };
 
   const [activeTab, setActiveTab] = useState<'introduction' | 'records' | 'models'>(getInitialTab());
+
+  const tabs = [
+    { key: 'introduction', label: t('design.tabs.introduction', 'Introduction') },
+    { key: 'records', label: t('design.tabs.records', 'Records') },
+    { key: 'models', label: t('design.tabs.models', 'Models') },
+  ];
 
   // 初始化时,如果URL没有tab参数,则设置默认值
   useEffect(() => {
@@ -383,11 +390,12 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     setModelsCurrentPage(page);
   };
 
-  const handleTabChange = (tab: 'introduction' | 'records' | 'models') => {
-    setActiveTab(tab);
+  const handleTabChange = (tab: string) => {
+    const newTab = tab as 'introduction' | 'records' | 'models';
+    setActiveTab(newTab);
     // 更新URL参数
     const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set('tab', tab);
+    newSearchParams.set('tab', newTab);
     setSearchParams(newSearchParams, { replace: true });
   };
 
@@ -454,30 +462,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
       </FeatureCardGroup>
 
       <div className="design-tool-table-container">
-        <div className="design-tabs-header">
-          <div className="design-tabs">
-            <button
-              className={`design-tab ${activeTab === 'introduction' ? 'active' : ''}`}
-              onClick={() => handleTabChange('introduction')}
-            >
-              {t('design.tabs.introduction', 'Introduction')}
-            </button>
-            <button
-              className={`design-tab ${activeTab === 'records' ? 'active' : ''}`}
-              onClick={() => handleTabChange('records')}
-            >
-              {t('design.tabs.records', 'Records')}
-            </button>
-            <button
-              className={`design-tab ${activeTab === 'models' ? 'active' : ''}`}
-              onClick={() => handleTabChange('models')}
-            >
-              {t('design.tabs.models', 'Models')}
-            </button>
-          </div>
-        </div>
-
-        <div className="design-tab-content">
+        <TabSection activeTab={activeTab} onTabChange={handleTabChange} tabs={tabs}>
           {activeTab === 'introduction' && (
             <div className="design-tab-panel">
               <DesignIntroduction />
@@ -805,7 +790,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
               )}
             </div>
           )}
-        </div>
+        </TabSection>
       </div>
     </div>
   );
