@@ -10,7 +10,6 @@
   color: @color-text-secondary;
   line-height: 1.5;
   margin: 0;
-  min-height: calc(1.5em * 3); // 固定最小高度为3行，减少视觉抖动
   transition: all 0.3s ease;
   overflow: hidden;
   display: -webkit-box;
@@ -20,7 +19,6 @@
     -webkit-line-clamp: unset !important;
     line-clamp: unset !important;
     max-height: none !important;
-    min-height: unset; // 展开时取消最小高度限制
   }
 }
 
