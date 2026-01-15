@@ -194,13 +194,21 @@ const handleCalculate = async () => {
 
 ## API 说明
 
-### validateElectrodeParameters(params, t?)
+### validateElectrodeParameters(params, t?, options?)
 
-验证电极参数是否符合所有规则，支持多语言。
+验证电极参数是否符合所有规则，支持多语言和验证模式选择。
 
 **参数:**
 - `params: ElectrodeParameters` - 包含所有电极参数的对象
 - `t?: TranslateFunction` - 可选的翻译函数，用于多语言支持。如果不提供，将使用默认的中文错误消息。
+- `options?: ValidationOptions` - 可选的验证选项
+
+**ValidationOptions:**
+```typescript
+interface ValidationOptions {
+  skipEmptyCheck?: boolean;  // 是否跳过空值检查，默认 false
+}
+```
 
 **返回:**
 ```typescript
@@ -220,11 +228,33 @@ import { useTranslation } from 'react-i18next';
 
 const { t } = useTranslation();
 
-// 使用翻译函数
+// 完整验证（包含空值检查）- 用于提交时
 const validationResult = validateElectrodeParameters(params, t);
 
-// 或不传入翻译函数（使用默认中文）
-const validationResult = validateElectrodeParameters(params);
+// 跳过空值检查 - 用于实时验证，只检查范围和业务规则
+const validationResult = validateElectrodeParameters(params, t, { skipEmptyCheck: true });
+```
+
+### 区域验证函数
+
+除了 `validateElectrodeParameters`，还可以单独使用各区域的验证函数：
+
+```typescript
+import {
+  validateCathodeParameters,
+  validateAnodeParameters,
+  validateDimensionParameters,
+} from '../validation';
+
+// 实时验证时跳过空值检查
+const cathodeError = validateCathodeParameters(params, t, { skipEmptyCheck: true });
+const anodeError = validateAnodeParameters(params, t, { skipEmptyCheck: true });
+const dimensionError = validateDimensionParameters(params, t, { skipEmptyCheck: true });
+
+// 提交时完整验证
+const cathodeError = validateCathodeParameters(params, t);
+const anodeError = validateAnodeParameters(params, t);
+const dimensionError = validateDimensionParameters(params, t);
 ```
 
 ### getAllParameterRanges()
@@ -259,9 +289,12 @@ const validationResult = validateElectrodeParameters(params);
 ## 注意事项
 
 1. **统一范围**: 所有材料使用统一的参数范围配置
-2. **验证时机**: 所有参数验证都是在用户点击"Calculate"按钮时触发
-3. **错误显示**: 错误信息会显示在对应区域的下方（阴极区域、阳极区域、尺寸区域）
-4. **验证顺序**: 验证函数会按顺序检查：基础参数 → 范围验证 → 规则验证
-5. **错误处理**: 每次只显示每个区域的第一个错误，修复后会继续显示下一个错误
-6. **范围一致性**: 参数范围和验证规则应该与后端 API 保持一致
-7. **多语言支持**: 验证函数支持多语言，传入 `t` 翻译函数即可。验证错误消息的翻译键位于 `design.electrode.validation.*`
+2. **验证时机**:
+   - **实时验证**: 使用 `{ skipEmptyCheck: true }` 选项，只检查范围和业务规则，不检查空值
+   - **提交验证**: 点击"Calculate"按钮时执行完整验证，包括空值检查
+3. **空值判断**: 验证函数使用严格的空值判断，0 不会被误识别为空值
+4. **错误显示**: 错误信息会显示在对应区域的下方（阴极区域、阳极区域、尺寸区域）
+5. **验证顺序**: 验证函数会按顺序检查：空值检查（可跳过）→ 范围验证 → 业务规则验证
+6. **错误处理**: 每次只显示每个区域的第一个错误，修复后会继续显示下一个错误
+7. **范围一致性**: 参数范围和验证规则应该与后端 API 保持一致
+8. **多语言支持**: 验证函数支持多语言，传入 `t` 翻译函数即可。验证错误消息的翻译键位于 `design.electrode.validation.*`
