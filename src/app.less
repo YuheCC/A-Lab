@@ -175,6 +175,19 @@
     height: 100%;
   }
 
+  /* 在 container 底部添加透明桥接区域，连接到下拉菜单 */
+  .nav-dropdown-container::after {
+    content: '';
+    position: absolute;
+    bottom: -12px; /* 延伸到下拉菜单的位置，覆盖 4px 间隙 + 额外空间 */
+    left: 0;
+    right: 0;
+    height: 12px;
+    background: transparent;
+    pointer-events: auto;
+    z-index: 9999;
+  }
+
   .nav-dropdown {
     position: absolute;
     top: calc(100% + 4px);
