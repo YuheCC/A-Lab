@@ -140,6 +140,7 @@
     height: 3px;
     background: @color-accent; /* Green for active indicator */
     border-radius: 2px;
+    pointer-events: none;
   }
   .nav-item.disabled {
     color: @color-gray-400 !important; /* Gray-400 for disabled state */
@@ -172,6 +173,19 @@
     display: flex;
     align-items: center;
     height: 100%;
+  }
+
+  /* 在 container 底部添加透明桥接区域，连接到下拉菜单 */
+  .nav-dropdown-container::after {
+    content: '';
+    position: absolute;
+    bottom: -12px; /* 延伸到下拉菜单的位置，覆盖 4px 间隙 + 额外空间 */
+    left: 0;
+    right: 0;
+    height: 12px;
+    background: transparent;
+    pointer-events: auto;
+    z-index: 9999;
   }
 
   .nav-dropdown {
