@@ -6,13 +6,13 @@ import { Select, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import Button from '@/components/Button';
 import { useMessage } from '@/components/MessageProvider';
+import type { OptimizeResultItemDTO } from '@/services/electrode/types';
 import ParameterInput from '../Predict/components/ParameterInput';
 import DesignDetailsModal from './components/DesignDetailsModal';
-import { getOptimizeRecommendations, getOptimizeDetail } from './model';
+import { getOptimizeRecommendations } from './model';
 import {
   DesignTargetsFormData,
   DesignRecommendation,
-  DesignDetails,
   PARAMETER_RANGES,
 } from './types';
 import {
@@ -54,11 +54,13 @@ const OptimizePage: React.FC = () => {
 
   // 推荐结果状态
   const [recommendations, setRecommendations] = useState<DesignRecommendation[]>([]);
+  const [fullResults, setFullResults] = useState<OptimizeResultItemDTO[]>([]); // 保存完整的 API 数据
   const [loading, setLoading] = useState(false);
 
   // Modal 状态
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedDesign, setSelectedDesign] = useState<DesignDetails | null>(null);
+  const [selectedDesign, setSelectedDesign] = useState<OptimizeResultItemDTO | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [modalLoading, setModalLoading] = useState(false);
 
   // 处理计算
@@ -79,6 +81,7 @@ const OptimizePage: React.FC = () => {
     try {
       const response = await getOptimizeRecommendations(formData);
       setRecommendations(response.data);
+      setFullResults(response.fullResults); // 保存完整的 API 数据
       message.success(t('design.electrode.optimize.messages.calculateSuccess'));
     } catch (error) {
       console.error('Calculate error:', error);
@@ -89,20 +92,15 @@ const OptimizePage: React.FC = () => {
   };
 
   // 处理查看详情
-  const handleViewDetails = async (record: DesignRecommendation) => {
-    setModalVisible(true);
-    setModalLoading(true);
-    setSelectedDesign(null);
-
-    try {
-      const response = await getOptimizeDetail(record.id);
-      setSelectedDesign(response.data);
-    } catch (error) {
-      console.error('Load details error:', error);
+  const handleViewDetails = (record: DesignRecommendation, index: number) => {
+    // 从完整数据中获取对应的详细信息
+    const fullData = fullResults[index];
+    if (fullData) {
+      setSelectedDesign(fullData);
+      setSelectedIndex(index);
+      setModalVisible(true);
+    } else {
       message.error(t('design.electrode.optimize.messages.loadDetailsError'));
-      setModalVisible(false);
-    } finally {
-      setModalLoading(false);
     }
   };
 
@@ -115,34 +113,34 @@ const OptimizePage: React.FC = () => {
       align: 'center',
     },
     {
-      title: t('design.electrode.optimize.designCapacity') + ' (mAh)',
+      title: t('design.electrode.optimize.designCapacity') + ' (Ah)',
       dataIndex: 'designCapacity',
       width: 180,
-      render: (value: number) => value.toFixed(0),
+      render: (value: number) => value.toFixed(2),
     },
     {
       title: t('design.electrode.optimize.specificEnergy') + ' (Wh/kg)',
       dataIndex: 'specificEnergy',
       width: 200,
-      render: (value: number) => value.toFixed(0),
+      render: (value: number) => value.toFixed(2),
     },
     {
       title: t('design.electrode.optimize.jellyRollThickness') + ' (mm)',
       dataIndex: 'thickness',
       width: 200,
-      render: (value: number) => value.toFixed(1),
+      render: (value: number) => value.toFixed(2),
     },
     {
       title: t('design.electrode.optimize.volumetricEnergyDensity') + ' (Wh/L)',
       dataIndex: 'volumetricEnergyDensity',
       width: 220,
-      render: (value: number) => value.toFixed(0),
+      render: (value: number) => value.toFixed(2),
     },
     {
       title: t('design.electrode.optimize.actions'),
       width: 100,
-      render: (_: any, record: DesignRecommendation) => (
-        <a className="electrode-optimize-details-link" onClick={() => handleViewDetails(record)}>
+      render: (_: any, record: DesignRecommendation, index: number) => (
+        <a className="electrode-optimize-details-link" onClick={() => handleViewDetails(record, index)}>
           {t('design.electrode.optimize.details')}
         </a>
       ),
@@ -395,6 +393,11 @@ const OptimizePage: React.FC = () => {
       <DesignDetailsModal
         visible={modalVisible}
         data={selectedDesign}
+        rank={selectedIndex + 1}
+        cellDesign={formData.cellDesign}
+        npRatio={formData.npRatio}
+        cathodeActiveMaterial={formData.cathodeActiveMaterial}
+        anodeActiveMaterial={formData.anodeActiveMaterial}
         loading={modalLoading}
         onClose={() => setModalVisible(false)}
       />

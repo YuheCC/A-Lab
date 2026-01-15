@@ -3,20 +3,24 @@
 .tab-section {
   &__header {
     display: flex;
-    gap: @spacing-xl;
+    gap: 8px;
+    margin-bottom: 8px;
     border-bottom: none;
+    padding-bottom: 16px;
   }
 
   &__button {
-    padding: @spacing-sm 0;
-    font-size: @font-size-base;
-    color: @color-text-secondary;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: @color-gray-500;
     background: none;
     border: none;
     border-bottom: 2px solid transparent;
     cursor: pointer;
-    transition: @transition-fast;
-    font-weight: @font-weight-normal;
+    transition: all 0.2s ease;
+    position: relative;
+    margin-bottom: -1px;
 
     &.active {
       color: @color-accent;
@@ -30,11 +34,13 @@
     }
 
     &:not(.disabled):hover {
-      color: @color-accent;
+      color: @color-text-primary;
     }
   }
 
   &__content {
-    padding: @spacing-xl 0;
+    min-height: 400px;
+    margin: 0 auto;
+    padding: 0;
   }
 }

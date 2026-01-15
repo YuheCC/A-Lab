@@ -24,8 +24,10 @@ export const ELECTRODE_ENDPOINTS: EndpointConfig<Record<string, string>> = {
     historyDetail: '/api/electrodePerformance/history/detail',
     /** 删除历史记录 */
     historyDelete: '/api/electrodePerformance/history/delete',
-    /** 性能预测 */
+    /** 性能预测（正向预测 type=1） */
     modelPredict: '/api/electrodePerformance/model_predict',
+    /** 反向设计优化（type=2）- 复用 model_predict 端点 */
+    optimize: '/api/electrodePerformance/model_predict',
   },
 
   /**

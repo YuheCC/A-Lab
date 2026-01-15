@@ -20,7 +20,7 @@ interface CollapsibleTextProps {
  */
 const CollapsibleText: React.FC<CollapsibleTextProps> = ({
   children,
-  lineClamp = 3,
+  lineClamp = 2,
   className = '',
 }) => {
   const { i18n } = useTranslation();
@@ -65,6 +65,7 @@ const CollapsibleText: React.FC<CollapsibleTextProps> = ({
           WebkitLineClamp: lineClamp,
           lineClamp: lineClamp,
           maxHeight: isExpanded ? 'none' : `calc(1.5em * ${lineClamp})`,
+          minHeight: isExpanded ? 'unset' : `calc(1.5em * ${lineClamp})`,
         }}
       >
         {children}

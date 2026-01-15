@@ -6,18 +6,25 @@
 import request from '@/services/request';
 import { urlConfig } from '@/services/config/urlConfig';
 import { getElectrodeEndpoint } from './endpoints';
-import type {
-  ElectrodeHistoryListParams,
-  ElectrodeHistoryItem,
-  ElectrodeHistoryDetailParams,
-  ElectrodeHistoryDeleteParams,
-  ElectrodeHistoryDeleteResponse,
-  ElectrodeModelPredictParams,
-  ElectrodeModelPredictResponse,
-  ElectrodeModelParams,
-  ElectrodeModelParamsDTO,
-  ElectrodeModelResult,
-  ElectrodeModelResultDTO,
+import {
+  ElectrodePageType,
+  type ElectrodeHistoryListParams,
+  type ElectrodeHistoryItem,
+  type ElectrodeHistoryDetailParams,
+  type ElectrodeHistoryDeleteParams,
+  type ElectrodeHistoryDeleteResponse,
+  type ElectrodeModelPredictParams,
+  type ElectrodeModelPredictResponse,
+  type ElectrodeModelParams,
+  type ElectrodeModelParamsDTO,
+  type ElectrodeModelResult,
+  type ElectrodeModelResultDTO,
+  type ElectrodeOptimizeParams,
+  type OptimizeResultItemDTO,
+  type ElectrodeOptimizeResponseDTO,
+  type OptimizeHistoryItem,
+  type OptimizeModelParamsDTO,
+  type UniversalHistoryDetailResponse,
 } from './types';
 
 // ============================================
@@ -197,20 +204,28 @@ export async function getElectrodeHistoryList(
  * Get Electrode Performance History Detail
  *
  * @param params - 查询参数（需要 id 和 type）
- * @returns 历史记录详情（包含前端业务模型）
+ * @returns 历史记录详情（根据 type 返回不同结构）
+ *   - type=1: ElectrodeHistoryItem（正向预测）
+ *   - type=2: OptimizeHistoryItem（反向设计）
  *
  * @example
  * ```typescript
+ * // type=1: 正向预测
  * const detail = await getElectrodeHistoryDetail({
  *   id: 123,
  *   type: ElectrodePageType.RESULT_PREDICTION,
  * });
- * // detail 已转换为前端驼峰命名格式
+ *
+ * // type=2: 反向设计
+ * const optimizeDetail = await getElectrodeHistoryDetail({
+ *   id: 456,
+ *   type: ElectrodePageType.INVERSE_DESIGN,
+ * });
  * ```
  */
 export async function getElectrodeHistoryDetail(
   params: ElectrodeHistoryDetailParams,
-): Promise<ElectrodeHistoryItem> {
+): Promise<UniversalHistoryDetailResponse> {
   const env = urlConfig.getEnvironment();
   const endpoint = getElectrodeEndpoint(env, 'historyDetail');
   const url = urlConfig.buildFullURL(endpoint);
@@ -220,13 +235,46 @@ export async function getElectrodeHistoryDetail(
     params,
   });
 
-  // 转换后端 DTO 为前端业务模型
+  // 根据 type 处理不同的数据结构
+  if (response?.data?.type === ElectrodePageType.INVERSE_DESIGN) {
+    // type=2: 反向设计 - model_result 是数组
+    const rawData = response.data as {
+      id: number;
+      cell_design: string;
+      np_ratio?: string;
+      cathode_active_material: string;
+      anode_active_material: string;
+      type: ElectrodePageType;
+      model_params: OptimizeModelParamsDTO;
+      model_result: OptimizeResultItemDTO[];
+      created_at?: string;
+      updated_at?: string;
+      user_id?: number;
+    };
+
+    return {
+      id: rawData.id,
+      cell_design: rawData.cell_design,
+      np_ratio: rawData.np_ratio,
+      cathode_active_material: rawData.cathode_active_material,
+      anode_active_material: rawData.anode_active_material,
+      type: rawData.type,
+      model_params: rawData.model_params,
+      model_result: rawData.model_result,
+      created_at: rawData.created_at,
+      updated_at: rawData.updated_at,
+      user_id: rawData.user_id,
+    } as OptimizeHistoryItem;
+  }
+
+  // type=1: 正向预测 - model_result 是单个对象
   const rawData = response.data as {
     id: number;
     cell_design: string;
     np_ratio?: string;
     cathode_active_material: string;
     anode_active_material: string;
+    type?: ElectrodePageType;
     model_params: ElectrodeModelParamsDTO;
     model_result: ElectrodeModelResultDTO;
     created_at?: string;
@@ -239,11 +287,12 @@ export async function getElectrodeHistoryDetail(
     np_ratio: rawData.np_ratio,
     cathode_active_material: rawData.cathode_active_material,
     anode_active_material: rawData.anode_active_material,
+    type: ElectrodePageType.RESULT_PREDICTION,
     model_params: fromElectrodeModelParamsDTO(rawData.model_params),
     model_result: fromElectrodeModelResultDTO(rawData.model_result),
     created_at: rawData.created_at,
     updated_at: rawData.updated_at,
-  };
+  } as ElectrodeHistoryItem;
 }
 
 /**
@@ -338,4 +387,52 @@ export async function predictElectrodePerformance(
     id: rawData.id,
     model_result: fromElectrodeModelResultDTO(rawData.model_result),
   };
+}
+
+/**
+ * 电极反向设计优化（Inverse Design）
+ * Electrode Inverse Design Optimization
+ *
+ * @param params - 优化参数（使用区间模式的 model_params）
+ * @returns 优化结果列表（多条推荐结果）
+ *
+ * @example
+ * ```typescript
+ * const results = await optimizeElectrodeDesign({
+ *   cell_design: 'Balanced',
+ *   np_ratio: '1.07',
+ *   cathode_active_material: 'LFP',
+ *   anode_active_material: 'Gr',
+ *   type: ElectrodePageType.INVERSE_DESIGN,  // type=2
+ *   model_params: {
+ *     width: 156,
+ *     length: 30,
+ *     layers: 17,
+ *     design_capacity: [5, 7],
+ *     specific_ED: [250, 300],
+ *     jelly_roll_thickness: [4, 7],
+ *     volumetric_ED: [935, 970],
+ *   },
+ * });
+ * // results 是 OptimizeResultItemDTO[] 数组
+ * ```
+ */
+export async function optimizeElectrodeDesign(
+  params: ElectrodeOptimizeParams,
+): Promise<OptimizeResultItemDTO[]> {
+  const env = urlConfig.getEnvironment();
+  const endpoint = getElectrodeEndpoint(env, 'optimize');
+  const url = urlConfig.buildFullURL(endpoint);
+
+  const response = await request(url, {
+    method: 'POST',
+    data: params,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  // 从响应的 model_result 字段获取结果数组
+  const rawData = response.data as ElectrodeOptimizeResponseDTO;
+  return rawData.model_result;
 }

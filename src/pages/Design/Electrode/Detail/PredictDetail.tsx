@@ -1,106 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from '@umijs/max';
+import React from 'react';
+import type { TFunction } from 'i18next';
 import { LeftOutlined } from '@ant-design/icons';
-import { Select, Input, Spin, message } from 'antd';
-import ParameterInput from '../components/ParameterInput';
-import ResultDisplay from '../components/ResultDisplay';
-import RateCapabilityChart from '../components/RateCapabilityChart';
-import * as electrodeModel from '../../model';
-import type { ElectrodeHistoryItem } from '../../model';
+import { Select, Input } from 'antd';
+import ParameterInput from '../Predict/components/ParameterInput';
+import ResultDisplay from '../Predict/components/ResultDisplay';
+import RateCapabilityChart from '../Predict/components/RateCapabilityChart';
+import type { ElectrodeHistoryItem } from '../model';
+import {
+  CELL_DESIGN_OPTIONS,
+  CATHODE_ACTIVE_MATERIAL_OPTIONS,
+  ANODE_ACTIVE_MATERIAL_OPTIONS,
+} from '../constants';
 import './index.less';
 
 const { Option } = Select;
 
-const DetailPage: React.FC = () => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+interface PredictDetailProps {
+  t: TFunction;
+  predictData: ElectrodeHistoryItem;
+  npRatio: string;
+  onGoBack: () => void;
+}
 
-  // 状态管理
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<ElectrodeHistoryItem | null>(null);
-
-  // 加载详情数据
-  useEffect(() => {
-    const loadDetailData = async () => {
-      if (!id) {
-        message.error('无效的记录 ID');
-        navigate(-1);
-        return;
-      }
-
-      setLoading(true);
-      try {
-        const response = await electrodeModel.getElectrodeHistoryDetail({
-          id: parseInt(id, 10),
-          type: electrodeModel.PageType.RESULT_PREDICTION,
-        });
-        setData(response);
-      } catch (error) {
-        message.error('加载详情失败');
-        console.error('[DetailPage] Load detail error:', error);
-        // 可以选择返回或显示错误页面
-        // navigate(-1);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadDetailData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
-  // 根据 Cell Design 获取 NP Ratio
-  const getNpRatio = (cellDesign: string): string => {
-    switch (cellDesign) {
-      case 'Balanced':
-        return '1.07';
-      case 'High Energy':
-        return '1.05';
-      case 'High Power':
-        return '1.10';
-      default:
-        return '1.07';
-    }
-  };
-
-  const handleGoBack = () => {
-    navigate(-1);
-  };
-
-  if (loading) {
-    return (
-      <div className="electrode-predict-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
-        <Spin size="large" tip={t('common.loading', '加载中...')} />
-      </div>
-    );
-  }
-
-  if (!data) {
-    return (
-      <div className="electrode-predict-container">
-        <div className="electrode-predict-actions">
-          <h1 className="electrode-predict-title">
-            {t('design.electrode.predict.title', 'Result Prediction')}
-          </h1>
-          <button className="electrode-predict-back-btn" onClick={handleGoBack}>
-            <LeftOutlined style={{ marginRight: 8 }} />
-            {t('design.electrode.predict.back', '返回')}
-          </button>
-        </div>
-        <div className="electrode-predict-content">
-          <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
-            {t('common.noData', '未找到记录')}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const { cell_design, np_ratio, cathode_active_material, anode_active_material, model_params, model_result } = data;
-  // 优先使用 API 返回的 np_ratio，如果没有则根据 cell_design 计算（向后兼容）
-  const npRatio = np_ratio || getNpRatio(cell_design);
+const PredictDetail: React.FC<PredictDetailProps> = ({
+  t,
+  predictData,
+  npRatio,
+  onGoBack,
+}) => {
+  const { cell_design, cathode_active_material, anode_active_material, model_params, model_result } = predictData;
 
   return (
     <div className="electrode-predict-container">
@@ -109,7 +37,7 @@ const DetailPage: React.FC = () => {
         <h1 className="electrode-predict-title">
           {t('design.electrode.predict.title', 'Result Prediction')}
         </h1>
-        <button className="electrode-predict-back-btn" onClick={handleGoBack}>
+        <button className="electrode-predict-back-btn" onClick={onGoBack}>
           <LeftOutlined style={{ marginRight: 8 }} />
           {t('design.electrode.predict.back', '返回')}
         </button>
@@ -136,9 +64,11 @@ const DetailPage: React.FC = () => {
                     value={cell_design}
                     className="electrode-predict-select"
                   >
-                    <Option value="Balanced">Balanced</Option>
-                    <Option value="High Energy">High Energy</Option>
-                    <Option value="High Power">High Power</Option>
+                    {CELL_DESIGN_OPTIONS.map((opt) => (
+                      <Option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </Option>
+                    ))}
                   </Select>
                 </div>
 
@@ -167,9 +97,11 @@ const DetailPage: React.FC = () => {
                     value={cathode_active_material}
                     className="electrode-predict-select"
                   >
-                    <Option value="NCM811">NCM811</Option>
-                    <Option value="NCM622">NCM622</Option>
-                    <Option value="LFP">LFP</Option>
+                    {CATHODE_ACTIVE_MATERIAL_OPTIONS.map((opt) => (
+                      <Option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </Option>
+                    ))}
                   </Select>
 
                   <h3 className="electrode-predict-subsection-title">
@@ -244,10 +176,11 @@ const DetailPage: React.FC = () => {
                     value={anode_active_material}
                     className="electrode-predict-select"
                   >
-                    <Option value="12% Si">12% Si</Option>
-                    <Option value="30% Si">30% Si</Option>
-                    <Option value="Si">Si</Option>
-                    <Option value="Gr">Gr</Option>
+                    {ANODE_ACTIVE_MATERIAL_OPTIONS.map((opt) => (
+                      <Option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </Option>
+                    ))}
                   </Select>
 
                   <h3 className="electrode-predict-subsection-title">
@@ -423,4 +356,4 @@ const DetailPage: React.FC = () => {
   );
 };
 
-export default DetailPage;
+export default PredictDetail;

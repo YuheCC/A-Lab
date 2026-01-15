@@ -1,26 +1,25 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import './index.less';
 
-interface TabSectionProps {
+export interface TabItem {
+  key: string;
+  label: string;
+  disabled?: boolean;
+}
+
+export interface TabSectionProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
-  children: React.ReactNode;
+  tabs: TabItem[];
+  children?: React.ReactNode;
 }
 
 const TabSection: React.FC<TabSectionProps> = ({
   activeTab,
   onTabChange,
+  tabs,
   children
 }) => {
-  const { t } = useTranslation();
-
-  const tabs = [
-    { key: 'introduction', label: t('design.electrode.tabs.introduction'), disabled: false },
-    { key: 'records', label: t('design.electrode.tabs.records'), disabled: false },
-    // { key: 'models', label: t('design.electrode.tabs.models'), disabled: true }
-  ];
-
   return (
     <div className="tab-section">
       <div className="tab-section__header">
