@@ -92,6 +92,7 @@ const OptimizePage: React.FC = () => {
   const [recommendations, setRecommendations] = useState<DesignRecommendation[]>([]);
   const [fullResults, setFullResults] = useState<OptimizeResultItemDTO[]>([]); // 保存完整的 API 数据
   const [loading, setLoading] = useState(false);
+  const [hasCalculated, setHasCalculated] = useState(false); // 是否已计算过
 
   // Modal 状态
   const [modalVisible, setModalVisible] = useState(false);
@@ -147,6 +148,7 @@ const OptimizePage: React.FC = () => {
       const response = await getOptimizeRecommendations(formData);
       setRecommendations(response.data);
       setFullResults(response.fullResults); // 保存完整的 API 数据
+      setHasCalculated(true); // 标记已计算
       message.success(t('design.electrode.optimize.messages.calculateSuccess'));
     } catch (error) {
       console.error('Calculate error:', error);
@@ -446,19 +448,21 @@ const OptimizePage: React.FC = () => {
           </div>
         </div>
 
-        {/* Design Recommendations 表格 */}
-        <div className="electrode-optimize-section">
-          <h2 className="electrode-optimize-section-title">
-            {t('design.electrode.optimize.designRecommendations')}
-          </h2>
-          <Table
-            columns={columns}
-            dataSource={recommendations}
-            rowKey="id"
-            pagination={false}
-            className="electrode-optimize-table"
-          />
-        </div>
+        {/* Design Recommendations 表格 - 仅在计算后显示 */}
+        {hasCalculated && (
+          <div className="electrode-optimize-section">
+            <h2 className="electrode-optimize-section-title">
+              {t('design.electrode.optimize.designRecommendations')}
+            </h2>
+            <Table
+              columns={columns}
+              dataSource={recommendations}
+              rowKey="id"
+              pagination={false}
+              className="electrode-optimize-table"
+            />
+          </div>
+        )}
       </div>
 
       {/* 详情 Modal */}
