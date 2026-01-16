@@ -156,7 +156,12 @@ const RecordsContent: React.FC = () => {
           <div className="records-tabs">
             <Radio.Group
               value={activeSubTab}
-              onChange={(e) => setActiveSubTab(e.target.value)}
+              onChange={(e) => {
+                setActiveSubTab(e.target.value);
+                // Tab 切换时清空搜索条件
+                setSearchKeyword('');
+                setSelectedDate('');
+              }}
               buttonStyle="solid"
               className="records-radio-group"
             >
