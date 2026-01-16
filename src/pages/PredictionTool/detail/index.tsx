@@ -6,6 +6,7 @@ import { downloadFile, type HistoryDetailResponse } from '@/services/prediction/
 import { getHistoryDetail } from '../model';
 import { formatUTCDateTime } from '@/utils/dateUtils';
 import CycleLifeScatterChart from '../components/CycleLifeScatterChart';
+import CycleLifeLineChart from '../components/CycleLifeLineChart';
 import './index.less';
 
 const DetailPage: React.FC = () => {
@@ -216,17 +217,39 @@ const DetailPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 散点图展示 - 暂时隐藏 */}
+                {/* 散点图或折线图展示 */}
                 {detailData.brcode_data && detailData.brcode_data.length > 0 && (
-                  <div className="chart-section" style={{ display: 'none' }}>
-                    <div className="chart-container">
-                      <CycleLifeScatterChart
-                        brcodeData={detailData.brcode_data}
-                        selectedBarcode={selectedBarcode}
-                        onBarcodeSelect={setSelectedBarcode}
-                      />
-                    </div>
-                  </div>
+                  (() => {
+                    const hasModelResult = detailData.brcode_data.some(item => !!item.model_result);
+                    const hasLegacyData = detailData.brcode_data.some(item => !!item.cycle_life_1_cycles_detail);
+
+                    if (hasModelResult) {
+                      return (
+                        <div className="chart-section">
+                          <div className="chart-container">
+                            <CycleLifeLineChart
+                              brcodeData={detailData.brcode_data}
+                              selectedBarcode={selectedBarcode}
+                              onBarcodeSelect={setSelectedBarcode}
+                            />
+                          </div>
+                        </div>
+                      );
+                    } else if (hasLegacyData) {
+                      return (
+                        <div className="chart-section">
+                          <div className="chart-container">
+                            <CycleLifeScatterChart
+                              brcodeData={detailData.brcode_data}
+                              selectedBarcode={selectedBarcode}
+                              onBarcodeSelect={setSelectedBarcode}
+                            />
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()
                 )}
               </div>
             </>

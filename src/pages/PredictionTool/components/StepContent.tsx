@@ -5,6 +5,7 @@ import { predict, type HistoryDetailResponse } from '@/services/prediction/predi
 import { formatUTCDateTime } from '@/utils/dateUtils';
 import { useAuthStore } from '@/models/useAuth';
 import CycleLifeScatterChart from './CycleLifeScatterChart';
+import CycleLifeLineChart from './CycleLifeLineChart';
 import ModelSelect from '@/components/ModelSelect';
 import { getModelList } from '../model';
 import type { ModelListItem } from '@/services/model/training';
@@ -39,6 +40,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
   const [selectedModel, setSelectedModel] = useState<string>('');
   const [modelOptions, setModelOptions] = useState<ModelOption[]>([]);
   const [isModelLoading, setIsModelLoading] = useState(false);
+  const [selectedBarcode, setSelectedBarcode] = useState<string | undefined>();
 
   // 获取模型列表
   useEffect(() => {
@@ -541,20 +543,45 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
               )}
             </div>
 
-            {/* 散点图展示 - 暂时隐藏 */}
+            {/* 散点图或折线图展示 */}
             {predictionResult.brcode_data && predictionResult.brcode_data.length > 0 && (
-              <div className="scatter-chart-card" style={{
-                marginTop: '24px',
-                padding: '20px',
-                backgroundColor: '#fff',
-                borderRadius: '8px',
-                border: '1px solid #e2e8f0',
-                display: 'none' // 暂时隐藏图表
-              }}>
-                <CycleLifeScatterChart
-                  brcodeData={predictionResult.brcode_data}
-                />
-              </div>
+              (() => {
+                const hasModelResult = predictionResult.brcode_data.some(item => !!item.model_result);
+                const hasLegacyData = predictionResult.brcode_data.some(item => !!item.cycle_life_1_cycles_detail);
+
+                if (hasModelResult) {
+                  return (
+                    <div className="scatter-chart-card" style={{
+                      marginTop: '24px',
+                      padding: '20px',
+                      backgroundColor: '#fff',
+                      borderRadius: '8px',
+                      border: '1px solid #e2e8f0'
+                    }}>
+                      <CycleLifeLineChart
+                        brcodeData={predictionResult.brcode_data}
+                        selectedBarcode={selectedBarcode}
+                        onBarcodeSelect={setSelectedBarcode}
+                      />
+                    </div>
+                  );
+                } else if (hasLegacyData) {
+                  return (
+                    <div className="scatter-chart-card" style={{
+                      marginTop: '24px',
+                      padding: '20px',
+                      backgroundColor: '#fff',
+                      borderRadius: '8px',
+                      border: '1px solid #e2e8f0'
+                    }}>
+                      <CycleLifeScatterChart
+                        brcodeData={predictionResult.brcode_data}
+                      />
+                    </div>
+                  );
+                }
+                return null;
+              })()
             )}
           </div>
         );

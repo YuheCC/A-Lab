@@ -42,6 +42,14 @@ export interface BarcodeData {
   cycle_life_2: number | null;
   cycle_life_1_cycles_detail?: Record<string, number>;
   cycle_life_1_predict_detail?: any;
+  model_result?: {
+    original_cycles: number[];
+    original_sohs: number[];
+    predicted_cycles: number[];
+    predicted_sohs: number[];
+    max_cycle?: number;
+    predicted_value?: number;
+  };
   history_id: number;
   status: string;
   created_at: string;
