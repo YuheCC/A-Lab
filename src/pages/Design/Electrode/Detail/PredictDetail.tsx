@@ -31,7 +31,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
   const { cell_design, cathode_active_material, anode_active_material, model_params, model_result } = predictData;
 
   return (
-    <div className="electrode-predict-container">
+    <div className="electrode-predict-container antd-readonly-style">
       {/* 页面标题和返回按钮 */}
       <div className="electrode-predict-actions">
         <h1 className="electrode-predict-title">
@@ -116,7 +116,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       min={0}
                       max={10}
                       step={0.1}
-                      disabled={true}
+                      readonly={true}
                     />
                     <ParameterInput
                       label={t('design.electrode.predict.cn01y', 'CN-01Y (wt.%)')}
@@ -125,7 +125,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       min={0}
                       max={10}
                       step={0.1}
-                      disabled={true}
+                      readonly={true}
                     />
                     <ParameterInput
                       label={t('design.electrode.predict.superC65', 'Super C65 (wt.%)')}
@@ -134,7 +134,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       min={0}
                       max={10}
                       step={0.1}
-                      disabled={true}
+                      readonly={true}
                     />
                     <ParameterInput
                       label={t('design.electrode.predict.cathodeActiveMaterialLabel', 'Active material NCM-A (%)')}
@@ -143,7 +143,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       min={0}
                       max={100}
                       step={0.1}
-                      disabled={true}
+                      readonly={true}
                     />
                     <ParameterInput
                       label={t('design.electrode.predict.arealLoading', 'Areal Loading (mAh/cm²)')}
@@ -152,7 +152,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       min={0}
                       max={10}
                       step={0.01}
-                      disabled={true}
+                      readonly={true}
                     />
                     <ParameterInput
                       label={t('design.electrode.predict.pressDensity', 'Press Density (g/cc)')}
@@ -161,7 +161,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       min={0}
                       max={10}
                       step={0.01}
-                      disabled={true}
+                      readonly={true}
                     />
                   </div>
                 </div>
@@ -195,7 +195,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       min={0}
                       max={10}
                       step={0.1}
-                      disabled={true}
+                      readonly={true}
                     />
                     <ParameterInput
                       label={t('design.electrode.predict.sbr', 'SBR (wt.%)')}
@@ -204,7 +204,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       min={0}
                       max={10}
                       step={0.1}
-                      disabled={true}
+                      readonly={true}
                     />
                     <ParameterInput
                       label={t('design.electrode.predict.paa', 'PAA (wt.%)')}
@@ -213,7 +213,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       min={0}
                       max={10}
                       step={0.1}
-                      disabled={true}
+                      readonly={true}
                     />
                     <ParameterInput
                       label={t('design.electrode.predict.superP', 'Super P (wt.%)')}
@@ -222,7 +222,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       min={0}
                       max={10}
                       step={0.1}
-                      disabled={true}
+                      readonly={true}
                     />
                     <ParameterInput
                       label={t('design.electrode.predict.swcnt', 'SWCNT (wt.%)')}
@@ -231,7 +231,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       min={0}
                       max={10}
                       step={0.01}
-                      disabled={true}
+                      readonly={true}
                     />
                     <ParameterInput
                       label={t('design.electrode.predict.activeMaterial1', 'Active material-1 SC-B-I (%)')}
@@ -240,7 +240,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       min={0}
                       max={100}
                       step={0.1}
-                      disabled={true}
+                      readonly={true}
                     />
                     <ParameterInput
                       label={t('design.electrode.predict.activeMaterial2', 'Active material-2 Gr-S-I (%)')}
@@ -249,7 +249,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       min={0}
                       max={100}
                       step={0.1}
-                      disabled={true}
+                      readonly={true}
                     />
                     <ParameterInput
                       label={t('design.electrode.predict.anodeArealLoading', 'Areal Loading (mAh/cm²)')}
@@ -258,7 +258,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       min={0}
                       max={10}
                       step={0.01}
-                      disabled={true}
+                      readonly={true}
                     />
                     <ParameterInput
                       label={t('design.electrode.predict.pressDensity', 'Press Density (g/cc)')}
@@ -267,7 +267,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       min={0}
                       max={10}
                       step={0.01}
-                      disabled={true}
+                      readonly={true}
                     />
                   </div>
                 </div>

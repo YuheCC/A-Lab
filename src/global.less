@@ -1417,3 +1417,29 @@
   border: 1px solid @color-gray-200;
   margin: 0;
 }
+
+/* ==================== Antd Readonly Style ==================== */
+/* 全局只读样式类 - 用于统一 antd 组件 disabled 状态的字体颜色 */
+.antd-readonly-style {
+  // Input 输入框
+  .ant-input[disabled],
+  .ant-input-disabled {
+    color: @color-gray-700;
+  }
+
+  // Select 选择器
+  .ant-select-disabled .ant-select-selection-item,
+  .ant-select-disabled .ant-select-selector {
+    color: @color-gray-700 !important;
+  }
+
+  // InputNumber 数字输入框
+  .ant-input-number-disabled .ant-input-number-input {
+    color: @color-gray-700;
+  }
+
+  // TextArea 文本域
+  textarea.ant-input[disabled] {
+    color: @color-gray-700;
+  }
+}
