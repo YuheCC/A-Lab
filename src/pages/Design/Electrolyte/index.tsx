@@ -4,12 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs, { Dayjs } from 'dayjs';
+import { Dayjs } from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import 'dayjs/locale/en';
 import 'dayjs/locale/ja';
 import 'dayjs/locale/ko';
 import { Activity, X, RefreshCw } from 'lucide-react';
+import { useDateFilter } from '@/hooks/useDateFilter';
 import { getHistoryList, deleteHistory, getModelList as getModelListFromModel, getBaseModelList, removeModel } from './model';
 import { type ModelListItem } from '@/services/model/training';
 import { formatUTCDateTime } from '@/utils/dateUtils';
@@ -66,30 +67,23 @@ const DesignPage: React.FC<DesignPageProps> = () => {
   // Records filter state
   const [recordSearchKeyword, setRecordSearchKeyword] = useState<string>('');
   const [recordSelectedModel, setRecordSelectedModel] = useState<string>('all');
-  const [recordSelectedDate, setRecordSelectedDate] = useState<string>('');
   const [debouncedRecordId, setDebouncedRecordId] = useState<string>('');
+
+  // 使用日期筛选 hook（Electrolyte 使用本地时间格式）
+  const {
+    selectedDate: recordSelectedDate,
+    datePickerValue: recordDatePickerValue,
+    handleDateChange: handleRecordDateChange,
+    getUTCDateRange: getRecordDateRange,
+    getDayjsLocale,
+    resetDate: resetRecordDate,
+  } = useDateFilter();
 
   // Model options for records filter (top 100 models)
   const [recordModelOptions, setRecordModelOptions] = useState<ModelListItem[]>([]);
 
   // Debounce timer ref
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Get dayjs locale based on current language
-  const getDayjsLocale = () => {
-    const lang = i18n.language || 'zh';
-    const localeMap: Record<string, string> = {
-      'zh': 'zh-cn',
-      'zh-CN': 'zh-cn',
-      'en': 'en',
-      'en-US': 'en',
-      'ja': 'ja',
-      'ja-JP': 'ja',
-      'ko': 'ko',
-      'ko-KR': 'ko',
-    };
-    return localeMap[lang] || 'zh-cn';
-  };
 
   // Parse and validate record ID format (e.g., "DS-001" -> "1", "76" -> "76")
   const parseRecordId = (input: string): string | null => {
@@ -214,10 +208,9 @@ const DesignPage: React.FC<DesignPageProps> = () => {
         params.model_id = parseInt(recordSelectedModel);
       }
 
-      // Add date filter (split to 0:00:00 - 23:59:59 of selected day)
+      // Add date filter using hook
       if (recordSelectedDate) {
-        const selectedDay = dayjs(recordSelectedDate);
-        params.created_at = `${selectedDay.format('YYYY-MM-DD')}T00:00:00,${selectedDay.format('YYYY-MM-DD')}T23:59:59`;
+        params.created_at = getRecordDateRange();
       }
 
       const response = await getHistoryList(params);
@@ -404,7 +397,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     setRecordSearchKeyword('');
     setDebouncedRecordId('');
     setRecordSelectedModel('all');
-    setRecordSelectedDate('');
+    resetRecordDate();
   };
 
   const handleBaseModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -504,10 +497,8 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={getDayjsLocale()}>
                       <DatePicker
                         className="records-date-filter"
-                        value={recordSelectedDate ? dayjs(recordSelectedDate) : null}
-                        onChange={(date: Dayjs | null) => {
-                          setRecordSelectedDate(date ? date.format('YYYY-MM-DD') : '');
-                        }}
+                        value={recordDatePickerValue}
+                        onChange={handleRecordDateChange}
                         enableAccessibleFieldDOMStructure={false}
                         slotProps={{
                           textField: {
