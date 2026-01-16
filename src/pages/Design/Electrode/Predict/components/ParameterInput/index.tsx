@@ -19,6 +19,7 @@ interface ParameterInputProps {
   max?: number;
   step?: number;
   disabled?: boolean;
+  readonly?: boolean; // 只读状态（无透明度）
   
   // 差值限制（仅区间模式）
   minDiff?: number; // 最小差值
@@ -36,9 +37,19 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
   max = 10,
   step = 0.01,
   disabled = false,
+  readonly = false,
   minDiff,
   maxDiff,
 }) => {
+  // 是否禁用交互（disabled 或 readonly 都禁用交互）
+  const isDisabled = disabled || readonly;
+
+  // 获取样式类名
+  const getStateClassName = () => {
+    if (readonly) return 'parameter-input--readonly';
+    if (disabled) return 'parameter-input--disabled';
+    return '';
+  };
   // 格式化数字：移除不必要的尾随零
   const formatNumber = (val: number | string | undefined): string => {
     if (val === undefined || val === null) return '';
@@ -92,21 +103,21 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
 
   // 单值模式：Slider 变化处理
   const handleSliderChange = (newValue: number) => {
-    if (!disabled && onChange) {
+    if (!isDisabled && onChange) {
       onChange(newValue);
     }
   };
 
   // 单值模式：输入框变化处理
   const handleInputChange = (newValue: number | null) => {
-    if (!disabled && newValue !== null && onChange) {
+    if (!isDisabled && newValue !== null && onChange) {
       onChange(newValue);
     }
   };
 
   // 区间模式：Range Slider 变化处理
   const handleRangeSliderChange = (newValue: number | number[]) => {
-    if (!disabled && onRangeChange && Array.isArray(newValue)) {
+    if (!isDisabled && onRangeChange && Array.isArray(newValue)) {
       const validatedRange = validateRange(newValue as [number, number]);
       onRangeChange(validatedRange);
     }
@@ -114,7 +125,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
 
   // 区间模式：输入框变化处理
   const handleRangeInputChange = (newValue: number | null, index: 0 | 1) => {
-    if (!disabled && newValue !== null && rangeValue && onRangeChange) {
+    if (!isDisabled && newValue !== null && rangeValue && onRangeChange) {
       const newRange: [number, number] = [...rangeValue] as [number, number];
       newRange[index] = newValue;
       const validatedRange = validateRange(newRange);
@@ -125,9 +136,9 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
   // 区间模式渲染
   if (mode === 'range') {
     const currentRangeValue = rangeValue || [min, max];
-    
+
     return (
-      <div className={`parameter-input parameter-input--range ${disabled ? 'parameter-input--disabled' : ''}`}>
+      <div className={`parameter-input parameter-input--range ${getStateClassName()}`}>
         <div className="parameter-input__label">{label}</div>
         <div className="parameter-input__controls">
           <Slider
@@ -137,7 +148,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
             step={step}
             value={currentRangeValue}
             onChange={handleRangeSliderChange}
-            disabled={disabled}
+            disabled={isDisabled}
             className="parameter-input__slider parameter-input__slider--range"
           />
           <div className="parameter-input__range-inputs">
@@ -147,7 +158,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
               step={step}
               value={currentRangeValue[0]}
               onChange={(val) => handleRangeInputChange(val, 0)}
-              disabled={disabled}
+              disabled={isDisabled}
               className="parameter-input__number"
               formatter={formatNumber}
               parser={parseNumber}
@@ -159,7 +170,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
               step={step}
               value={currentRangeValue[1]}
               onChange={(val) => handleRangeInputChange(val, 1)}
-              disabled={disabled}
+              disabled={isDisabled}
               className="parameter-input__number"
               formatter={formatNumber}
               parser={parseNumber}
@@ -172,9 +183,9 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
 
   // 单值模式渲染（默认）
   const currentValue = value || min;
-  
+
   return (
-    <div className={`parameter-input ${disabled ? 'parameter-input--disabled' : ''}`}>
+    <div className={`parameter-input ${getStateClassName()}`}>
       <div className="parameter-input__label">{label}</div>
       <div className="parameter-input__controls">
         <Slider
@@ -183,7 +194,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
           step={step}
           value={currentValue}
           onChange={handleSliderChange}
-          disabled={disabled}
+          disabled={isDisabled}
           className="parameter-input__slider"
         />
         <InputNumber
@@ -192,7 +203,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
           step={step}
           value={currentValue}
           onChange={handleInputChange}
-          disabled={disabled}
+          disabled={isDisabled}
           className="parameter-input__number"
           formatter={formatNumber}
           parser={parseNumber}

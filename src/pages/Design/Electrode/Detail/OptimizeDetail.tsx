@@ -170,7 +170,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
   ];
 
   return (
-    <div className="electrode-optimize-container">
+    <div className="electrode-optimize-container antd-readonly-style">
       {/* 页面标题和返回按钮 */}
       <div className="electrode-optimize-actions">
         <h1 className="electrode-optimize-title">
@@ -306,7 +306,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                 {t('design.electrode.optimize.targets', 'Targets')}
               </h3>
 
-              {/* 参数滑块 - disabled 模式 */}
+              {/* 参数滑块 - readonly 模式 */}
               <div className="electrode-optimize-parameters">
                 <ParameterInput
                   mode="range"
@@ -316,7 +316,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                   min={0}
                   max={20}
                   step={0.1}
-                  disabled
+                  readonly
                 />
                 <ParameterInput
                   mode="range"
@@ -326,7 +326,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                   min={0}
                   max={500}
                   step={1}
-                  disabled
+                  readonly
                 />
                 <ParameterInput
                   mode="range"
@@ -336,7 +336,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                   min={0}
                   max={20}
                   step={0.1}
-                  disabled
+                  readonly
                 />
                 <ParameterInput
                   mode="range"
@@ -346,7 +346,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                   min={0}
                   max={1500}
                   step={1}
-                  disabled
+                  readonly
                 />
               </div>
             </div>
