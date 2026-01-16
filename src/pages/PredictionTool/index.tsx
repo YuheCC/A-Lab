@@ -157,6 +157,20 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
     const avgCycleLife2 = apiData.avg_cycle_life_2 || 0;
     const avgCycleLife = avgCycleLife1 > 0 ? avgCycleLife1 : avgCycleLife2;
 
+    let modelName = apiData.model || '-';
+
+    if (apiData.model_id) {
+      const targetModel = recordModelOptions.find((item) => item.id === apiData.model_id);
+      if (targetModel) {
+        modelName = targetModel.model_name;
+      }
+    } else {
+      const defaultModel = recordModelOptions.find((item) => item.base_model_id === -2);
+      if (defaultModel) {
+        modelName = defaultModel.model_name;
+      }
+    }
+
     return {
       id: apiData.id.toString(),
       name: apiData.file_name,
@@ -165,7 +179,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
       avgCirculation: avgCycleLife > 0 ? `${avgCycleLife.toFixed(0)}` : t('predictionTool.results.unknown'),
       avgCycleLife1: avgCycleLife1,
       avgCycleLife2: avgCycleLife2,
-      model: apiData.model || 'Li-ion Cycle Predictor v2.1',
+      model: modelName,
       isMock: apiData.isMock || false,
       rawData: apiData
     };
