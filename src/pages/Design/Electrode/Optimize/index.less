@@ -188,6 +188,22 @@
   }
 }
 
+// 错误提示样式
+.electrode-optimize-error-message {
+  margin-top: @spacing-sm;
+  color: #ff4d4f;
+  font-size: 13px;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+
+  &::before {
+    content: '⚠';
+    margin-right: 6px;
+    font-size: 14px;
+  }
+}
+
 // 参数区域
 .electrode-optimize-parameters {
   margin-top: @spacing-2xl;
