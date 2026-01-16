@@ -163,6 +163,7 @@ export const getHistoryList = async (params: HistoryListParams = {}): Promise<Hi
     params: {
       page,
       page_size,
+      ...params,
     },
   });
 

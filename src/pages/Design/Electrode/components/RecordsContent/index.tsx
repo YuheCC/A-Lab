@@ -1,19 +1,16 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Radio, message, Spin } from 'antd';
-import { RefreshCw, Trash2, RotateCcw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@umijs/max';
-import dayjs, { Dayjs } from 'dayjs';
-import utc from 'dayjs/plugin/utc';
+import { Dayjs } from 'dayjs';
 import { formatUTCDateTime } from '@/utils/dateUtils';
+import { useDateFilter } from '@/hooks/useDateFilter';
 import * as electrodeModel from '../../model';
 import type { ElectrodeHistoryItem } from '../../model';
 import './index.less';
-
-// 扩展 dayjs 以支持 UTC
-dayjs.extend(utc);
 
 const RecordsContent: React.FC = () => {
   const { t } = useTranslation();
@@ -24,8 +21,17 @@ const RecordsContent: React.FC = () => {
 
   // 搜索和过滤状态
   const [searchKeyword, setSearchKeyword] = useState<string>('');
-  const [selectedDate, setSelectedDate] = useState<string>('');
   const [debouncedSearchKeyword, setDebouncedSearchKeyword] = useState<string>('');
+
+  // 使用日期筛选 hook
+  const {
+    selectedDate,
+    datePickerValue,
+    handleDateChange,
+    getUTCDateRange,
+    getDayjsLocale,
+    resetDate,
+  } = useDateFilter();
 
   // 数据状态
   const [records, setRecords] = useState<ElectrodeHistoryItem[]>([]);
@@ -58,21 +64,8 @@ const RecordsContent: React.FC = () => {
   const loadRecords = async () => {
     setLoading(true);
     try {
-      // 处理日期参数：将本地时区的日期转换为 UTC 时间范围
-      let createdAtParam = '';
-      if (selectedDate) {
-        const date = dayjs(selectedDate);
-        // 获取当天的开始时间（00:00:00）和结束时间（23:59:59）
-        const startOfDay = date.startOf('day');
-        const endOfDay = date.endOf('day');
-
-        // 转换为 UTC 时间
-        const startUTC = startOfDay.utc().format('YYYY-MM-DD HH:mm:ss');
-        const endUTC = endOfDay.utc().format('YYYY-MM-DD HH:mm:ss');
-
-        // 用逗号拼接两个时间点
-        createdAtParam = `${startUTC},${endUTC}`;
-      }
+      // 使用 hook 获取 UTC 时间范围
+      const createdAtParam = getUTCDateRange();
 
       const response = await electrodeModel.getElectrodeHistoryList({
         type: getTypeFromSubTab(activeSubTab),
@@ -139,13 +132,7 @@ const RecordsContent: React.FC = () => {
   // 重置所有过滤条件
   const handleReset = () => {
     setSearchKeyword('');
-    setSelectedDate('');
-  };
-
-  // 获取 dayjs locale
-  const getDayjsLocale = () => {
-    const lang = localStorage.getItem('language') || 'zh';
-    return lang === 'zh' ? 'zh-cn' : 'en';
+    resetDate();
   };
 
   return (
@@ -160,7 +147,7 @@ const RecordsContent: React.FC = () => {
                 setActiveSubTab(e.target.value);
                 // Tab 切换时清空搜索条件
                 setSearchKeyword('');
-                setSelectedDate('');
+                resetDate();
               }}
               buttonStyle="solid"
               className="records-radio-group"
@@ -191,10 +178,8 @@ const RecordsContent: React.FC = () => {
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={getDayjsLocale()}>
               <DatePicker
                 className="records-date-filter"
-                value={selectedDate ? dayjs(selectedDate) : null}
-                onChange={(date: Dayjs | null) => {
-                  setSelectedDate(date ? date.format('YYYY-MM-DD') : '');
-                }}
+                value={datePickerValue}
+                onChange={handleDateChange}
                 enableAccessibleFieldDOMStructure={false}
                 slotProps={{
                   textField: {

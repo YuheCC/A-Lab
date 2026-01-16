@@ -4,12 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs, { Dayjs } from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import 'dayjs/locale/en';
 import 'dayjs/locale/ja';
 import 'dayjs/locale/ko';
 import { Activity, X, RefreshCw } from 'lucide-react';
+import { useDateFilter } from '@/hooks/useDateFilter';
 import Button from '@/components/Button';
 import { getHistoryList, deleteHistory, getModelList, getBaseModelList, isMockModel, removeModel } from './model';
 import { formatUTCDateTime } from '@/utils/dateUtils';
@@ -37,23 +37,51 @@ interface PredictionToolProps {}
 const PredictionTool: React.FC<PredictionToolProps> = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
-  // Get dayjs locale based on current language
-  const getDayjsLocale = () => {
-    const lang = i18n.language || 'zh';
-    const localeMap: Record<string, string> = {
-      'zh': 'zh-cn',
-      'zh-CN': 'zh-cn',
-      'en': 'en',
-      'en-US': 'en',
-      'ja': 'ja',
-      'ja-JP': 'ja',
-      'ko': 'ko',
-      'ko-KR': 'ko',
-    };
-    return localeMap[lang] || 'zh-cn';
-  };
+  // 使用日期筛选 hook（PredictionTool 使用本地时间格式）
+  const {
+    selectedDate: recordSelectedDate,
+    datePickerValue: recordDatePickerValue,
+    handleDateChange: handleRecordDateChange,
+    getUTCDateRange: getRecordDateRange,
+    getDayjsLocale,
+    resetDate: resetRecordDate,
+  } = useDateFilter();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [historyData, setHistoryData] = useState<FileRecord[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(20);
+  const [total, setTotal] = useState(0);
+
+  // Models state
+  const [modelsLoading, setModelsLoading] = useState(false);
+  const [modelsError, setModelsError] = useState<string | null>(null);
+  const [modelsData, setModelsData] = useState<ModelListItem[]>([]);
+  const [modelsCurrentPage, setModelsCurrentPage] = useState(1);
+  const [modelsPageSize] = useState(20);
+  const [modelsTotal, setModelsTotal] = useState(0);
+
+  // Models filter state
+  const [modelSearchKeyword, setModelSearchKeyword] = useState<string>('');
+  const [selectedModelStatus, setSelectedModelStatus] = useState<string>('');
+  const [selectedBaseModel, setSelectedBaseModel] = useState<string>('');
+  const [selectedBaseModelId, setSelectedBaseModelId] = useState<number | undefined>(undefined);
+  const [baseModelOptions, setBaseModelOptions] = useState<Array<{ id: number; name: string }>>([]);
+
+  // Records filter state
+  const [recordSearchKeyword, setRecordSearchKeyword] = useState<string>('');
+  const [recordSelectedModel, setRecordSelectedModel] = useState<string>('all');
+  const [debouncedRecordId, setDebouncedRecordId] = useState<string>('');
+
+  // Model options for records filter (top 100 models)
+  const [recordModelOptions, setRecordModelOptions] = useState<ModelListItem[]>([]);
+
+  // Debounce timer ref
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Parse and validate record ID format (e.g., "PR-001" -> "1", "76" -> "76")
   const parseRecordId = (input: string): string | null => {
@@ -96,41 +124,6 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
       }
     };
   }, [recordSearchKeyword]);
-
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [historyData, setHistoryData] = useState<FileRecord[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(20);
-  const [total, setTotal] = useState(0);
-
-  // Models state
-  const [modelsLoading, setModelsLoading] = useState(false);
-  const [modelsError, setModelsError] = useState<string | null>(null);
-  const [modelsData, setModelsData] = useState<ModelListItem[]>([]);
-  const [modelsCurrentPage, setModelsCurrentPage] = useState(1);
-  const [modelsPageSize] = useState(20);
-  const [modelsTotal, setModelsTotal] = useState(0);
-
-  // Models filter state
-  const [modelSearchKeyword, setModelSearchKeyword] = useState<string>('');
-  const [selectedModelStatus, setSelectedModelStatus] = useState<string>('');
-  const [selectedBaseModel, setSelectedBaseModel] = useState<string>('');
-  const [selectedBaseModelId, setSelectedBaseModelId] = useState<number | undefined>(undefined);
-  const [baseModelOptions, setBaseModelOptions] = useState<Array<{ id: number; name: string }>>([]);
-
-  // Records filter state
-  const [recordSearchKeyword, setRecordSearchKeyword] = useState<string>('');
-  const [recordSelectedModel, setRecordSelectedModel] = useState<string>('all');
-  const [recordSelectedDate, setRecordSelectedDate] = useState<string>('');
-  const [debouncedRecordId, setDebouncedRecordId] = useState<string>('');
-
-  // Model options for records filter (top 100 models)
-  const [recordModelOptions, setRecordModelOptions] = useState<ModelListItem[]>([]);
-
-  // Debounce timer ref
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const getInitialTab = (): 'introduction' | 'records' | 'models' => {
     // Check if navigation state has activeTab (from train page)
@@ -198,10 +191,9 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
         params.model_id = parseInt(recordSelectedModel);
       }
 
-      // Add date filter (split to 0:00:00 - 23:59:59 of selected day)
+      // Add date filter using hook
       if (recordSelectedDate) {
-        const selectedDay = dayjs(recordSelectedDate);
-        params.created_at = `${selectedDay.format('YYYY-MM-DD')}T00:00:00,${selectedDay.format('YYYY-MM-DD')}T23:59:59`;
+        params.created_at = getRecordDateRange();
       }
 
       const response = await getHistoryList(params);
@@ -397,18 +389,6 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
     setSelectedModelStatus(e.target.value);
   };
 
-  const handleBaseModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = e.target.value;
-    setSelectedBaseModel(selectedValue);
-
-    if (selectedValue) {
-      const selectedOption = baseModelOptions.find(option => option.name === selectedValue);
-      setSelectedBaseModelId(selectedOption?.id);
-    } else {
-      setSelectedBaseModelId(undefined);
-    }
-  };
-
   const handleClearModelsFilters = () => {
     setModelSearchKeyword('');
     setSelectedModelStatus('');
@@ -421,7 +401,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
     setRecordSearchKeyword('');
     setDebouncedRecordId('');
     setRecordSelectedModel('all');
-    setRecordSelectedDate('');
+    resetRecordDate();
   };
 
   const getStatusLabel = (status: string) => {
@@ -529,10 +509,8 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                     >
                       <DatePicker
                         className="records-date-filter"
-                        value={recordSelectedDate ? dayjs(recordSelectedDate) : null}
-                        onChange={(date: Dayjs | null) => {
-                          setRecordSelectedDate(date ? date.format('YYYY-MM-DD') : '');
-                        }}
+                        value={recordDatePickerValue}
+                        onChange={handleRecordDateChange}
                         enableAccessibleFieldDOMStructure={false}
                         slotProps={{
                           textField: {
