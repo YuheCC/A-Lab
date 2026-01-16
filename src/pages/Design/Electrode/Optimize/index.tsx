@@ -22,6 +22,11 @@ import {
   getNpRatioByCellDesign,
   DEFAULT_VALUES,
 } from '../constants';
+import {
+  validateDimensionParameters,
+  dimensionParameterRanges,
+} from '../validation';
+import { useDebounce } from '@/hooks/useDebounce';
 import './index.less';
 
 const { Option } = Select;
@@ -46,11 +51,42 @@ const OptimizePage: React.FC = () => {
     volumetricEnergyDensity: PARAMETER_RANGES.volumetricEnergyDensity.default,
   });
 
+  // 错误状态
+  const [dimensionError, setDimensionError] = useState<string>('');
+
+  // ============ 防抖值 - 用于优化实时验证性能 ============
+  // Dimension 字段防抖（3个）
+  const debouncedWidth = useDebounce(formData.width, 300);
+  const debouncedLength = useDebounce(formData.length, 300);
+  const debouncedLayers = useDebounce(formData.layers, 300);
+
   // 根据 Cell Design 自动更新 NP Ratio
   useEffect(() => {
     const npRatio = getNpRatioByCellDesign(formData.cellDesign);
     setFormData((prev) => ({ ...prev, npRatio }));
   }, [formData.cellDesign]);
+
+  // ============ 实时验证 useEffect ============
+  // 实时验证 Dimension 参数
+  useEffect(() => {
+    // 构建 dimension 参数对象
+    const dimensionParams = {
+      width: debouncedWidth,
+      length: debouncedLength,
+      layers: debouncedLayers,
+    };
+
+    // 执行验证（实时验证跳过空值检查，只检查范围和业务规则）
+    const error = validateDimensionParameters(dimensionParams, t, { skipEmptyCheck: true });
+
+    // 更新错误状态
+    setDimensionError(error || '');
+  }, [
+    debouncedWidth,
+    debouncedLength,
+    debouncedLayers,
+    t,
+  ]);
 
   // 推荐结果状态
   const [recommendations, setRecommendations] = useState<DesignRecommendation[]>([]);
@@ -65,15 +101,44 @@ const OptimizePage: React.FC = () => {
 
   // 处理计算
   const handleCalculate = async () => {
-    // 验证表单
+    // 验证表单 - 材料选择
     if (!formData.cellDesign || !formData.anodeActiveMaterial || !formData.cathodeActiveMaterial) {
       message.error(t('design.electrode.optimize.messages.fillAllFields'));
       return;
     }
-    
-    // 验证 Cathode Dimension 字段
+
+    // 验证 Cathode Dimension 字段（空值检查）
     if (!formData.width || !formData.length || !formData.layers) {
-      message.error(t('design.electrode.optimize.messages.fillAllDimensions'));
+      // 通过二次验证设置错误状态，页面会显示错误提示
+      const emptyError = validateDimensionParameters({
+        width: formData.width,
+        length: formData.length,
+        layers: formData.layers,
+      }, t);
+      if (emptyError) {
+        setDimensionError(emptyError);
+      }
+      return;
+    }
+
+    // 首先检查实时验证的错误状态
+    // 如果存在任何错误，直接返回，不执行计算
+    if (dimensionError) {
+      console.warn('[OptimizePage] Validation failed:', { dimensionError });
+      return;
+    }
+
+    // 二次验证（防御性编程，确保数据一致性）
+    // 这是为了防止状态异步更新导致的问题
+    const dimensionValidationError = validateDimensionParameters({
+      width: formData.width,
+      length: formData.length,
+      layers: formData.layers,
+    }, t);
+
+    if (dimensionValidationError) {
+      setDimensionError(dimensionValidationError);
+      console.error('[OptimizePage] Double-check validation failed');
       return;
     }
 
@@ -306,6 +371,13 @@ const OptimizePage: React.FC = () => {
                   />
                 </div>
               </div>
+
+              {/* 尺寸错误提示 */}
+              {dimensionError && (
+                <div className="electrode-optimize-error-message">
+                  {dimensionError}
+                </div>
+              )}
             </div>
 
             {/* Targets 分组 */}
