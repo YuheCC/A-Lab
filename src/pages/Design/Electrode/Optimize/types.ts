@@ -1,4 +1,5 @@
 // TypeScript 类型定义 - Optimize 页面
+import type { OptimizeResultItemDTO } from '@/services/electrode/types';
 
 // 设计目标表单数据
 export interface DesignTargetsFormData {
@@ -63,6 +64,26 @@ export interface AnodeParameters {
   activeMaterial2: string; // Active material-2 Gr-S-I (%)
   arealLoading: string; // Areal Loading (mAh/cm²)
   pressDensity: string; // Press Density (g/cc)
+}
+
+// 偏差字段类型
+export type DeviatedFieldType = 'designCapacity' | 'specificEnergy' | 'thickness' | 'volumetricEnergyDensity';
+
+// 带偏差标记的推荐结果
+export interface DesignRecommendationWithDeviation extends DesignRecommendation {
+  deviatedFields: DeviatedFieldType[];
+}
+
+// 分组后的推荐结果
+export interface GroupedRecommendations {
+  valid: DesignRecommendation[];
+  invalid: DesignRecommendationWithDeviation[];
+}
+
+// 分组后的完整 API 数据
+export interface GroupedFullResults {
+  valid: OptimizeResultItemDTO[];
+  invalid: OptimizeResultItemDTO[];
 }
 
 // 设计详情数据

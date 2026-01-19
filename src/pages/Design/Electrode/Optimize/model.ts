@@ -8,7 +8,11 @@ import { generateMockDetail } from './example';
 import type {
   DesignTargetsFormData,
   DesignRecommendation,
+  DesignRecommendationWithDeviation,
   DesignDetails,
+  DeviatedFieldType,
+  GroupedRecommendations,
+  GroupedFullResults,
 } from './types';
 
 /**
@@ -30,15 +34,63 @@ const transformToRecommendation = (
 });
 
 /**
+ * 检查单条结果是否有偏差（超出目标范围）
+ * @param item API 返回的单条结果
+ * @param formData 表单数据（包含目标范围）
+ * @returns 偏差字段数组
+ */
+const checkDeviations = (
+  item: OptimizeResultItemDTO,
+  formData: DesignTargetsFormData,
+): DeviatedFieldType[] => {
+  const deviatedFields: DeviatedFieldType[] = [];
+
+  // 检查 Design Capacity
+  if (
+    item.design_capacity < formData.designCapacity[0] ||
+    item.design_capacity > formData.designCapacity[1]
+  ) {
+    deviatedFields.push('designCapacity');
+  }
+
+  // 检查 Specific Energy (Gravimetric Energy Density)
+  if (
+    item.specific_ED < formData.specificEnergy[0] ||
+    item.specific_ED > formData.specificEnergy[1]
+  ) {
+    deviatedFields.push('specificEnergy');
+  }
+
+  // 检查 Jelly Roll Thickness
+  if (
+    item.jelly_roll_thickness < formData.thickness[0] ||
+    item.jelly_roll_thickness > formData.thickness[1]
+  ) {
+    deviatedFields.push('thickness');
+  }
+
+  // 检查 Volumetric Energy Density
+  if (
+    item.volumetric_ED < formData.volumetricEnergyDensity[0] ||
+    item.volumetric_ED > formData.volumetricEnergyDensity[1]
+  ) {
+    deviatedFields.push('volumetricEnergyDensity');
+  }
+
+  return deviatedFields;
+};
+
+/**
  * 获取优化推荐列表
+ * 后端直接返回 valid/invalid 分组结构，仅对 invalid 数据计算偏差字段
  * @param formData 表单数据
- * @returns 推荐结果列表和完整数据
+ * @returns 分组后的推荐结果和完整数据
  */
 export const getOptimizeRecommendations = async (
   formData: DesignTargetsFormData,
-): Promise<{ data: DesignRecommendation[]; fullResults: OptimizeResultItemDTO[] }> => {
-  // 调用真实 API
-  const results = await optimizeElectrodeDesign({
+): Promise<{ data: GroupedRecommendations; fullResults: GroupedFullResults }> => {
+  // 调用真实 API - 后端直接返回 { valid: [], invalid: [] } 结构
+  const apiResult = await optimizeElectrodeDesign({
     cell_design: formData.cellDesign,
     np_ratio: formData.npRatio,
     cathode_active_material: formData.cathodeActiveMaterial,
@@ -55,10 +107,32 @@ export const getOptimizeRecommendations = async (
     },
   });
 
-  // 返回转换后的数据和完整数据
+  // 转换 valid 数据 - 直接转换，无需计算偏差
+  const validData: DesignRecommendation[] = apiResult.valid.map(
+    (item, index) => transformToRecommendation(item, index),
+  );
+
+  // 转换 invalid 数据 - 需要计算偏差字段
+  const invalidData: DesignRecommendationWithDeviation[] = apiResult.invalid.map(
+    (item, index) => {
+      const recommendation = transformToRecommendation(item, index);
+      const deviatedFields = checkDeviations(item, formData);
+      return {
+        ...recommendation,
+        deviatedFields,
+      };
+    },
+  );
+
   return {
-    data: results.map(transformToRecommendation),
-    fullResults: results,
+    data: {
+      valid: validData,
+      invalid: invalidData,
+    },
+    fullResults: {
+      valid: apiResult.valid,
+      invalid: apiResult.invalid,
+    },
   };
 };
 

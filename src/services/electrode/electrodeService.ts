@@ -21,6 +21,7 @@ import {
   type ElectrodeModelResultDTO,
   type ElectrodeOptimizeParams,
   type OptimizeResultItemDTO,
+  type OptimizeGroupedResultDTO,
   type ElectrodeOptimizeResponseDTO,
   type OptimizeHistoryItem,
   type OptimizeModelParamsDTO,
@@ -394,7 +395,7 @@ export async function predictElectrodePerformance(
  * Electrode Inverse Design Optimization
  *
  * @param params - 优化参数（使用区间模式的 model_params）
- * @returns 优化结果列表（多条推荐结果）
+ * @returns 优化结果（分组结构：valid/invalid）
  *
  * @example
  * ```typescript
@@ -414,12 +415,12 @@ export async function predictElectrodePerformance(
  *     volumetric_ED: [935, 970],
  *   },
  * });
- * // results 是 OptimizeResultItemDTO[] 数组
+ * // results 是 { valid: [], invalid: [] } 结构
  * ```
  */
 export async function optimizeElectrodeDesign(
   params: ElectrodeOptimizeParams,
-): Promise<OptimizeResultItemDTO[]> {
+): Promise<OptimizeGroupedResultDTO> {
   const env = urlConfig.getEnvironment();
   const endpoint = getElectrodeEndpoint(env, 'optimize');
   const url = urlConfig.buildFullURL(endpoint);
@@ -432,7 +433,7 @@ export async function optimizeElectrodeDesign(
     },
   });
 
-  // 从响应的 model_result 字段获取结果数组
+  // 从响应的 model_result 字段获取分组结果
   const rawData = response.data as ElectrodeOptimizeResponseDTO;
   return rawData.model_result;
 }

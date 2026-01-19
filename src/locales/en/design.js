@@ -425,7 +425,11 @@ export default {
                 calculateSuccess: "Recommendations calculated successfully",
                 calculateError: "Failed to calculate recommendations",
                 loadDetailsError: "Failed to load design details"
-            }
+            },
+            additionalPrompt: "Would you like to view other recommendations? (Target values may have slight deviations)",
+            additionalRecommendations: "Additional Recommendations (with slight deviations)",
+            expand: "Expand",
+            collapse: "Collapse"
         },
         records: {
             resultPrediction: "Performance Prediction",

@@ -13,6 +13,9 @@ import { getOptimizeRecommendations } from './model';
 import {
   DesignTargetsFormData,
   DesignRecommendation,
+  DesignRecommendationWithDeviation,
+  GroupedRecommendations,
+  GroupedFullResults,
   PARAMETER_RANGES,
 } from './types';
 import {
@@ -88,11 +91,18 @@ const OptimizePage: React.FC = () => {
     t,
   ]);
 
-  // 推荐结果状态
-  const [recommendations, setRecommendations] = useState<DesignRecommendation[]>([]);
-  const [fullResults, setFullResults] = useState<OptimizeResultItemDTO[]>([]); // 保存完整的 API 数据
+  // 推荐结果状态 - 分组数据
+  const [recommendations, setRecommendations] = useState<GroupedRecommendations>({
+    valid: [],
+    invalid: [],
+  });
+  const [fullResults, setFullResults] = useState<GroupedFullResults>({
+    valid: [],
+    invalid: [],
+  });
   const [loading, setLoading] = useState(false);
   const [hasCalculated, setHasCalculated] = useState(false); // 是否已计算过
+  const [isAdditionalExpanded, setIsAdditionalExpanded] = useState(false); // 额外推荐折叠状态
 
   // Modal 状态
   const [modalVisible, setModalVisible] = useState(false);
@@ -147,8 +157,9 @@ const OptimizePage: React.FC = () => {
     try {
       const response = await getOptimizeRecommendations(formData);
       setRecommendations(response.data);
-      setFullResults(response.fullResults); // 保存完整的 API 数据
-      setHasCalculated(true); // 标记已计算
+      setFullResults(response.fullResults);
+      setHasCalculated(true);
+      setIsAdditionalExpanded(false); // 重置折叠状态
       message.success(t('design.electrode.optimize.messages.calculateSuccess'));
     } catch (error) {
       console.error('Calculate error:', error);
@@ -159,9 +170,10 @@ const OptimizePage: React.FC = () => {
   };
 
   // 处理查看详情
-  const handleViewDetails = (record: DesignRecommendation, index: number) => {
-    // 从完整数据中获取对应的详细信息
-    const fullData = fullResults[index];
+  const handleViewDetails = (record: DesignRecommendation, index: number, isInvalid = false) => {
+    // 根据来源从 fullResults.valid 或 fullResults.invalid 获取详情数据
+    const sourceData = isInvalid ? fullResults.invalid : fullResults.valid;
+    const fullData = sourceData[index];
     if (fullData) {
       setSelectedDesign(fullData);
       setSelectedIndex(index);
@@ -208,6 +220,65 @@ const OptimizePage: React.FC = () => {
       width: 100,
       render: (_: any, record: DesignRecommendation, index: number) => (
         <a className="electrode-optimize-details-link" onClick={() => handleViewDetails(record, index)}>
+          {t('design.electrode.optimize.details')}
+        </a>
+      ),
+    },
+  ];
+
+  // Invalid 表格列配置 - 显示偏差值为绿色
+  const invalidColumns: ColumnsType<DesignRecommendationWithDeviation> = [
+    {
+      title: t('design.electrode.optimize.no'),
+      dataIndex: 'rank',
+      width: 80,
+      align: 'center',
+    },
+    {
+      title: t('design.electrode.optimize.designCapacity') + ' (Ah)',
+      dataIndex: 'designCapacity',
+      width: 180,
+      render: (value: number, record: DesignRecommendationWithDeviation) => (
+        <span className={record.deviatedFields.includes('designCapacity') ? 'deviated-value' : ''}>
+          {value.toFixed(2)}
+        </span>
+      ),
+    },
+    {
+      title: t('design.electrode.optimize.specificEnergy') + ' (Wh/kg)',
+      dataIndex: 'specificEnergy',
+      width: 200,
+      render: (value: number, record: DesignRecommendationWithDeviation) => (
+        <span className={record.deviatedFields.includes('specificEnergy') ? 'deviated-value' : ''}>
+          {value.toFixed(2)}
+        </span>
+      ),
+    },
+    {
+      title: t('design.electrode.optimize.jellyRollThickness') + ' (mm)',
+      dataIndex: 'thickness',
+      width: 200,
+      render: (value: number, record: DesignRecommendationWithDeviation) => (
+        <span className={record.deviatedFields.includes('thickness') ? 'deviated-value' : ''}>
+          {value.toFixed(2)}
+        </span>
+      ),
+    },
+    {
+      title: t('design.electrode.optimize.volumetricEnergyDensity') + ' (Wh/L)',
+      dataIndex: 'volumetricEnergyDensity',
+      width: 220,
+      render: (value: number, record: DesignRecommendationWithDeviation) => (
+        <span className={record.deviatedFields.includes('volumetricEnergyDensity') ? 'deviated-value' : ''}>
+          {value.toFixed(2)}
+        </span>
+      ),
+    },
+    {
+      title: t('design.electrode.optimize.actions'),
+      width: 100,
+      render: (_: any, record: DesignRecommendationWithDeviation, index: number) => (
+        <a className="electrode-optimize-details-link" onClick={() => handleViewDetails(record, index, true)}>
           {t('design.electrode.optimize.details')}
         </a>
       ),
@@ -456,11 +527,46 @@ const OptimizePage: React.FC = () => {
             </h2>
             <Table
               columns={columns}
-              dataSource={recommendations}
+              dataSource={recommendations.valid}
               rowKey="id"
               pagination={false}
               className="electrode-optimize-table"
             />
+
+            {/* 额外推荐折叠提示栏 - 仅在有 invalid 数据时显示 */}
+            {recommendations.invalid.length > 0 && (
+              <>
+                <div className="electrode-optimize-additional-banner">
+                  <span className="electrode-optimize-additional-banner-text">
+                    {t('design.electrode.optimize.additionalPrompt')}
+                  </span>
+                  <button
+                    className="electrode-optimize-additional-toggle-btn"
+                    onClick={() => setIsAdditionalExpanded(!isAdditionalExpanded)}
+                  >
+                    {isAdditionalExpanded
+                      ? t('design.electrode.optimize.collapse')
+                      : t('design.electrode.optimize.expand')}
+                  </button>
+                </div>
+
+                {/* 展开后的额外表格区域 */}
+                {isAdditionalExpanded && (
+                  <div className="electrode-optimize-additional-section">
+                    <h3 className="electrode-optimize-section-title">
+                      {t('design.electrode.optimize.additionalRecommendations')}
+                    </h3>
+                    <Table
+                      columns={invalidColumns}
+                      dataSource={recommendations.invalid}
+                      rowKey="id"
+                      pagination={false}
+                      className="electrode-optimize-table electrode-optimize-table-additional"
+                    />
+                  </div>
+                )}
+              </>
+            )}
           </div>
         )}
       </div>
