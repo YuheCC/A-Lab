@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@umijs/max';
 import { LeftOutlined } from '@ant-design/icons';
@@ -111,6 +111,9 @@ const OptimizePage: React.FC = () => {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [modalLoading, setModalLoading] = useState(false);
 
+  // 额外推荐区域的 ref
+  const additionalSectionRef = useRef<HTMLDivElement>(null);
+
   // 处理额外推荐的展开/折叠
   const handleToggleAdditional = () => {
     if (isAdditionalExpanded) {
@@ -123,6 +126,15 @@ const OptimizePage: React.FC = () => {
     } else {
       // 直接展开
       setIsAdditionalExpanded(true);
+      // 延迟滚动到可视区域（等待 DOM 更新）
+      setTimeout(() => {
+        if (additionalSectionRef.current) {
+          additionalSectionRef.current.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest'
+          });
+        }
+      }, 100);
     }
   };
 
@@ -569,7 +581,10 @@ const OptimizePage: React.FC = () => {
 
                 {/* 展开后的额外表格区域 */}
                 {(isAdditionalExpanded || isCollapsing) && (
-                  <div className={`electrode-optimize-additional-section ${isCollapsing ? 'collapsing' : ''}`}>
+                  <div
+                    ref={additionalSectionRef}
+                    className={`electrode-optimize-additional-section ${isCollapsing ? 'collapsing' : ''}`}
+                  >
                     <h3 className="electrode-optimize-section-title">
                       {t('design.electrode.optimize.additionalRecommendations')}
                     </h3>

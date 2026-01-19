@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import type { TFunction } from 'i18next';
 import { LeftOutlined } from '@ant-design/icons';
 import { Select, Table, Modal } from 'antd';
@@ -122,6 +122,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isAdditionalExpanded, setIsAdditionalExpanded] = useState(false);
   const [isCollapsing, setIsCollapsing] = useState(false);
+  const additionalSectionRef = useRef<HTMLDivElement>(null);
 
   /**
    * 检查单条结果是否有偏差（超出目标范围）
@@ -184,6 +185,15 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
     } else {
       // 直接展开
       setIsAdditionalExpanded(true);
+      // 延迟滚动到可视区域（等待 DOM 更新）
+      setTimeout(() => {
+        if (additionalSectionRef.current) {
+          additionalSectionRef.current.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest'
+          });
+        }
+      }, 100);
     }
   };
 
@@ -527,7 +537,10 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
 
           {/* Additional Recommendations 表格（可折叠） */}
           {(isAdditionalExpanded || isCollapsing) && modelResult.invalid.length > 0 && (
-            <div className={`electrode-optimize-additional-section ${isCollapsing ? 'collapsing' : ''}`}>
+            <div
+              ref={additionalSectionRef}
+              className={`electrode-optimize-additional-section ${isCollapsing ? 'collapsing' : ''}`}
+            >
               <h3 className="electrode-optimize-section-title">
                 {t('design.electrode.optimize.additionalRecommendations', 'Additional Recommendations')}
               </h3>
