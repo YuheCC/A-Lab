@@ -318,39 +318,44 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: @color-gray-800;
+  background: @color-positive-light-bg-alt;
+  border: 1px solid @color-positive-border;
   border-radius: @radius-lg;
   padding: @spacing-lg @spacing-xl;
   margin-top: @spacing-xl;
   margin-bottom: @spacing-lg;
+  gap: @spacing-lg;
 }
 
 .electrode-optimize-additional-banner-text {
-  color: #ffffff;
+  color: @color-gray-800;
   font-size: @font-size-base;
   font-weight: @font-weight-normal;
-}
-
-.electrode-optimize-additional-toggle-btn {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: @radius-md;
-  padding: @spacing-sm @spacing-lg;
-  color: #ffffff;
-  font-size: @font-size-base;
-  font-weight: @font-weight-medium;
-  cursor: pointer;
-  transition: @transition-fast;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.5);
-  }
+  flex: 1;
 }
 
 // 额外推荐区域
 .electrode-optimize-additional-section {
   animation: fadeInPanel 0.3s ease-out;
+  overflow: hidden;
+}
+
+// 额外推荐区域 - 折叠动画
+.electrode-optimize-additional-section.collapsing {
+  animation: fadeOutPanel 0.3s ease-out forwards;
+}
+
+@keyframes fadeOutPanel {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 1000px;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+    max-height: 0;
+  }
 }
 
 // 额外推荐表格 - 偏差值高亮（绿色）

@@ -103,12 +103,28 @@ const OptimizePage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [hasCalculated, setHasCalculated] = useState(false); // 是否已计算过
   const [isAdditionalExpanded, setIsAdditionalExpanded] = useState(false); // 额外推荐折叠状态
+  const [isCollapsing, setIsCollapsing] = useState(false); // 折叠动画状态
 
   // Modal 状态
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedDesign, setSelectedDesign] = useState<OptimizeResultItemDTO | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [modalLoading, setModalLoading] = useState(false);
+
+  // 处理额外推荐的展开/折叠
+  const handleToggleAdditional = () => {
+    if (isAdditionalExpanded) {
+      // 开始折叠动画
+      setIsCollapsing(true);
+      setTimeout(() => {
+        setIsAdditionalExpanded(false);
+        setIsCollapsing(false);
+      }, 300); // 动画持续时间匹配 CSS
+    } else {
+      // 直接展开
+      setIsAdditionalExpanded(true);
+    }
+  };
 
   // 处理计算
   const handleCalculate = async () => {
@@ -540,19 +556,20 @@ const OptimizePage: React.FC = () => {
                   <span className="electrode-optimize-additional-banner-text">
                     {t('design.electrode.optimize.additionalPrompt')}
                   </span>
-                  <button
-                    className="electrode-optimize-additional-toggle-btn"
-                    onClick={() => setIsAdditionalExpanded(!isAdditionalExpanded)}
+                  <Button
+                    variant="primary"
+                    size="small"
+                    onClick={handleToggleAdditional}
                   >
                     {isAdditionalExpanded
                       ? t('design.electrode.optimize.collapse')
                       : t('design.electrode.optimize.expand')}
-                  </button>
+                  </Button>
                 </div>
 
                 {/* 展开后的额外表格区域 */}
-                {isAdditionalExpanded && (
-                  <div className="electrode-optimize-additional-section">
+                {(isAdditionalExpanded || isCollapsing) && (
+                  <div className={`electrode-optimize-additional-section ${isCollapsing ? 'collapsing' : ''}`}>
                     <h3 className="electrode-optimize-section-title">
                       {t('design.electrode.optimize.additionalRecommendations')}
                     </h3>
