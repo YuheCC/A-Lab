@@ -196,7 +196,7 @@ const DetailPage: React.FC = () => {
                                 <tr
                                   key={item.id}
                                   className={isSelected ? 'selected-row' : ''}
-                                  onClick={() => setSelectedBarcode(item.barcode)}
+                                  // onClick={() => setSelectedBarcode(item.barcode)}
                                   style={{ cursor: 'pointer' }}
                                 >
                                   <td className="barcode-cell" title={item.barcode}>{item.barcode}</td>
@@ -229,8 +229,8 @@ const DetailPage: React.FC = () => {
                           <div className="chart-container">
                             <CycleLifeLineChart
                               brcodeData={detailData.brcode_data}
-                              selectedBarcode={selectedBarcode}
-                              onBarcodeSelect={setSelectedBarcode}
+                              // selectedBarcode={selectedBarcode}
+                              // onBarcodeSelect={setSelectedBarcode}
                             />
                           </div>
                         </div>
@@ -241,8 +241,8 @@ const DetailPage: React.FC = () => {
                           <div className="chart-container">
                             <CycleLifeScatterChart
                               brcodeData={detailData.brcode_data}
-                              selectedBarcode={selectedBarcode}
-                              onBarcodeSelect={setSelectedBarcode}
+                              // selectedBarcode={selectedBarcode}
+                              // onBarcodeSelect={setSelectedBarcode}
                             />
                           </div>
                         </div>
