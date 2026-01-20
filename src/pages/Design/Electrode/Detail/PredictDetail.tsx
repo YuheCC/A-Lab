@@ -280,7 +280,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                 </h3>
                 <div className="electrode-predict-dimension-grid">
                   <div className="electrode-predict-dimension-item">
-                    <label className="electrode-predict-label-small">
+                    <label className="electrode-predict-label">
                       {t('design.electrode.predict.width', 'Width (mm)')}
                     </label>
                     <Input
@@ -290,7 +290,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                     />
                   </div>
                   <div className="electrode-predict-dimension-item">
-                    <label className="electrode-predict-label-small">
+                    <label className="electrode-predict-label">
                       {t('design.electrode.predict.length', 'Length (mm)')}
                     </label>
                     <Input
@@ -300,7 +300,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                     />
                   </div>
                   <div className="electrode-predict-dimension-item">
-                    <label className="electrode-predict-label-small">
+                    <label className="electrode-predict-label">
                       {t('design.electrode.predict.layers', 'Layers')}
                     </label>
                     <Input

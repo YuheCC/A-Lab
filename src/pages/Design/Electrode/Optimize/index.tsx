@@ -188,10 +188,10 @@ const OptimizePage: React.FC = () => {
       setFullResults(response.fullResults);
       setHasCalculated(true);
       setIsAdditionalExpanded(false); // 重置折叠状态
-      message.success(t('design.electrode.optimize.messages.calculateSuccess'));
+      // message.success(t('design.electrode.optimize.messages.calculateSuccess'));
     } catch (error) {
       console.error('Calculate error:', error);
-      message.error(t('design.electrode.optimize.messages.calculateError'));
+      // message.error(t('design.electrode.optimize.messages.calculateError'));
     } finally {
       setLoading(false);
     }
