@@ -84,12 +84,12 @@ export const isAssistantMessage = (message: Message): boolean => {
 };
 
 /**
- * 判断是否为deep space消息对象
+ * 判断是否为deep space消息对象（用于控制PDF下载按钮显示）
  * @param message 消息对象
- * @returns boolean
+ * @returns boolean - 当 msg_type 为 'multi-agent' 且消息已完成（is_running === false）时返回 true
  */
 export const isDeepSpaceMessage = (message: Message): boolean => {
-  return message.msg_type === 'multi-agent';
+  return message.msg_type === 'multi-agent' && message.is_running === false;
 };
 
 /**

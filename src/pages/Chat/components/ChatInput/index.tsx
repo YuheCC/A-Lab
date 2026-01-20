@@ -218,6 +218,8 @@ const ChatInput: FC<ChatInputProps> = ({
       const backendMode = backendModeMap[currentMode];
       let mode: ChatMode = backendMode;
       // 如果是deep-space模式且有消息历史，默认使用clarify模式
+      console.log('backendMode', backendMode);
+      console.log('messages', messages);
       if(backendMode === 'deep-space' && messages.length > 0 && messages[messages.length - 1].msg_type === 'multi-agent-clarify'){
         mode = 'clarify';
       }

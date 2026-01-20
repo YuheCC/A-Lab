@@ -373,6 +373,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const messageBody = data?.data ?? data;
             const extraData = extractExtraData(messageBody);
             const toolStats = extractToolStats(messageBody);
+            // 提取 msg_type 字段，用于业务场景区分（如判断是否显示 PDF 下载按钮）
+            const msgType = data?.msg_type ?? data?.msgType ?? messageBody?.msg_type ?? messageBody?.msgType;
 
             // 若无 chat_id 或与当前会话不匹配，忽略
             if (!incomingChatId || !currentChatId || Number(incomingChatId) !== currentChatId) {
@@ -418,15 +420,19 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                         content: botChunksRef.current[key],
                         showRegenerate: existingMessage.showRegenerate ?? isNewSessionMessage,
                         ...(extraData ? { extraData } : {}),
-                        ...(toolStats ? { toolStats } : {})
+                        ...(toolStats ? { toolStats } : {}),
+                        ...(msgType ? { msg_type: msgType } : {})
                     } as Message
-                    : createAssistantMessage(botChunksRef.current[key], targetId, isNewSessionMessage);
+                    : createAssistantMessage(botChunksRef.current[key], targetId, isNewSessionMessage, msgType);
 
                 if (extraData) {
                     (updatedMessage as Message).extraData = extraData;
                 }
                 if (toolStats) {
                     (updatedMessage as Message).toolStats = toolStats;
+                }
+                if (msgType) {
+                    (updatedMessage as Message).msg_type = msgType;
                 }
 
                 // 使用精确更新，避免全量刷新
@@ -439,7 +445,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 for (const possibleId of possibleIds) {
                     const existingMessage = messages.find(msg => String(msg.id) === String(possibleId));
                     if (existingMessage) {
-                        upsertMessage({ ...existingMessage, extraData });
+                        upsertMessage({ ...existingMessage, extraData, ...(msgType ? { msg_type: msgType } : {}) });
                         break;
                     }
                 }
@@ -451,7 +457,20 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 for (const possibleId of possibleIds) {
                     const existingMessage = messages.find(msg => String(msg.id) === String(possibleId));
                     if (existingMessage) {
-                        upsertMessage({ ...existingMessage, toolStats });
+                        upsertMessage({ ...existingMessage, toolStats, ...(msgType ? { msg_type: msgType } : {}) });
+                        break;
+                    }
+                }
+            }
+
+            // 单独处理 msg_type 更新（当没有 chunk、extraData、toolStats 时）
+            if (msgType && !(isChunk && chunk) && !extraData && !toolStats && messageId !== undefined && messageId !== null) {
+                const key = String(messageId);
+                const possibleIds = [key, `assistant-${key}`];
+                for (const possibleId of possibleIds) {
+                    const existingMessage = messages.find(msg => String(msg.id) === String(possibleId));
+                    if (existingMessage) {
+                        upsertMessage({ ...existingMessage, msg_type: msgType });
                         break;
                     }
                 }
