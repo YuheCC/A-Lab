@@ -89,7 +89,7 @@ export const isAssistantMessage = (message: Message): boolean => {
  * @returns boolean - 当 msg_type 为 'multi-agent' 且消息已完成（is_running === false）时返回 true
  */
 export const isDeepSpaceMessage = (message: Message): boolean => {
-  return message.msg_type === 'multi-agent' && message.is_running === false;
+  return message.msg_type === 'multi-agent';
 };
 
 /**
