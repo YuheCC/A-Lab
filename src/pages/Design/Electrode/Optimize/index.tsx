@@ -558,11 +558,11 @@ const OptimizePage: React.FC = () => {
               <div className="electrode-optimize-empty-state">
                 <div className="electrode-optimize-empty-icon">
                   <div className="electrode-optimize-empty-icon-circle">
-                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <circle cx="21" cy="21" r="12" stroke="#56B26A" strokeWidth="2.5" fill="none" />
-                      <line x1="30" y1="30" x2="40" y2="40" stroke="#56B26A" strokeWidth="2.5" strokeLinecap="round" />
-                      <line x1="16" y1="16" x2="26" y2="26" stroke="#56B26A" strokeWidth="2.5" strokeLinecap="round" />
-                      <line x1="26" y1="16" x2="16" y2="26" stroke="#56B26A" strokeWidth="2.5" strokeLinecap="round" />
+                    <svg width="75" height="75" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="24" cy="24" r="12" stroke="#5fd98f" strokeWidth="3" fill="none" />
+                      <line x1="33" y1="33" x2="38" y2="38" stroke="#5fd98f" strokeWidth="3" strokeLinecap="round" />
+                      <line x1="19" y1="19" x2="29" y2="29" stroke="#5fd98f" strokeWidth="3" strokeLinecap="round" />
+                      <line x1="29" y1="19" x2="19" y2="29" stroke="#5fd98f" strokeWidth="3" strokeLinecap="round" />
                     </svg>
                   </div>
                   <div className="electrode-optimize-empty-dot electrode-optimize-empty-dot--top" />

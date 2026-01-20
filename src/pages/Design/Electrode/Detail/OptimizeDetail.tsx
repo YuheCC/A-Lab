@@ -509,13 +509,37 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
           <h2 className="electrode-optimize-section-title">
             {t('design.electrode.optimize.designRecommendations', 'Design Recommendations')}
           </h2>
-          <Table
-            columns={columns}
-            dataSource={modelResult.valid}
-            rowKey={(_, index) => `valid-result-${index}`}
-            pagination={false}
-            className="electrode-optimize-table"
-          />
+
+          {modelResult.valid.length === 0 ? (
+            <div className="electrode-optimize-empty-state">
+              <div className="electrode-optimize-empty-icon">
+                <div className="electrode-optimize-empty-icon-circle">
+                  <svg width="75" height="75" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="24" cy="24" r="12" stroke="#5fd98f" strokeWidth="3" fill="none" />
+                    <line x1="33" y1="33" x2="38" y2="38" stroke="#5fd98f" strokeWidth="3" strokeLinecap="round" />
+                    <line x1="19" y1="19" x2="29" y2="29" stroke="#5fd98f" strokeWidth="3" strokeLinecap="round" />
+                    <line x1="29" y1="19" x2="19" y2="29" stroke="#5fd98f" strokeWidth="3" strokeLinecap="round" />
+                  </svg>
+                </div>
+                <div className="electrode-optimize-empty-dot electrode-optimize-empty-dot--top" />
+                <div className="electrode-optimize-empty-dot electrode-optimize-empty-dot--bottom" />
+              </div>
+              <h3 className="electrode-optimize-empty-title">
+                {t('design.electrode.optimize.emptyState.title', 'No Matching Designs Found')}
+              </h3>
+              <p className="electrode-optimize-empty-description">
+                {t('design.electrode.optimize.emptyState.description', 'We couldn\'t find any designs that match your current criteria. Try adjusting your target values or check out other recommendations below.')}
+              </p>
+            </div>
+          ) : (
+            <Table
+              columns={columns}
+              dataSource={modelResult.valid}
+              rowKey={(_, index) => `valid-result-${index}`}
+              pagination={false}
+              className="electrode-optimize-table"
+            />
+          )}
 
           {/* Additional Recommendations 折叠提示 */}
           {modelResult.invalid.length > 0 && (

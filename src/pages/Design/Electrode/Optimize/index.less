@@ -330,7 +330,7 @@
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background: rgba(86, 178, 106, 0.1);
+  background: #f0fdf5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -338,19 +338,23 @@
 
 .electrode-optimize-empty-dot {
   position: absolute;
-  width: 8px;
-  height: 8px;
   border-radius: 50%;
   background: @color-accent;
 
   &--top {
+    width: 10px;
+    height: 10px;
     top: -4px;
     right: -4px;
+    opacity: 0.6;
   }
 
   &--bottom {
+    width: 8px;
+    height: 8px;
     bottom: 8px;
     left: -8px;
+    opacity: 0.4;
   }
 }
 
