@@ -5,6 +5,10 @@
   background: #ffffff;
   min-height: calc(100vh - 66px);
   padding: @spacing-xl;
+
+  .parameter-input__label{
+    font-size: @font-size-base;
+  }
 }
 
 // 标题和返回按钮区域
@@ -57,23 +61,24 @@
 }
 
 .electrode-optimize-section-title {
-  font-size: @font-size-lg;
+  font-size: 20px;
   font-weight: @font-weight-semibold;
   color: @color-gray-800;
   margin: 0 0 @spacing-xl 0;
 }
 
-// 表单容器（卡片样式）
+// 表单容器
 .electrode-optimize-form-container {
   background: #ffffff;
-  border: 1px solid @color-gray-200;
-  border-radius: @radius-xl;
-  padding: @spacing-2xl;
 }
 
-// 子分组
+// 子分组（独立边框卡片）
 .electrode-optimize-subsection {
-  margin-bottom: @spacing-2xl;
+  margin-bottom: @spacing-xl;
+  padding: @spacing-xl;
+  border: 1px solid @color-gray-200;
+  border-radius: @radius-lg;
+  background: #ffffff;
 
   &:last-child {
     margin-bottom: 0;
@@ -274,13 +279,13 @@
 }
 
 @media (max-width: 768px) {
-  .electrode-optimize-form-container {
-    padding: @spacing-xl;
+  .electrode-optimize-subsection {
+    padding: @spacing-lg;
   }
 
   .electrode-optimize-form-row {
     grid-template-columns: 1fr;
-    
+
     &--triple {
       grid-template-columns: 1fr;
     }

@@ -446,10 +446,10 @@ const DesignPage: React.FC<DesignPageProps> = () => {
           onClick={handleNewDesign}
         />
         <FeatureCard
-          icon={<Activity size={20} />}
+          icon={<img src="/design/electrode/icon-train.svg" alt="New Design" style={{ width: 24, height: 24 }} />}
           title={t('design.history.train', 'Train')}
           description={t('design.electrolyte.features.train.description', 'Train a new model')}
-          iconBgColor="#dcfce7"
+          iconBgColor="#fef3c6"
           onClick={handleTrain}
         />
       </FeatureCardGroup>
