@@ -36,8 +36,8 @@ const CycleLifeLineChart: React.FC<CycleLifeLineChartProps> = ({
         } = item.model_result;
         
         const isSelected = selectedBarcode === item.barcode;
-        const opacity = selectedBarcode ? (isSelected ? 1 : 0.1) : 0.7;
-        const z = isSelected ? 2 : 1;
+        const opacity = 0.7; // selectedBarcode ? (isSelected ? 1 : 0.1) : 0.7;
+        const z = 1; // isSelected ? 2 : 1;
 
         // Original Data (Blue)
         if (original_cycles && original_sohs && original_cycles.length === original_sohs.length) {
@@ -83,7 +83,7 @@ const CycleLifeLineChart: React.FC<CycleLifeLineChartProps> = ({
                 smooth: true,
                 lineStyle: {
                   color: '#5470c6',
-                  width: isSelected ? 3 : 1,
+                  width: 1, // isSelected ? 3 : 1,
                   opacity: opacity,
                   type: 'solid'
                 },
@@ -102,7 +102,7 @@ const CycleLifeLineChart: React.FC<CycleLifeLineChartProps> = ({
                 smooth: true,
                 lineStyle: {
                   color: '#5470c6',
-                  width: isSelected ? 3 : 1,
+                  width: 1, // isSelected ? 3 : 1,
                   opacity: opacity,
                   type: 'dashed'
                 },
@@ -122,7 +122,7 @@ const CycleLifeLineChart: React.FC<CycleLifeLineChartProps> = ({
               smooth: true,
               lineStyle: {
                 color: '#5470c6',
-                width: isSelected ? 3 : 1,
+                width: 1, // isSelected ? 3 : 1,
                 opacity: opacity
               },
               z: z,
@@ -143,7 +143,7 @@ const CycleLifeLineChart: React.FC<CycleLifeLineChartProps> = ({
             smooth: true,
             lineStyle: {
               color: '#ee6666',
-              width: isSelected ? 3 : 1,
+              width: 1, // isSelected ? 3 : 1,
               opacity: opacity,
               type: 'dashed' // Keeping red as dashed per previous logic, or solid? "predicted data red". Usually dashed for prediction.
             },

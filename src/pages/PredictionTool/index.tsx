@@ -169,7 +169,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
       if (defaultModel) {
         modelName = defaultModel.model_name;
       }
-    }
+    }              
 
     return {
       id: apiData.id.toString(),
@@ -331,7 +331,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
   }, [currentPage]);
 
   const handleNewPrediction = () => {
-    window.open('/predict/create', '_blank');
+    navigate('/predict/create');
   };
 
   const handleTrain = () => {
