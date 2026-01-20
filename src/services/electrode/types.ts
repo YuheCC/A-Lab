@@ -405,6 +405,17 @@ export interface OptimizeResultItemDTO {
 }
 
 /**
+ * Optimize 分组结果 - 后端返回的 valid/invalid 分组结构
+ * Optimize Grouped Result - Backend valid/invalid grouped structure
+ */
+export interface OptimizeGroupedResultDTO {
+  /** 符合目标范围的推荐结果 */
+  valid: OptimizeResultItemDTO[];
+  /** 存在偏差的推荐结果 */
+  invalid: OptimizeResultItemDTO[];
+}
+
+/**
  * Optimize API 响应 - 后端 DTO
  * Optimize API Response - Backend DTO
  *
@@ -425,8 +436,8 @@ export interface ElectrodeOptimizeResponseDTO {
   type: number;
   /** 模型参数 */
   model_params: OptimizeModelParamsDTO;
-  /** 模型结果数组 - 多条推荐结果 */
-  model_result: OptimizeResultItemDTO[];
+  /** 模型结果 - 分组结构（valid/invalid） */
+  model_result: OptimizeGroupedResultDTO;
   /** 创建时间 */
   created_at?: string;
   /** 更新时间 */
@@ -439,7 +450,7 @@ export interface ElectrodeOptimizeResponseDTO {
  * Optimize 历史记录项 - type=2 反向设计
  * Optimize History Item - type=2 Inverse Design
  *
- * 与 ElectrodeHistoryItem 类似，但 model_result 是数组
+ * 与 ElectrodeHistoryItem 类似，但 model_result 是分组结构
  */
 export interface OptimizeHistoryItem {
   /** 记录 ID */
@@ -456,8 +467,8 @@ export interface OptimizeHistoryItem {
   type: ElectrodePageType;
   /** 模型参数（区间模式） */
   model_params: OptimizeModelParamsDTO;
-  /** 模型结果数组 - 多条推荐结果 */
-  model_result: OptimizeResultItemDTO[];
+  /** 模型结果 - 分组结构（valid/invalid） */
+  model_result: OptimizeGroupedResultDTO;
   /** 创建时间 */
   created_at?: string;
   /** 更新时间 */

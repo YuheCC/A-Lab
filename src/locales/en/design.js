@@ -399,7 +399,7 @@ export default {
             anodeActiveMaterial: "Anode Active Material",
             cathodeActiveMaterial: "Cathode Active Material",
             selectMaterial: "Select an anode material",
-            cathodeDimension: "Cathode Dimension",
+            cathodeDimension: "Cathode Dimensions",
             width: "Width (mm)",
             length: "Length (mm)",
             layers: "Layers",
@@ -425,6 +425,14 @@ export default {
                 calculateSuccess: "Recommendations calculated successfully",
                 calculateError: "Failed to calculate recommendations",
                 loadDetailsError: "Failed to load design details"
+            },
+            additionalPrompt: "Would you like to view other recommendations? (Target values may have slight deviations)",
+            additionalRecommendations: "Additional Recommendations (with slight deviations)",
+            expand: "Expand",
+            collapse: "Collapse",
+            emptyState: {
+                title: "No Matching Designs Found",
+                description: "We couldn't find any designs that match your current criteria. Try adjusting your target values or check out other recommendations below."
             }
         },
         records: {

@@ -176,7 +176,10 @@ export async function getElectrodeHistoryDetail(
     // type=2: 反向设计 - model_result 是数组，格式化每个结果项
     return {
       ...response,
-      model_result: formatOptimizeResults(response.model_result),
+      model_result: {
+        valid: formatOptimizeResults(response.model_result.valid),
+        invalid: formatOptimizeResults(response.model_result.invalid),
+      },
     };
   }
 

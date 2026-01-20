@@ -425,6 +425,14 @@ export default {
                 calculateSuccess: "추천이 성공적으로 계산되었습니다",
                 calculateError: "추천 계산에 실패했습니다",
                 loadDetailsError: "세부정보 로드에 실패했습니다"
+            },
+            additionalPrompt: "다른 추천 결과를 보시겠습니까? (목표 값에 약간의 편차가 있을 수 있습니다)",
+            additionalRecommendations: "추가 추천 (약간의 편차 있음)",
+            expand: "펼치기",
+            collapse: "접기",
+            emptyState: {
+                title: "일치하는 설계를 찾을 수 없습니다",
+                description: "현재 조건에 맞는 설계를 찾을 수 없습니다. 목표 값을 조정하거나 아래의 다른 추천을 확인해 보세요."
             }
         },
         records: {
