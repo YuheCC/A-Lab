@@ -217,9 +217,13 @@ const ChatInput: FC<ChatInputProps> = ({
       extraPayload.llmComputePower = computePowerMap[currentMode];
       const backendMode = backendModeMap[currentMode];
       let mode: ChatMode = backendMode;
-      // 如果是deep-space模式且有消息历史，默认使用clarify模式
-      if(backendMode === 'deep-space' && messages.length > 0 && messages[messages.length - 1].msg_type === 'multi-agent-clarify'){
-        mode = 'clarify';
+      // 如果是deep-space模式且有消息历史，默认使用clarify模式，如果有multi-agent-clarify消息，则使用multi-agent模式
+      if(backendMode === 'deep-space'){
+        if(messages.length > 0 && messages[messages.length - 1].msg_type === 'multi-agent-clarify'){
+          mode = 'deep-space';
+        } else {
+          mode = 'clarify';
+        }
       }
       handleSendMessage(inputValue.trim(), mode, currentChatId, extraPayload);
       setInputValue('');
