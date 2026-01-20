@@ -399,7 +399,7 @@ export default {
             anodeActiveMaterial: "Anode Active Material",
             cathodeActiveMaterial: "Cathode Active Material",
             selectMaterial: "Select an anode material",
-            cathodeDimension: "Cathode Dimension",
+            cathodeDimension: "Cathode Dimensions",
             width: "Width (mm)",
             length: "Length (mm)",
             layers: "Layers",

@@ -113,7 +113,7 @@ export const getOptimizeRecommendations = async (
   );
 
   // 转换 invalid 数据 - 需要计算偏差字段
-  const invalidData: DesignRecommendationWithDeviation[] = apiResult.valid.map(
+  const invalidData: DesignRecommendationWithDeviation[] = apiResult.invalid.map(
     (item, index) => {
       const recommendation = transformToRecommendation(item, index);
       const deviatedFields = checkDeviations(item, formData);

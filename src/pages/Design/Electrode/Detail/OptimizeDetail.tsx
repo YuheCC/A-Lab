@@ -221,7 +221,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
       render: (_: any, __: any, index: number) => index + 1,
     },
     {
-      title: `${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah)`,
+      title: `${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (mAh)`,
       dataIndex: 'design_capacity',
       width: 180,
       render: (value: number) => value?.toFixed(2),
@@ -265,7 +265,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
       render: (_: any, __: any, index: number) => modelResult.valid.length + index + 1,
     },
     {
-      title: `${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah)`,
+      title: `${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (mAh)`,
       dataIndex: 'design_capacity',
       width: 180,
       render: (value: number, record: any) => (
@@ -459,7 +459,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
               <div className="electrode-optimize-parameters">
                 <ParameterInput
                   mode="range"
-                  label={`${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah)`}
+                  label={`${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (mAh)`}
                   rangeValue={modelParams.design_capacity}
                   onRangeChange={() => {}}
                   min={0}
@@ -575,7 +575,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                 <PerformanceCard
                   label="Design Capacity"
                   value={selectedResult.design_capacity}
-                  unit="Ah"
+                  unit="mAh"
                 />
                 <PerformanceCard
                   label="Specific E.D."
