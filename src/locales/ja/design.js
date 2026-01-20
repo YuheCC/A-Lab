@@ -429,7 +429,11 @@ export default {
             additionalPrompt: "他の推奨結果を表示しますか？（目標値にわずかな偏差がある場合があります）",
             additionalRecommendations: "追加の推奨（わずかな偏差あり）",
             expand: "展開",
-            collapse: "折りたたむ"
+            collapse: "折りたたむ",
+            emptyState: {
+                title: "一致するデザインが見つかりません",
+                description: "現在の条件に一致するデザインが見つかりませんでした。目標値を調整するか、以下の他の推奨をご確認ください。"
+            }
         },
         records: {
             resultPrediction: "性能予測",

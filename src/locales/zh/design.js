@@ -429,7 +429,11 @@ export default {
             additionalPrompt: "您是否想查看其他推荐结果？（目标值可能存在轻微偏差）",
             additionalRecommendations: "额外推荐（存在轻微偏差）",
             expand: "展开",
-            collapse: "收起"
+            collapse: "收起",
+            emptyState: {
+                title: "未找到匹配的设计",
+                description: "我们无法找到符合当前条件的设计方案。请尝试调整目标值或查看下方的其他推荐。"
+            }
         },
         records: {
             resultPrediction: "性能预测",

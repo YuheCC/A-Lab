@@ -429,7 +429,11 @@ export default {
             additionalPrompt: "Would you like to view other recommendations? (Target values may have slight deviations)",
             additionalRecommendations: "Additional Recommendations (with slight deviations)",
             expand: "Expand",
-            collapse: "Collapse"
+            collapse: "Collapse",
+            emptyState: {
+                title: "No Matching Designs Found",
+                description: "We couldn't find any designs that match your current criteria. Try adjusting your target values or check out other recommendations below."
+            }
         },
         records: {
             resultPrediction: "Performance Prediction",
