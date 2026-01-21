@@ -336,7 +336,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
   }, []);
 
   const handleNewDesign = () => {
-    window.open('/design/electrolyte/create', '_blank');
+    navigate('/design/electrolyte/create');
   };
 
   const handleTrain = () => {
