@@ -9,6 +9,17 @@
   .parameter-input__label{
     font-size: @font-size-base;
   }
+
+  .parameter-input__number {
+    height: 28px;
+    font-size: @font-size-base;
+
+    .ant-input-number-input {
+      font-size: @font-size-base;
+      height: 26px;
+      line-height: 26px;
+    }
+  }
 }
 
 // 标题和返回按钮区域
@@ -233,7 +244,7 @@
     background: @color-gray-50 !important;
     color: @color-gray-700 !important;
     font-weight: @font-weight-semibold !important;
-    font-size: 12px !important;
+    font-size: 14px !important;
     padding: @spacing-md @spacing-lg !important;
     border-bottom: 1px solid @color-gray-200 !important;
   }
@@ -244,7 +255,7 @@
       padding: @spacing-lg;
       border-bottom: 1px solid @color-gray-100;
       color: @color-gray-800;
-      font-size: 12px;
+      font-size: 14px;
     }
 
     tbody tr:hover {
@@ -425,10 +436,10 @@
   }
 }
 
-// 额外推荐表格 - 偏差值高亮（绿色）
+// 额外推荐表格 - 偏差值高亮（红色）
 .electrode-optimize-table-additional {
   .deviated-value {
-    color: @color-accent;
+    color: @color-error;
     font-weight: @font-weight-semibold;
   }
 }

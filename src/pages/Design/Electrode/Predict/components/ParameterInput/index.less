@@ -18,23 +18,33 @@
     flex: 1;
     margin: 0;
 
+    // 设置 slider 容器高度，让 rail 和 handle 有足够空间居中
+    &.ant-slider {
+      height: 16px;
+      padding-block: 0;
+    }
+
     .ant-slider-rail {
       background-color: @color-gray-200;
       height: 8px;
       border-radius: 9999px;
+      top: 50%;
+      transform: translateY(-50%);
     }
 
     .ant-slider-track {
       background-color: @color-accent;
       height: 8px;
       border-radius: 9999px;
+      top: 50%;
+      transform: translateY(-50%);
     }
 
     .ant-slider-handle {
       width: 16px;
       height: 16px;
-      inset-block-start: 50% !important;
-      transform: translate(-50%, -50%) !important;
+      top: 50% !important;
+      transform: translateX(-50%) translateY(-50%) !important;
       margin-top: 0 !important;
       border: 2px solid @color-accent !important;
       border-radius: 50% !important;
@@ -56,37 +66,9 @@
       background-color: @color-accent;
     }
 
-    // Range Slider 特殊样式
+    // Range Slider 特殊样式（继承基础样式，无需额外覆盖）
     &--range {
-      .ant-slider-handle {
-        // 确保两个滑块样式一致
-        width: 16px;
-        height: 16px;
-        inset-block-start: 50% !important;
-        transform: translate(-50%, -50%) !important;
-        margin-top: 0 !important;
-        border: 2px solid @color-accent !important;
-        border-radius: 50% !important;
-        background-color: #ffffff !important;
-
-        &::after {
-          display: none;
-        }
-
-        &:hover,
-        &:focus,
-        &.ant-slider-handle-dragging {
-          border-color: @color-accent !important;
-          box-shadow: 0 0 0 4px rgba(86, 178, 106, 0.1) !important;
-        }
-      }
-
-      // Range Slider 中间的 track
-      .ant-slider-track {
-        background-color: @color-accent;
-        height: 8px;
-        border-radius: 9999px;
-      }
+      // 样式已由基础 slider 样式覆盖
     }
   }
 
