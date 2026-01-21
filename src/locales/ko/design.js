@@ -306,6 +306,17 @@ export default {
         noModel: "모델 정보 없음",
         weightPercentage: "중량 백분율"
     },
+    // Electrolyte Module
+    electrolyte: {
+        features: {
+            newDesign: {
+                description: "새 전해질 설계 생성"
+            },
+            train: {
+                description: "새 모델 학습"
+            }
+        }
+    },
     // Electrode Module
     electrode: {
         title: "전극이 배터리 성능에 미치는 영향",

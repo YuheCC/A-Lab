@@ -306,6 +306,17 @@ export default {
         noModel: "モデル情報なし",
         weightPercentage: "重量パーセンテージ"
     },
+    // Electrolyte Module
+    electrolyte: {
+        features: {
+            newDesign: {
+                description: "新しい電解質設計を作成"
+            },
+            train: {
+                description: "新しいモデルをトレーニング"
+            }
+        }
+    },
     // Electrode Module
     electrode: {
         title: "電極が電池性能に与える影響",

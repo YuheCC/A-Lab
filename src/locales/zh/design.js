@@ -306,6 +306,17 @@ export default {
         noModel: "无模型信息",
         weightPercentage: "重量百分比"
     },
+    // Electrolyte Module
+    electrolyte: {
+        features: {
+            newDesign: {
+                description: "创建新的电解质设计"
+            },
+            train: {
+                description: "训练新模型"
+            }
+        }
+    },
     // Electrode Module
     electrode: {
         title: "电极对电池性能的影响",
