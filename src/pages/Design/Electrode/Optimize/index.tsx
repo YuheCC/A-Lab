@@ -220,7 +220,7 @@ const OptimizePage: React.FC = () => {
       align: 'center',
     },
     {
-      title: t('design.electrode.optimize.designCapacity') + ' (mAh)',
+      title: t('design.electrode.optimize.designCapacity') + ' (Ah)',
       dataIndex: 'designCapacity',
       width: 180,
       render: (value: number) => value.toFixed(2),
@@ -263,7 +263,7 @@ const OptimizePage: React.FC = () => {
       align: 'center',
     },
     {
-      title: t('design.electrode.optimize.designCapacity') + ' (mAh)',
+      title: t('design.electrode.optimize.designCapacity') + ' (Ah)',
       dataIndex: 'designCapacity',
       width: 180,
       render: (value: number, record: DesignRecommendationWithDeviation) => (
@@ -491,7 +491,7 @@ const OptimizePage: React.FC = () => {
               <div className="electrode-optimize-parameters">
                 <ParameterInput
                   mode="range"
-                  label={`${t('design.electrode.optimize.designCapacity')} (mAh)`}
+                  label={`${t('design.electrode.optimize.designCapacity')} (Ah)`}
                   rangeValue={formData.designCapacity}
                   onRangeChange={(value) => setFormData({ ...formData, designCapacity: value })}
                   min={PARAMETER_RANGES.designCapacity.min}

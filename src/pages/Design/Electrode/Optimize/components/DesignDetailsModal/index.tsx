@@ -111,14 +111,15 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
     <Modal
       title={
         data
-          ? `${t('design.electrode.optimize.designDetails')} - Rank #${rank}`
+          ? `${t('design.electrode.optimize.designDetails')} - ${t('design.electrode.optimize.no')} #${rank}`
           : t('design.electrode.optimize.designDetails')
       }
       open={visible}
       centered
       onCancel={onClose}
       footer={null}
-      width="90%"
+      width="80%"
+      style={{ maxWidth: 1100 }}
       className="design-details-modal"
     >
       {loading ? (

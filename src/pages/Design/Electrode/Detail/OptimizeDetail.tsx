@@ -221,7 +221,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
       render: (_: any, __: any, index: number) => index + 1,
     },
     {
-      title: `${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (mAh)`,
+      title: `${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah)`,
       dataIndex: 'design_capacity',
       width: 180,
       render: (value: number) => value?.toFixed(2),
@@ -265,7 +265,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
       render: (_: any, __: any, index: number) => modelResult.valid.length + index + 1,
     },
     {
-      title: `${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (mAh)`,
+      title: `${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah)`,
       dataIndex: 'design_capacity',
       width: 180,
       render: (value: number, record: any) => (
@@ -459,7 +459,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
               <div className="electrode-optimize-parameters">
                 <ParameterInput
                   mode="range"
-                  label={`${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (mAh)`}
+                  label={`${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah)`}
                   rangeValue={modelParams.design_capacity}
                   onRangeChange={() => {}}
                   min={0}
@@ -582,12 +582,13 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
 
       {/* 详情 Modal */}
       <Modal
-        title={`${t('design.electrode.optimize.designDetails', 'Design Details')} - Rank #${selectedIndex + 1}`}
+        title={`${t('design.electrode.optimize.designDetails', 'Design Details')} - ${t('design.electrode.optimize.no')} #${selectedIndex + 1}`}
         open={modalVisible}
         centered
         onCancel={() => setModalVisible(false)}
         footer={null}
-        width="90%"
+        width="80%"
+        style={{ maxWidth: 1100 }}
         className="design-details-modal"
       >
         {selectedResult && (
