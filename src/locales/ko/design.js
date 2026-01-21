@@ -443,7 +443,8 @@ export default {
             collapse: "접기",
             emptyState: {
                 title: "일치하는 설계를 찾을 수 없습니다",
-                description: "현재 조건에 맞는 설계를 찾을 수 없습니다. 목표 값을 조정하거나 아래의 다른 추천을 확인해 보세요."
+                description: "현재 조건에 맞는 설계를 찾을 수 없습니다. 목표 값을 조정해 보세요.",
+                descriptionWithRecommendation: "현재 조건에 맞는 설계를 찾을 수 없습니다. 목표 값을 조정하거나 아래의 다른 추천을 확인해 보세요."
             }
         },
         records: {

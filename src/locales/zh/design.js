@@ -443,7 +443,8 @@ export default {
             collapse: "收起",
             emptyState: {
                 title: "未找到匹配的设计",
-                description: "我们无法找到符合当前条件的设计方案。请尝试调整目标值或查看下方的其他推荐。"
+                description: "我们无法找到符合当前条件的设计方案。请尝试调整目标值。",
+                descriptionWithRecommendation: "我们无法找到符合当前条件的设计方案。请尝试调整目标值或查看下方的其他推荐。"
             }
         },
         records: {

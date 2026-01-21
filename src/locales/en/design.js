@@ -443,7 +443,8 @@ export default {
             collapse: "Collapse",
             emptyState: {
                 title: "No Matching Designs Found",
-                description: "We couldn't find any designs that match your current criteria. Try adjusting your target values or check out other recommendations below."
+                description: "We couldn't find any designs that match your current criteria. Try adjusting your target values.",
+                descriptionWithRecommendation: "We couldn't find any designs that match your current criteria. Try adjusting your target values or check out other recommendations below."
             }
         },
         records: {
