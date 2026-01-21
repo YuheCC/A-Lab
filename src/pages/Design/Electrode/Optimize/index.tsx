@@ -572,7 +572,9 @@ const OptimizePage: React.FC = () => {
                   {t('design.electrode.optimize.emptyState.title')}
                 </h3>
                 <p className="electrode-optimize-empty-description">
-                  {t('design.electrode.optimize.emptyState.description')}
+                  {recommendations.invalid.length > 0
+                    ? t('design.electrode.optimize.emptyState.descriptionWithRecommendation')
+                    : t('design.electrode.optimize.emptyState.description')}
                 </p>
               </div>
             ) : (

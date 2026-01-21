@@ -306,6 +306,17 @@ export default {
         noModel: "无模型信息",
         weightPercentage: "重量百分比"
     },
+    // Electrolyte Module
+    electrolyte: {
+        features: {
+            newDesign: {
+                description: "创建新的电解质设计"
+            },
+            train: {
+                description: "训练新模型"
+            }
+        }
+    },
     // Electrode Module
     electrode: {
         title: "电极对电池性能的影响",
@@ -432,7 +443,8 @@ export default {
             collapse: "收起",
             emptyState: {
                 title: "未找到匹配的设计",
-                description: "我们无法找到符合当前条件的设计方案。请尝试调整目标值或查看下方的其他推荐。"
+                description: "我们无法找到符合当前条件的设计方案。请尝试调整目标值。",
+                descriptionWithRecommendation: "我们无法找到符合当前条件的设计方案。请尝试调整目标值或查看下方的其他推荐。"
             }
         },
         records: {

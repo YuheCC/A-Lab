@@ -306,6 +306,17 @@ export default {
         noModel: "모델 정보 없음",
         weightPercentage: "중량 백분율"
     },
+    // Electrolyte Module
+    electrolyte: {
+        features: {
+            newDesign: {
+                description: "새 전해질 설계 생성"
+            },
+            train: {
+                description: "새 모델 학습"
+            }
+        }
+    },
     // Electrode Module
     electrode: {
         title: "전극이 배터리 성능에 미치는 영향",
@@ -432,7 +443,8 @@ export default {
             collapse: "접기",
             emptyState: {
                 title: "일치하는 설계를 찾을 수 없습니다",
-                description: "현재 조건에 맞는 설계를 찾을 수 없습니다. 목표 값을 조정하거나 아래의 다른 추천을 확인해 보세요."
+                description: "현재 조건에 맞는 설계를 찾을 수 없습니다. 목표 값을 조정해 보세요.",
+                descriptionWithRecommendation: "현재 조건에 맞는 설계를 찾을 수 없습니다. 목표 값을 조정하거나 아래의 다른 추천을 확인해 보세요."
             }
         },
         records: {

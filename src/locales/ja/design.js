@@ -306,6 +306,17 @@ export default {
         noModel: "モデル情報なし",
         weightPercentage: "重量パーセンテージ"
     },
+    // Electrolyte Module
+    electrolyte: {
+        features: {
+            newDesign: {
+                description: "新しい電解質設計を作成"
+            },
+            train: {
+                description: "新しいモデルをトレーニング"
+            }
+        }
+    },
     // Electrode Module
     electrode: {
         title: "電極が電池性能に与える影響",
@@ -432,7 +443,8 @@ export default {
             collapse: "折りたたむ",
             emptyState: {
                 title: "一致するデザインが見つかりません",
-                description: "現在の条件に一致するデザインが見つかりませんでした。目標値を調整するか、以下の他の推奨をご確認ください。"
+                description: "現在の条件に一致するデザインが見つかりませんでした。目標値を調整してください。",
+                descriptionWithRecommendation: "現在の条件に一致するデザインが見つかりませんでした。目標値を調整するか、以下の他の推奨をご確認ください。"
             }
         },
         records: {
