@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Tooltip } from '@mui/material';
+import { Tooltip } from 'antd';
 import { Info, ArrowUp, ArrowDown } from 'lucide-react';
 import Button from '@/components/Button';
 import { ArrowUpIcon, ArrowDownIcon } from '@/components/PerformanceBadge';
@@ -1325,25 +1325,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                   </div>
                 }
                 placement="bottom"
-                arrow
-                PopperProps={{
-                  sx: {
-                    '& .MuiTooltip-tooltip': {
-                      backgroundColor: 'white',
-                      color: 'black',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                      borderRadius: '8px',
-                      padding: '16px',
-                      fontSize: '14px',
-                      maxWidth: 500,
-                      minWidth: 380,
-                      border: 'none'
-                    },
-                    '& .MuiTooltip-arrow': {
-                      color: 'white',
-                    }
-                  }
-                }}
+                overlayClassName="performance-tooltip-overlay"
               >
                 <div className="tip-icon-container">
                   <Info

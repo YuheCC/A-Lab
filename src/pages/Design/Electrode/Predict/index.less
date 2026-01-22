@@ -262,3 +262,31 @@
     grid-template-columns: 1fr;
   }
 }
+
+// ============ 材料描述 Tooltip 内容样式 ============
+// 注意：Tooltip 外观样式（图标容器、overlay）已统一到 global.less 中
+.electrode-material-tooltip {
+  &__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: @color-text-primary;
+    margin-bottom: 8px;
+  }
+
+  &__composition {
+    font-size: 14px;
+    color: @color-text-primary;
+    margin-bottom: 8px;
+    line-height: 1.5;
+
+    strong {
+      font-weight: 600;
+    }
+  }
+
+  &__content {
+    font-size: 14px;
+    color: @color-text-primary;
+    line-height: 1.6;
+  }
+}

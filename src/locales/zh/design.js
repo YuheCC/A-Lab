@@ -320,6 +320,13 @@ export default {
     // Electrode Module
     electrode: {
         title: "电极对电池性能的影响",
+        // Material Description (shared across electrode pages)
+        materialDescription: {
+            title: "SiC 材料说明",
+            silicon: "硅 (Si):",
+            carbon: "碳 (C):",
+            description: "该 Si-C 复合材料的脱锂容量高达 1937.9 mAh/g，首次库仑效率 (ICE) 为 93.8%。D50 粒径控制在 8.58 μm，振实密度为 0.79 g/cm³。"
+        },
         subtitle: "通过在SES内部实验数据上训练的AI模型，预测电极材料对电池性能指标（循环寿命、库仑效率、倍率性能）的影响",
         features: {
             resultPrediction: {

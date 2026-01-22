@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@umijs/max';
 import { LeftOutlined } from '@ant-design/icons';
-import { Select, Input } from 'antd';
+import { Select, Input, Tooltip } from 'antd';
+import { Info } from 'lucide-react';
 import Button from '@/components/Button';
 import ParameterInput from './components/ParameterInput';
 import ResultDisplay from './components/ResultDisplay';
@@ -559,11 +560,34 @@ const PredictPage: React.FC = () => {
               {/* 阳极区域 */}
               <div className="electrode-predict-electrode-section">
                 <label className="electrode-predict-label">
-                {t('design.electrode.predict.anodeActiveMaterial', 'Anode Active Material')}
-              </label>
-              <Select
-                value={anodeActiveMaterial}
-                onChange={setAnodeActiveMaterial}
+                  {t('design.electrode.predict.anodeActiveMaterial', 'Anode Active Material')}
+                  <Tooltip
+                    title={
+                      <div className="electrode-material-tooltip">
+                        <div className="electrode-material-tooltip__title">
+                          {t('design.electrode.materialDescription.title')}
+                        </div>
+                        <div className="electrode-material-tooltip__composition">
+                          <strong>{t('design.electrode.materialDescription.silicon')}</strong> 50.0% (wt%) <strong>{t('design.electrode.materialDescription.carbon')}</strong> 50.0% (wt%)
+                        </div>
+                        <div className="electrode-material-tooltip__content">
+                          {t('design.electrode.materialDescription.description')}
+                        </div>
+                      </div>
+                    }
+                    overlayClassName="common-tooltip-overlay"
+                  >
+                    <div className="tip-icon-container">
+                      <Info
+                        size={16}
+                        className="tip-icon"
+                      />
+                    </div>
+                  </Tooltip>
+                </label>
+                <Select
+                  value={anodeActiveMaterial}
+                  onChange={setAnodeActiveMaterial}
                   placeholder={t('design.electrode.predict.selectMaterial', 'Select material')}
                   className="electrode-predict-select"
                 >

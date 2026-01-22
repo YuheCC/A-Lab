@@ -464,3 +464,31 @@
     text-align: center;
   }
 }
+
+// ============ 材料描述 Tooltip 内容样式 ============
+// 注意：Tooltip 外观样式（图标容器、overlay）已统一到 global.less 中
+.electrode-material-tooltip {
+  &__title {
+    font-size: @font-size-base;
+    font-weight: @font-weight-semibold;
+    color: @color-text-primary;
+    margin-bottom: @spacing-sm;
+  }
+
+  &__composition {
+    font-size: @font-size-base;
+    color: @color-text-primary;
+    margin-bottom: @spacing-sm;
+    line-height: 1.5;
+
+    strong {
+      font-weight: @font-weight-semibold;
+    }
+  }
+
+  &__content {
+    font-size: @font-size-base;
+    color: @color-text-primary;
+    line-height: 1.6;
+  }
+}

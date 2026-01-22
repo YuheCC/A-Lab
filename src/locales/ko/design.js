@@ -320,6 +320,13 @@ export default {
     // Electrode Module
     electrode: {
         title: "전극이 배터리 성능에 미치는 영향",
+        // Material Description (shared across electrode pages)
+        materialDescription: {
+            title: "SiC 재료 설명",
+            silicon: "실리콘 (Si):",
+            carbon: "탄소 (C):",
+            description: "이 Si-C 복합재는 최대 1937.9 mAh/g의 탈리튬화 용량과 93.8%의 초기 쿨롱 효율(ICE)을 나타냅니다. D50 입자 크기는 8.58 μm로 제어되며, 탭 밀도는 0.79 g/cm³입니다."
+        },
         subtitle: "SES 내부 실험 데이터로 학습한 AI 모델을 통해 전극 재료가 배터리 성능 지표(사이클 수명, 쿨롱 효율, 레이트 성능)에 미치는 영향 예측",
         features: {
             resultPrediction: {
