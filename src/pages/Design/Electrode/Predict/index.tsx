@@ -553,6 +553,20 @@ const PredictPage: React.FC = () => {
                     disabled={true}
                     max={2.322}
                   />
+                </div>
+              </div>
+
+              {/* 阳极区域 */}
+              <div className="electrode-predict-electrode-section">
+                <label className="electrode-predict-label">
+                {t('design.electrode.predict.anodeActiveMaterial', 'Anode Active Material')}
+              </label>
+              <Select
+                value={anodeActiveMaterial}
+                onChange={setAnodeActiveMaterial}
+                  placeholder={t('design.electrode.predict.selectMaterial', 'Select material')}
+                  className="electrode-predict-select"
+                >
                   {ANODE_ACTIVE_MATERIAL_OPTIONS.map((option) => (
                     <Option
                       key={option.value}
