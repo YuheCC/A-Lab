@@ -397,7 +397,9 @@ export default {
             paa: "PAA (wt.%)",
             superP: "Carbon Black (wt.%)",
             swcnt: "CNT (wt.%)",
-            rateCapability: "倍率性能 (1C-5C)"
+            rateCapability: "倍率性能 (1C-5C)",
+            electrolyteParameters: "电解液参数",
+            electrolyteContent: "电解液含量 (g/Ah)"
         },
         optimize: {
             title: "逆向设计",
