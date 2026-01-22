@@ -59,24 +59,10 @@ const CycleLifeLineChart: React.FC<CycleLifeLineChartProps> = ({
               }
             });
 
-            // Ensure continuity: Include the last point of solid data in dashed data
-            // Find the point exactly at max_cycle or the last one <= max_cycle
-            let connectionPoint: number[] | null = null;
-            for (let i = original_cycles.length - 1; i >= 0; i--) {
-                if (original_cycles[i] <= max_cycle) {
-                    connectionPoint = [original_cycles[i], original_sohs[i]];
-                    break;
-                }
-            }
-
-            if (connectionPoint && dashedData.length > 0) {
-                dashedData.unshift(connectionPoint);
-            }
-
             // Solid Line
             if (solidData.length > 0) {
               series.push({
-                name: `${item.barcode} - ${t('predictionTool.chart.originalSoh')}`,
+                name: `${t('predictionTool.chart.originalSohUsed')}`,
                 type: 'line',
                 data: solidData,
                 showSymbol: false,
@@ -95,7 +81,7 @@ const CycleLifeLineChart: React.FC<CycleLifeLineChartProps> = ({
             // Dashed Line
             if (dashedData.length > 0) {
               series.push({
-                name: `${item.barcode} - ${t('predictionTool.chart.estimatedSoh')}`,
+                name: `${t('predictionTool.chart.originalSohUnused')}`,
                 type: 'line',
                 data: dashedData,
                 showSymbol: false,
@@ -115,7 +101,7 @@ const CycleLifeLineChart: React.FC<CycleLifeLineChartProps> = ({
             // Fallback: All solid if no max_cycle
             const data = original_cycles.map((cycle, index) => [cycle, original_sohs[index]]);
             series.push({
-              name: `${item.barcode} - ${t('predictionTool.chart.originalSoh')}`,
+              name: `${t('predictionTool.chart.originalSoh')}`,
               type: 'line',
               data: data,
               showSymbol: false,
@@ -136,7 +122,7 @@ const CycleLifeLineChart: React.FC<CycleLifeLineChartProps> = ({
           const data = predicted_cycles.map((cycle, index) => [cycle, predicted_sohs[index]]);
 
           const seriesItem: any = {
-            name: `${item.barcode} - ${t('predictionTool.chart.estimatedSoh')}`,
+            name: `${t('predictionTool.chart.estimatedSoh')}`,
             type: 'line',
             data: data,
             showSymbol: false,
@@ -232,19 +218,10 @@ const CycleLifeLineChart: React.FC<CycleLifeLineChartProps> = ({
                 // Just let them show.
                 
                 const val = param.value[1];
-                const isPrediction = param.seriesName.includes(t('predictionTool.chart.estimatedSoh'));
-                const color = isPrediction ? '#ee6666' : '#5470c6';
-                
-                // Simplified label
-                let label = '';
-                if (param.seriesName.includes(t('predictionTool.chart.estimatedSoh'))) {
-                    label = t('predictionTool.chart.estimatedSoh');
-                } else {
-                    label = t('predictionTool.chart.originalSoh');
-                }
+                const color = param.seriesName === t('predictionTool.chart.estimatedSoh') ? '#ee6666' : '#5470c6';
                 
                 html += `<div style="color: ${color}">
-                  ${label}: ${val?.toFixed(4) || '0'}
+                  ${param.seriesName}: ${val?.toFixed(4) || '0'}
                 </div>`;
             });
             return html;
@@ -279,6 +256,8 @@ const CycleLifeLineChart: React.FC<CycleLifeLineChartProps> = ({
         name: t('predictionTool.chart.yAxisLabel'),
         nameLocation: 'middle',
         nameGap: 50,
+        min: 75,
+        max: 105,
         scale: true, // Auto scale
         splitLine: {
           show: true,

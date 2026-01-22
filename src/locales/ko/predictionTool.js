@@ -173,6 +173,8 @@ export default {
         xAxisLabel: "사이클 ID",
         yAxisLabel: "SOH (%)",
         originalSoh: "원본 SOH",
+        originalSohUsed: "사용된 원본 SOH",
+        originalSohUnused: "미사용 원본 SOH",
         estimatedSoh: "예측 SOH",
         predictedCapacityLine: "예측 용량선",
         sohPredictionLine: "80% SOH 예측선",
