@@ -173,6 +173,8 @@ export default {
         xAxisLabel: "Cycle ID",
         yAxisLabel: "SOH (%)",
         originalSoh: "Original SOH",
+        originalSohUsed: "Original SOH Used",
+        originalSohUnused: "Original SOH Unused",
         estimatedSoh: "Estimated SOH",
         predictedCapacityLine: "Predicted Capacity Line",
         sohPredictionLine: "80% SOH Prediction Line",

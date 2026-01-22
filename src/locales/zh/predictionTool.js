@@ -173,6 +173,8 @@ export default {
         xAxisLabel: "循环圈数",
         yAxisLabel: "SOH (%)",
         originalSoh: "原始 SOH",
+        originalSohUsed: "已使用的原始 SOH",
+        originalSohUnused: "未使用的原始 SOH",
         estimatedSoh: "预测 SOH",
         predictedCapacityLine: "预测容量线",
         sohPredictionLine: "80% SOH 预测线",
