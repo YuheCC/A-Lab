@@ -320,6 +320,13 @@ export default {
     // Electrode Module
     electrode: {
         title: "電極が電池性能に与える影響",
+        // Material Description (shared across electrode pages)
+        materialDescription: {
+            title: "SiC 材料の説明",
+            silicon: "シリコン (Si):",
+            carbon: "炭素 (C):",
+            description: "このSi-C複合材料は、最大1937.9 mAh/gの脱リチウム容量を示し、初期クーロン効率（ICE）は93.8%です。D50粒子サイズは8.58 μmに制御され、タップ密度は0.79 g/cm³です。"
+        },
         subtitle: "SES内部実験データで学習したAIモデルで、電極材料が電池性能指標（サイクル寿命、クーロン効率、レート性能）に与える影響を予測",
         features: {
             resultPrediction: {

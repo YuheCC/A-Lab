@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@umijs/max';
 import { LeftOutlined } from '@ant-design/icons';
-import { Select, Table } from 'antd';
+import { Select, Table, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import Button from '@/components/Button';
 import { useMessage } from '@/components/MessageProvider';
@@ -31,6 +31,7 @@ import {
 } from '../validation';
 import { useDebounce } from '@/hooks/useDebounce';
 import './index.less';
+import { Info } from 'lucide-react';
 
 const { Option } = Select;
 
@@ -422,6 +423,29 @@ const OptimizePage: React.FC = () => {
                 <div className="electrode-optimize-form-item">
                   <label className="electrode-optimize-label">
                     {t('design.electrode.optimize.anodeActiveMaterial')}
+                    <Tooltip
+                      title={
+                        <div className="electrode-material-tooltip">
+                          <div className="electrode-material-tooltip__title">
+                            {t('design.electrode.materialDescription.title')}
+                          </div>
+                          <div className="electrode-material-tooltip__composition">
+                            <strong>{t('design.electrode.materialDescription.silicon')}</strong> 50.0% (wt%) <strong>{t('design.electrode.materialDescription.carbon')}</strong> 50.0% (wt%)
+                          </div>
+                          <div className="electrode-material-tooltip__content">
+                            {t('design.electrode.materialDescription.description')}
+                          </div>
+                        </div>
+                      }
+                      overlayClassName="common-tooltip-overlay"
+                    >
+                      <div className="tip-icon-container">
+                        <Info
+                          size={16}
+                          className="tip-icon"
+                        />
+                      </div>
+                    </Tooltip>
                   </label>
                   <Select
                     value={formData.anodeActiveMaterial}

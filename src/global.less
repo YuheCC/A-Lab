@@ -1443,3 +1443,48 @@
     color: @color-gray-700;
   }
 }
+
+/* ==================== 通用 Tooltip 样式 ==================== */
+/* 统一的 Tooltip 外观样式 - 用于所有使用 Ant Design Tooltip 的组件 */
+.common-tooltip-overlay {
+  .ant-tooltip-inner {
+    max-width: 500px;
+    min-width: 400px;
+    padding: @spacing-lg;
+    background-color: #ffffff;
+    color: @color-text-primary;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: @radius-lg;
+    font-size: 14px;
+  }
+
+  .ant-tooltip-arrow {
+    &::before {
+      background-color: #ffffff;
+    }
+  }
+}
+
+/* 统一的图标容器样式 - 用于所有 Tooltip 触发图标 */
+.tip-icon-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+  cursor: help;
+  line-height: 1;
+  vertical-align: text-bottom;
+  position: relative;
+  top: -1px;
+}
+
+.tip-icon {
+  color: @color-gray-500;
+  cursor: help;
+  transition: color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.tip-icon:hover {
+  color: @color-gray-700;
+}

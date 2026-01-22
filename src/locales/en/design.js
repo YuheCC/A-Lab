@@ -320,6 +320,13 @@ export default {
     // Electrode Module
     electrode: {
         title: "Impact of electrode on cell performances",
+        // Material Description (shared across electrode pages)
+        materialDescription: {
+            title: "Description for SiC",
+            silicon: "Silicon (Si):",
+            carbon: "Carbon (C):",
+            description: "This Si-C composite exhibits a delithiation capacity of up to 1937.9 mAh/g with an initial coulombic efficiency (ICE) of 93.8%. The D50 particle size is controlled at 8.58 μm, with a tap density of 0.79 g/cm³."
+        },
         subtitle: "Predict impact of electrode materials on cell performance metrics (cycle life, coulombic efficiency, rate performance) with an AI model trained on SES internal experimental data",
         features: {
             resultPrediction: {
