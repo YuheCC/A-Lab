@@ -112,9 +112,25 @@
   }
 
   // 禁用状态
-  &--disabled {
-    opacity: 0.6;
+  &--disabled, &--readonly {
     cursor: not-allowed;
+
+    // 使用更高特异性选择器覆盖 Ant Design 的 disabled 样式
+    .ant-slider.ant-slider-disabled {
+      opacity: 0.4;
+
+      .ant-slider-rail {
+        background-color: @color-gray-200;
+      }
+
+      .ant-slider-track {
+        background-color: @color-accent !important;
+      }
+
+      .ant-slider-handle {
+        border-color: @color-gray-200 !important;
+      }
+    }
   }
 
   // 只读状态（无透明度，保持正常颜色）

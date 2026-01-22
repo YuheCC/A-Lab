@@ -397,7 +397,9 @@ export default {
             paa: "PAA (wt.%)",
             superP: "Carbon Black (wt.%)",
             swcnt: "CNT (wt.%)",
-            rateCapability: "속도 성능 (1C-5C)"
+            rateCapability: "속도 성능 (1C-5C)",
+            electrolyteParameters: "전해액 매개변수",
+            electrolyteContent: "전해액 함량 (g/Ah)"
         },
         optimize: {
             title: "역설계",

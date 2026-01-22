@@ -397,7 +397,9 @@ export default {
             paa: "PAA (wt.%)",
             superP: "Carbon Black (wt.%)",
             swcnt: "CNT (wt.%)",
-            rateCapability: "Rate Capability (1C-5C)"
+            rateCapability: "Rate Capability (1C-5C)",
+            electrolyteParameters: "Electrolyte Parameters",
+            electrolyteContent: "Electrolyte Content (g/Ah)"
         },
         optimize: {
             title: "Inverse Design",

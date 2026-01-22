@@ -164,6 +164,22 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       readonly={true}
                     />
                   </div>
+
+                  {/* 电解液参数模块 */}
+                  <h3 className="electrode-predict-subsection-title">
+                    {t('design.electrode.predict.electrolyteParameters', 'Electrolyte Parameters')}
+                  </h3>
+
+                  <div className="electrode-predict-parameters-container">
+                    <ParameterInput
+                      label={t('design.electrode.predict.electrolyteContent', 'Electrolyte Content (g/Ah)')}
+                      value={2.322}
+                      onChange={() => {}}
+                      min={0}
+                      max={2.322}
+                      readonly={true}
+                    />
+                  </div>
                 </div>
 
                 {/* 阳极区域 */}

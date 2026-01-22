@@ -58,6 +58,9 @@ const PredictPage: React.FC = () => {
   const [cathodePressDensity, setCathodePressDensity] = useState(3.52); // 保持不变
   const [cathodeNCMA, setCathodeNCMA] = useState(0);              // 新增 - 计算字段
 
+  // 电解液参数
+  const [electrolyteContent, setElectrolyteContent] = useState(2.322); // 电解液含量 (g/Ah)
+
   // 尺寸参数
   const [width, setWidth] = useState('');
   const [length, setLength] = useState('');
@@ -535,19 +538,21 @@ const PredictPage: React.FC = () => {
                     {cathodeError}
                   </div>
                 )}
-              </div>
 
-              {/* 阳极区域 */}
-              <div className="electrode-predict-electrode-section">
-                <label className="electrode-predict-label">
-                {t('design.electrode.predict.anodeActiveMaterial', 'Anode Active Material')}
-              </label>
-              <Select
-                value={anodeActiveMaterial}
-                onChange={setAnodeActiveMaterial}
-                  placeholder={t('design.electrode.predict.selectMaterial', 'Select material')}
-                  className="electrode-predict-select"
-                >
+                {/* 电解液参数模块 */}
+                <h3 className="electrode-predict-subsection-title">
+                  {t('design.electrode.predict.electrolyteParameters', 'Electrolyte Parameters')}
+                </h3>
+
+                <div className="electrode-predict-parameters-container">
+                  <ParameterInput
+                    label={t('design.electrode.predict.electrolyteContent', 'Electrolyte Content (g/Ah)')}
+                    value={electrolyteContent}
+                    onChange={setElectrolyteContent}
+                    min={0}
+                    disabled={true}
+                    max={2.322}
+                  />
                   {ANODE_ACTIVE_MATERIAL_OPTIONS.map((option) => (
                     <Option
                       key={option.value}
