@@ -104,6 +104,8 @@ const OptimizePage: React.FC = () => {
   const [hasCalculated, setHasCalculated] = useState(false); // 是否已计算过
   const [isAdditionalExpanded, setIsAdditionalExpanded] = useState(false); // 额外推荐折叠状态
   const [isCollapsing, setIsCollapsing] = useState(false); // 折叠动画状态
+  const [lastCalculatedFormData, setLastCalculatedFormData] = useState<DesignTargetsFormData | null>(null); // 上次计算的表单数据
+  const [isFormModified, setIsFormModified] = useState(false); // 表单是否被修改
 
   // Modal 状态
   const [modalVisible, setModalVisible] = useState(false);
@@ -113,6 +115,19 @@ const OptimizePage: React.FC = () => {
 
   // 额外推荐区域的 ref
   const additionalSectionRef = useRef<HTMLDivElement>(null);
+
+  // 监听表单数据变化，判断是否与上次计算的数据不同
+  useEffect(() => {
+    if (!lastCalculatedFormData) {
+      // 如果还没有计算过，表单未修改
+      setIsFormModified(false);
+      return;
+    }
+
+    // 比较当前 formData 与上次计算的 formData
+    const isModified = JSON.stringify(formData) !== JSON.stringify(lastCalculatedFormData);
+    setIsFormModified(isModified);
+  }, [formData, lastCalculatedFormData]);
 
   // 处理额外推荐的展开/折叠
   const handleToggleAdditional = () => {
@@ -187,6 +202,8 @@ const OptimizePage: React.FC = () => {
       setRecommendations(response.data);
       setFullResults(response.fullResults);
       setHasCalculated(true);
+      setLastCalculatedFormData({ ...formData }); // 保存本次计算的表单数据
+      setIsFormModified(false); // 计算完成后，表单未修改
       setIsAdditionalExpanded(false); // 重置折叠状态
       // message.success(t('design.electrode.optimize.messages.calculateSuccess'));
     } catch (error) {
@@ -539,6 +556,7 @@ const OptimizePage: React.FC = () => {
                 size="mlarge"
                 onClick={handleCalculate}
                 loading={loading}
+                disabled={loading || !!dimensionError || (hasCalculated && !isFormModified)}
                 className="electrode-optimize-calculate-btn"
               >
                 {t('design.electrode.optimize.calculate')}

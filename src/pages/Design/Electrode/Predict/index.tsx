@@ -69,6 +69,10 @@ const PredictPage: React.FC = () => {
   // 预测结果（初始值设为 null，等待计算）
   const [results, setResults] = useState<electrodeModel.ElectrodeModelResult | null>(null);
 
+  // 表单修改状态
+  const [lastCalculatedFormData, setLastCalculatedFormData] = useState<any>(null);
+  const [isFormModified, setIsFormModified] = useState(false);
+
   // 错误状态
   const [cathodeError, setCathodeError] = useState<string>('');
   const [anodeError, setAnodeError] = useState<string>('');
@@ -211,6 +215,61 @@ const PredictPage: React.FC = () => {
   const cathodeRanges = cathodeParameterRanges;
   const anodeRanges = anodeParameterRanges;
 
+  // 监听表单数据变化，判断是否与上次计算的数据不同
+  useEffect(() => {
+    if (!lastCalculatedFormData) {
+      // 如果还没有计算过，表单未修改
+      setIsFormModified(false);
+      return;
+    }
+
+    // 构建当前表单数据对象
+    const currentFormData = {
+      cellDesign,
+      npRatio,
+      anodeActiveMaterial,
+      cathodeActiveMaterial,
+      anodeCMC,
+      anodeSBR,
+      anodePAA,
+      anodeSuperP,
+      anodeSWCNT,
+      anodePressDensity,
+      cathodeKF9700,
+      cathodeCN01Y,
+      cathodeSuperC65,
+      cathodeArealLoading,
+      cathodePressDensity,
+      width,
+      length,
+      layers,
+    };
+
+    // 比较当前表单数据与上次计算的数据
+    const isModified = JSON.stringify(currentFormData) !== JSON.stringify(lastCalculatedFormData);
+    setIsFormModified(isModified);
+  }, [
+    cellDesign,
+    npRatio,
+    anodeActiveMaterial,
+    cathodeActiveMaterial,
+    anodeCMC,
+    anodeSBR,
+    anodePAA,
+    anodeSuperP,
+    anodeSWCNT,
+    anodePressDensity,
+    cathodeKF9700,
+    cathodeCN01Y,
+    cathodeSuperC65,
+    cathodeArealLoading,
+    cathodePressDensity,
+    width,
+    length,
+    layers,
+    lastCalculatedFormData,
+  ]);
+
   const handleCalculate = async () => {
     // 首先检查实时验证的错误状态
     // 如果存在任何错误，直接返回，不执行计算
@@ -297,6 +356,29 @@ const PredictPage: React.FC = () => {
     try {
       const response = await electrodeModel.predictElectrodePerformance(requestParams);
       setResults(response.model_result);
+
+      // 保存本次计算的表单数据
+      setLastCalculatedFormData({
+        cellDesign,
+        npRatio,
+        anodeActiveMaterial,
+        cathodeActiveMaterial,
+        anodeCMC,
+        anodeSBR,
+        anodePAA,
+        anodeSuperP,
+        anodeSWCNT,
+        anodePressDensity,
+        cathodeKF9700,
+        cathodeCN01Y,
+        cathodeSuperC65,
+        cathodeArealLoading,
+        cathodePressDensity,
+        width,
+        length,
+        layers,
+      });
+      setIsFormModified(false); // 计算完成后，表单未修改
     } catch (error) {
       // 将API错误显示在dimension区域（或者可以根据错误类型分配到不同区域）
       setDimensionError(t('design.electrode.predict.calculateError', 'Failed to calculate prediction'));
@@ -621,6 +703,7 @@ const PredictPage: React.FC = () => {
                 size="large"
                 onClick={handleCalculate}
                 loading={loading}
+                disabled={loading || !!cathodeError || !!anodeError || !!dimensionError || (results !== null && !isFormModified)}
                 className="electrode-predict-calculate-btn"
               >
                 {t('design.electrode.predict.calculate', 'Calculate')}
