@@ -327,7 +327,7 @@ export default {
             carbon: "Carbon (C):",
             description: "This Si-C composite exhibits a delithiation capacity of up to 1937.9 mAh/g with an initial coulombic efficiency (ICE) of 93.8%. The D50 particle size is controlled at 8.58 μm, with a tap density of 0.79 g/cm³."
         },
-        subtitle: "Predict impact of electrode materials on cell performance metrics (cycle life, coulombic efficiency, rate performance) with an AI model trained on SES internal experimental data",
+        subtitle: "A data-driven AI model designed to predict, analyze, and optimize the impact of electrode materials on cell performance. The model supports trend analysis and inverse design for both materials and cells, and can be fine-tuned using customer-provided datasets for specialized battery research and development.",
         features: {
             resultPrediction: {
                 title: "Performance Prediction",
@@ -356,7 +356,20 @@ export default {
             function1: "1. Result Prediction: Predict battery performance based on electrode material selection and parameter settings",
             function2: "2. Trend Analysis: Preset electrode formulation information, set one or more parameters as variables, and predict how battery performance changes as these parameters vary",
             function3: "3. Optimize: By defining target battery performance metrics, reverse-engineer and recommend appropriate electrode material selections and parameters",
-            function4: "4. Train: Enable users to train custom models"
+            function4: "4. Train: Enable users to train custom models",
+            // New detailed introduction content
+            resultPrediction: {
+                title: "1. Result Prediction",
+                description1: "Result Prediction delivers data-driven predictions of cell-level performance—including energy density, rate capability, and cycle life (future development)—based on electrode material choices and formulation parameters within a defined cell design.",
+                description2: "Powered by AI models trained on SES's proprietary experimental database, the module enables rapid and scalable evaluation of specific design configurations without requiring physical prototyping. It allows engineers to assess the expected performance outcomes of a given cell design and formulation, supporting efficient screening and comparison of candidate designs.",
+                exampleTitle: "Example",
+                example: "Predict cycle life, and rate performance for a given cell design combined with a specific cathode and anode formulation."
+            },
+            inverseDesign: {
+                title: "2. Inverse Design",
+                description1: "Inverse Design automatically generates feasible combinations of electrode materials and formulation parameters that satisfy user-defined performance targets. Rather than manually iterating through the design space, the module searches within realistic physical and manufacturing constraints to identify valid design candidates. This approach supports multi-objective decision-making by revealing trade-offs between energy density, rate capability, and lifetime, while avoiding solutions that are impractical or unstable.",
+                description2: "Inverse Design builds on insights from prediction and trend analysis, enabling target-driven exploration of design options that are both high-performing and manufacturable."
+            }
         },
         predict: {
             title: "Performance Prediction",
