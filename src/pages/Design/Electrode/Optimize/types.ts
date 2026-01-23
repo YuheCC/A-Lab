@@ -27,7 +27,7 @@ export interface ParameterRange {
 
 // 参数范围常量
 export const PARAMETER_RANGES: Record<string, ParameterRange> = {
-  designCapacity: { min: 0.01, max: 600, step: 0.01, default: [0.01, 1900], minDiff: 1 },
+  designCapacity: { min: 0.01, max: 600, step: 0.01, default: [0.01, 600], minDiff: 1 },
   specificEnergy: { min: 30, max: 340, step: 0.01, default: [30, 340], minDiff: 20 },
   thickness: { min: 0.4, max: 15, step: 0.01, default: [0.4, 15], minDiff: 0.5 },
   volumetricEnergyDensity: { min: 530, max: 1060, step: 0.01, default: [530, 1060], minDiff: 20 },
