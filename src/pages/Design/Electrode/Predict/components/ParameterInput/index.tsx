@@ -52,6 +52,11 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
   // 使用 ref 同步跟踪最新的内部值，解决闭包陷阱问题
   const internalRangeValueRef = useRef<[number, number]>(internalRangeValue);
 
+  // 记录当前正在拖动的 handle：'min' | 'max' | null
+  const draggingHandleRef = useRef<'min' | 'max' | null>(null);
+  // 记录拖动开始时另一个 handle 的位置（作为边界）
+  const dragBoundaryRef = useRef<number | null>(null);
+
   // 更新内部状态的同时更新 ref
   const updateInternalRangeValue = (newValue: [number, number]) => {
     internalRangeValueRef.current = newValue;
@@ -86,7 +91,20 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
     if (!val) return 0;
     return parseFloat(val) || 0;
   };
-  // 区间模式：差值校验函数
+
+  // 浮点数近似比较（解决精度问题）
+  const EPSILON = 1e-9;
+  const isApproxEqual = (a: number, b: number): boolean => {
+    return Math.abs(a - b) < EPSILON;
+  };
+  const isApproxLessOrEqual = (a: number, b: number): boolean => {
+    return a < b || isApproxEqual(a, b);
+  };
+  const isApproxGreaterOrEqual = (a: number, b: number): boolean => {
+    return a > b || isApproxEqual(a, b);
+  };
+
+  // 区间模式：差值校验函数（用于输入框等场景）
   const validateRange = (newValue: [number, number]): [number, number] => {
     let [minVal, maxVal] = newValue;
 
@@ -94,16 +112,17 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
     minVal = Math.max(min, Math.min(max, minVal));
     maxVal = Math.max(min, Math.min(max, maxVal));
 
-    // 2. 确保 maxVal >= minVal
-    if (maxVal < minVal) {
+    // 2. 确保 minVal <= maxVal（输入框场景可能出现）
+    if (minVal > maxVal) {
       [minVal, maxVal] = [maxVal, minVal];
     }
 
     // 3. 检查最小差值（差值不够时，优先调整 maxVal）
-    if (minDiff && (maxVal - minVal) < minDiff) {
+    // 使用容差比较解决浮点精度问题
+    if (minDiff && !isApproxGreaterOrEqual(maxVal - minVal, minDiff)) {
       // 尝试增加 maxVal
       const newMaxVal = minVal + minDiff;
-      if (newMaxVal <= max) {
+      if (isApproxLessOrEqual(newMaxVal, max)) {
         maxVal = newMaxVal;
       } else {
         // maxVal 超出边界，则减少 minVal
@@ -113,7 +132,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
     }
 
     // 4. 检查最大差值
-    if (maxDiff && (maxVal - minVal) > maxDiff) {
+    if (maxDiff && !isApproxLessOrEqual(maxVal - minVal, maxDiff)) {
       maxVal = minVal + maxDiff;
     }
 
@@ -137,12 +156,52 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
   // 区间模式：Range Slider 变化处理（Slider 即时校验并更新）
   const handleRangeSliderChange = (newValue: number | number[]) => {
     if (!isDisabled && Array.isArray(newValue)) {
-      const validatedRange = validateRange(newValue as [number, number]);
+      const [newMin, newMax] = newValue as [number, number];
+      const [prevMin, prevMax] = internalRangeValueRef.current;
+
+      let resultMin = newMin;
+      let resultMax = newMax;
+
+      // 判断哪个 handle 在移动
+      const minMoved = !isApproxEqual(newMin, prevMin);
+      const maxMoved = !isApproxEqual(newMax, prevMax);
+
+      // 第一次 onChange：确定正在拖动的 handle 和边界
+      if (draggingHandleRef.current === null) {
+        if (minMoved && !maxMoved) {
+          draggingHandleRef.current = 'min';
+          dragBoundaryRef.current = prevMax; // min handle 不能超过 max
+        } else if (maxMoved && !minMoved) {
+          draggingHandleRef.current = 'max';
+          dragBoundaryRef.current = prevMin; // max handle 不能低于 min
+        }
+      }
+
+      // 根据正在拖动的 handle 限制移动范围
+      if (draggingHandleRef.current === 'min' && dragBoundaryRef.current !== null) {
+        // 正在拖动 min handle，不能超过边界（原始 max 位置）
+        resultMin = Math.min(newMin, dragBoundaryRef.current);
+        resultMax = dragBoundaryRef.current; // max 保持不变
+      } else if (draggingHandleRef.current === 'max' && dragBoundaryRef.current !== null) {
+        // 正在拖动 max handle，不能低于边界（原始 min 位置）
+        resultMin = dragBoundaryRef.current; // min 保持不变
+        resultMax = Math.max(newMax, dragBoundaryRef.current);
+      }
+
+      // 应用 minDiff/maxDiff 校验
+      const validatedRange = validateRange([resultMin, resultMax]);
+
       updateInternalRangeValue(validatedRange);
       if (onRangeChange) {
         onRangeChange(validatedRange);
       }
     }
+  };
+
+  // 区间模式：拖动结束处理
+  const handleRangeSliderChangeComplete = () => {
+    draggingHandleRef.current = null;
+    dragBoundaryRef.current = null;
   };
 
   // 区间模式：输入框变化处理（只更新内部状态，不触发校验）
@@ -180,6 +239,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
             step={step}
             value={sliderValue}
             onChange={handleRangeSliderChange}
+            onChangeComplete={handleRangeSliderChangeComplete}
             disabled={isDisabled}
             className="parameter-input__slider parameter-input__slider--range"
           />
