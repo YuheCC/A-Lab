@@ -7,35 +7,53 @@ const Introduction: React.FC = () => {
 
   return (
     <div className="prediction-introduction-container">
-      <div className="introduction-image-section">
-        <img
-          src="/predict/predictExampleChart.png"
-          alt="Prediction Example Chart"
-          className="introduction-chart-image"
-        />
-        <p className="introduction-image-caption">
-          {t('predictionTool.tutorial.imageCaption')}
-        </p>
-      </div>
+      {/* Introduction Section */}
+      <section className="introduction-section">
+        <h2 className="section-title">{t('predictionTool.introduction.title')}</h2>
+        <p className="section-paragraph">{t('predictionTool.introduction.paragraph1')}</p>
+        <p className="section-paragraph">{t('predictionTool.introduction.paragraph2')}</p>
+      </section>
 
-      <div className="introduction-text-content">
-        <ul className="introduction-main-list">
-          {/* <li>
-            {t('predictionTool.tutorial.point1')}
-            <ul className="introduction-sub-list">
-              <li>{t('predictionTool.tutorial.point1_sub1')}</li>
-              <li>{t('predictionTool.tutorial.point1_sub2')}</li>
-            </ul>
-          </li> */}
-          <li>{t('predictionTool.tutorial.point2')}</li>
-          <li>
-            {t('predictionTool.tutorial.point3')}
-            <ul className="introduction-sub-list">
-              <li>{t('predictionTool.tutorial.point3_sub1')}</li>
-            </ul>
-          </li>
+      {/* Input Requirement Section */}
+      <section className="introduction-section">
+        <h2 className="section-title">{t('predictionTool.introduction.inputRequirement.title')}</h2>
+        <p className="section-paragraph">{t('predictionTool.introduction.inputRequirement.paragraph1')}</p>
+        <p className="section-paragraph">{t('predictionTool.introduction.inputRequirement.paragraph2')}</p>
+        <ul className="section-list">
+          <li>{t('predictionTool.introduction.inputRequirement.item1')}</li>
+          <li>{t('predictionTool.introduction.inputRequirement.item2')}</li>
+          <li>{t('predictionTool.introduction.inputRequirement.item3')}</li>
         </ul>
-      </div>
+      </section>
+
+      {/* Applicability Section */}
+      <section className="introduction-section">
+        <h2 className="section-title">{t('predictionTool.introduction.applicability.title')}</h2>
+        <p className="section-paragraph">{t('predictionTool.introduction.applicability.paragraph1')}</p>
+      </section>
+
+      {/* Prediction Accuracy Section */}
+      <section className="introduction-section">
+        <h2 className="section-title">{t('predictionTool.introduction.predictionAccuracy.title')}</h2>
+        <ul className="section-list">
+          <li>{t('predictionTool.introduction.predictionAccuracy.item1')}</li>
+          <li>{t('predictionTool.introduction.predictionAccuracy.item2')}</li>
+        </ul>
+      </section>
+
+      {/* Example Section */}
+      <section className="introduction-section">
+        <h2 className="section-title">{t('predictionTool.introduction.example.title')}</h2>
+        <div className="example-image-wrapper">
+          <img
+            src="/predict/predictExampleChartNew.png"
+            alt="Prediction Example Chart"
+            className="example-image"
+          />
+        </div>
+        <p className="section-paragraph">{t('predictionTool.introduction.example.paragraph1')}</p>
+        <p className="section-paragraph">{t('predictionTool.introduction.example.paragraph2')}</p>
+      </section>
     </div>
   );
 };

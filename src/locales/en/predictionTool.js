@@ -1,7 +1,7 @@
 export default {
     // Header
     title: "Upload early cycle data for life prediction",
-    subtitle: "Predict is an AI model trained on SES or customer experimental datasets to estimate cycle life, defined as the number of cycles at which discharge-capacity retention reaches 80%. The model requires only the first 100 effective cycles as input, where effective cycles exclude those with sudden capacity changes or abnormal behavior, meaning the actual cycle count may be higher. The model provides accurate predictions for battery systems with limited active-ion inventories, such as Li-ion, Na-ion, and anode-free batteries. It cannot capture degradation due to mechanical or cell-design issues—such as internal shorts, tab cracking, gassing, lithium plating, or insufficient electrolyte—unless corresponding data are provided to retrain or calibrate the model.",
+    subtitle: "Predict is an SES-developed AI model that estimates battery cycle life—defined as the cycle count at which discharge capacity falls to 80%—using early-cycle performance data. The model uses approximately the first 100 effective cycles as input, with effective cycles defined as those free from sudden capacity shifts or abnormal behavior. Predict performs best for systems where lifetime is governed by active-ion inventory loss, including Li-ion, Na-ion, and anode-free batteries. The presence of non-electrochemical degradation mechanisms—such as mechanical damage, design-related issues, internal shorts, gassing, lithium plating, or electrolyte depletion—can impact prediction accuracy.",
     betaTag: "BETA",
     disclaimerTitle: "Disclaimer",
     disclaimer: "<strong>Note:</strong> This function predicts cell cycle life using only early-stage cycling data provided by the user. No additional information, such as cell chemistry or design, is required. The model is currently applicable to battery systems with limited active ions under standard cycling conditions (not real-world usage profiles). Users are encouraged to validate the predictions through their own testing.",
@@ -214,6 +214,35 @@ export default {
         point3: 'For a real cell with known cycle-life (1261 cycles based on the capacity retention of each cycle, or 1351 cycles based on the capacity retention of capacity check cycles), the model predicted EOL at the 1321 cycle.',
         point3_sub1: 'The prediction has a minor error of 4.7% or 2.2%, which is much better than simple linear extrapolation (800 cycles).',
         point4: 'The prediction has a minor error of 4.7% or 2.2%. Which is much better than simple linear extrapolation (800 cycles).'
+    },
+
+    // Introduction Page
+    introduction: {
+        title: "Introduction",
+        paragraph1: "This tool predicts battery cycle life, defined as the number of cycles until discharge capacity retention reaches 80%, using an AI model trained on internal experimental datasets.",
+        paragraph2: "Unlike traditional extrapolation methods, the model captures non-linear aging behavior and provides an early, data-driven estimate of end-of-life based on limited cycling information.",
+        inputRequirement: {
+            title: "Input Requirement",
+            paragraph1: "Only data from the early cycles (for instance first 100 effective cycles) is required.",
+            paragraph2: "Effective cycles represent normal aging behavior under the target operating conditions and exclude non-representative cycles, such as:",
+            item1: "Diagnostic or capacity check (RPT) cycles",
+            item2: "Long rest or low-rate test cycles",
+            item3: "Cycles affected by experimental disturbances or abnormal capacity jumps"
+        },
+        applicability: {
+            title: "Applicability",
+            paragraph1: "The model is validated for battery systems in which cycle life is primarily governed by active ion inventory loss, including lithium-ion batteries, sodium-ion batteries, and anode-free batteries. For other electrochemical degradation mechanisms, such as active material loss or lithium plating, the model can provide estimates with reduced accuracy. Failure modes driven by mechanical factors, such as tab cracking or internal shorting, are outside the scope of the model and cannot be predicted."
+        },
+        predictionAccuracy: {
+            title: "Prediction Accuracy",
+            item1: "For general use without prior knowledge of the materials system, the typical prediction error is within ±15%.",
+            item2: "After fine-tuning the model for a specific battery system, the error can be reduced to approximately ±5%."
+        },
+        example: {
+            title: "Example",
+            paragraph1: "In one example, the model-based prediction estimates the battery end-of-life at approximately 1308 cycles by capturing the evolving SOH degradation trend over time. Rather than assuming a constant fade rate, the prediction projects a non-linear aging behavior, resulting in a trajectory that is consistent with the measured SOH evolution. In this case, the model uses data up to the cycle indicated by the vertical red dashed line (around 130 cycles) and excludes abnormal cycles to establish a stable degradation trend for prediction. The actual end-of-life is observed at 1396 cycles (excluding capacity check cycles), corresponding to a prediction error of approximately 6.3%.",
+            paragraph2: "If a simple linear extrapolation were applied instead, the lifetime would be underestimated at around 1000 cycles. This highlights the advantage of the prediction approach in providing a more accurate lifetime estimate."
+        }
     },
 
     // Train
