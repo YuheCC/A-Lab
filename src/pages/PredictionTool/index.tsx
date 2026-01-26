@@ -87,7 +87,7 @@ const PredictionTool: React.FC = () => {
         columns={{
           default: 1,
           sm: 2,
-          lg: 2,
+          lg: 4,
         }}
         gap={16}
       >
