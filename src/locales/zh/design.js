@@ -343,7 +343,7 @@ export default {
             },
             train: {
                 title: "训练",
-                description: "训练自定义模型"
+                description: "训练您的自定义模型"
             }
         },
         tabs: {

@@ -64,7 +64,7 @@ const DesignInfoItem: React.FC<DesignInfoItemProps> = ({ label, value }) => (
   <div className="designdetail-design-info-item">
     <div className="designdetail-design-info-label">{label}</div>
     <div className="designdetail-design-info-value">
-      {typeof value === 'number' ? value.toFixed(2) : value}
+      {typeof value === 'number' ? value.toFixed(label === 'Layers' ? 0 : 2) : value}
     </div>
   </div>
 );

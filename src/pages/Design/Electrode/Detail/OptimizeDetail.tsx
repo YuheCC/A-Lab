@@ -29,7 +29,6 @@ interface OptimizeDetailContentProps {
   modelParams: {
     width: number;
     length: number;
-    layers: number;
     design_capacity: [number, number];
     specific_ED: [number, number];
     jelly_roll_thickness: [number, number];
@@ -410,7 +409,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                 {t('design.electrode.optimize.cathodeDimension', 'Cathode Dimension')}
               </h3>
 
-              <div className="electrode-optimize-form-row electrode-optimize-form-row--triple">
+              <div className="electrode-optimize-form-row">
                 <div className="electrode-optimize-form-item">
                   <label className="electrode-optimize-label">
                     {t('design.electrode.optimize.width', 'Width (mm)')}
@@ -430,18 +429,6 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                   <input
                     type="number"
                     value={modelParams.length}
-                    disabled
-                    className="electrode-optimize-input electrode-optimize-input--disabled"
-                  />
-                </div>
-
-                <div className="electrode-optimize-form-item">
-                  <label className="electrode-optimize-label">
-                    {t('design.electrode.optimize.layers', 'Layers')}
-                  </label>
-                  <input
-                    type="number"
-                    value={modelParams.layers}
                     disabled
                     className="electrode-optimize-input electrode-optimize-input--disabled"
                   />
@@ -636,7 +623,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                 />
                 <DesignInfoItem label="Width (mm)" value={selectedResult.width} />
                 <DesignInfoItem label="Length (mm)" value={selectedResult.length} />
-                <DesignInfoItem label="Layers" value={selectedResult.layers} />
+                <DesignInfoItem label="Layers" value={selectedResult.layers.toFixed(0)} />
               </div>
             </div>
 

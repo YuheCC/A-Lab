@@ -343,7 +343,7 @@ export default {
             },
             train: {
                 title: "Train",
-                description: "Train custom model"
+                description: "Train your custom model"
             }
         },
         tabs: {

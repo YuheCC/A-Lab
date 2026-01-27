@@ -2,7 +2,7 @@
 
 .electrode-introduction-content {
   background: white;
-  padding: @spacing-xl;
+  padding: 0px 24px 96px 24px;
   border-radius: @radius-lg;
   max-width: 1400px;
   margin: 0 auto;
@@ -89,21 +89,24 @@
   &__example-images-centered {
     display: flex;
     flex-direction: row;
-    gap: 24px;
+    flex-wrap: wrap;
     margin-top: 24px;
     justify-content: center;
-    align-items: center;
+    gap: 10%;
+    align-items: flex-start;
 
     .electrode-introduction-content__example-image-item {
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
       align-items: center;
+      width: 40%;
     }
 
     .electrode-introduction-content__example-image {
-      max-width: 100%;
-      height: auto;
+      width: 100%;
+      height: 300px;
+      object-fit: contain;
     }
   }
 
