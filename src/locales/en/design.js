@@ -363,14 +363,19 @@ export default {
                 description1: "Result Prediction delivers data-driven predictions of cell-level performance—including energy density, rate capability, and cycle life (future development)—based on electrode material choices and formulation parameters within a defined cell design.",
                 description2: "Powered by AI models trained on SES's proprietary experimental database, the module enables rapid and scalable evaluation of specific design configurations without requiring physical prototyping. It allows engineers to assess the expected performance outcomes of a given cell design and formulation, supporting efficient screening and comparison of candidate designs.",
                 exampleTitle: "Example",
-                example: "Predict cycle life, and rate performance for a given cell design combined with a specific cathode and anode formulation."
+                example: "Predict cycle life, and rate performance for a given cell design combined with a specific cathode and anode formulation.",
+                image1Caption: "Electrode Design",
+                image2Caption: "Performance Prediction"
             },
             inverseDesign: {
                 title: "2. Inverse Design",
                 description1: "Inverse Design automatically generates feasible combinations of electrode materials and formulation parameters that satisfy user-defined performance targets. Rather than manually iterating through the design space, the module searches within realistic physical and manufacturing constraints to identify valid design candidates. This approach supports multi-objective decision-making by revealing trade-offs between energy density, rate capability, and lifetime, while avoiding solutions that are impractical or unstable.",
                 description2: "Inverse Design builds on insights from prediction and trend analysis, enabling target-driven exploration of design options that are both high-performing and manufacturable.",
                 exampleTitle: "Example",
-                example: "Design an electrode formulation that achieves 1000Wh/L while maintaining high-rate capability and target cycle life."
+                example: "Design an electrode formulation that achieves 1000Wh/L while maintaining high-rate capability and target cycle life.",
+                image1Caption: "Target Setting",
+                image2Caption: "Design Recommendations",
+                image3Caption: "Design Details"
             }
         },
         predict: {
