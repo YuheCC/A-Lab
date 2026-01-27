@@ -313,7 +313,7 @@ export default {
                 description: "创建新的电解质设计"
             },
             train: {
-                description: "训练新模型"
+                description: "训练您的自定义模型"
             }
         }
     },

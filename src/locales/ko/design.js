@@ -313,7 +313,7 @@ export default {
                 description: "새 전해질 설계 생성"
             },
             train: {
-                description: "새 모델 학습"
+                description: "사용자 정의 모델 학습"
             }
         }
     },
