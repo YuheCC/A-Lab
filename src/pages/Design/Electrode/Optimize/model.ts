@@ -99,7 +99,6 @@ export const getOptimizeRecommendations = async (
     model_params: {
       width: Number(formData.width),
       length: Number(formData.length),
-      layers: Number(formData.layers),
       design_capacity: formData.designCapacity,
       specific_ED: formData.specificEnergy,
       jelly_roll_thickness: formData.thickness,

@@ -9,7 +9,6 @@ export interface DesignTargetsFormData {
   cathodeActiveMaterial: string;
   width: string; // Cathode Width (mm)
   length: string; // Cathode Length (mm)
-  layers: string; // Cathode Layers
   designCapacity: [number, number]; // Design Capacity (Ah) - 区间
   specificEnergy: [number, number]; // Gravimetric Energy Density (Wh/kg) - 区间
   thickness: [number, number]; // Jelly Roll Thickness (mm) - 区间

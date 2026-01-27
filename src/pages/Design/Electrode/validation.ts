@@ -349,7 +349,7 @@ function validateDimensionParameters(
   const lengthEmpty = isEmptyNumber(lengthRaw);
   const layersEmpty = isEmptyNumber(layersRaw);
 
-  if (!skipEmptyCheck && (widthEmpty || lengthEmpty || layersEmpty)) {
+  if (!skipEmptyCheck && (widthEmpty || lengthEmpty || (params.hasOwnProperty('layers') && layersEmpty))) {
     return t
       ? t('design.electrode.validation.fillAllDimensions')
       : '请填写所有尺寸参数';

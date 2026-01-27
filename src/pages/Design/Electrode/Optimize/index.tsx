@@ -48,7 +48,6 @@ const OptimizePage: React.FC = () => {
     cathodeActiveMaterial: DEFAULT_VALUES.cathodeActiveMaterial,
     width: '',
     length: '',
-    layers: '',
     designCapacity: PARAMETER_RANGES.designCapacity.default,
     specificEnergy: PARAMETER_RANGES.specificEnergy.default,
     thickness: PARAMETER_RANGES.thickness.default,
@@ -59,10 +58,9 @@ const OptimizePage: React.FC = () => {
   const [dimensionError, setDimensionError] = useState<string>('');
 
   // ============ 防抖值 - 用于优化实时验证性能 ============
-  // Dimension 字段防抖（3个）
+  // Dimension 字段防抖（2个）
   const debouncedWidth = useDebounce(formData.width, 300);
   const debouncedLength = useDebounce(formData.length, 300);
-  const debouncedLayers = useDebounce(formData.layers, 300);
 
   // 根据 Cell Design 自动更新 NP Ratio
   useEffect(() => {
@@ -77,7 +75,6 @@ const OptimizePage: React.FC = () => {
     const dimensionParams = {
       width: debouncedWidth,
       length: debouncedLength,
-      layers: debouncedLayers,
     };
 
     // 执行验证（实时验证跳过空值检查，只检查范围和业务规则）
@@ -88,7 +85,6 @@ const OptimizePage: React.FC = () => {
   }, [
     debouncedWidth,
     debouncedLength,
-    debouncedLayers,
     t,
   ]);
 
@@ -163,12 +159,11 @@ const OptimizePage: React.FC = () => {
     }
 
     // 验证 Cathode Dimension 字段（空值检查）
-    if (!formData.width || !formData.length || !formData.layers) {
+    if (!formData.width || !formData.length) {
       // 通过二次验证设置错误状态，页面会显示错误提示
       const emptyError = validateDimensionParameters({
         width: formData.width,
         length: formData.length,
-        layers: formData.layers,
       }, t);
       if (emptyError) {
         setDimensionError(emptyError);
@@ -188,7 +183,6 @@ const OptimizePage: React.FC = () => {
     const dimensionValidationError = validateDimensionParameters({
       width: formData.width,
       length: formData.length,
-      layers: formData.layers,
     }, t);
 
     if (dimensionValidationError) {
@@ -473,7 +467,7 @@ const OptimizePage: React.FC = () => {
                 {t('design.electrode.optimize.cathodeDimension')}
               </h3>
 
-              <div className="electrode-optimize-form-row electrode-optimize-form-row--triple">
+              <div className="electrode-optimize-form-row">
                 <div className="electrode-optimize-form-item">
                   <label className="electrode-optimize-label">
                     {t('design.electrode.optimize.width')}
@@ -496,19 +490,6 @@ const OptimizePage: React.FC = () => {
                     value={formData.length}
                     onChange={(e) => setFormData({ ...formData, length: e.target.value })}
                     placeholder={t('design.electrode.optimize.enterLength')}
-                    className="electrode-optimize-input"
-                  />
-                </div>
-
-                <div className="electrode-optimize-form-item">
-                  <label className="electrode-optimize-label">
-                    {t('design.electrode.optimize.layers')}
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.layers}
-                    onChange={(e) => setFormData({ ...formData, layers: e.target.value })}
-                    placeholder={t('design.electrode.optimize.enterLayers')}
                     className="electrode-optimize-input"
                   />
                 </div>
