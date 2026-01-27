@@ -4,7 +4,7 @@ import { RefreshCw } from 'lucide-react';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from '@umijs/max';
+import { useNavigate, useSearchParams } from '@umijs/max';
 import { Dayjs } from 'dayjs';
 import { formatUTCDateTime } from '@/utils/dateUtils';
 import { useDateFilter } from '@/hooks/useDateFilter';
@@ -15,9 +15,17 @@ import './index.less';
 const RecordsContent: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const getInitialSubTab = (): 'result-prediction' | 'inverse-design' => {
+    const subTabParam = searchParams.get('subTab');
+    return (subTabParam === 'result-prediction' || subTabParam === 'inverse-design') 
+      ? subTabParam as 'result-prediction' | 'inverse-design' 
+      : 'result-prediction';
+  };
 
   // 二级 Tab 状态
-  const [activeSubTab, setActiveSubTab] = useState('result-prediction');
+  const [activeSubTab, setActiveSubTab] = useState<'result-prediction' | 'inverse-design'>(getInitialSubTab());
 
   // 搜索和过滤状态
   const [searchKeyword, setSearchKeyword] = useState<string>('');
@@ -40,6 +48,16 @@ const RecordsContent: React.FC = () => {
 
   // 防抖 timer
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // 初始化时,如果URL没有subTab参数,则设置默认值
+  useEffect(() => {
+    const subTabParam = searchParams.get('subTab');
+    if (!subTabParam) {
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.set('subTab', activeSubTab);
+      setSearchParams(newSearchParams, { replace: true });
+    }
+  }, []);
 
   // 将 activeSubTab 映射到 type 参数
   const getTypeFromSubTab = (subTab: string): electrodeModel.PageType => {
@@ -144,7 +162,12 @@ const RecordsContent: React.FC = () => {
             <Radio.Group
               value={activeSubTab}
               onChange={(e) => {
-                setActiveSubTab(e.target.value);
+                const newSubTab = e.target.value as 'result-prediction' | 'inverse-design';
+                setActiveSubTab(newSubTab);
+                // 更新URL参数
+                const newSearchParams = new URLSearchParams(searchParams);
+                newSearchParams.set('subTab', newSubTab);
+                setSearchParams(newSearchParams, { replace: true });
                 // Tab 切换时清空搜索条件
                 setSearchKeyword('');
                 resetDate();

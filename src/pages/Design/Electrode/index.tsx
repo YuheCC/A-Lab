@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from '@umijs/max';
+import { useNavigate, useSearchParams } from '@umijs/max';
 import CollapsibleText from '@/components/CollapsibleText';
 import FeatureCard from '../components/FeatureCard';
 import FeatureCardGroup from '../components/FeatureCardGroup';
@@ -20,7 +20,14 @@ const ICONS = {
 const ElectrodePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('introduction');
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const getInitialTab = (): 'introduction' | 'records' => {
+    const tabParam = searchParams.get('tab');
+    return (tabParam === 'records' || tabParam === 'introduction') ? tabParam as 'introduction' | 'records' : 'introduction';
+  };
+
+  const [activeTab, setActiveTab] = useState<'introduction' | 'records'>(getInitialTab());
 
   const tabs = [
     { key: 'introduction', label: t('design.electrode.tabs.introduction'), disabled: false },
@@ -28,12 +35,31 @@ const ElectrodePage: React.FC = () => {
     // { key: 'models', label: t('design.electrode.tabs.models'), disabled: true }
   ];
 
+  // 初始化时,如果URL没有tab参数,则设置默认值
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (!tabParam) {
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.set('tab', activeTab);
+      setSearchParams(newSearchParams, { replace: true });
+    }
+  }, []);
+
   const handleNavigateToPredict = () => {
     navigate('/design/electrode/predict');
   };
 
   const handleNavigateToOptimize = () => {
     navigate('/design/electrode/optimize');
+  };
+
+  const handleTabChange = (tab: string) => {
+    const newTab = tab as 'introduction' | 'records';
+    setActiveTab(newTab);
+    // 更新URL参数
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('tab', newTab);
+    setSearchParams(newSearchParams, { replace: true });
   };
 
   return (
@@ -84,7 +110,7 @@ const ElectrodePage: React.FC = () => {
         />
       </FeatureCardGroup>
 
-      <TabSection activeTab={activeTab} onTabChange={setActiveTab} tabs={tabs}>
+      <TabSection activeTab={activeTab} onTabChange={handleTabChange} tabs={tabs}>
         {activeTab === 'introduction' && <IntroductionContent />}
         {activeTab === 'records' && <RecordsContent />}
       </TabSection>

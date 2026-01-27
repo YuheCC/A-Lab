@@ -76,7 +76,10 @@ const DetailPage: React.FC = () => {
   };
 
   const handleGoBack = () => {
-    navigate(-1);
+    // 根据 type 参数决定返回到哪个 subTab
+    // type=2: inverse-design, type=1 或未指定: result-prediction
+    const subTab = typeParam === '2' ? 'inverse-design' : 'result-prediction';
+    navigate(`/design/electrode?tab=records&subTab=${subTab}`);
   };
 
   // 加载状态
