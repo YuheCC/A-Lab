@@ -368,7 +368,9 @@ export default {
             inverseDesign: {
                 title: "2. Inverse Design",
                 description1: "Inverse Design automatically generates feasible combinations of electrode materials and formulation parameters that satisfy user-defined performance targets. Rather than manually iterating through the design space, the module searches within realistic physical and manufacturing constraints to identify valid design candidates. This approach supports multi-objective decision-making by revealing trade-offs between energy density, rate capability, and lifetime, while avoiding solutions that are impractical or unstable.",
-                description2: "Inverse Design builds on insights from prediction and trend analysis, enabling target-driven exploration of design options that are both high-performing and manufacturable."
+                description2: "Inverse Design builds on insights from prediction and trend analysis, enabling target-driven exploration of design options that are both high-performing and manufacturable.",
+                exampleTitle: "Example",
+                example: "Design an electrode formulation that achieves 1000Wh/L while maintaining high-rate capability and target cycle life."
             }
         },
         predict: {
