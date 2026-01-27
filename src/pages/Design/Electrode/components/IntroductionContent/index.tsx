@@ -25,7 +25,7 @@ const IntroductionContent: React.FC = () => {
           <p className="electrode-introduction-content__example-text">
             {t('design.electrode.introduction.resultPrediction.example')}
           </p>
-          <div className="electrode-introduction-content__example-images">
+          <div className="electrode-introduction-content__example-images-centered">
             <div className="electrode-introduction-content__example-image-item">
               <img 
                 src="/design/electrode/introduction/example1-1.png" 
@@ -55,6 +55,37 @@ const IntroductionContent: React.FC = () => {
         <p className="electrode-introduction-content__paragraph">
           {t('design.electrode.introduction.inverseDesign.description2')}
         </p>
+        <div className="electrode-introduction-content__example">
+          <p className="electrode-introduction-content__example-title">
+            {t('design.electrode.introduction.inverseDesign.exampleTitle')}
+          </p>
+          <p className="electrode-introduction-content__example-text">
+            {t('design.electrode.introduction.inverseDesign.example')}
+          </p>
+          <div className="electrode-introduction-content__example-images-row">
+            <div className="electrode-introduction-content__example-image-item">
+              <img
+                src="/design/electrode/introduction/example2-1.png"
+                alt="Inverse design example 1"
+                className="electrode-introduction-content__example-image"
+              />
+            </div>
+            <div className="electrode-introduction-content__example-image-item">
+              <img
+                src="/design/electrode/introduction/example2-2.png"
+                alt="Inverse design example 2"
+                className="electrode-introduction-content__example-image"
+              />
+            </div>
+            <div className="electrode-introduction-content__example-image-item">
+              <img
+                src="/design/electrode/introduction/example2-3.png"
+                alt="Inverse design example 3"
+                className="electrode-introduction-content__example-image"
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
