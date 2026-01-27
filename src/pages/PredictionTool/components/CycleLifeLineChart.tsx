@@ -228,7 +228,37 @@ const CycleLifeLineChart: React.FC<CycleLifeLineChartProps> = ({
         }
       },
       legend: {
-        bottom: '10'
+        bottom: '10',
+        itemWidth: 30,
+        data: [
+          {
+            name: t('predictionTool.chart.originalSohUsed'),
+            // Solid line path
+            icon: 'path://M0 48 L100 48 L100 52 L0 52 Z',
+            itemStyle: {
+              color: '#5470c6',
+              opacity: 1
+            }
+          },
+          {
+            name: t('predictionTool.chart.originalSohUnused'),
+            // Dashed line path
+            icon: 'path://M0 48 L20 48 L20 52 L0 52 Z M30 48 L50 48 L50 52 L30 52 Z M60 48 L80 48 L80 52 L60 52 Z',
+            itemStyle: {
+              color: '#5470c6',
+              opacity: 1
+            }
+          },
+          {
+            name: t('predictionTool.chart.estimatedSoh'),
+            // Dashed line path
+            icon: 'path://M0 48 L20 48 L20 52 L0 52 Z M30 48 L50 48 L50 52 L30 52 Z M60 48 L80 48 L80 52 L60 52 Z',
+            itemStyle: {
+              color: '#ee6666',
+              opacity: 1
+            }
+          }
+        ]
       },
       grid: {
         left: '3%',
