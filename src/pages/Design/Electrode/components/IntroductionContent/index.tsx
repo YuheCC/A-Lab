@@ -32,6 +32,9 @@ const IntroductionContent: React.FC = () => {
                 alt="Electrode parameters configuration"
                 className="electrode-introduction-content__example-image"
               />
+              <span className="electrode-introduction-content__example-image-caption">
+                {t('design.electrode.introduction.resultPrediction.image1Caption')}
+              </span>
             </div>
             <div className="electrode-introduction-content__example-image-item">
               <img 
@@ -39,6 +42,9 @@ const IntroductionContent: React.FC = () => {
                 alt="Cell performance prediction results"
                 className="electrode-introduction-content__example-image"
               />
+              <span className="electrode-introduction-content__example-image-caption">
+                {t('design.electrode.introduction.resultPrediction.image2Caption')}
+              </span>
             </div>
           </div>
         </div>
@@ -69,6 +75,9 @@ const IntroductionContent: React.FC = () => {
                 alt="Inverse design example 1"
                 className="electrode-introduction-content__example-image"
               />
+              <span className="electrode-introduction-content__example-image-caption">
+                {t('design.electrode.introduction.inverseDesign.image1Caption')}
+              </span>
             </div>
             <div className="electrode-introduction-content__example-image-item">
               <img
@@ -76,6 +85,9 @@ const IntroductionContent: React.FC = () => {
                 alt="Inverse design example 2"
                 className="electrode-introduction-content__example-image"
               />
+              <span className="electrode-introduction-content__example-image-caption">
+                {t('design.electrode.introduction.inverseDesign.image2Caption')}
+              </span>
             </div>
             <div className="electrode-introduction-content__example-image-item">
               <img
@@ -83,6 +95,9 @@ const IntroductionContent: React.FC = () => {
                 alt="Inverse design example 3"
                 className="electrode-introduction-content__example-image"
               />
+              <span className="electrode-introduction-content__example-image-caption">
+                {t('design.electrode.introduction.inverseDesign.image3Caption')}
+              </span>
             </div>
           </div>
         </div>

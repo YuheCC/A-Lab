@@ -74,7 +74,8 @@
     .electrode-introduction-content__example-image-item {
       flex: 1;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      justify-content: flex-start;
       align-items: center;
     }
 
@@ -95,7 +96,9 @@
 
     .electrode-introduction-content__example-image-item {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
     }
 
     .electrode-introduction-content__example-image {
@@ -114,5 +117,13 @@
   &__example-image {
     width: 100%;
     height: auto;
+  }
+
+  &__example-image-caption {
+    font-size: 14px;
+    color: @color-text-primary;
+    margin-top: 12px;
+    text-align: center;
+    line-height: 1.5;
   }
 }
