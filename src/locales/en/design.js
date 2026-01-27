@@ -313,7 +313,7 @@ export default {
                 description: "Create a new electrolyte design"
             },
             train: {
-                description: "Train a new model"
+                description: "Train your custom model"
             }
         }
     },

@@ -313,7 +313,7 @@ export default {
                 description: "新しい電解質設計を作成"
             },
             train: {
-                description: "新しいモデルをトレーニング"
+                description: "カスタムモデルをトレーニング"
             }
         }
     },
