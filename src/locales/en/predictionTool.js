@@ -6,6 +6,18 @@ export default {
     disclaimerTitle: "Disclaimer",
     disclaimer: "<strong>Note:</strong> This function predicts cell cycle life using only early-stage cycling data provided by the user. No additional information, such as cell chemistry or design, is required. The model is currently applicable to battery systems with limited active ions under standard cycling conditions (not real-world usage profiles). Users are encouraged to validate the predictions through their own testing.",
 
+    // Features
+    features: {
+        newPrediction: {
+            title: "New Prediction",
+            description: "Run a new prediction"
+        },
+        train: {
+            title: "Train",
+            description: "Train your custom model"
+        }
+    },
+
     // Create page
     create: {
         title: "New Prediction"
@@ -171,11 +183,11 @@ export default {
         xAxisName: "Cycle Number",
         yAxisName: "Discharge Capacity",
         xAxisLabel: "Cycle ID",
-        yAxisLabel: "SOH (%)",
-        originalSoh: "Original SOH",
-        originalSohUsed: "Original SOH Used",
-        originalSohUnused: "Original SOH Unused",
-        estimatedSoh: "Estimated SOH",
+        yAxisLabel: "Capacity Retention(%)",
+        originalSoh: "Uploaded Value",
+        originalSohUsed: "Uploaded Value (Used)",
+        originalSohUnused: "Uploaded Value (Unused)",
+        estimatedSoh: "Predicted Value",
         predictedCapacityLine: "Predicted Capacity Line",
         sohPredictionLine: "80% SOH Prediction Line",
         value: "Value",

@@ -228,12 +228,7 @@ const CycleLifeLineChart: React.FC<CycleLifeLineChartProps> = ({
         }
       },
       legend: {
-        data: [
-            { name: t('predictionTool.chart.originalSoh'), itemStyle: { color: '#5470c6' } },
-            { name: t('predictionTool.chart.estimatedSoh'), itemStyle: { color: '#ee6666' } }
-        ],
-        bottom: '10',
-        selectedMode: false 
+        bottom: '10'
       },
       grid: {
         left: '3%',
@@ -267,23 +262,7 @@ const CycleLifeLineChart: React.FC<CycleLifeLineChartProps> = ({
         }
       },
       series: [
-          ...series,
-          // Dummy series for Legend
-          {
-              name: t('predictionTool.chart.originalSoh'),
-              type: 'line',
-              data: [],
-              itemStyle: { color: '#5470c6' },
-              showSymbol: false
-          },
-          {
-              name: t('predictionTool.chart.estimatedSoh'),
-              type: 'line',
-              data: [],
-              itemStyle: { color: '#ee6666' },
-              lineStyle: { type: 'dashed' },
-              showSymbol: false
-          }
+          ...series
       ],
       dataZoom: [
         {

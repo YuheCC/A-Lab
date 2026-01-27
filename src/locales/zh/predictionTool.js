@@ -6,6 +6,18 @@ export default {
     disclaimerTitle: "免责声明",
     disclaimer: "<strong>注意：</strong>此功能仅使用用户提供的早期阶段循环数据来预测电池循环寿命。不需要电池化学或设计等额外信息。该模型目前适用于在标准循环条件下（非实际使用场景）具有有限活性离子的电池系统。鼓励用户通过自己的测试来验证预测结果。",
 
+    // Features
+    features: {
+        newPrediction: {
+            title: "新增预测",
+            description: "运行新预测"
+        },
+        train: {
+            title: "训练",
+            description: "训练您的自定义模型"
+        }
+    },
+
     // Create page
     create: {
         title: "新增预测"
@@ -170,16 +182,16 @@ export default {
         predictedCycleLife: "预测达到80% SOH的循环次数",
         xAxisName: "循环数",
         yAxisName: "放电容量",
-        xAxisLabel: "循环圈数",
-        yAxisLabel: "SOH (%)",
-        originalSoh: "原始 SOH",
-        originalSohUsed: "已使用的原始 SOH",
-        originalSohUnused: "未使用的原始 SOH",
-        estimatedSoh: "预测 SOH",
+        originalSoh: "上传值",
+        originalSohUsed: "上传值 (已使用)",
+        originalSohUnused: "上传值 (未使用)",
+        estimatedSoh: "预测值",
         predictedCapacityLine: "预测容量线",
         sohPredictionLine: "80% SOH 预测线",
         value: "值",
-        noData: "无数据"
+        noData: "无数据",
+        xAxisLabel: "循环圈数",
+        yAxisLabel: "容量保持率(%)"
     },
 
     // Detail
