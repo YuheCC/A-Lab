@@ -11,6 +11,7 @@ import {
 } from '../constants';
 import type { OptimizeGroupedResultDTO } from '@/services/electrode/types';
 import type { DeviatedFieldType } from '../Optimize/types';
+import { PARAMETER_RANGES } from '../Optimize/types';
 import Button from '@/components/Button';
 import './index.less';
 
@@ -449,9 +450,9 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                   label={`${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah)`}
                   rangeValue={modelParams.design_capacity}
                   onRangeChange={() => {}}
-                  min={0}
-                  max={20}
-                  step={0.1}
+                  min={PARAMETER_RANGES.designCapacity.min}
+                  max={PARAMETER_RANGES.designCapacity.max}
+                  step={PARAMETER_RANGES.designCapacity.step}
                   readonly
                 />
                 <ParameterInput
@@ -459,9 +460,9 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                   label={`${t('design.electrode.optimize.specificEnergy', 'Specific E.D.')} (Wh/kg)`}
                   rangeValue={modelParams.specific_ED}
                   onRangeChange={() => {}}
-                  min={0}
-                  max={500}
-                  step={1}
+                  min={PARAMETER_RANGES.specificEnergy.min}
+                  max={PARAMETER_RANGES.specificEnergy.max}
+                  step={PARAMETER_RANGES.specificEnergy.step}
                   readonly
                 />
                 <ParameterInput
@@ -469,9 +470,9 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                   label={`${t('design.electrode.optimize.jellyRollThickness', 'Jelly Roll Thickness')} (mm)`}
                   rangeValue={modelParams.jelly_roll_thickness}
                   onRangeChange={() => {}}
-                  min={0}
-                  max={20}
-                  step={0.1}
+                  min={PARAMETER_RANGES.thickness.min}
+                  max={PARAMETER_RANGES.thickness.max}
+                  step={PARAMETER_RANGES.thickness.step}
                   readonly
                 />
                 <ParameterInput
@@ -479,9 +480,9 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                   label={`${t('design.electrode.optimize.volumetricEnergyDensity', 'Volumetric E.D.')} (Wh/L)`}
                   rangeValue={modelParams.volumetric_ED}
                   onRangeChange={() => {}}
-                  min={0}
-                  max={1500}
-                  step={1}
+                  min={PARAMETER_RANGES.volumetricEnergyDensity.min}
+                  max={PARAMETER_RANGES.volumetricEnergyDensity.max}
+                  step={PARAMETER_RANGES.volumetricEnergyDensity.step}
                   readonly
                 />
               </div>
