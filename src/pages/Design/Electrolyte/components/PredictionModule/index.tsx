@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Tooltip } from 'antd';
 import { Info, ArrowUp, ArrowDown } from 'lucide-react';
 import Button from '@/components/Button';
-import { ArrowUpIcon, ArrowDownIcon } from '@/components/PerformanceBadge';
 import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
 import { getBatterySystemList, predictPerformance, requestLLMAnalysisStream, type PerformancePredictionResponse, type LLMAnalysisStreamRequest } from '@/services/prediction/performance';
 import { useAuthStore } from '@/models/useAuth';
@@ -21,6 +20,7 @@ import { getModelList } from '../../model';
 import type { ModelListItem } from '@/services/model/training';
 import { parseModelResult } from '@/utils/modelResultParser';
 import { getWeightPercentage } from '../../utils/weightPercentage';
+import ElectrolytePerformanceBadge from '../ElectrolytePerformanceBadge';
 
 interface SystemSpec {
   cathode: string;
@@ -836,58 +836,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     }
   }, [onResetRef, resetPredictionState]);
 
-  // Helper function to render result badge
-  const renderResultBadge = (metric: any, metricType: 'cycleLife' | 'ce' | 'ratePerformance') => {
-    console.log('metric', metric);
-    const isPositive = metric.status === 'Positive';
-    const isNegative = metric.status === 'Negative';
-    
-    // 获取百分比数值
-    let percentValue = 0;
-    if (typeof metric.confidence === 'string') {
-      percentValue = Math.abs(parseFloat(metric.confidence.replace('%', '')));
-    } else if (typeof metric.confidence === 'number') {
-      percentValue = Math.abs(metric.confidence);
-    }
-    
-    // 根据百分比值判断严重程度级别
-    let level = '';
-    if (percentValue < 5) {
-      level = 'light';
-    } else if (percentValue >= 5 && percentValue <= 25) {
-      level = 'medium';
-    } else if (percentValue > 25) {
-      level = 'dark';
-    }
-    
-    const badgeClass = `${isPositive ? 'positive' : isNegative ? 'negative' : 'unknown'}-${level}`;
-    
-    // 选择箭头图标 - 使用自定义箭头
-    const ArrowIcon = isPositive ? ArrowUpIcon : isNegative ? ArrowDownIcon : null;
-    
-    // CE 只显示箭头
-    if (metricType === 'ce') {
-      return (
-        <div className={`pm-performance-result-badge pm-performance-result-badge--${badgeClass} pm-performance-result-badge--ce-only`}>
-          <span className="pm-performance-result-badge__arrow">
-            {ArrowIcon && <ArrowIcon size={16} />}
-          </span>
-        </div>
-      );
-    }
-    
-    // 其他指标显示箭头 + 百分比
-    const value = percentValue > 0 ? `${percentValue}%` : '';
-    
-    return (
-      <div className={`pm-performance-result-badge pm-performance-result-badge--${badgeClass}`}>
-        <span className="pm-performance-result-badge__text">
-          {ArrowIcon && <ArrowIcon size={15} />}
-          {value && <span>{value}</span>}
-        </span>
-      </div>
-    );
-  };
 
   const comingSoonText = useMemo(() => {
     return {
@@ -1371,7 +1319,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                           return (
                             <div className="pm-result-item" key={firstMetric}>
                               <div className="pm-result-label">{t(config.label25Key)}</div>
-                              {renderResultBadge(resultsData['25c'][config.dataKey], config.dataKey)}
+                              <ElectrolytePerformanceBadge metric={resultsData['25c'][config.dataKey]} metricType={config.dataKey} />
                             </div>
                           );
                         })()}
@@ -1384,7 +1332,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                               return (
                                 <div className="pm-result-item" key={metric}>
                                   <div className="pm-result-label">{t(config.label25Key)}</div>
-                                  {renderResultBadge(resultsData['25c'][config.dataKey], config.dataKey)}
+                                  <ElectrolytePerformanceBadge metric={resultsData['25c'][config.dataKey]} metricType={config.dataKey} />
                                 </div>
                               );
                             })}
@@ -1413,7 +1361,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                             return (
                               <div className="pm-result-item" key={metric}>
                                 <div className="pm-result-label">{t(config.label45Key)}</div>
-                                {renderResultBadge(resultsData['45c'][config.dataKey], config.dataKey)}
+                                <ElectrolytePerformanceBadge metric={resultsData['45c'][config.dataKey]} metricType={config.dataKey} />
                               </div>
                             );
                           })}
