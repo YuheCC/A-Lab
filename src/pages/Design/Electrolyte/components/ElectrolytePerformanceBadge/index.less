@@ -1,0 +1,122 @@
+@import '@/styles/variables.less';
+
+/* Electrolyte Performance Result Badge */
+.electrolyte-performance-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* CE 只显示箭头的样式 */
+.electrolyte-performance-badge--ce-only {
+  padding: 8px;
+  width: 44px;
+  background: transparent !important;
+}
+
+/* CE 箭头的颜色和边框 */
+.electrolyte-performance-badge--ce-only.electrolyte-performance-badge--positive-light {
+  border: 1px solid #008236;
+}
+
+.electrolyte-performance-badge--ce-only.electrolyte-performance-badge--positive-medium {
+  color: #00c950;
+  border: 1px solid #00c950;
+}
+
+.electrolyte-performance-badge--ce-only.electrolyte-performance-badge--positive-dark {
+  color: #008236;
+  border: 1px solid #008236;
+}
+
+.electrolyte-performance-badge--ce-only.electrolyte-performance-badge--negative-light {
+  border: 1px solid #c10007;
+}
+
+.electrolyte-performance-badge--ce-only.electrolyte-performance-badge--negative-medium {
+  color: #fb2c36;
+  border: 1px solid #fb2c36;
+}
+
+.electrolyte-performance-badge--ce-only.electrolyte-performance-badge--negative-dark {
+  color: #c10007;
+  border: 1px solid #c10007;
+}
+
+.electrolyte-performance-badge__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.electrolyte-performance-badge__arrow svg {
+  display: block;
+}
+
+.electrolyte-performance-badge__text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+  font-weight: 500;
+  text-align: center;
+  gap: 4px;
+}
+
+/* Positive 颜色方案 - 由浅到深的绿色 */
+.electrolyte-performance-badge--positive-light {
+  background: #dcfce7;
+  color: #008236;
+}
+
+.electrolyte-performance-badge--positive-medium {
+  background: #00c950;
+  color: #ffffff;
+}
+
+.electrolyte-performance-badge--positive-dark {
+  background: #008236;
+  color: #ffffff;
+}
+
+.electrolyte-performance-badge--positive-dark .electrolyte-performance-badge__text {
+  font-weight: 600;
+}
+
+/* Negative 颜色方案 - 由浅到深的红色 */
+.electrolyte-performance-badge--negative-light {
+  background: #ffe2e2;
+  color: #c10007;
+}
+
+.electrolyte-performance-badge--negative-medium {
+  background: #fb2c36;
+  color: #ffffff;
+}
+
+.electrolyte-performance-badge--negative-dark {
+  background: #c10007;
+  color: #ffffff;
+}
+
+.electrolyte-performance-badge--negative-dark .electrolyte-performance-badge__text {
+  font-weight: 600;
+}
+
+/* Unknown 状态 */
+.electrolyte-performance-badge--unknown-light,
+.electrolyte-performance-badge--unknown-medium,
+.electrolyte-performance-badge--unknown-dark {
+  background: @color-gray-100;
+  color: @color-gray-500;
+}

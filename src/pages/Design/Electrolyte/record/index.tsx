@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { getHistoryDetail, getModelList } from '../model';
 import { useAuthStore } from '@/models/useAuth';
-import PerformanceBadge from '@/components/PerformanceBadge';
+import ElectrolytePerformanceBadge from '../components/ElectrolytePerformanceBadge';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 import type { ModelListItem } from '@/services/model/training';
 import { parseModelResult } from '@/utils/modelResultParser';
@@ -341,19 +341,19 @@ const RecordPage: React.FC = () => {
                       {shouldShowMetric('cl', '25') && (
                         <div className="result-item">
                           <div className="result-label">{t('performance.results.performance.cycleLife25')}</div>
-                          <PerformanceBadge metric={processedResults.temp25.cycleLife} metricType="cycleLife" />
+                          <ElectrolytePerformanceBadge metric={processedResults.temp25.cycleLife} metricType="cycleLife" />
                         </div>
                       )}
                       {shouldShowMetric('ce', '25') && (
                         <div className="result-item">
                           <div className="result-label">{t('performance.results.performance.ce25')}</div>
-                          <PerformanceBadge metric={processedResults.temp25.ce} metricType="ce" />
+                          <ElectrolytePerformanceBadge metric={processedResults.temp25.ce} metricType="ce" />
                         </div>
                       )}
                       {shouldShowMetric('rate', '25') && (
                         <div className="result-item">
                           <div className="result-label">{t('performance.results.performance.ratePerformance25')}</div>
-                          <PerformanceBadge metric={processedResults.temp25.ratePerformance} metricType="ratePerformance" />
+                          <ElectrolytePerformanceBadge metric={processedResults.temp25.ratePerformance} metricType="ratePerformance" />
                         </div>
                       )}
                     </div>
@@ -367,13 +367,13 @@ const RecordPage: React.FC = () => {
                         {shouldShowMetric('cl', '45') && (
                           <div className="result-item">
                             <div className="result-label">{t('performance.results.performance.cycleLife45')}</div>
-                            <PerformanceBadge metric={processedResults.temp45.cycleLife} metricType="cycleLife" />
+                            <ElectrolytePerformanceBadge metric={processedResults.temp45.cycleLife} metricType="cycleLife" />
                           </div>
                         )}
                         {shouldShowMetric('ce', '45') && (
                           <div className="result-item">
                             <div className="result-label">{t('performance.results.performance.ce45')}</div>
-                            <PerformanceBadge metric={processedResults.temp45.ce} metricType="ce" />
+                            <ElectrolytePerformanceBadge metric={processedResults.temp45.ce} metricType="ce" />
                           </div>
                         )}
                       </div>
@@ -387,7 +387,7 @@ const RecordPage: React.FC = () => {
                     <div className="limited-preview">
                       <div className="result-item">
                         <div className="result-label">{t('performance.results.performance.cycleLife25')}</div>
-                        <PerformanceBadge metric={processedResults.temp25.cycleLife} metricType="cycleLife" />
+                        <ElectrolytePerformanceBadge metric={processedResults.temp25.cycleLife} metricType="cycleLife" />
                       </div>
                       <div className="upgrade-prompt">
                         {t('performance.results.upgradeToViewMetrics')}
