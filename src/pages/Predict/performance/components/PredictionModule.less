@@ -203,6 +203,13 @@
   background: rgba(59, 130, 246, 0.1);
 }
 
+/* 计算按钮容器 - 使用 flex 居中 */
+.pm-calculate-btn-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* 计算按钮基础样式 */
 .pm-calculate-btn {
   background: @color-gray-800;
@@ -214,8 +221,6 @@
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  display: block;
-  margin: 0 auto;
   position: relative;
 }
 

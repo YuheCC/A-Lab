@@ -1189,16 +1189,18 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
             )}
           </div>
 
-          <Button
-            variant="primary"
-            size="mlarge"
-            loading={isCalculating}
-            onClick={handleCalculate}
-            disabled={isCalculating || showResults || isInvalidSmiles}
-            className="pm-calculate-btn"
-          >
-            {t('performance.calculate.button')}
-          </Button>
+          <div className="pm-calculate-btn-wrapper">
+            <Button
+              variant="primary"
+              size="mlarge"
+              loading={isCalculating}
+              onClick={handleCalculate}
+              disabled={isCalculating || showResults || isInvalidSmiles}
+              className="pm-calculate-btn"
+            >
+              {t('performance.calculate.button')}
+            </Button>
+          </div>
 
           {calculationError && (
             <div className="pm-calculation-error">

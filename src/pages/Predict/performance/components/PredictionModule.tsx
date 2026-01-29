@@ -960,13 +960,15 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
             )}
           </div>
 
-          <button 
-            className={`pm-calculate-btn ${showResults ? 'pm-calculated' : ''} ${isCalculating ? 'pm-calculating' : ''} ${isInvalidSmiles ? 'pm-disabled' : ''}`}
-            onClick={handleCalculate}
-            disabled={isCalculating || showResults}
-          >
-            {isCalculating ? t('performance.ui.calculating') : t('performance.calculate.button')}
-          </button>
+          <div className="pm-calculate-btn-wrapper">
+            <button 
+              className={`pm-calculate-btn ${showResults ? 'pm-calculated' : ''} ${isCalculating ? 'pm-calculating' : ''} ${isInvalidSmiles ? 'pm-disabled' : ''}`}
+              onClick={handleCalculate}
+              disabled={isCalculating || showResults}
+            >
+              {isCalculating ? t('performance.ui.calculating') : t('performance.calculate.button')}
+            </button>
+          </div>
 
           {calculationError && (
             <div className="pm-calculation-error">
