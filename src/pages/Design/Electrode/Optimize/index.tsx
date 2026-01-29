@@ -123,6 +123,14 @@ const OptimizePage: React.FC = () => {
 
     // 比较当前 formData 与上次计算的 formData
     const isModified = JSON.stringify(formData) !== JSON.stringify(lastCalculatedFormData);
+    
+    // 如果表单被修改，清空结果数据（即使用户改回原值，结果也不会重新显示）
+    if (isModified) {
+      setRecommendations({ valid: [], invalid: [] });
+      setFullResults({ valid: [], invalid: [] });
+      setHasCalculated(false);
+    }
+    
     setIsFormModified(isModified);
   }, [formData, lastCalculatedFormData]);
 
@@ -342,9 +350,11 @@ const OptimizePage: React.FC = () => {
     setDimensionError('');
     setRecommendations({ valid: [], invalid: [] });
     setFullResults({ valid: [], invalid: [] });
-    setSelectedDesignTarget(null);
+    setHasCalculated(false);
+    setLastCalculatedFormData(null);
+    setIsFormModified(false);
+    setIsAdditionalExpanded(false);
     setModalVisible(false);
-    setModalFullResults(null);
   };
 
   return (

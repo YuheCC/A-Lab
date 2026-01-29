@@ -96,6 +96,13 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const [calculationError, setCalculationError] = useState<string | null>(null);
   const [predictionResults, setPredictionResults] = useState<PerformancePredictionResponse | null>(null);
   
+  // 新增状态：记录上次计算的表单数据
+  const [lastCalculatedFormData, setLastCalculatedFormData] = useState<{
+    selectedSystem: string;
+    selectedModel: string;
+    additive: string;
+  } | null>(null);
+  
   // 新增状态：LLM分析相关
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisContent, setAnalysisContent] = useState<string>('');
@@ -416,6 +423,12 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
         console.log('Prediction results:', responseData);
         setPredictionResults(responseData);
         setShowResults(true);
+        // 保存本次计算的表单数据
+        setLastCalculatedFormData({
+          selectedSystem,
+          selectedModel,
+          additive,
+        });
       } else {
         throw new Error('No data received from prediction API');
       }
@@ -814,6 +827,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     setIsCalculating(false);
     setCalculationError(null);
     setPredictionResults(null);
+    setLastCalculatedFormData(null);
 
     // Clear LLM analysis states
     setIsAnalyzing(false);
@@ -835,6 +849,29 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       onResetRef(resetPredictionState);
     }
   }, [onResetRef, resetPredictionState]);
+
+  // 监听表单数据变化，当参数修改后重置结果显示
+  useEffect(() => {
+    // 如果还没有计算过，不做处理
+    if (!lastCalculatedFormData || !predictionResults) {
+      return;
+    }
+
+    // 比较当前表单数据与上次计算的数据
+    const isFormModified = 
+      selectedSystem !== lastCalculatedFormData.selectedSystem ||
+      selectedModel !== lastCalculatedFormData.selectedModel ||
+      additive !== lastCalculatedFormData.additive;
+
+    // 如果表单被修改，重置结果显示
+    if (isFormModified) {
+      setShowResults(false);
+      setPredictionResults(null);
+      setHasAnalysisResult(false);
+      setAnalysisContent('');
+      setIsAnalyzing(false);
+    }
+  }, [selectedSystem, selectedModel, additive, lastCalculatedFormData, predictionResults]);
 
 
   const comingSoonText = useMemo(() => {

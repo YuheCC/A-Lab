@@ -251,6 +251,12 @@ const PredictPage: React.FC = () => {
 
     // 比较当前表单数据与上次计算的数据
     const isModified = JSON.stringify(currentFormData) !== JSON.stringify(lastCalculatedFormData);
+    
+    // 如果表单被修改，清空结果数据（即使用户改回原值，结果也不会重新显示）
+    if (isModified) {
+      setResults(null);
+    }
+    
     setIsFormModified(isModified);
   }, [
     cellDesign,
