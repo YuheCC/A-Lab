@@ -20,7 +20,7 @@ export const AUTO_FETCH_ENDPOINTS: EndpointConfig<Record<string, string>> = {
     chatHistoryDelete: '/chat-history/delete',
     findFriendWithImage: '/api/llm/find-friend-with-image',
     feedback: '/api/feedback',
-    moleculeDetails: '/api/molecule_details',
+    moleculeDetails: '/api/search/molecule_details',
     // Auth
     login: '/api/user/login',
     register: '/api/user/register',

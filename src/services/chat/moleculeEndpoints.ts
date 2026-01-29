@@ -8,8 +8,8 @@ import type { Environment } from '../config/types';
 export const MOLECULE_ENDPOINTS = {
   // Default configuration
   default: {
-    moleculeDetails: '/api/molecule_details',
-    similarMolecules: '/molecule/similar',
+    moleculeDetails: '/api/search/molecule_details',
+    similarMolecules: '/api/llm/molecule/similar',
   },
   box: {
     moleculeDetails: '/api/search/molecule_details',
