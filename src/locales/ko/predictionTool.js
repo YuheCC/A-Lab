@@ -205,7 +205,9 @@ export default {
 
     // Actions
     actions: {
-        backToList: "목록으로 돌아가기"
+        backToList: "목록으로 돌아가기",
+        back: "뒤로",
+        newPrediction: "새 예측"
     },
 
     // Default Step

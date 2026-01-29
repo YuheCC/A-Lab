@@ -205,7 +205,9 @@ export default {
 
     // Actions
     actions: {
-        backToList: "Back to List"
+        backToList: "Back to List",
+        back: "Back",
+        newPrediction: "New Prediction"
     },
 
     // Default Step

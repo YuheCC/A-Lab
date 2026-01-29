@@ -9,9 +9,16 @@ const CreatePage: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
+  const [resetKey, setResetKey] = useState(0);
 
   const handleBackToList = () => {
     navigate('/predict?tab=records');
+  };
+
+  const handleNewPrediction = () => {
+    // 重置所有状态
+    setCurrentStep(0);
+    setResetKey(prev => prev + 1);
   };
 
   const handlePredictionComplete = () => {
@@ -52,9 +59,14 @@ const CreatePage: React.FC = () => {
       <div className="create-content">
         <div className="create-actions">
           <h1 className="prediction-title">{t('predictionTool.create.title', 'New Prediction')}</h1>
-          <button className="back-to-list-button" onClick={handleBackToList}>
-            {t('predictionTool.actions.backToList', 'Back to List')}
-          </button>
+          <div className="right-actions">
+            <button className="new-prediction-button" onClick={handleNewPrediction}>
+              {t('predictionTool.actions.newPrediction', 'New Prediction')}
+            </button>
+            <button className="back-button" onClick={handleBackToList}>
+              {t('predictionTool.actions.back', 'Back')}
+            </button>
+          </div>
         </div>
 
         <div className="operation-area">
@@ -81,6 +93,7 @@ const CreatePage: React.FC = () => {
           </div>
 
           <StepContent
+            key={resetKey}
             activeStep={currentStep}
             onStepChange={setCurrentStep}
             onPredictionComplete={handlePredictionComplete}

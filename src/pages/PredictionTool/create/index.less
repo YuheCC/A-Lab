@@ -23,6 +23,28 @@
     margin-bottom: 20px;
   }
 
+  .right-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .new-prediction-button {
+    background: @color-text-primary;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background: #374151;
+    }
+  }
+
   .prediction-header-wrapper {
     display: flex;
     align-items: center;
@@ -36,6 +58,24 @@
     margin: 0;
   }
 
+  .back-button {
+    background: @color-gray-100;
+    color: @color-gray-700;
+    border: 1px solid @color-gray-300;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: @color-gray-200;
+      border-color: @color-gray-400;
+    }
+  }
+
+  // 保持向后兼容（如果其他地方有使用）
   .back-to-list-button {
     background: @color-gray-100;
     color: @color-gray-700;
@@ -294,7 +334,7 @@
   // 操作按钮区域
   .step-content-actions {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     margin-top: 24px;
 
     .step-content-start-btn {
@@ -868,6 +908,22 @@
       flex-direction: column;
       gap: 12px;
       align-items: stretch;
+    }
+
+    .right-actions {
+      flex-direction: row;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .new-prediction-button {
+      flex: 1;
+      text-align: center;
+    }
+
+    .back-button {
+      flex: 1;
+      text-align: center;
     }
 
     .back-to-list-button {
