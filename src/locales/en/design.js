@@ -274,7 +274,10 @@ export default {
     },
     // Actions
     actions: {
-        backToList: "Back to List"
+        backToList: "Back to List",
+        back: "Back",
+        newDesign: "New Design",
+        newPrediction: "New Prediction"
     },
     // Tabs
     tabs: {

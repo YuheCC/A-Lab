@@ -18,11 +18,50 @@
   margin-bottom: 20px;
 }
 
+.right-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 .design-title {
   font-size: 24px;
   font-weight: 600;
   color: @color-text-primary;
   margin: 0;
+}
+
+.new-design-button {
+  background: @color-text-primary;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: #374151;
+  }
+}
+
+.back-button {
+  background: @color-gray-100;
+  color: @color-gray-700;
+  border: 1px solid @color-gray-300;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: @color-gray-200;
+    border-color: @color-gray-400;
+  }
 }
 
 .back-to-list-button {

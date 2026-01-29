@@ -396,6 +396,49 @@ const PredictPage: React.FC = () => {
     navigate(-1);
   };
 
+  const handleNewPrediction = () => {
+    // 重置所有表单状态为默认值
+    setCellDesign(DEFAULT_VALUES.cellDesign);
+    setNpRatio(DEFAULT_VALUES.npRatio);
+    setAnodeActiveMaterial(DEFAULT_VALUES.anodeActiveMaterial);
+    setCathodeActiveMaterial(DEFAULT_VALUES.cathodeActiveMaterial);
+    
+    // 重置阳极参数
+    setAnodeCMC(1.52);
+    setAnodeSBR(2.21);
+    setAnodePAA(2.33);
+    setAnodeSuperP(1.4);
+    setAnodeSWCNT(0.41);
+    setAnodePressDensity(1.5);
+    setAnodeSCBI(0);
+    setAnodeGrSI(0);
+    setAnodeArealLoading(0);
+    
+    // 重置阴极参数
+    setCathodeKF9700(1.24);
+    setCathodeCN01Y(0.5);
+    setCathodeSuperC65(2.04);
+    setCathodeArealLoading(2.93);
+    setCathodePressDensity(3.52);
+    setCathodeNCMA(0);
+    
+    // 重置电解液参数
+    setElectrolyteContent(2.322);
+    
+    // 重置尺寸参数
+    setWidth('');
+    setLength('');
+    setLayers('');
+    
+    // 重置结果和错误状态
+    setResults(null);
+    setLastCalculatedFormData(null);
+    setIsFormModified(false);
+    setCathodeError('');
+    setAnodeError('');
+    setDimensionError('');
+  };
+
   return (
     <div className="electrode-predict-container">
       {/* 页面标题和返回按钮 */}
@@ -403,10 +446,15 @@ const PredictPage: React.FC = () => {
         <h1 className="electrode-predict-title">
           {t('design.electrode.predict.title', 'Result Prediction')}
         </h1>
-        <button className="electrode-predict-back-btn" onClick={handleGoBack}>
-          <LeftOutlined style={{ marginRight: 8 }} />
-          {t('design.electrode.predict.back', '返回')}
-        </button>
+        <div className="electrode-predict-right-actions">
+          <button className="electrode-predict-new-btn" onClick={handleNewPrediction}>
+            {t('design.actions.newPrediction', 'New Prediction')}
+          </button>
+          <button className="electrode-predict-back-btn" onClick={handleGoBack}>
+            <LeftOutlined style={{ marginRight: 8 }} />
+            {t('design.actions.back', 'Back')}
+          </button>
+        </div>
       </div>
 
       <div className="electrode-predict-content">

@@ -325,6 +325,28 @@ const OptimizePage: React.FC = () => {
     },
   ];
 
+  const handleNewDesign = () => {
+    // 重置所有状态为默认值
+    setFormData({
+      cellDesign: DEFAULT_VALUES.cellDesign,
+      npRatio: DEFAULT_VALUES.npRatio,
+      anodeActiveMaterial: DEFAULT_VALUES.anodeActiveMaterial,
+      cathodeActiveMaterial: DEFAULT_VALUES.cathodeActiveMaterial,
+      width: '',
+      length: '',
+      designCapacity: PARAMETER_RANGES.designCapacity.default,
+      specificEnergy: PARAMETER_RANGES.specificEnergy.default,
+      thickness: PARAMETER_RANGES.thickness.default,
+      volumetricEnergyDensity: PARAMETER_RANGES.volumetricEnergyDensity.default,
+    });
+    setDimensionError('');
+    setRecommendations({ valid: [], invalid: [] });
+    setFullResults({ valid: [], invalid: [] });
+    setSelectedDesignTarget(null);
+    setModalVisible(false);
+    setModalFullResults(null);
+  };
+
   return (
     <div className="electrode-optimize-container">
       {/* 标题和返回按钮 */}
@@ -332,10 +354,15 @@ const OptimizePage: React.FC = () => {
         <h1 className="electrode-optimize-title">
           {t('design.electrode.optimize.title')}
         </h1>
-        <button className="electrode-optimize-back-btn" onClick={() => navigate(-1)}>
-          <LeftOutlined style={{ marginRight: 8 }} />
-          {t('design.electrode.optimize.back')}
-        </button>
+        <div className="electrode-optimize-right-actions">
+          <button className="electrode-optimize-new-btn" onClick={handleNewDesign}>
+            {t('design.actions.newDesign', 'New Design')}
+          </button>
+          <button className="electrode-optimize-back-btn" onClick={() => navigate(-1)}>
+            <LeftOutlined style={{ marginRight: 8 }} />
+            {t('design.actions.back', 'Back')}
+          </button>
+        </div>
       </div>
 
       {/* 内容区域 */}
