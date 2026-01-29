@@ -26,7 +26,7 @@ export const PREDICTION_ENDPOINTS: EndpointConfig<Record<string, string>> = {
 
 export const PERFORMANCE_ENDPOINTS: EndpointConfig<Record<string, string>> = {
   default: {
-    batterySystemList: '/api/batterySystem/list',
+    batterySystemList: '/api/cellPerformance/batterySystem/list',
     historyList: '/api/cellPerformance/history/list',
     historyDetail: '/api/cellPerformance/history/detail',
     historyDelete: '/api/cellPerformance/history/delete',
