@@ -449,6 +449,12 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
   // 计算按钮点击处理函数 - 包含前置验证
   const handleCalculate = async () => {
+    // 校验模型是否选择
+    if (!selectedModel) {
+      alert(t('performance.modelSelection.placeholder', '请选择预测模型'));
+      return;
+    }
+
     if (!additive.trim()) {
       alert(t('performance.additive.placeholder'));
       return;
@@ -898,7 +904,10 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
         
         <div className="pm-module-content-card">
           <div className="pm-form-group pm-model-selection">
-            <label>{t('performance.modelSelection.label', '预测模型选择')}</label>
+            <label>
+              {t('performance.modelSelection.label', '预测模型选择')}
+              <span className="required-star">*</span>
+            </label>
             <ModelSelect
               mode="single"
               value={selectedModel}
