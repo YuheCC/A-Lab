@@ -349,6 +349,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                   label={t('design.electrode.predict.specificED', 'Specific E.D.')}
                   value={model_result.specificED}
                   unit="Wh/kg"
+                  tooltip={t('design.electrode.predict.specificEDTooltip', 'Energy density calculated based on total cell mass, including pouch materials, electrolyte, and auxiliary inactive components. Electrolyte loading is ~41% excessive relative to the active area.')}
                 />
                 <ResultDisplay
                   label={t('design.electrode.predict.jellyRollThickness', 'Jelly Roll Thickness')}
@@ -359,6 +360,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                   label={t('design.electrode.predict.volumetricED', 'Volumetric E.D.')}
                   value={model_result.volumetricED}
                   unit="Wh/L"
+                  tooltip={t('design.electrode.predict.volumetricEDTooltip', 'Energy density calculated based on the jelly roll volume.')}
                 />
               </div>
 

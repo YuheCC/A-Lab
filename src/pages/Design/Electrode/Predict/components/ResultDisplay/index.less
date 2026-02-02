@@ -2,10 +2,24 @@
 
 .result-display {
   &__label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     font-size: 14px;
     font-weight: @font-weight-medium;
     color: @color-gray-600;
     margin-bottom: 8px;
+  }
+
+  &__info-icon {
+    font-size: 14px;
+    color: @color-gray-400;
+    cursor: help;
+    transition: color 0.2s;
+
+    &:hover {
+      color: @color-primary;
+    }
   }
 
   &__value-wrapper {
