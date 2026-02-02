@@ -135,7 +135,7 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
               <PerformanceCard
                 label="Design Capacity"
                 value={data.design_capacity}
-                unit="mAh"
+                unit="Ah"
               />
               <PerformanceCard
                 label="Specific E.D."
