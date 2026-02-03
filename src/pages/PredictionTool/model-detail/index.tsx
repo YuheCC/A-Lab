@@ -246,17 +246,17 @@ const ModelDetailPage: React.FC = () => {
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'online':
-        return t('predictionTool.modelDetail.statusOnline');
+        return { text: t('predictionTool.modelDetail.statusOnline'), color: '#dcfce7', textColor: '#008236' };
       case 'trained':
-        return t('predictionTool.modelDetail.statusTrained');
-      case 'offline':
-        return t('predictionTool.modelDetail.statusOffline');
+        return { text: t('predictionTool.modelDetail.statusTrained'), color: '#dbeafe', textColor: '#1e40af' };
       case 'training':
-        return t('predictionTool.modelDetail.statusTraining');
+        return { text: t('predictionTool.modelDetail.statusTraining'), color: '#fef3c7', textColor: '#92400e' };
+      case 'offline':
+        return { text: t('predictionTool.modelDetail.statusOffline'), color: '#f3f4f6', textColor: '#6b7280' };
       case 'fail':
-        return t('predictionTool.modelDetail.statusFail');
+        return { text: t('predictionTool.modelDetail.statusFail'), color: '#fee2e2', textColor: '#991b1b' };
       default:
-        return status;
+        return { text: status, color: '#f3f4f6', textColor: '#374151' };
     }
   };
 
@@ -690,8 +690,16 @@ const ModelDetailPage: React.FC = () => {
           <div className="info-row">
             <span className="label">{t('predictionTool.modelDetail.status')}</span>
             <span className="value">
-              <span className="status-badge">
-                {getStatusLabel(model.status)}
+              <span
+                style={{
+                  backgroundColor: getStatusLabel(model.status).color,
+                  color: getStatusLabel(model.status).textColor,
+                  padding: '2px 8px',
+                  borderRadius: '4px',
+                  fontSize: '14px'
+                }}
+              >
+                {getStatusLabel(model.status).text}
               </span>
             </span>
           </div>

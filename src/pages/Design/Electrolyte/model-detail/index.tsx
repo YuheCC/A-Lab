@@ -286,17 +286,17 @@ const DesignModelDetailPage: React.FC = () => {
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'online':
-        return t('design.modelDetail.statusOnline', 'Online');
+        return { text: t('design.modelDetail.statusOnline', 'Online'), color: '#dcfce7', textColor: '#008236' };
       case 'trained':
-        return t('design.modelDetail.statusTrained', 'Trained');
+        return { text: t('design.modelDetail.statusTrained', 'Trained'), color: '#e0e7ff', textColor: '#4338ca' };
       case 'offline':
-        return t('design.modelDetail.statusOffline', 'Offline');
+        return { text: t('design.modelDetail.statusOffline', 'Offline'), color: '#e0e7ff', textColor: '#4338ca' };
       case 'training':
-        return t('design.modelDetail.statusTraining', 'Training');
+        return { text: t('design.modelDetail.statusTraining', 'Training'), color: '#fef3c7', textColor: '#92400e' };
       case 'fail':
-        return t('design.modelDetail.statusFail', 'Failed');
+        return { text: t('design.modelDetail.statusFail', 'Failed'), color: '#fee2e2', textColor: '#991b1b' };
       default:
-        return status;
+        return { text: status, color: '#f3f4f6', textColor: '#374151' };
     }
   };
 
@@ -533,8 +533,16 @@ const DesignModelDetailPage: React.FC = () => {
             <div className="info-row">
               <span className="label">{t('design.modelDetail.status', 'Status')}</span>
               <span className="value">
-                <span className="status-badge">
-                  {getStatusLabel(model.status)}
+                <span
+                  style={{
+                    backgroundColor: getStatusLabel(model.status).color,
+                    color: getStatusLabel(model.status).textColor,
+                    padding: '2px 8px',
+                    borderRadius: '4px',
+                    fontSize: '14px'
+                  }}
+                >
+                  {getStatusLabel(model.status).text}
                 </span>
               </span>
             </div>
