@@ -214,9 +214,16 @@ export default {
     calculatingDesc: '편극 역장 기반 분자동역학 시뮬레이션은 오랜 시간이 소요됩니다. 예상 시간 후에 결과를 확인할 수 있으며, 시스템에서 계산 상태를 알려드립니다',
     notice2: '이 페이지를 닫아도 백그라운드 계산 프로세스에는 영향을 주지 않습니다'
   },
+  filters: {
+    searchPlaceholder: '분석 ID 검색...',
+    statusPlaceholder: '상태 선택',
+    clearFilters: '필터 지우기',
+    refresh: '새로고침'
+  },
   history: {
     title: '분석 기록',
     newAnalysis: '새 분석',
+    showingRecords: '{{count}} / {{total}} 개의 기록 표시 중',
     loading: {
       message: '로딩 중...',
       error: '오류'

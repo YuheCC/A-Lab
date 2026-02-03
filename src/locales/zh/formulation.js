@@ -214,9 +214,16 @@ export default {
     calculatingDesc: '基于极化力场的分子动力学模拟耗时较长，可在预计时间之后查看结果，系统会提醒您计算的状态',
     notice2: '您可以关闭此页面，不会影响后台计算进程'
   },
+  filters: {
+    searchPlaceholder: '搜索分析 ID...',
+    statusPlaceholder: '选择状态',
+    clearFilters: '清除筛选',
+    refresh: '刷新'
+  },
   history: {
     title: '分析记录',
     newAnalysis: '新建分析',
+    showingRecords: '显示 {{count}} / {{total}} 条记录',
     loading: {
       message: '加载中...',
       error: '错误'

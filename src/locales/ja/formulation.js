@@ -214,9 +214,16 @@ export default {
     calculatingDesc: '偏極力場に基づく分子動力学シミュレーションには長時間を要します。予定時間後に結果を確認でき、システムが計算状況をお知らせします',
     notice2: 'このページを閉じても、バックグラウンド計算プロセスには影響しません'
   },
+  filters: {
+    searchPlaceholder: '解析IDを検索...',
+    statusPlaceholder: 'ステータスを選択',
+    clearFilters: 'フィルタークリア',
+    refresh: '更新'
+  },
   history: {
     title: '解析記録',
     newAnalysis: '新規解析',
+    showingRecords: '{{count}} / {{total}} 件の記録を表示中',
     loading: {
       message: '読み込み中...',
       error: 'エラー'

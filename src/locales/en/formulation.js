@@ -214,9 +214,16 @@ export default {
     calculatingDesc: 'MD simulation using polarizable force field is time consuming. The system will notify you regarding the job status.',
     notice2: 'You can close this page without affecting the background calculation process'
   },
+  filters: {
+    searchPlaceholder: 'Search Analysis ID...',
+    statusPlaceholder: 'Select Status',
+    clearFilters: 'Clear Filters',
+    refresh: 'Refresh'
+  },
   history: {
     title: 'Analysis Records',
     newAnalysis: 'New Analysis',
+    showingRecords: 'Showing {{count}} of {{total}} records',
     loading: {
       message: 'Loading...',
       error: 'Error'
