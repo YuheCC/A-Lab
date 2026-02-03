@@ -214,6 +214,51 @@
   white-space: nowrap;
 }
 
+.process-cell {
+  min-width: 120px;
+}
+
+.progress-bar-container {
+  width: 80px;
+  height: 6px;
+  background: @color-gray-200;
+  border-radius: 3px;
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: @color-accent;
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
+.progress-failed-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.progress-bar-failed {
+  background: @color-gray-300;
+}
+
+.progress-failed-icon {
+  font-size: 12px;
+  font-weight: 700;
+  color: @color-gray-600;
+  line-height: 1;
+}
+
+.progress-text {
+  font-size: 12px;
+  color: @color-gray-600;
+  vertical-align: middle;
+}
+
 .action-button {
   border: none;
   background: none;

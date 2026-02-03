@@ -246,6 +246,7 @@ export default {
       concentration: '염 농도',
       created: '생성일',
       status: '상태',
+      process: '진행률',
       actions: '작업'
     }
   },

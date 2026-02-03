@@ -246,6 +246,7 @@ export default {
       concentration: 'Salt Concentration',
       created: 'Created',
       status: 'Status',
+      process: 'Process',
       actions: 'Actions'
     }
   },

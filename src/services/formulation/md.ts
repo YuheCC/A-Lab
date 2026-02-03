@@ -44,6 +44,7 @@ export interface MDHistoryItem {
   result_data: any;
   created_at: string;
   updated_at: string;
+  process?: number; // 进度百分比 0-100
 }
 
 export interface MDHistoryResponse {
@@ -67,6 +68,7 @@ export interface MDHistoryDetailResponse {
   result_data: any;
   created_at: string;
   updated_at: string;
+  process?: number; // 进度百分比 0-100
 }
 
 export async function runMDSimulation(params: MDRunParams) {

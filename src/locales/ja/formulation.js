@@ -246,6 +246,7 @@ export default {
       concentration: '塩濃度',
       created: '作成日時',
       status: 'ステータス',
+      process: '進捗',
       actions: '操作'
     }
   },

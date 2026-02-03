@@ -246,6 +246,7 @@ export default {
       concentration: '盐浓度',
       created: '创建时间',
       status: '状态',
+      process: '进度',
       actions: '操作'
     }
   },

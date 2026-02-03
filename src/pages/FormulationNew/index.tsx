@@ -189,15 +189,16 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                       <th>{t('formulation.list.columns.solventFraction', 'Solvent (Fraction)')}</th>
                       <th>{t('formulation.list.columns.solventFractionType', 'Fraction Type (Solvent)')}</th>
                       <th>{t('formulation.list.columns.concentration', 'Concentration')}</th>
-                      <th>{t('formulation.list.columns.created', 'Created')}</th>
                       <th>{t('formulation.list.columns.status', 'Status')}</th>
+                      <th>{t('formulation.list.columns.process', 'Process')}</th>
+                      <th>{t('formulation.list.columns.created', 'Created')}</th>
                       <th>{t('formulation.list.columns.actions', 'Actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {historyData.length === 0 ? (
                       <tr>
-                        <td colSpan={9} className="no-data">
+                        <td colSpan={10} className="no-data">
                           {t('formulation.history.noResults.message', 'No analysis records found.')}
                         </td>
                       </tr>
@@ -205,6 +206,8 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                       historyData.map((record) => {
                         const statusInfo = formatStatus(record.status);
                         const isMock = isMockRecord(record);
+                        // 计算进度百分比，如果没有process字段则根据status推断
+                        const processValue = record.process || (record.status === 'completed' || record.status === 'success' ? 100 : (record.status === 'running' ? 50 : 0));
                         return (
                           <tr key={record.id}>
                             <td className="analysis-id">
@@ -232,12 +235,30 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                             </td>
                             <td>{record.solvent_fractions_type === 'mole' ? t('formulation.fractionType.mole', 'Molar fraction') : t('formulation.fractionType.weight', 'Weight fraction')}</td>
                             <td>{formatConcentration(record.cation_molality)}</td>
-                            <td className="created-date">{formatDate(normalizeServerDate(record.created_at).toISOString())}</td>
                             <td>
                               <span className={`status-badge ${statusInfo.className}`}>
                                 {statusInfo.text}
                               </span>
                             </td>
+                            <td className="process-cell">
+                              {record.status === 'failed' ? (
+                                <div className="progress-failed-wrapper">
+                                  <div className="progress-bar-container progress-bar-failed" />
+                                  <span className="progress-failed-icon">×</span>
+                                </div>
+                              ) : (
+                                <>
+                                  <div className="progress-bar-container">
+                                    <div 
+                                      className="progress-bar-fill" 
+                                      style={{ width: `${processValue}%` }}
+                                    />
+                                  </div>
+                                  <span className="progress-text">{processValue}%</span>
+                                </>
+                              )}
+                            </td>
+                            <td className="created-date">{formatDate(normalizeServerDate(record.created_at).toISOString())}</td>
                             <td className="actions-cell">
                               {record.status === 'success' && (
                               <button
