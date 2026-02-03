@@ -564,7 +564,7 @@ const PredictPage: React.FC = () => {
                   max={cathodeRanges.cathodeSuperC65?.max}
                 />
                 <ParameterInput
-                  label={t('design.electrode.predict.cathodeActiveMaterialLabel', 'Active material NCM-A (%)')}
+                  label={t('design.electrode.predict.cathodeActiveMaterialLabel', 'Active Material NCM-A (%)')}
                   value={cathodeNCMA}
                   onChange={setCathodeNCMA}
                   min={0}
@@ -697,7 +697,7 @@ const PredictPage: React.FC = () => {
                   max={anodeRanges.anodeSWCNT?.max}
                 />
                 <ParameterInput
-                  label={t('design.electrode.predict.activeMaterial1', 'Active material-1 SC-B-I (%)')}
+                  label={t('design.electrode.predict.activeMaterial1', 'Active Material-1 SC-B-I (%)')}
                   value={anodeSCBI}
                   onChange={setAnodeSCBI}
                   min={0}
@@ -705,7 +705,7 @@ const PredictPage: React.FC = () => {
                   disabled={true}  // 置灰 - 计算字段
                 />
                 <ParameterInput
-                  label={t('design.electrode.predict.activeMaterial2', 'Active material-2 Gr-S-I (%)')}
+                  label={t('design.electrode.predict.activeMaterial2', 'Active Material-2 Gr-S-I (%)')}
                   value={anodeGrSI}
                   onChange={setAnodeGrSI}
                   min={0}

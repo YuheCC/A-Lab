@@ -137,7 +137,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       readonly={true}
                     />
                     <ParameterInput
-                      label={t('design.electrode.predict.cathodeActiveMaterialLabel', 'Active material NCM-A (%)')}
+                      label={t('design.electrode.predict.cathodeActiveMaterialLabel', 'Active Material NCM-A (%)')}
                       value={model_params.cathodeNCMA}
                       onChange={() => {}}
                       min={0}

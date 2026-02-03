@@ -111,7 +111,7 @@ export const generateMockDetail = (id: string): DesignDetails => {
         binder1: '1.5', // PVDF
         binder2: '1', // CNT
         conductiveCarbon: '1.5', // Carbon black
-        activeMaterial: '96', // Active material
+        activeMaterial: '96', // Active Material
         arealLoading: '4', // mAh/cm²
         pressDensity: '3.4', // g/cc
       },

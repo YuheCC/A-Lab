@@ -420,7 +420,7 @@ export default {
             activeMaterial1: "Active Material SiC (wt.%)",
             activeMaterial2: "Active Material Graphite (wt.%)",
             anodeArealLoading: "Areal Loading (mAh/cm²)",
-            cathodeActiveMaterialLabel: "Active material (wt.%)",
+            cathodeActiveMaterialLabel: "Active Material (wt.%)",
             kf9700: "PVDF (wt.%)",
             cn01y: "CNT (wt.%)",
             superC65: "Carbon Black (wt.%)",
