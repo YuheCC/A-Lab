@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { X, RefreshCw } from 'lucide-react';
@@ -34,7 +34,11 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
 
   // Filter state
   const [searchKeyword, setSearchKeyword] = useState<string>('');
+  const [debouncedSearchKeyword, setDebouncedSearchKeyword] = useState<string>('');
   const [selectedStatus, setSelectedStatus] = useState<string>('');
+
+  // 防抖 timer
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Column settings state
   const [columnConfigs, setColumnConfigs] = useState<ColumnConfig[]>([
@@ -80,9 +84,9 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
         page_size: pageSize,
       };
 
-      // Add search keyword if provided
-      if (searchKeyword) {
-        params.keyword = searchKeyword;
+      // Add search keyword if provided (去除非数字字符，只保留数字部分)
+      if (debouncedSearchKeyword) {
+        params.id = debouncedSearchKeyword.replace(/\D/g, '');
       }
 
       // Add status filter if selected
@@ -109,6 +113,23 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
     }
   };
 
+  // 防抖搜索
+  useEffect(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    debounceTimerRef.current = setTimeout(() => {
+      setDebouncedSearchKeyword(searchKeyword);
+    }, 500);
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [searchKeyword]);
+
   useEffect(() => {
     // Reset to page 1 when filters change
     if (currentPage === 1) {
@@ -116,7 +137,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
     } else {
       setCurrentPage(1);
     }
-  }, [searchKeyword, selectedStatus]);
+  }, [debouncedSearchKeyword, selectedStatus]);
 
   useEffect(() => {
     fetchHistoryData(currentPage);

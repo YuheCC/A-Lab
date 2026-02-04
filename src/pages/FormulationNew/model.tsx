@@ -18,6 +18,7 @@ const isUserLoggedIn = (): boolean => {
 /**
  * 获取历史记录列表
  * 逻辑：未登录或登录用户返回历史记录为空时显示mock数据
+ * 如果有搜索条件（id 或 status），则不显示 mock 数据
  */
 export const getHistoryList = async (params?: any): Promise<{
   data: {
@@ -26,6 +27,9 @@ export const getHistoryList = async (params?: any): Promise<{
   }
 }> => {
   const isLoggedIn = isUserLoggedIn();
+  
+  // 检查是否有搜索条件
+  const hasSearchCondition = params && (params.id || params.status);
 
   if (!isLoggedIn) {
     // 用户未登录，直接返回mock数据
@@ -40,6 +44,16 @@ export const getHistoryList = async (params?: any): Promise<{
   try {
     // 用户已登录，尝试获取真实数据
     const response = await getMDHistoryList(params);
+
+    // 如果有搜索条件，直接返回搜索结果，不合并 mock 数据
+    if (hasSearchCondition) {
+      return {
+        data: {
+          data: response?.data?.data || [],
+          total: response?.data?.total || 0
+        }
+      };
+    }
 
     // 检查返回的数据是否为空
     if (!response?.data?.data || response.data.data.length === 0) {
