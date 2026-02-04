@@ -439,5 +439,8 @@ export default {
             actualValue: "真实循环数",
             sampleSize: "测试集样本量"
         }
-    }
+    },
+
+    // Train disabled tip
+    trainDisabledTip: "如需使用，请通过邮箱 <emailLink>mu.sales@ses.ai</emailLink> 联系我们的团队。"
 };

@@ -8,6 +8,8 @@ interface FeatureCardProps {
   iconBgColor: string;
   onClick?: () => void;
   disabled?: boolean;
+  disabledTip?: React.ReactNode;      // 禁用提示内容，支持 HTML/React 节点
+  disabledTipClassName?: string;      // 自定义提示样式类名
 }
 
 const FeatureCard: React.FC<FeatureCardProps> = ({
@@ -16,7 +18,9 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   description,
   iconBgColor,
   onClick,
-  disabled = false
+  disabled = false,
+  disabledTip,
+  disabledTipClassName
 }) => {
   const handleClick = () => {
     if (!disabled && onClick) {
@@ -24,9 +28,12 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
     }
   };
 
+  // 判断是否有禁用提示
+  const hasDisabledTip = disabled && disabledTip;
+
   return (
     <div
-      className={`feature-card ${onClick && !disabled ? 'feature-card--clickable' : ''} ${disabled ? 'feature-card--disabled' : ''}`}
+      className={`feature-card ${onClick && !disabled ? 'feature-card--clickable' : ''} ${disabled && !hasDisabledTip ? 'feature-card--disabled' : ''} ${hasDisabledTip ? 'feature-card--disabled-with-tip' : ''}`}
       onClick={handleClick}
     >
       <div className="feature-card__icon-wrapper" style={{ backgroundColor: iconBgColor }}>
@@ -36,6 +43,15 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
         <div className="feature-card__title">{title}</div>
         <div className="feature-card__description">{description}</div>
       </div>
+      
+      {/* 禁用提示蒙层 */}
+      {hasDisabledTip && (
+        <div className={`feature-card__disabled-overlay ${disabledTipClassName || ''}`}>
+          <div className="feature-card__disabled-tip">
+            {disabledTip}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -472,6 +472,14 @@ const DesignPage: React.FC<DesignPageProps> = () => {
           iconBgColor="#fef3c6"
           onClick={canTrain ? handleTrain : undefined}
           disabled={!canTrain}
+          disabledTip={!canTrain ? (
+            <Trans
+              i18nKey="performance.trainDisabledTip"
+              components={{
+                emailLink: <a href="mailto:mu.sales@ses.ai" />
+              }}
+            />
+          ) : undefined}
         />
       </FeatureCardGroup>
 

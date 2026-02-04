@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, useLocation } from '@umijs/max';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import CollapsibleText from '@/components/CollapsibleText';
 import FeatureCard from '@/pages/Design/components/FeatureCard';
 import FeatureCardGroup from '@/pages/Design/components/FeatureCardGroup';
@@ -125,6 +125,14 @@ const PredictionTool: React.FC = () => {
           iconBgColor="#fef3c6"
           onClick={canTrain ? handleTrain : undefined}
           disabled={!canTrain}
+          disabledTip={!canTrain ? (
+            <Trans
+              i18nKey="predictionTool.trainDisabledTip"
+              components={{
+                emailLink: <a href="mailto:mu.sales@ses.ai" />
+              }}
+            />
+          ) : undefined}
         />
       </FeatureCardGroup>
 

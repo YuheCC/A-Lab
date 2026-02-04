@@ -101,13 +101,13 @@ const ElectrodePage: React.FC = () => {
           iconBgColor="#dcfce7"
           onClick={handleNavigateToOptimize}
         />
-        <FeatureCard
+        {/* <FeatureCard
           icon={<img src={ICONS.train} alt="" style={{ width: 20, height: 20 }} />}
           title={t('design.electrode.features.train.title')}
           description={t('design.electrode.features.train.description')}
           iconBgColor="#fef3c6"
           disabled={true}
-        />
+        /> */}
       </FeatureCardGroup>
 
       <TabSection activeTab={activeTab} onTabChange={handleTabChange} tabs={tabs}>

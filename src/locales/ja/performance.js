@@ -275,5 +275,8 @@ export default {
   },
 
   // Battery system fallback
-  batterySystemFallback: "バッテリーシステム"
+  batterySystemFallback: "バッテリーシステム",
+
+  // Train disabled tip
+  trainDisabledTip: "ご利用については、メール <emailLink>mu.sales@ses.ai</emailLink> で当社チームにお問い合わせください。"
 }

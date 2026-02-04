@@ -439,5 +439,8 @@ export default {
             actualValue: "Actual Cycles",
             sampleSize: "Test Set Sample Size"
         }
-    }
+    },
+
+    // Train disabled tip
+    trainDisabledTip: "For usage, please contact our team via email <emailLink>mu.sales@ses.ai</emailLink>."
 };
