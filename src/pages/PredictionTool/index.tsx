@@ -5,6 +5,7 @@ import CollapsibleText from '@/components/CollapsibleText';
 import FeatureCard from '@/pages/Design/components/FeatureCard';
 import FeatureCardGroup from '@/pages/Design/components/FeatureCardGroup';
 import TabSection from '@/components/TabSection';
+import { useAuthStore } from '@/models/useAuth';
 import Introduction from './components/Introduction';
 import RecordsContent from './components/RecordsContent';
 import ModelsContent from './components/ModelsContent';
@@ -20,24 +21,33 @@ const PredictionTool: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
+  const { hasPermissionNew } = useAuthStore();
+
+  // 检查是否有 train 权限
+  const canTrain = hasPermissionNew('cell_life:train');
 
   const [searchParams, setSearchParams] = useSearchParams();
 
   const getInitialTab = (): string => {
     // Check if navigation state has activeTab (from train page)
     const stateTab = (location.state as any)?.activeTab;
+    // 如果没有 train 权限且试图访问 models tab，则重定向到 introduction
+    if (stateTab === 'models' && !canTrain) return 'introduction';
     if (stateTab === 'models') return 'models';
 
     const tabParam = searchParams.get('tab');
+    // 如果没有 train 权限且试图访问 models tab，则重定向到 introduction
+    if (tabParam === 'models' && !canTrain) return 'introduction';
     return (tabParam === 'records' || tabParam === 'introduction' || tabParam === 'models') ? tabParam : 'introduction';
   };
 
   const [activeTab, setActiveTab] = useState<string>(getInitialTab());
 
+  // 根据权限动态生成 tabs，没有 train 权限时不显示 models tab
   const tabs = [
     { key: 'introduction', label: t('predictionTool.tabs.introduction', 'Introduction'), disabled: false },
     { key: 'records', label: t('predictionTool.tabs.records', 'Records'), disabled: false },
-    { key: 'models', label: t('predictionTool.tabs.models', 'Models'), disabled: false }
+    ...(canTrain ? [{ key: 'models', label: t('predictionTool.tabs.models', 'Models'), disabled: false }] : [])
   ];
 
   // 初始化时,如果URL没有tab参数且没有从state传递,则设置默认值
@@ -55,6 +65,16 @@ const PredictionTool: React.FC = () => {
       setSearchParams(newSearchParams, { replace: true });
     }
   }, []);
+
+  // 当权限变化时，如果当前在 models tab 但没有权限，则切换到 introduction
+  useEffect(() => {
+    if (activeTab === 'models' && !canTrain) {
+      setActiveTab('introduction');
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.set('tab', 'introduction');
+      setSearchParams(newSearchParams, { replace: true });
+    }
+  }, [canTrain, activeTab]);
 
   const handleNewPrediction = () => {
     navigate('/predict/create');
@@ -103,7 +123,8 @@ const PredictionTool: React.FC = () => {
           title={t('predictionTool.features.train.title', 'Train Model')}
           description={t('predictionTool.features.train.description', 'Train a custom prediction model using your own battery data')}
           iconBgColor="#fef3c6"
-          onClick={handleTrain}
+          onClick={canTrain ? handleTrain : undefined}
+          disabled={!canTrain}
         />
       </FeatureCardGroup>
 

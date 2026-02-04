@@ -14,6 +14,7 @@ import { useDateFilter } from '@/hooks/useDateFilter';
 import { getHistoryList, deleteHistory, getModelList as getModelListFromModel, getBaseModelList, removeModel } from './model';
 import { type ModelListItem } from '@/services/model/training';
 import { formatUTCDateTime } from '@/utils/dateUtils';
+import { useAuthStore } from '@/models/useAuth';
 import DesignIntroduction from './components/DesignIntroduction';
 import Pagination from '@/components/Pagination';
 import CollapsibleText from '@/components/CollapsibleText';
@@ -41,6 +42,10 @@ interface DesignPageProps {}
 const DesignPage: React.FC<DesignPageProps> = () => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  const { hasPermissionNew } = useAuthStore();
+  
+  // 检查是否有 train 权限
+  const canTrain = hasPermissionNew('cell_performance:train');
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -146,15 +151,20 @@ const DesignPage: React.FC<DesignPageProps> = () => {
 
   const getInitialTab = (): 'introduction' | 'records' | 'models' => {
     const tabParam = searchParams.get('tab');
+    // 如果没有 train 权限且试图访问 models tab，则重定向到 introduction
+    if (tabParam === 'models' && !canTrain) {
+      return 'introduction';
+    }
     return (tabParam === 'records' || tabParam === 'introduction' || tabParam === 'models') ? tabParam as 'introduction' | 'records' | 'models' : 'introduction';
   };
 
   const [activeTab, setActiveTab] = useState<'introduction' | 'records' | 'models'>(getInitialTab());
 
+  // 根据权限动态生成 tabs，没有 train 权限时不显示 models tab
   const tabs = [
     { key: 'introduction', label: t('design.tabs.introduction', 'Introduction') },
     { key: 'records', label: t('design.tabs.records', 'Records') },
-    { key: 'models', label: t('design.tabs.models', 'Models') },
+    ...(canTrain ? [{ key: 'models', label: t('design.tabs.models', 'Models') }] : []),
   ];
 
   // 初始化时,如果URL没有tab参数,则设置默认值
@@ -166,6 +176,16 @@ const DesignPage: React.FC<DesignPageProps> = () => {
       setSearchParams(newSearchParams, { replace: true });
     }
   }, []);
+
+  // 当权限变化时，如果当前在 models tab 但没有权限，则切换到 introduction
+  useEffect(() => {
+    if (activeTab === 'models' && !canTrain) {
+      setActiveTab('introduction');
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.set('tab', 'introduction');
+      setSearchParams(newSearchParams, { replace: true });
+    }
+  }, [canTrain, activeTab]);
 
   const transformApiDataToRecord = (apiData: any, modelOptions: ModelListItem[]): HistoryRecord => {
     // Find model info by model_id
@@ -450,7 +470,8 @@ const DesignPage: React.FC<DesignPageProps> = () => {
           title={t('design.history.train', 'Train')}
           description={t('design.electrolyte.features.train.description', 'Train a new model')}
           iconBgColor="#fef3c6"
-          onClick={handleTrain}
+          onClick={canTrain ? handleTrain : undefined}
+          disabled={!canTrain}
         />
       </FeatureCardGroup>
 
