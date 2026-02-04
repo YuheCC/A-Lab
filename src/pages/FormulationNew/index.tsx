@@ -368,8 +368,8 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                         historyData.map((record) => {
                           const statusInfo = formatStatus(record.status);
                           const isMock = isMockRecord(record);
-                          // 计算进度百分比，如果没有process字段则根据status推断
-                          const processValue = record.process || (record.status === 'completed' || record.status === 'success' ? 100 : (record.status === 'running' ? 50 : 0));
+                          // 使用解析后的 process 字段（model.tsx 已处理过）
+                          const processValue = record.process;
                           return (
                             <tr key={record.id}>
                               {isColumnVisible('analysisId') && (
@@ -423,7 +423,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                                       <div className="progress-bar-container progress-bar-failed" />
                                       <span className="progress-failed-icon">×</span>
                                     </div>
-                                  ) : (
+                                  ) : processValue !== undefined ? (
                                     <>
                                       <div className="progress-bar-container">
                                         <div 
@@ -433,6 +433,8 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                                       </div>
                                       <span className="progress-text">{processValue}%</span>
                                     </>
+                                  ) : (
+                                    <span className="progress-text">-</span>
                                   )}
                                 </td>
                               )}

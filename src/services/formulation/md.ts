@@ -27,6 +27,16 @@ export interface MDRunResponse {
   updated_at: string;
 }
 
+// updates 字段解析后的类型
+export interface MDUpdatesInfo {
+  task_name?: string;
+  message?: string;
+  timestamp?: string;
+  stage_name?: string;
+  total_steps?: number;
+  completed_steps?: number;
+}
+
 // MD历史记录接口类型定义
 export interface MDHistoryItem {
   id: number;
@@ -44,6 +54,8 @@ export interface MDHistoryItem {
   result_data: any;
   created_at: string;
   updated_at: string;
+  updates?: string; // JSON 字符串
+  updatesInfo?: MDUpdatesInfo; // 解析后的 updates 信息
   process?: number; // 进度百分比 0-100
 }
 
