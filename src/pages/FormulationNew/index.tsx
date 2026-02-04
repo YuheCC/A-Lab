@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { X, RefreshCw } from 'lucide-react';
 import Button from '@/components/Button';
-import { deleteMDHistory, MDHistoryItem } from '@/services/formulation/md';
+import { deleteMDHistory, rerunMDSimulation, MDHistoryItem } from '@/services/formulation/md';
 import { getHistoryList, isMockRecord } from './model';
 import './index.less';
 import { normalizeServerDate } from "@/utils/messageUtils";
@@ -11,12 +11,15 @@ import { formatIonDisplay } from './utils';
 import IntroductionNew from './components/IntroductionNew';
 import Pagination from '@/components/Pagination';
 import ColumnSettings, { ColumnConfig } from '@/components/ColumnSettings';
+import { useAuthStore } from '@/models/useAuth';
+import { useMessage } from '@/components/MessageProvider';
 
 interface FormulationTableProps {}
 
 const FormulationNew: React.FC<FormulationTableProps> = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const message = useMessage();
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,6 +27,10 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(20);
   const [total, setTotal] = useState(0);
+  
+  // 权限判断
+  const { hasPermissionNew } = useAuthStore();
+  const canRerun = hasPermissionNew('formulation:admin');
 
   // Filter state
   const [searchKeyword, setSearchKeyword] = useState<string>('');
@@ -138,7 +145,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
       'completed': { text: t('formulation.status.completed', '已完成'), className: 'status-completed' },
       'success': { text: t('formulation.status.success', '已完成'), className: 'status-completed' },
       'running': { text: t('formulation.status.running', '运行中'), className: 'status-running' },
-      'failed': { text: t('formulation.status.failed', '失败'), className: 'status-failed' },
+      'fail': { text: t('formulation.status.failed', '失败'), className: 'status-failed' },
       'pending': { text: t('formulation.status.pending', '等待中'), className: 'status-pending' }
     };
     return statusMap[status] || { text: status, className: 'status-unknown' };
@@ -166,6 +173,22 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
     } catch (err) {
       console.error('Failed to delete MD history:', err);
       setError(err instanceof Error ? err.message : t('formulation.history.actions.deleteFailed', '删除记录失败'));
+    }
+  };
+
+  // 处理重试记录
+  const handleRerunRecord = async (id: number | string) => {
+    if (!confirm(t('formulation.history.actions.retryConfirm', '确定要重试这条记录吗？'))) {
+      return;
+    }
+
+    try {
+      await rerunMDSimulation(Number(id));
+      message.success(t('formulation.history.actions.retrySuccess', '重试成功'));
+      await fetchHistoryData(currentPage);
+    } catch (err) {
+      console.error('Failed to rerun MD simulation:', err);
+      message.error(err instanceof Error ? err.message : t('formulation.history.actions.retryFailed', '重试失败'));
     }
   };
 
@@ -268,7 +291,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                       <option value="" disabled hidden>{t('formulation.filters.statusPlaceholder', 'Select Status')}</option>
                       <option value="success">{t('formulation.status.success', 'Completed')}</option>
                       <option value="running">{t('formulation.status.running', 'Running')}</option>
-                      <option value="failed">{t('formulation.status.failed', 'Failed')}</option>
+                      <option value="fail">{t('formulation.status.failed', 'Failed')}</option>
                       <option value="pending">{t('formulation.status.pending', 'Pending')}</option>
                     </select>
 
@@ -374,7 +397,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                               )}
                               {isColumnVisible('process') && (
                                 <td className="process-cell">
-                                  {record.status === 'failed' ? (
+                                  {record.status === 'fail' ? (
                                     <div className="progress-failed-wrapper">
                                       <div className="progress-bar-container progress-bar-failed" />
                                       <span className="progress-failed-icon">×</span>
@@ -404,6 +427,14 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                                   >
                                     {t('formulation.history.actions.viewDetails', 'View Details')}
                                   </button>
+                                  )}
+                                  {record.status === 'fail' && canRerun && !isMock && (
+                                    <button
+                                      className="action-button retry-button"
+                                      onClick={() => handleRerunRecord(record.id)}
+                                    >
+                                      {t('formulation.history.actions.retry', 'Retry')}
+                                    </button>
                                   )}
                                   {!isMock && (
                                     <button

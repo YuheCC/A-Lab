@@ -116,3 +116,15 @@ export async function deleteMDHistory(id: number) {
     data: { id },
   });
 }
+
+export async function rerunMDSimulation(id: number) {
+  const env = urlConfig.getEnvironment();
+  const endpoint = getFormulationMDEndpoint(env, 'rerun');
+  const url = urlConfig.buildFullURL(endpoint);
+  return request(`${url}?id=${id}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+}

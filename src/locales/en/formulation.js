@@ -240,7 +240,11 @@ export default {
       viewDetails: 'View Result',
       delete: 'Delete',
       deleteConfirm: 'Are you sure you want to delete this record?',
-      deleteFailed: 'Failed to delete record'
+      deleteFailed: 'Failed to delete record',
+      retry: 'Retry',
+      retryConfirm: 'Are you sure you want to retry this record?',
+      retrySuccess: 'Retry successful',
+      retryFailed: 'Failed to retry record'
     }
   },
   list: {

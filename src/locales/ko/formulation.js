@@ -240,7 +240,11 @@ export default {
       viewDetails: '결과 보기',
       delete: '삭제',
       deleteConfirm: '이 기록을 삭제하시겠습니까?',
-      deleteFailed: '기록 삭제에 실패했습니다'
+      deleteFailed: '기록 삭제에 실패했습니다',
+      retry: '다시 시도',
+      retryConfirm: '이 기록을 다시 시도하시겠습니까?',
+      retrySuccess: '다시 시도에 성공했습니다',
+      retryFailed: '다시 시도하는 데 실패했습니다'
     }
   },
   list: {

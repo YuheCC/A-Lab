@@ -7,18 +7,21 @@ export const FORMULATION_MD_ENDPOINTS: EndpointConfig<Record<string, string>> = 
     historyList: '/api/formulate/history/list',
     historyDetail: '/api/formulate/history/detail',
     historyDelete: '/api/formulate/history/delete',
+    rerun: '/api/formulate/rerun',
   },
   us: {
     run: '/api/formulate/run',
     historyList: '/api/formulate/history/list',
     historyDetail: '/api/formulate/history/detail',
     historyDelete: '/api/formulate/history/delete',
+    rerun: '/api/formulate/rerun',
   },
   box: {
     run: '/api/formulate/run',
     historyList: '/api/formulate/history/list',
     historyDetail: '/api/formulate/history/detail',
     historyDelete: '/api/formulate/history/delete',
+    rerun: '/api/formulate/rerun',
   },
 };
 

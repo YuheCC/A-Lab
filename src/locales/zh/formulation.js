@@ -240,7 +240,11 @@ export default {
       viewDetails: '查看结果',
       delete: '删除',
       deleteConfirm: '确认删除该记录？',
-      deleteFailed: '删除记录失败'
+      deleteFailed: '删除记录失败',
+      retry: '重试',
+      retryConfirm: '确定要重试这条记录吗？',
+      retrySuccess: '重试成功',
+      retryFailed: '重试失败'
     }
   },
   list: {

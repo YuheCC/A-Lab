@@ -240,7 +240,11 @@ export default {
       viewDetails: '結果を見る',
       delete: '削除',
       deleteConfirm: 'この記録を削除しますか？',
-      deleteFailed: '記録の削除に失敗しました'
+      deleteFailed: '記録の削除に失敗しました',
+      retry: '再試行',
+      retryConfirm: 'この記録を再試行しますか？',
+      retrySuccess: '再試行に成功しました',
+      retryFailed: '再試行に失敗しました'
     }
   },
   list: {
