@@ -11,9 +11,9 @@ const IntroductionContent: React.FC = () => {
       <Image.PreviewGroup>
         {/* Result Prediction Section */}
         <div className="electrode-introduction-content__section">
-          <h2 className="electrode-introduction-content__section-title">
+          {/* <h2 className="electrode-introduction-content__section-title">
             {t('design.electrode.introduction.resultPrediction.title')}
-          </h2>
+          </h2> */}
           <p className="electrode-introduction-content__paragraph">
             {t('design.electrode.introduction.resultPrediction.description1')}
           </p>

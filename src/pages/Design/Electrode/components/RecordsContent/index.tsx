@@ -8,6 +8,7 @@ import { useNavigate, useSearchParams } from '@umijs/max';
 import { Dayjs } from 'dayjs';
 import { formatUTCDateTime } from '@/utils/dateUtils';
 import { useDateFilter } from '@/hooks/useDateFilter';
+import Pagination from '@/components/Pagination';
 import * as electrodeModel from '../../model';
 import type { ElectrodeHistoryItem } from '../../model';
 import './index.less';
@@ -57,6 +58,10 @@ const RecordsContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [total, setTotal] = useState<number>(0);
 
+  // 分页状态
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageSize] = useState<number>(20);
+
   // 初始化时,如果URL没有subTab参数,则设置默认值
   useEffect(() => {
     const subTabParam = searchParams.get('subTab');
@@ -95,8 +100,8 @@ const RecordsContent: React.FC = () => {
 
       const response = await electrodeModel.getElectrodeHistoryList({
         type: getTypeFromSubTab(activeSubTab),
-        page: 1,
-        page_size: 100,
+        page: currentPage,
+        page_size: pageSize,
         // 可选过滤参数
         ...(createdAtParam && { created_at: createdAtParam }),
         ...(debouncedSearchKeyword && { id: debouncedSearchKeyword.replace(/\D/g, '') }),
@@ -131,6 +136,11 @@ const RecordsContent: React.FC = () => {
   useEffect(() => {
     loadRecords();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSubTab, debouncedSearchKeyword, selectedDate, currentPage]);
+
+  // 筛选条件变化时重置页码到第一页
+  useEffect(() => {
+    setCurrentPage(1);
   }, [activeSubTab, debouncedSearchKeyword, selectedDate]);
 
   // 刷新数据
@@ -331,6 +341,14 @@ const RecordsContent: React.FC = () => {
           </tbody>
         </table>
       </div>
+
+      {/* 分页组件 */}
+      <Pagination
+        current={currentPage}
+        total={total}
+        pageSize={pageSize}
+        onChange={(page) => setCurrentPage(page)}
+      />
     </div>
     </Spin>
   );

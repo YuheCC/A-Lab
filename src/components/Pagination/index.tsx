@@ -8,13 +8,26 @@ interface PaginationProps {
   total: number;
   pageSize: number;
   onChange: (page: number) => void;
+  /** 只有一页时是否隐藏分页组件，默认为 false（即默认展示） */
+  hideOnSinglePage?: boolean;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ current, total, pageSize, onChange }) => {
+const Pagination: React.FC<PaginationProps> = ({ 
+  current, 
+  total, 
+  pageSize, 
+  onChange, 
+  hideOnSinglePage = false 
+}) => {
   const { t } = useTranslation();
   const totalPages = Math.ceil(total / pageSize);
 
-  if (totalPages <= 1) {
+  if (totalPages <= 0) {
+    return null;
+  }
+
+  // 只有一页时，根据配置决定是否隐藏
+  if (totalPages === 1 && hideOnSinglePage) {
     return null;
   }
 
