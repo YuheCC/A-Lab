@@ -342,7 +342,8 @@ export default {
             },
             optimize: {
                 title: "逆向设计",
-                description: "优化电极参数"
+                description: "优化电极参数",
+                disabledTip: "将在 MU2 中推出"
             },
             train: {
                 title: "训练",

@@ -342,7 +342,8 @@ export default {
             },
             optimize: {
                 title: "Inverse Design",
-                description: "Optimize electrode parameters"
+                description: "Optimize electrode parameters",
+                disabledTip: "To be launched in MU2"
             },
             train: {
                 title: "Train",

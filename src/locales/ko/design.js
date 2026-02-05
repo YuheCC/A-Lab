@@ -342,7 +342,8 @@ export default {
             },
             optimize: {
                 title: "역설계",
-                description: "전극 매개변수 최적화"
+                description: "전극 매개변수 최적화",
+                disabledTip: "MU2에서 출시 예정"
             },
             train: {
                 title: "학습",

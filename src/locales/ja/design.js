@@ -342,7 +342,8 @@ export default {
             },
             optimize: {
                 title: "逆設計",
-                description: "電極パラメータを最適化"
+                description: "電極パラメータを最適化",
+                disabledTip: "MU2で提供予定"
             },
             train: {
                 title: "トレーニング",

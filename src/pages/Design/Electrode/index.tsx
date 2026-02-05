@@ -95,7 +95,9 @@ const ElectrodePage: React.FC = () => {
           iconBgColor="#f3e8ff"
         /> */}
         {/* TEMPORARY HIDDEN: Inverse Design 功能暂时隐藏，后期需要恢复 */}
-        {/* <FeatureCard
+        <FeatureCard
+          disabled={true}
+          disabledTip={t('design.electrode.features.optimize.disabledTip')}
           icon={<img src={ICONS.optimize} alt="" style={{ width: 20, height: 20 }} />}
           title={t('design.electrode.features.optimize.title')}
           description={t('design.electrode.features.optimize.description')}

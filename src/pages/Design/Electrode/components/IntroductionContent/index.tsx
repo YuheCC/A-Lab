@@ -11,9 +11,9 @@ const IntroductionContent: React.FC = () => {
       <Image.PreviewGroup>
         {/* Result Prediction Section */}
         <div className="electrode-introduction-content__section">
-          {/* <h2 className="electrode-introduction-content__section-title">
+          <h2 className="electrode-introduction-content__section-title">
             {t('design.electrode.introduction.resultPrediction.title')}
-          </h2> */}
+          </h2>
           <p className="electrode-introduction-content__paragraph">
             {t('design.electrode.introduction.resultPrediction.description1')}
           </p>
@@ -61,7 +61,7 @@ const IntroductionContent: React.FC = () => {
         </div>
 
         {/* Inverse Design Section */}
-        {/* <div className="electrode-introduction-content__section">
+        <div className="electrode-introduction-content__section">
           <h2 className="electrode-introduction-content__section-title">
             {t('design.electrode.introduction.inverseDesign.title')}
           </h2>
@@ -123,7 +123,7 @@ const IntroductionContent: React.FC = () => {
               </div>
             </div>
           </div>
-        </div> */}
+        </div>
       </Image.PreviewGroup>
     </div>
   );
