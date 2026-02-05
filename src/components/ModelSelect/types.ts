@@ -3,6 +3,8 @@ import { ReactNode } from 'react';
 // 选项数据结构
 export interface ModelSelectOption {
   id: string | number;
+  disabled?: boolean; // 禁用标记
+  disabledText?: string; // 禁用提示文案的多语言翻译键
   [key: string]: any; // 支持动态字段
 }
 

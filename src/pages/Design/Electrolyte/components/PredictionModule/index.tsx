@@ -13,7 +13,7 @@ import './PerformanceTooltip.less';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 import CustomSelect from '../CustomSelect';
 import ModelSelect from '@/components/ModelSelect';
-import { mockModels, type PerformanceMetricType, type ModelOption } from './mockModelData';
+import { upcomingModels, type PerformanceMetricType, type ModelOption } from './mockModelData';
 import { PricingContext } from '@/layouts/index';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
 import { getModelList } from '../../model';
@@ -87,7 +87,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const [isBatterySystemLoading, setIsBatterySystemLoading] = useState(true);
 
   // 新增状态：模型相关
-  const [modelOptions, setModelOptions] = useState<ModelOption[]>(mockModels);
+  const [modelOptions, setModelOptions] = useState<ModelOption[]>([]);
   const [isModelLoading, setIsModelLoading] = useState(false);
   const [selectedModelData, setSelectedModelData] = useState<ModelListItem | null>(null);
 
@@ -302,8 +302,11 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
         const allModels = response.data.filter(item => item.base_model_id !== -1).map(convertToModelOption);
 
-        if (allModels.length > 0) {
-          setModelOptions(allModels);
+        // 添加即将推出的模型（不做多语言转换，保持原样）
+        const modelsWithUpcoming = [...allModels, ...upcomingModels];
+
+        if (modelsWithUpcoming.length > 0) {
+          setModelOptions(modelsWithUpcoming);
         }
       } catch (error) {
         console.error('获取模型列表失败:', error);
@@ -933,11 +936,11 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 'mu': t('performance.modelSelection.muModels', 'Mu Models')
               }}
               columns={[
-                { key: 'name', title: t('performance.modelSelection.columns.modelName', 'Model Name'), width: '40%' },
+                { key: 'name', title: t('performance.modelSelection.columns.modelName', 'Model Name'), width: '45%' },
                 {
                   key: 'id',
                   title: t('performance.modelSelection.columns.modelId', 'Model ID'),
-                  width: '20%',
+                  width: '15%',
                   render: (value: any) => `DM-${String(value).padStart(6, '0')}`
                 },
                 { key: 'baseModel', title: t('performance.modelSelection.columns.baseModel', 'Base Model'), width: '40%' }

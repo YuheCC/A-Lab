@@ -261,6 +261,21 @@
     outline-offset: -2px;
   }
 
+  // 禁用状态样式
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none; // 禁止所有交互
+    
+    .table-col {
+      color: @color-text-muted;
+    }
+    
+    &:hover {
+      background: transparent; // 移除 hover 效果
+    }
+  }
+
   .table-col {
     color: @color-text-primary;
     font-size: @font-size-base;

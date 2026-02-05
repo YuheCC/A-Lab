@@ -10,6 +10,8 @@ export interface ModelOption {
   baseModel: string;
   category: 'base' | 'finetuned' | 'mu';
   supportedMetrics: PerformanceMetricType[]; // 支持的性能指标配置
+  disabled?: boolean; // 禁用标记
+  disabledText?: string; // 禁用提示文案的多语言翻译键
 }
 
 export const mockModels: ModelOption[] = [
@@ -78,5 +80,27 @@ export const mockModels: ModelOption[] = [
     baseModel: 'Coulombic Efficiency Base Model',
     category: 'finetuned',
     supportedMetrics: ['ce']
+  }
+];
+
+// MU2 即将推出的模型（置灰状态）- 用于添加到真实数据中
+export const upcomingModels: ModelOption[] = [
+  {
+    id: 'D-MU2-001',
+    name: 'LFP-Graphite - Carbonate electrolyte',
+    disabledText: 'design.model.toLaunchInMU2',
+    baseModel: 'Cycle Life + Coulombic Efficiency + Rate Performance',
+    category: 'mu',
+    supportedMetrics: ['cl', 'ce', 'rate'],
+    disabled: true
+  },
+  {
+    id: 'D-MU2-002',
+    name: 'NCM811-Li-Metal - SES proprietary electrolyte',
+    disabledText: 'design.model.toLaunchInMU2',
+    baseModel: 'Cycle Life + Coulombic Efficiency + Rate Performance',
+    category: 'mu',
+    supportedMetrics: ['cl', 'ce', 'rate'],
+    disabled: true
   }
 ];

@@ -16,6 +16,10 @@ export default {
     create: {
         title: '새 설계'
     },
+    // Model
+    model: {
+        toLaunchInMU2: '（MU2에서 출시 예정）'
+    },
     // Train page
     train: {
         title: '새 모델 학습',

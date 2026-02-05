@@ -16,6 +16,10 @@ export default {
     create: {
         title: 'New Design'
     },
+    // Model
+    model: {
+        toLaunchInMU2: '(to be launched in MU2)'
+    },
     // Train page
     train: {
         title: 'Train New Model',
