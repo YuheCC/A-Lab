@@ -333,7 +333,7 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
 
   const anionOptions = [
     { value: 'PF6', label: 'PF₆⁻', subLabel: 'Hexafluorophosphate', available: true, disabledText: "" },
-    { value: 'BF4', label: 'BF₄⁻', subLabel: 'Tetrafluoroborate', available: true, disabledText: "" },
+    { value: 'BF4', label: 'BF₄⁻', subLabel: 'Tetrafluoroborate', available: false, disabledText: "" },
     { value: 'FSI', label: 'FSI⁻', subLabel: 'Bis(fluorosulfonyl)imide', available: true, disabledText: "" },
     { value: 'TFSI', label: 'TFSI⁻', subLabel: 'Bis(trifluoromethylsulfonyl)imide', available: true, disabledText: "" }
   ];
@@ -559,8 +559,8 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
                 >
                   <div className="ion-symbol">{option.label}</div>
                   <div className="ion-name">{option.subLabel}</div>
-                  {!option.available && (
-                    <div className="coming-soon">{t('formulation.comingSoon', 'Will be available soon')}</div>
+                  {!option.available && option.disabledText && (
+                    <div className="coming-soon">{option.disabledText}</div>
                   )}
                 </div>
               ))}
