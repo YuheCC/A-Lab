@@ -4,6 +4,13 @@ export default {
     previousPage: '前のページ',
     nextPage: '次のページ'
   },
+  columnSettings: {
+    ariaLabel: '列設定',
+    title: '列表示',
+    selectAll: 'すべて選択',
+    deselectAll: '選択解除',
+    reset: 'リセット'
+  },
   modelSelect: {
     placeholder: '選択してください',
     searchPlaceholder: '検索...',

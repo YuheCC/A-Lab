@@ -48,19 +48,19 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
     }
   };
 
-  // Column settings state
+  // Column settings state - 使用 titleKey 支持多语言切换
   const [columnConfigs, setColumnConfigs] = useState<ColumnConfig[]>([
-    { key: 'analysisId', title: t('formulation.list.columns.analysisId', 'Analysis ID'), visible: true, disabled: true },
-    { key: 'saltFraction', title: t('formulation.list.columns.saltFraction', 'Salt (Fraction)'), visible: true },
-    { key: 'saltFractionType', title: t('formulation.list.columns.saltFractionType', 'Fraction Type (Salt)'), visible: false },
-    { key: 'solventFraction', title: t('formulation.list.columns.solventFraction', 'Solvent (Fraction)'), visible: true },
-    { key: 'solventFractionType', title: t('formulation.list.columns.solventFractionType', 'Fraction Type (Solvent)'), visible: false },
-    { key: 'concentration', title: t('formulation.list.columns.concentration', 'Concentration'), visible: true },
-    { key: 'status', title: t('formulation.list.columns.status', 'Status'), visible: true },
-    { key: 'progress', title: t('formulation.list.columns.progress', 'Progress'), visible: true },
-    { key: 'creator', title: t('formulation.list.columns.creator', 'Creator'), visible: false },
-    { key: 'created', title: t('formulation.list.columns.created', 'Created Time'), visible: false },
-    { key: 'actions', title: t('formulation.list.columns.actions', 'Actions'), visible: true, disabled: true },
+    { key: 'analysisId', title: 'Analysis ID', titleKey: 'formulation.list.columns.analysisId', visible: true, disabled: true },
+    { key: 'saltFraction', title: 'Salt (Fraction)', titleKey: 'formulation.list.columns.saltFraction', visible: true },
+    { key: 'saltFractionType', title: 'Fraction Type (Salt)', titleKey: 'formulation.list.columns.saltFractionType', visible: false },
+    { key: 'solventFraction', title: 'Solvent (Fraction)', titleKey: 'formulation.list.columns.solventFraction', visible: true },
+    { key: 'solventFractionType', title: 'Fraction Type (Solvent)', titleKey: 'formulation.list.columns.solventFractionType', visible: false },
+    { key: 'concentration', title: 'Concentration', titleKey: 'formulation.list.columns.concentration', visible: true },
+    { key: 'status', title: 'Status', titleKey: 'formulation.list.columns.status', visible: true },
+    { key: 'progress', title: 'Progress', titleKey: 'formulation.list.columns.progress', visible: true },
+    { key: 'creator', title: 'Creator', titleKey: 'formulation.list.columns.creator', visible: false },
+    { key: 'created', title: 'Created Time', titleKey: 'formulation.list.columns.created', visible: false },
+    { key: 'actions', title: 'Actions', titleKey: 'formulation.list.columns.actions', visible: true, disabled: true },
   ]);
 
   // 根据 URL query 参数初始化 activeTab

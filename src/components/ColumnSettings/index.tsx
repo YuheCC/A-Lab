@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Settings } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import './index.less';
 
 export interface ColumnConfig {
   key: string;
-  title: string;
+  title: string;       // 直接显示的标题文本
+  titleKey?: string;   // 多语言 key，优先级高于 title
   visible: boolean;
-  disabled?: boolean; // 某些列不允许隐藏
+  disabled?: boolean;  // 某些列不允许隐藏
 }
 
 interface ColumnSettingsProps {
@@ -20,6 +22,7 @@ const ColumnSettings: React.FC<ColumnSettingsProps> = ({
   onChange,
   storageKey,
 }) => {
+  const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -101,12 +104,20 @@ const ColumnSettings: React.FC<ColumnSettingsProps> = ({
   const visibleCount = columns.filter(col => col.visible).length;
   const allVisible = columns.every(col => col.visible);
 
+  // 获取列标题，优先使用 titleKey 进行翻译
+  const getColumnTitle = (col: ColumnConfig) => {
+    if (col.titleKey) {
+      return t(col.titleKey, col.title);
+    }
+    return col.title;
+  };
+
   return (
     <div className="column-settings" ref={dropdownRef}>
       <button
         className="column-settings-trigger"
         onClick={() => setVisible(!visible)}
-        aria-label="列设置"
+        aria-label={t('common.columnSettings.ariaLabel', 'Column Settings')}
       >
         <Settings size={16} />
       </button>
@@ -114,7 +125,9 @@ const ColumnSettings: React.FC<ColumnSettingsProps> = ({
       {visible && (
         <div className="column-settings-dropdown">
           <div className="column-settings-header">
-            <span className="column-settings-title">列展示</span>
+            <span className="column-settings-title">
+              {t('common.columnSettings.title', 'Column Display')}
+            </span>
             <span className="column-settings-count">
               {visibleCount}/{columns.length}
             </span>
@@ -125,13 +138,15 @@ const ColumnSettings: React.FC<ColumnSettingsProps> = ({
               className="column-settings-action-btn"
               onClick={handleSelectAll}
             >
-              {allVisible ? '取消全选' : '全选'}
+              {allVisible 
+                ? t('common.columnSettings.deselectAll', 'Deselect All') 
+                : t('common.columnSettings.selectAll', 'Select All')}
             </button>
             <button
               className="column-settings-action-btn"
               onClick={handleReset}
             >
-              重置
+              {t('common.columnSettings.reset', 'Reset')}
             </button>
           </div>
 
@@ -148,7 +163,7 @@ const ColumnSettings: React.FC<ColumnSettingsProps> = ({
                   onChange={() => !col.disabled && handleToggle(col.key)}
                 />
                 <span className="column-settings-item-checkbox"></span>
-                <span className="column-settings-item-label">{col.title}</span>
+                <span className="column-settings-item-label">{getColumnTitle(col)}</span>
               </label>
             ))}
           </div>

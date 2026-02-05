@@ -4,6 +4,13 @@ export default {
     previousPage: 'Previous',
     nextPage: 'Next'
   },
+  columnSettings: {
+    ariaLabel: 'Column Settings',
+    title: 'Column Display',
+    selectAll: 'Select All',
+    deselectAll: 'Deselect All',
+    reset: 'Reset'
+  },
   modelSelect: {
     placeholder: 'Please select',
     searchPlaceholder: 'Search...',

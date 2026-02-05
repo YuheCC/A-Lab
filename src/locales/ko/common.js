@@ -4,6 +4,13 @@ export default {
     previousPage: '이전',
     nextPage: '다음'
   },
+  columnSettings: {
+    ariaLabel: '열 설정',
+    title: '열 표시',
+    selectAll: '전체 선택',
+    deselectAll: '선택 해제',
+    reset: '초기화'
+  },
   modelSelect: {
     placeholder: '선택하세요',
     searchPlaceholder: '검색...',

@@ -4,6 +4,13 @@ export default {
     previousPage: '上一页',
     nextPage: '下一页'
   },
+  columnSettings: {
+    ariaLabel: '列设置',
+    title: '列展示',
+    selectAll: '全选',
+    deselectAll: '取消全选',
+    reset: '重置'
+  },
   modelSelect: {
     placeholder: '请选择',
     searchPlaceholder: '搜索...',
