@@ -57,6 +57,7 @@ export interface MDHistoryItem {
   updates?: string; // JSON 字符串
   updatesInfo?: MDUpdatesInfo; // 解析后的 updates 信息
   process?: number; // 进度百分比 0-100
+  username?: string; // 创建者用户名
 }
 
 export interface MDHistoryResponse {

@@ -261,9 +261,10 @@ export default {
       solventFraction: '溶剂（分数）',
       solventFractionType: '分数类型（溶剂）',
       concentration: '盐浓度',
+      creator: '创建者',
       created: '创建时间',
       status: '状态',
-      process: '进度',
+      progress: '进度',
       actions: '操作'
     }
   },

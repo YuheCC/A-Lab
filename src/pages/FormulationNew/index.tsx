@@ -57,8 +57,9 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
     { key: 'solventFractionType', title: t('formulation.list.columns.solventFractionType', 'Fraction Type (Solvent)'), visible: false },
     { key: 'concentration', title: t('formulation.list.columns.concentration', 'Concentration'), visible: true },
     { key: 'status', title: t('formulation.list.columns.status', 'Status'), visible: true },
-    { key: 'process', title: t('formulation.list.columns.process', 'Process'), visible: true },
-    { key: 'created', title: t('formulation.list.columns.created', 'Created'), visible: false },
+    { key: 'progress', title: t('formulation.list.columns.progress', 'Progress'), visible: true },
+    { key: 'creator', title: t('formulation.list.columns.creator', 'Creator'), visible: false },
+    { key: 'created', title: t('formulation.list.columns.created', 'Created Time'), visible: false },
     { key: 'actions', title: t('formulation.list.columns.actions', 'Actions'), visible: true, disabled: true },
   ]);
 
@@ -346,8 +347,9 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                         {isColumnVisible('solventFractionType') && <th>{t('formulation.list.columns.solventFractionType', 'Fraction Type (Solvent)')}</th>}
                         {isColumnVisible('concentration') && <th>{t('formulation.list.columns.concentration', 'Concentration')}</th>}
                         {isColumnVisible('status') && <th>{t('formulation.list.columns.status', 'Status')}</th>}
-                        {isColumnVisible('process') && <th>{t('formulation.list.columns.process', 'Process')}</th>}
-                        {isColumnVisible('created') && <th>{t('formulation.list.columns.created', 'Created')}</th>}
+                        {isColumnVisible('progress') && <th>{t('formulation.list.columns.progress', 'Progress')}</th>}
+                        {isColumnVisible('creator') && <th>{t('formulation.list.columns.creator', 'Creator')}</th>}
+                        {isColumnVisible('created') && <th>{t('formulation.list.columns.created', 'Created Time')}</th>}
                         {isColumnVisible('actions') && <th>{t('formulation.list.columns.actions', 'Actions')}</th>}
                       </tr>
                     </thead>
@@ -410,8 +412,8 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                                   </span>
                                 </td>
                               )}
-                              {isColumnVisible('process') && (
-                                <td className="process-cell">
+                              {isColumnVisible('progress') && (
+                                <td className="progress-cell">
                                   {record.status === 'fail' ? (
                                     <div className="progress-failed-wrapper">
                                       <div className="progress-bar-container progress-bar-failed" />
@@ -431,6 +433,9 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                                     <span className="progress-text">-</span>
                                   )}
                                 </td>
+                              )}
+                              {isColumnVisible('creator') && (
+                                <td className="creator-cell">{record.username || '-'}</td>
                               )}
                               {isColumnVisible('created') && (
                                 <td className="created-date">{formatDate(normalizeServerDate(record.created_at).toISOString())}</td>

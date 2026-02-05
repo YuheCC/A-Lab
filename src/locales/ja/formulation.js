@@ -261,9 +261,10 @@ export default {
       solventFraction: '溶媒（分率）',
       solventFractionType: '分率タイプ（溶媒）',
       concentration: '塩濃度',
+      creator: '作成者',
       created: '作成日時',
       status: 'ステータス',
-      process: '進捗',
+      progress: '進捗',
       actions: '操作'
     }
   },

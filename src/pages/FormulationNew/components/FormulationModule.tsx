@@ -47,6 +47,9 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   // Solvent fraction validation state
   const [solventFractionErrors, setSolventFractionErrors] = useState<{[key: number]: string}>({});
 
+  // Anion fraction validation state
+  const [anionFractionErrors, setAnionFractionErrors] = useState<{[key: string]: string}>({});
+
   // Temperature validation state
   const [temperatureError, setTemperatureError] = useState<string | null>(null);
 
@@ -150,6 +153,11 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   const hasValidSolventFractions = () => {
     const activeSolvents = solvents.filter(s => s.smiles.trim() !== '');
     return activeSolvents.every(s => validateSolventFraction(s.fraction) === null);
+  };
+
+  // Check if all anion fractions are valid
+  const hasValidAnionFractions = () => {
+    return selectedAnions.every(anion => validateSolventFraction(anionFractions[anion] || '0') === null);
   };
 
   // Validate all SMILES strings
@@ -295,6 +303,18 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
       ...prev,
       [anion]: value
     }));
+
+    // Validate fraction when user changes it
+    const error = validateSolventFraction(value);
+    setAnionFractionErrors(prev => {
+      const newErrors = { ...prev };
+      if (error) {
+        newErrors[anion] = error;
+      } else {
+        delete newErrors[anion];
+      }
+      return newErrors;
+    });
   };
 
   // Remove ionic symbols from ion names for API
@@ -340,9 +360,20 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
       }
     });
     setSolventFractionErrors(fractionErrors);
-    const fractionsValid = Object.keys(fractionErrors).length === 0;
+    const solventFractionsValid = Object.keys(fractionErrors).length === 0;
 
-    if (!isValidConfiguration() || !isValidSolventConfiguration() || !smilesValid || tempError !== null || !fractionsValid) {
+    // Validate all anion fractions
+    const anionErrors: {[key: string]: string} = {};
+    selectedAnions.forEach(anion => {
+      const error = validateSolventFraction(anionFractions[anion] || '0');
+      if (error) {
+        anionErrors[anion] = error;
+      }
+    });
+    setAnionFractionErrors(anionErrors);
+    const anionFractionsValid = Object.keys(anionErrors).length === 0;
+
+    if (!isValidConfiguration() || !isValidSolventConfiguration() || !smilesValid || tempError !== null || !solventFractionsValid || !anionFractionsValid) {
       return;
     }
 
@@ -437,6 +468,7 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
     setError(null);
     setSmilesErrors({});
     setSolventFractionErrors({});
+    setAnionFractionErrors({});
     setShowValidation(false);
   }, []);
 
@@ -466,17 +498,19 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
           <div className="form-group">
             <label>{t('formulation.temperature.label', 'Temperature (K)')}</label>
             <input
-              type="number"
-              step="0.01"
-              min="238.15"
-              max="378.15"
+              type="text"
+              inputMode="decimal"
+              pattern="[0-9]*\.?[0-9]*"
               value={temperature}
               onChange={(e) => {
-                const newValue = e.target.value;
-                setTemperature(newValue);
-                // Validate on change
-                const error = validateTemperature(newValue);
-                setTemperatureError(error);
+                const val = e.target.value;
+                // 只允许输入数字和小数点
+                if (val === '' || /^[0-9]*\.?[0-9]*$/.test(val)) {
+                  setTemperature(val);
+                  // Validate on change
+                  const error = validateTemperature(val);
+                  setTemperatureError(error);
+                }
               }}
               className={`concentration-input ${temperatureError && showValidation ? 'error' : ''}`}
             />
@@ -537,10 +571,17 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
           <div className="form-group">
             <label>{t('formulation.totalSaltConcentration.label', 'Total Salt Concentration (mol/kg)')}</label>
             <input
-              type="number"
-              step="0.01"
+              type="text"
+              inputMode="decimal"
+              pattern="[0-9]*\.?[0-9]*"
               value={totalSaltConcentration}
-              onChange={(e) => setTotalSaltConcentration(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                // 只允许输入数字和小数点
+                if (val === '' || /^[0-9]*\.?[0-9]*$/.test(val)) {
+                  setTotalSaltConcentration(val);
+                }
+              }}
               className="concentration-input"
             />
           </div>
@@ -548,16 +589,26 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
           {/* Anion Fractions */}
           {selectedAnions.map((anion) => (
             <div key={anion} className="form-group">
-              <label>{`${formatIonDisplay(anion)} Fraction`}</label>
+              <label>{`${formatIonDisplay(anion)} ${t('formulation.fraction.label', 'Fraction (min: 0.05)')}`}</label>
               <input
-                type="number"
-                step="0.01"
-                min="0"
-                max="1"
-                value={anionFractions[anion] || '0'}
-                onChange={(e) => updateAnionFraction(anion, e.target.value)}
-                className="fraction-input"
+                type="text"
+                inputMode="decimal"
+                pattern="[0-9]*\.?[0-9]*"
+                value={anionFractions[anion] ?? ''}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  // 只允许输入数字和小数点
+                  if (val === '' || /^[0-9]*\.?[0-9]*$/.test(val)) {
+                    updateAnionFraction(anion, val);
+                  }
+                }}
+                className={`fraction-input ${anionFractionErrors[anion] ? 'error' : ''}`}
               />
+              {anionFractionErrors[anion] && (
+                <div className="smiles-error-message">
+                  {anionFractionErrors[anion]}
+                </div>
+              )}
             </div>
           ))}
 
@@ -632,12 +683,17 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
                   <label>{t('formulation.fraction.label', 'Fraction (min: 0.05)')}</label>
                   <div className="fraction-input-with-remove">
                     <input
-                      type="number"
-                      step="0.01"
-                      min="0.05"
-                      max="1"
+                      type="text"
+                      inputMode="decimal"
+                      pattern="[0-9]*\.?[0-9]*"
                       value={solvent.fraction}
-                      onChange={(e) => updateSolvent(solvent.id, 'fraction', e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        // 只允许输入数字和小数点
+                        if (val === '' || /^[0-9]*\.?[0-9]*$/.test(val)) {
+                          updateSolvent(solvent.id, 'fraction', val);
+                        }
+                      }}
                       className={`fraction-input ${solventFractionErrors[solvent.id] ? 'error' : ''}`}
                     />
                   </div>
@@ -741,7 +797,7 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
           size="mlarge"
           loading={isCalculating}
           onClick={handleCalculate}
-          disabled={isCalculating || !isValidConfiguration() || !isValidSolventConfiguration() || !hasValidSolventFractions()}
+          disabled={isCalculating || !isValidConfiguration() || !isValidSolventConfiguration() || !hasValidSolventFractions() || !hasValidAnionFractions()}
         >
           {t('formulation.submit.button', 'Submit Configuration')}
         </Button>

@@ -261,9 +261,10 @@ export default {
       solventFraction: 'Solvent (Fraction)',
       solventFractionType: 'Fraction Type (Solvent)',
       concentration: 'Salt Concentration',
-      created: 'Created',
+      creator: 'Creator',
+      created: 'Created Time',
       status: 'Status',
-      process: 'Process',
+      progress: 'Progress',
       actions: 'Actions'
     }
   },

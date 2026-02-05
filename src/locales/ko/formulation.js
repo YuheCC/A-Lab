@@ -261,9 +261,10 @@ export default {
       solventFraction: '용매 (분율)',
       solventFractionType: '분율 유형 (용매)',
       concentration: '염 농도',
-      created: '생성일',
+      creator: '생성자',
+      created: '생성 시간',
       status: '상태',
-      process: '진행률',
+      progress: '진행률',
       actions: '작업'
     }
   },
