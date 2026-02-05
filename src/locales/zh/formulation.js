@@ -176,7 +176,13 @@ export default {
   },
 
   fraction: {
-    label: '分数（最小值：0.05）'
+    label: '分数（最小值：0.05）',
+    validation: {
+      empty: '分数不能为空',
+      invalid: '请输入有效的分数值',
+      tooLow: '分数不能低于 0.05',
+      tooHigh: '分数不能高于 1'
+    }
   },
 
   removeSolvent: '移除溶剂',

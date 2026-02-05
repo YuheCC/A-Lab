@@ -44,6 +44,9 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   const [smilesErrors, setSmilesErrors] = useState<{[key: number]: string}>({});
   const [showValidation, setShowValidation] = useState(false);
 
+  // Solvent fraction validation state
+  const [solventFractionErrors, setSolventFractionErrors] = useState<{[key: number]: string}>({});
+
   // Temperature validation state
   const [temperatureError, setTemperatureError] = useState<string | null>(null);
 
@@ -121,6 +124,34 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
     return null;
   };
 
+  // Solvent fraction validation logic
+  const validateSolventFraction = (fraction: string): string | null => {
+    if (fraction.trim() === '') {
+      return t('formulation.fraction.validation.empty', 'Fraction cannot be empty');
+    }
+
+    const fractionValue = parseFloat(fraction);
+    if (isNaN(fractionValue)) {
+      return t('formulation.fraction.validation.invalid', 'Please enter a valid fraction value');
+    }
+
+    if (fractionValue < 0.05) {
+      return t('formulation.fraction.validation.tooLow', 'Fraction cannot be lower than 0.05');
+    }
+
+    if (fractionValue > 1) {
+      return t('formulation.fraction.validation.tooHigh', 'Fraction cannot be higher than 1');
+    }
+
+    return null;
+  };
+
+  // Check if all solvent fractions are valid
+  const hasValidSolventFractions = () => {
+    const activeSolvents = solvents.filter(s => s.smiles.trim() !== '');
+    return activeSolvents.every(s => validateSolventFraction(s.fraction) === null);
+  };
+
   // Validate all SMILES strings
   const validateAllSMILES = () => {
     const errors: {[key: number]: string} = {};
@@ -149,6 +180,20 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
       setSmilesErrors(prev => {
         const newErrors = { ...prev };
         delete newErrors[id];
+        return newErrors;
+      });
+    }
+
+    // Validate fraction when user changes it
+    if (field === 'fraction') {
+      const error = validateSolventFraction(value);
+      setSolventFractionErrors(prev => {
+        const newErrors = { ...prev };
+        if (error) {
+          newErrors[id] = error;
+        } else {
+          delete newErrors[id];
+        }
         return newErrors;
       });
     }
@@ -284,7 +329,20 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
     // Validate SMILES
     const smilesValid = validateAllSMILES();
 
-    if (!isValidConfiguration() || !isValidSolventConfiguration() || !smilesValid || tempError !== null) {
+    // Validate all solvent fractions
+    const fractionErrors: {[key: number]: string} = {};
+    solvents.forEach(solvent => {
+      if (solvent.smiles.trim() !== '') {
+        const error = validateSolventFraction(solvent.fraction);
+        if (error) {
+          fractionErrors[solvent.id] = error;
+        }
+      }
+    });
+    setSolventFractionErrors(fractionErrors);
+    const fractionsValid = Object.keys(fractionErrors).length === 0;
+
+    if (!isValidConfiguration() || !isValidSolventConfiguration() || !smilesValid || tempError !== null || !fractionsValid) {
       return;
     }
 
@@ -378,6 +436,7 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
     setCurrentView('configuration');
     setError(null);
     setSmilesErrors({});
+    setSolventFractionErrors({});
     setShowValidation(false);
   }, []);
 
@@ -575,13 +634,18 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
                     <input
                       type="number"
                       step="0.01"
-                      min="0"
+                      min="0.05"
                       max="1"
                       value={solvent.fraction}
                       onChange={(e) => updateSolvent(solvent.id, 'fraction', e.target.value)}
-                      className="fraction-input"
+                      className={`fraction-input ${solventFractionErrors[solvent.id] ? 'error' : ''}`}
                     />
                   </div>
+                  {solventFractionErrors[solvent.id] && (
+                    <div className="smiles-error-message">
+                      {solventFractionErrors[solvent.id]}
+                    </div>
+                  )}
                 </div>
                 <div className="remove-button-group">
                   {solvents.length > 1 && (
@@ -677,7 +741,7 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
           size="mlarge"
           loading={isCalculating}
           onClick={handleCalculate}
-          disabled={isCalculating || !isValidConfiguration() || !isValidSolventConfiguration()}
+          disabled={isCalculating || !isValidConfiguration() || !isValidSolventConfiguration() || !hasValidSolventFractions()}
         >
           {t('formulation.submit.button', 'Submit Configuration')}
         </Button>

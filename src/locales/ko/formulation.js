@@ -176,7 +176,13 @@ export default {
   },
 
   fraction: {
-    label: '분율 (최소: 0.05)'
+    label: '분율 (최소: 0.05)',
+    validation: {
+      empty: '분율을 입력해주세요',
+      invalid: '유효한 분율 값을 입력해주세요',
+      tooLow: '분율은 0.05 미만일 수 없습니다',
+      tooHigh: '분율은 1을 초과할 수 없습니다'
+    }
   },
 
   removeSolvent: '용매 제거',

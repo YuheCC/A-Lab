@@ -176,7 +176,13 @@ export default {
   },
 
   fraction: {
-    label: 'Fraction (min: 0.05)'
+    label: 'Fraction (min: 0.05)',
+    validation: {
+      empty: 'Fraction cannot be empty',
+      invalid: 'Please enter a valid fraction value',
+      tooLow: 'Fraction cannot be lower than 0.05',
+      tooHigh: 'Fraction cannot be higher than 1'
+    }
   },
 
   removeSolvent: 'Remove solvent',

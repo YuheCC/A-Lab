@@ -176,7 +176,13 @@ export default {
   },
 
   fraction: {
-    label: '分率（最小: 0.05）'
+    label: '分率（最小: 0.05）',
+    validation: {
+      empty: '分率を入力してください',
+      invalid: '有効な分率を入力してください',
+      tooLow: '分率は 0.05 未満にはできません',
+      tooHigh: '分率は 1 を超えることはできません'
+    }
   },
 
   removeSolvent: '溶媒を削除',
