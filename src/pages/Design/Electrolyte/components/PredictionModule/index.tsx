@@ -1043,7 +1043,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 </label>
                 <input
                   type="text"
-                  value={getWeightPercentage(selectedModelData?.base_model_id)}
+                  value={getWeightPercentage(selectedModelData?.base_model_id, selectedModelData?.model_type)}
                   disabled
                   className="pm-weight-percentage-input"
                 />

@@ -322,7 +322,7 @@ const RecordPage: React.FC = () => {
                 </div>
                 <div className="info-item">
                   <span className="label">{t('design.record.weightPercentage', 'Weight Percentage')}:</span>
-                  <span className="value">{formatWeightPercentage(baseModelId)}</span>
+                  <span className="value">{formatWeightPercentage(baseModelId, modelType)}</span>
                 </div>
               </div>
             </div>
