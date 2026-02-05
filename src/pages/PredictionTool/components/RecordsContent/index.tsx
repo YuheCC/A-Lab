@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -58,9 +58,6 @@ const RecordsContent: React.FC = () => {
   // Model options for records filter (top 100 models)
   const [recordModelOptions, setRecordModelOptions] = useState<ModelListItem[]>([]);
 
-  // Debounce timer ref
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
-
   // Parse and validate record ID format (e.g., "PR-001" -> "1", "76" -> "76")
   const parseRecordId = (input: string): string | null => {
     if (!input || input.trim() === '') {
@@ -85,23 +82,17 @@ const RecordsContent: React.FC = () => {
     return null;
   };
 
-  // Debounce search input
-  useEffect(() => {
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
+  // Handle search on blur or Enter key
+  const handleSearchTrigger = () => {
+    const parsedId = parseRecordId(recordSearchKeyword);
+    setDebouncedRecordId(parsedId || '');
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearchTrigger();
     }
-
-    debounceTimerRef.current = setTimeout(() => {
-      const parsedId = parseRecordId(recordSearchKeyword);
-      setDebouncedRecordId(parsedId || '');
-    }, 500);
-
-    return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-    };
-  }, [recordSearchKeyword]);
+  };
 
   const transformApiDataToFileRecord = (apiData: any): FileRecord => {
     const avgCycleLife1 = apiData.avg_cycle_life_1 || 0;
@@ -267,6 +258,8 @@ const RecordsContent: React.FC = () => {
           className="records-search-input"
           value={recordSearchKeyword}
           onChange={(e) => setRecordSearchKeyword(e.target.value)}
+          onBlur={handleSearchTrigger}
+          onKeyDown={handleSearchKeyDown}
           placeholder={t('predictionTool.records.searchPlaceholder', 'Search record ID')}
         />
         <select

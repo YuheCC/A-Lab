@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation, Trans } from 'react-i18next';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -64,10 +64,22 @@ const DesignPage: React.FC<DesignPageProps> = () => {
 
   // Models filter state
   const [modelSearchKeyword, setModelSearchKeyword] = useState<string>('');
+  const [debouncedModelSearchKeyword, setDebouncedModelSearchKeyword] = useState<string>('');
   const [selectedModelStatus, setSelectedModelStatus] = useState<string>('');
   const [selectedBaseModel, setSelectedBaseModel] = useState<string>('');
   const [selectedBaseModelId, setSelectedBaseModelId] = useState<number | undefined>(undefined);
   const [baseModelOptions, setBaseModelOptions] = useState<Array<{ id: number; name: string }>>([]);
+
+  // Handle search on blur or Enter key (Models)
+  const handleModelSearchTrigger = () => {
+    setDebouncedModelSearchKeyword(modelSearchKeyword);
+  };
+
+  const handleModelSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleModelSearchTrigger();
+    }
+  };
 
   // Records filter state
   const [recordSearchKeyword, setRecordSearchKeyword] = useState<string>('');
@@ -86,9 +98,6 @@ const DesignPage: React.FC<DesignPageProps> = () => {
 
   // Model options for records filter (top 100 models)
   const [recordModelOptions, setRecordModelOptions] = useState<ModelListItem[]>([]);
-
-  // Debounce timer ref
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Parse and validate record ID format (e.g., "DS-001" -> "1", "76" -> "76")
   const parseRecordId = (input: string): string | null => {
@@ -114,23 +123,17 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     return null;
   };
 
-  // Debounce search input
-  useEffect(() => {
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
+  // Handle search on blur or Enter key (Records)
+  const handleRecordSearchTrigger = () => {
+    const parsedId = parseRecordId(recordSearchKeyword);
+    setDebouncedRecordId(parsedId || '');
+  };
+
+  const handleRecordSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleRecordSearchTrigger();
     }
-
-    debounceTimerRef.current = setTimeout(() => {
-      const parsedId = parseRecordId(recordSearchKeyword);
-      setDebouncedRecordId(parsedId || '');
-    }, 500); // 500ms delay
-
-    return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-    };
-  }, [recordSearchKeyword]);
+  };
 
   // Calculate total positive count based on base_model_type
   const getTotalPositiveCount = (modelType?: number): number => {
@@ -260,8 +263,8 @@ const DesignPage: React.FC<DesignPageProps> = () => {
       };
 
       // Add search keyword if provided
-      if (modelSearchKeyword) {
-        params.keyword = modelSearchKeyword;
+      if (debouncedModelSearchKeyword) {
+        params.keyword = debouncedModelSearchKeyword;
       }
 
       // Add status filter if selected
@@ -313,7 +316,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
         setModelsCurrentPage(1);
       }
     }
-  }, [activeTab, modelSearchKeyword, selectedModelStatus, selectedBaseModelId]);
+  }, [activeTab, debouncedModelSearchKeyword, selectedModelStatus, selectedBaseModelId]);
 
   useEffect(() => {
     if (activeTab === 'models') {
@@ -434,6 +437,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
 
   const handleClearModelsFilters = () => {
     setModelSearchKeyword('');
+    setDebouncedModelSearchKeyword('');
     setSelectedModelStatus('');
     setSelectedBaseModel('');
     setSelectedBaseModelId(undefined);
@@ -509,6 +513,8 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                       className="records-search-input"
                       value={recordSearchKeyword}
                       onChange={(e) => setRecordSearchKeyword(e.target.value)}
+                      onBlur={handleRecordSearchTrigger}
+                      onKeyDown={handleRecordSearchKeyDown}
                       placeholder={t('performance.records.searchPlaceholder', 'Search record ID')}
                     />
                     <select
@@ -668,6 +674,8 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                   className="models-search-input"
                   value={modelSearchKeyword}
                   onChange={(e) => setModelSearchKeyword(e.target.value)}
+                  onBlur={handleModelSearchTrigger}
+                  onKeyDown={handleModelSearchKeyDown}
                   placeholder={t('performance.models.filters.searchPlaceholder', '搜索模型ID或名称...')}
                 />
                 <select

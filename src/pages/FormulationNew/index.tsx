@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { X, RefreshCw } from 'lucide-react';
@@ -37,8 +37,16 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
   const [debouncedSearchKeyword, setDebouncedSearchKeyword] = useState<string>('');
   const [selectedStatus, setSelectedStatus] = useState<string>('');
 
-  // 防抖 timer
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  // Handle search on blur or Enter key
+  const handleSearchTrigger = () => {
+    setDebouncedSearchKeyword(searchKeyword);
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearchTrigger();
+    }
+  };
 
   // Column settings state
   const [columnConfigs, setColumnConfigs] = useState<ColumnConfig[]>([
@@ -112,23 +120,6 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
       setLoading(false);
     }
   };
-
-  // 防抖搜索
-  useEffect(() => {
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
-    }
-
-    debounceTimerRef.current = setTimeout(() => {
-      setDebouncedSearchKeyword(searchKeyword);
-    }, 500);
-
-    return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-    };
-  }, [searchKeyword]);
 
   useEffect(() => {
     // Reset to page 1 when filters change
@@ -241,6 +232,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
   // 清除筛选器
   const handleClearFilters = () => {
     setSearchKeyword('');
+    setDebouncedSearchKeyword('');
     setSelectedStatus('');
   };
 
@@ -301,6 +293,8 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                       className="analysis-search-input"
                       value={searchKeyword}
                       onChange={(e) => setSearchKeyword(e.target.value)}
+                      onBlur={handleSearchTrigger}
+                      onKeyDown={handleSearchKeyDown}
                       placeholder={t('formulation.filters.searchPlaceholder', 'Search Analysis ID...')}
                     />
                     <select

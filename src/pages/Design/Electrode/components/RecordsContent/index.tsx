@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Radio, message, Spin } from 'antd';
 import { RefreshCw } from 'lucide-react';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -31,6 +31,17 @@ const RecordsContent: React.FC = () => {
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [debouncedSearchKeyword, setDebouncedSearchKeyword] = useState<string>('');
 
+  // Handle search on blur or Enter key
+  const handleSearchTrigger = () => {
+    setDebouncedSearchKeyword(searchKeyword);
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearchTrigger();
+    }
+  };
+
   // 使用日期筛选 hook
   const {
     selectedDate,
@@ -45,9 +56,6 @@ const RecordsContent: React.FC = () => {
   const [records, setRecords] = useState<ElectrodeHistoryItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [total, setTotal] = useState<number>(0);
-
-  // 防抖 timer
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // 初始化时,如果URL没有subTab参数,则设置默认值
   useEffect(() => {
@@ -119,23 +127,6 @@ const RecordsContent: React.FC = () => {
     }
   };
 
-  // 防抖搜索
-  useEffect(() => {
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
-    }
-
-    debounceTimerRef.current = setTimeout(() => {
-      setDebouncedSearchKeyword(searchKeyword);
-    }, 500);
-
-    return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-    };
-  }, [searchKeyword]);
-
   // 监听 Tab、搜索关键词、日期变化，自动加载数据
   useEffect(() => {
     loadRecords();
@@ -150,6 +141,7 @@ const RecordsContent: React.FC = () => {
   // 重置所有过滤条件
   const handleReset = () => {
     setSearchKeyword('');
+    setDebouncedSearchKeyword('');
     resetDate();
   };
 
@@ -194,6 +186,8 @@ const RecordsContent: React.FC = () => {
               className="records-search-input"
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
+              onBlur={handleSearchTrigger}
+              onKeyDown={handleSearchKeyDown}
               placeholder={t('design.electrode.records.searchPlaceholder', 'Search record ID')}
             />
 
