@@ -3,6 +3,7 @@ import { useNavigate } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import PredictionModule from '../components/PredictionModule';
 import './index.less';
+import { LeftOutlined } from '@ant-design/icons';
 
 const CreatePage: React.FC = () => {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ const CreatePage: React.FC = () => {
               {t('design.actions.newDesign', 'New Design')}
             </button>
             <button className="back-button" onClick={handleBackToList}>
+              <LeftOutlined style={{ marginRight: 8 }} />
               {t('design.actions.back', 'Back')}
             </button>
           </div>

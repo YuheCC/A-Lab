@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Upload, Activity, BarChart3 } from 'lucide-react';
 import StepContent from '../components/StepContent';
 import './index.less';
+import { LeftOutlined } from '@ant-design/icons';
 
 const CreatePage: React.FC = () => {
   const navigate = useNavigate();
@@ -64,6 +65,7 @@ const CreatePage: React.FC = () => {
               {t('predictionTool.actions.newPrediction', 'New Prediction')}
             </button>
             <button className="back-button" onClick={handleBackToList}>
+              <LeftOutlined style={{ marginRight: 8 }} />
               {t('predictionTool.actions.back', 'Back')}
             </button>
           </div>
