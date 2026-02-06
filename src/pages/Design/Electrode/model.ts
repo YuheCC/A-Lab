@@ -4,7 +4,7 @@
 // ============================================
 
 import * as electrodeService from '@/services/electrode/electrodeService';
-import { MOCK_HISTORY_DATA, MOCK_PREDICT_RESULT } from './mockData';
+import { mockElectrodeHistory, generateMockDetail, type MockElectrodeHistoryItem } from './example';
 import {
   ElectrodePageType,
   isOptimizeHistoryItem,
@@ -25,14 +25,19 @@ import {
 } from '@/services/electrode/types';
 
 // ============================================
-// Mock 数据开关
+// 登录状态检查
 // ============================================
 
-/**
- * 是否使用 Mock 数据
- * 可通过环境变量控制：REACT_APP_USE_ELECTRODE_MOCK
- */
-const USE_MOCK = process.env.REACT_APP_USE_ELECTRODE_MOCK === 'true';
+// Check if user is logged in
+const isUserLoggedIn = (): boolean => {
+  const token = localStorage.getItem('token');
+  return !!token;
+};
+
+// Check if the record is a mock record
+export const isMockRecord = (record: any): boolean => {
+  return record?.isMock === true;
+};
 
 // ============================================
 // 辅助函数 - 数据处理
@@ -62,49 +67,60 @@ function formatModelResult(result: ElectrodeModelResult): ElectrodeModelResult {
  * 获取电极性能历史记录列表
  * Get Electrode Performance History List
  *
+ * 统一逻辑：
+ * - 未登录 → 返回 mock 数据
+ * - 已登录 + 有搜索条件（id）→ 仅返回搜索结果，不展示 mock
+ * - 已登录 + 无搜索条件 + 列表为空 → 返回 mock 数据
+ * - 已登录 + 无搜索条件 + 有数据 → 仅返回真实数据
+ *
  * @param params - 查询参数
  * @returns 历史记录列表
  */
 export async function getElectrodeHistoryList(
   params: ElectrodeHistoryListParams,
 ): Promise<ElectrodeHistoryListResponse> {
-  // Mock 模式
-  if (USE_MOCK) {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    // 简单过滤逻辑
-    let filteredData = MOCK_HISTORY_DATA;
-
-    if (params.cell_design) {
-      filteredData = filteredData.filter((item) =>
-        item.cell_design.toLowerCase().includes(params.cell_design!.toLowerCase()),
-      );
-    }
-
-    if (params.cathode_active_material) {
-      filteredData = filteredData.filter((item) =>
-        item.cathode_active_material
-          .toLowerCase()
-          .includes(params.cathode_active_material!.toLowerCase()),
-      );
-    }
-
-    if (params.anode_active_material) {
-      filteredData = filteredData.filter((item) =>
-        item.anode_active_material
-          .toLowerCase()
-          .includes(params.anode_active_material!.toLowerCase()),
-      );
-    }
-
+  // 未登录，返回 mock 数据
+  if (!isUserLoggedIn()) {
+    console.log('User not logged in, returning mock electrode data');
     return {
-      total: filteredData.length,
-      data: filteredData,
+      total: mockElectrodeHistory.length,
+      data: mockElectrodeHistory,
     };
   }
 
-  // 真实 API 调用
-  return await electrodeService.getElectrodeHistoryList(params);
+  // 检查是否有搜索条件
+  const hasSearchCondition = params && params.id;
+
+  try {
+    // 真实 API 调用
+    const response = await electrodeService.getElectrodeHistoryList(params);
+
+    // 有搜索条件时，仅返回搜索结果，不展示 mock
+    if (hasSearchCondition) {
+      return response;
+    }
+
+    // 无搜索条件且列表为空，返回 mock 数据
+    if (!response.data || response.data.length === 0) {
+      console.log('No electrode history data found, returning mock data');
+      return {
+        total: mockElectrodeHistory.length,
+        data: mockElectrodeHistory,
+      };
+    }
+
+    return response;
+  } catch (error) {
+    console.error('Error fetching electrode history list:', error);
+    // 出错时根据搜索条件决定是否返回 mock
+    if (hasSearchCondition) {
+      return { total: 0, data: [] };
+    }
+    return {
+      total: mockElectrodeHistory.length,
+      data: mockElectrodeHistory,
+    };
+  }
 }
 
 /**
@@ -153,19 +169,26 @@ function formatOptimizeResults(results: OptimizeResultItemDTO[]): OptimizeResult
 export async function getElectrodeHistoryDetail(
   params: ElectrodeHistoryDetailParams,
 ): Promise<UniversalHistoryDetailResponse> {
-  // Mock 模式（仅支持 type=1）
-  if (USE_MOCK) {
-    await new Promise((resolve) => setTimeout(resolve, 300));
-
-    const mockItem = MOCK_HISTORY_DATA.find((item) => item.id === params.id);
-    if (!mockItem) {
-      throw new Error(`Record not found: ${params.id}`);
-    }
-
+  // Check if this is a mock record
+  const mockRecord = mockElectrodeHistory.find(item => item.id === params.id);
+  if (mockRecord && mockRecord.isMock) {
+    console.log('Returning mock electrode detail for ID:', params.id);
     return {
-      ...mockItem,
-      model_result: formatModelResult(mockItem.model_result),
+      ...generateMockDetail(mockRecord),
+      model_result: formatModelResult(generateMockDetail(mockRecord).model_result),
     };
+  }
+
+  // 未登录时尝试从 mock 数据查找
+  if (!isUserLoggedIn()) {
+    const foundMockRecord = mockElectrodeHistory.find(item => item.id === params.id);
+    if (foundMockRecord) {
+      return {
+        ...generateMockDetail(foundMockRecord),
+        model_result: formatModelResult(generateMockDetail(foundMockRecord).model_result),
+      };
+    }
+    throw new Error('Record not found');
   }
 
   // 真实 API 调用
@@ -200,17 +223,16 @@ export async function getElectrodeHistoryDetail(
 export async function deleteElectrodeHistory(
   params: ElectrodeHistoryDeleteParams,
 ): Promise<ElectrodeHistoryDeleteResponse> {
-  // Mock 模式
-  if (USE_MOCK) {
-    await new Promise((resolve) => setTimeout(resolve, 300));
+  // Mock 记录不可删除
+  const mockRecord = mockElectrodeHistory.find(item => item.id === params.id);
+  if (mockRecord && mockRecord.isMock) {
+    console.log('Cannot delete mock electrode record with ID:', params.id);
+    throw new Error('Cannot delete demo record');
+  }
 
-    const index = MOCK_HISTORY_DATA.findIndex((item) => item.id === params.id);
-    if (index === -1) {
-      return { success: false };
-    }
-
-    // 注意：这里只是演示，实际 Mock 数据不会真的删除
-    return { success: true };
+  // 未登录不可删除
+  if (!isUserLoggedIn()) {
+    throw new Error('Please login to delete records');
   }
 
   // 真实 API 调用
@@ -227,14 +249,8 @@ export async function deleteElectrodeHistory(
 export async function predictElectrodePerformance(
   params: ElectrodeModelPredictParams,
 ): Promise<ElectrodeModelPredictResponse> {
-  // Mock 模式
-  if (USE_MOCK) {
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
-    return {
-      id: Math.floor(Math.random() * 10000),
-      model_result: formatModelResult(MOCK_PREDICT_RESULT),
-    };
+  if (!isUserLoggedIn()) {
+    throw new Error('Please login first');
   }
 
   // 真实 API 调用
@@ -304,3 +320,6 @@ export type {
 // 导出枚举和类型守卫
 export { ElectrodePageType as PageType } from '@/services/electrode/types';
 export { isOptimizeHistoryItem } from '@/services/electrode/types';
+
+// Export mock data utilities
+export { mockElectrodeHistory, generateMockDetail } from './example';

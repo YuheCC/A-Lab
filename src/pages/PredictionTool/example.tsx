@@ -4,6 +4,8 @@ import { PredictResponse, BarcodeData, HistoryDetailResponse } from '@/services/
 // Extended interface for mock data with isMock field
 export interface MockPredictResponse extends PredictResponse {
   isMock?: boolean;
+  model?: string;
+  model_id?: number;
 }
 
 export interface MockHistoryDetailResponse extends HistoryDetailResponse {
@@ -20,6 +22,7 @@ export const mockPredictionHistory: MockPredictResponse[] = [
     barcode_count: 1,
     avg_cycle_life_1: 2806.4293212890625,
     avg_cycle_life_2: 920.3,
+    model: 'ses_model',
     status: 'completed',
     user_id: 0,
     created_at: '2024-03-15T10:30:00Z',

@@ -57,14 +57,21 @@ const RecordsContent: React.FC = () => {
 
   // Model options for records filter (top 100 models)
   const [recordModelOptions, setRecordModelOptions] = useState<ModelListItem[]>([]);
+  // 标记 model options 是否已加载完成（无论成功与否）
+  const [modelOptionsLoaded, setModelOptionsLoaded] = useState(false);
 
-  // Parse and validate record ID format (e.g., "PR-001" -> "1", "76" -> "76")
+  // Parse and validate record ID format (e.g., "PR-001" -> "1", "76" -> "76", "example" -> "8888")
   const parseRecordId = (input: string): string | null => {
     if (!input || input.trim() === '') {
       return '';
     }
 
     const trimmedInput = input.trim();
+
+    // Check if it's "example" (case insensitive) - map to mock data ID
+    if (trimmedInput.toLowerCase() === 'example') {
+      return '8888';
+    }
 
     // Check if it matches PR-XXX format
     const prMatch = trimmedInput.match(/^PR-(\d+)$/i);
@@ -175,13 +182,15 @@ const RecordsContent: React.FC = () => {
       } catch (err) {
         console.error('Failed to fetch record model options:', err);
         setRecordModelOptions([]);
+      } finally {
+        setModelOptionsLoaded(true);
       }
     };
     fetchRecordModelOptions();
   }, []);
 
   useEffect(() => {
-    if (recordModelOptions.length > 0) {
+    if (modelOptionsLoaded) {
       // Reset to page 1 when filters change
       if (currentPage === 1) {
         fetchHistoryData(1);
@@ -189,10 +198,10 @@ const RecordsContent: React.FC = () => {
         setCurrentPage(1);
       }
     }
-  }, [recordModelOptions, debouncedRecordId, recordSelectedModel, recordSelectedDate]);
+  }, [modelOptionsLoaded, debouncedRecordId, recordSelectedModel, recordSelectedDate]);
 
   useEffect(() => {
-    if (recordModelOptions.length > 0) {
+    if (modelOptionsLoaded) {
       fetchHistoryData(currentPage);
     }
   }, [currentPage]);
@@ -376,7 +385,7 @@ const RecordsContent: React.FC = () => {
             ) : (
               historyData.map((record) => (
                 <tr key={record.id}>
-                  <td className="record-id">PR-{String(record.id).padStart(3, '0')}</td>
+                  <td className="record-id">{record.isMock ? 'example' : `PR-${String(record.id).padStart(3, '0')}`}</td>
                   <td className="file-name">{record.name}</td>
                   <td>{record.batteryCount}</td>
                   <td>{record.avgCirculation} {t('predictionTool.results.cycleUnit')}</td>
@@ -389,12 +398,14 @@ const RecordsContent: React.FC = () => {
                     >
                       {t('predictionTool.history.actions.viewResults', 'View Results')}
                     </button>
-                    <button
-                      className="action-button delete-button"
-                      onClick={() => handleDeleteRecord(record.id)}
-                    >
-                      {t('predictionTool.history.actions.delete', 'Delete')}
-                    </button>
+                    {!record.isMock && (
+                      <button
+                        className="action-button delete-button"
+                        onClick={() => handleDeleteRecord(record.id)}
+                      >
+                        {t('predictionTool.history.actions.delete', 'Delete')}
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))

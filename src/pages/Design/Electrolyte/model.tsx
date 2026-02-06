@@ -21,7 +21,14 @@ export const isMockRecord = (record: PerformanceHistoryItem | MockPerformanceHis
   return (record as MockPerformanceHistoryItem).isMock === true;
 };
 
-// Get performance history list with mock data fallback for not logged in users
+/**
+ * Get performance history list with mock data fallback
+ * 统一逻辑：
+ * - 未登录 → 返回 mock 数据
+ * - 已登录 + 有搜索条件（id, model_id）→ 仅返回搜索结果，不展示 mock
+ * - 已登录 + 无搜索条件 + 列表为空 → 返回 mock 数据
+ * - 已登录 + 无搜索条件 + 有数据 → 仅返回真实数据
+ */
 export const getHistoryList = async (params?: any): Promise<{ data: PerformanceHistoryResponse }> => {
   try {
     // Check if user is logged in
@@ -35,12 +42,20 @@ export const getHistoryList = async (params?: any): Promise<{ data: PerformanceH
       };
     }
 
+    // 检查是否有搜索条件
+    const hasSearchCondition = params && (params.id || params.model_id);
+
     // Fetch real data
     const response = await getPerformanceHistoryList(params);
 
     // Check if response is valid and has data
     if (response && response.data && response.data.data && Array.isArray(response.data.data)) {
-      // If data is empty, return mock data
+      // 有搜索条件时，仅返回搜索结果，不展示 mock
+      if (hasSearchCondition) {
+        return response;
+      }
+
+      // If data is empty and no search, return mock data
       if (response.data.data.length === 0) {
         console.log('No history data found, returning mock data');
         return {
@@ -53,8 +68,11 @@ export const getHistoryList = async (params?: any): Promise<{ data: PerformanceH
       return response;
     }
 
-    // If response is invalid, return mock data
+    // If response is invalid
     console.log('Invalid response, returning mock data');
+    if (hasSearchCondition) {
+      return { data: { total: 0, data: [] } };
+    }
     return {
       data: {
         total: mockPerformanceHistory.length,
@@ -63,7 +81,11 @@ export const getHistoryList = async (params?: any): Promise<{ data: PerformanceH
     };
   } catch (error) {
     console.error('Error fetching history list:', error);
-    // On error, return mock data
+    // On error
+    const hasSearchCondition = params && (params.id || params.model_id);
+    if (hasSearchCondition) {
+      return { data: { total: 0, data: [] } };
+    }
     return {
       data: {
         total: mockPerformanceHistory.length,

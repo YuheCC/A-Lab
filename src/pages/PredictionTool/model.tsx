@@ -48,7 +48,14 @@ export const isMockRecord = (record: any): boolean => {
   return record?.isMock === true;
 };
 
-// Get prediction history list with mock data fallback
+/**
+ * Get prediction history list with mock data fallback
+ * 统一逻辑：
+ * - 未登录 → 返回 mock 数据
+ * - 已登录 + 有搜索条件（id, model_id）→ 仅返回搜索结果，不展示 mock
+ * - 已登录 + 无搜索条件 + 列表为空 → 返回 mock 数据
+ * - 已登录 + 无搜索条件 + 有数据 → 仅返回真实数据
+ */
 export const getHistoryList = async (params: HistoryListParams = {}): Promise<HistoryListResponse> => {
   try {
     // Check if user is logged in
@@ -60,34 +67,51 @@ export const getHistoryList = async (params: HistoryListParams = {}): Promise<Hi
       };
     }
 
+    // 检查是否有搜索条件（params 可能包含动态扩展字段）
+    const paramsAny = params as any;
+    const hasSearchCondition = paramsAny && (paramsAny.id || paramsAny.model_id);
+
     // Try to fetch real data
     const response = await getHistoryListAPI(params);
 
     // Check if response is valid and has data
     if (response && response.data && Array.isArray(response.data)) {
-      // If data is empty, return mock data
+      // 有搜索条件时，仅返回搜索结果，不展示 mock
+      if (hasSearchCondition) {
+        return response;
+      }
+
+      // If data is empty and no search, return mock data
       if (response.data.length === 0) {
-        console.log('No history data found, adding mock data');
+        console.log('No history data found, returning mock data');
         return {
-          total: 0,
-          data: []
+          total: mockPredictionHistory.length,
+          data: mockPredictionHistory
         };
       }
       return response;
     }
 
-    // If response is invalid, return mock data
+    // If response is invalid, return mock data (only when no search condition)
     console.log('Invalid response, returning mock data');
+    if (hasSearchCondition) {
+      return { total: 0, data: [] };
+    }
     return {
-      total: 0,
-      data: []
+      total: mockPredictionHistory.length,
+      data: mockPredictionHistory
     };
   } catch (error) {
     console.error('Error fetching history list:', error);
-    // On error, return mock data
+    // On error, return mock data (only when no search condition)
+    const paramsAny = params as any;
+    const hasSearchCondition = paramsAny && (paramsAny.id || paramsAny.model_id);
+    if (hasSearchCondition) {
+      return { total: 0, data: [] };
+    }
     return {
-      total: 0,
-      data: []
+      total: mockPredictionHistory.length,
+      data: mockPredictionHistory
     };
   }
 };

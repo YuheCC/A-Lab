@@ -98,8 +98,11 @@ const parseUpdatesAndCalculateProcess = (item: MDHistoryItem): MDHistoryItem => 
 
 /**
  * 获取历史记录列表
- * 逻辑：未登录或登录用户返回历史记录为空时显示mock数据
- * 如果有搜索条件（id 或 status），则不显示 mock 数据
+ * 统一逻辑：
+ * - 未登录 → 返回 mock 数据
+ * - 已登录 + 有搜索条件（id 或 status）→ 仅返回搜索结果，不展示 mock
+ * - 已登录 + 无搜索条件 + 列表为空 → 返回 mock 数据
+ * - 已登录 + 无搜索条件 + 有数据 → 仅返回真实数据
  */
 export const getHistoryList = async (params?: any): Promise<{
   data: {
@@ -131,7 +134,7 @@ export const getHistoryList = async (params?: any): Promise<{
     // 用户已登录，尝试获取真实数据
     const response = await getMDHistoryList(params);
 
-    // 如果有搜索条件，直接返回搜索结果，不合并 mock 数据
+    // 如果有搜索条件，直接返回搜索结果，不展示 mock 数据
     if (hasSearchCondition) {
       const parsedData = parseDataList(response?.data?.data || []);
       return {
@@ -153,13 +156,12 @@ export const getHistoryList = async (params?: any): Promise<{
       };
     }
 
-    // 合并真实数据和mock数据，mock数据放在最前面，都需要经过解析处理
-    const parsedMockData = parseDataList(mockListData);
+    // 有真实数据时，仅返回真实数据，不合并 mock
     const parsedRealData = parseDataList(response.data.data);
     return {
       data: {
-        data: [...parsedMockData, ...parsedRealData],
-        total: mockListData.length + response.data.total
+        data: parsedRealData,
+        total: response.data.total
       }
     };
   } catch (error) {

@@ -11,6 +11,7 @@ import { useDateFilter } from '@/hooks/useDateFilter';
 import Pagination from '@/components/Pagination';
 import * as electrodeModel from '../../model';
 import type { ElectrodeHistoryItem } from '../../model';
+import type { MockElectrodeHistoryItem } from '../../example';
 import './index.less';
 
 const RecordsContent: React.FC = () => {
@@ -31,6 +32,26 @@ const RecordsContent: React.FC = () => {
   // 搜索和过滤状态
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [debouncedSearchKeyword, setDebouncedSearchKeyword] = useState<string>('');
+
+  // Parse search keyword: support RP-XXX format, pure number, or 'example'
+  const parseSearchKeyword = (input: string): string => {
+    const trimmed = input.trim();
+    if (!trimmed) return '';
+
+    // Support 'example' keyword mapping to mock data ID
+    if (trimmed.toLowerCase() === 'example') {
+      return '145'; // mock data ID
+    }
+
+    // Support RP-XXX format
+    const rpMatch = trimmed.match(/^RP-(\d+)$/i);
+    if (rpMatch) {
+      return rpMatch[1];
+    }
+
+    // Pure number
+    return trimmed.replace(/\D/g, '');
+  };
 
   // Handle search on blur or Enter key
   const handleSearchTrigger = () => {
@@ -86,9 +107,12 @@ const RecordsContent: React.FC = () => {
     }
   };
 
-  // 格式化 Record ID（将数字 id 格式化为 RP-XXX）
-  const formatRecordId = (id: number): string => {
-    return `RP-${String(id).padStart(3, '0')}`;
+  // 格式化 Record ID（将数字 id 格式化为 RP-XXX，mock 记录显示 example）
+  const formatRecordId = (record: ElectrodeHistoryItem): string => {
+    if ((record as MockElectrodeHistoryItem).isMock) {
+      return 'example';
+    }
+    return `RP-${String(record.id).padStart(3, '0')}`;
   };
 
   // 加载记录列表
@@ -104,7 +128,7 @@ const RecordsContent: React.FC = () => {
         page_size: pageSize,
         // 可选过滤参数
         ...(createdAtParam && { created_at: createdAtParam }),
-        ...(debouncedSearchKeyword && { id: debouncedSearchKeyword.replace(/\D/g, '') }),
+        ...(debouncedSearchKeyword && { id: parseSearchKeyword(debouncedSearchKeyword) }),
       });
       setRecords(response.data);
       setTotal(response.total);
@@ -308,9 +332,11 @@ const RecordsContent: React.FC = () => {
                 </td>
               </tr>
             ) : (
-              records.map((record) => (
+              records.map((record) => {
+                const isMock = (record as MockElectrodeHistoryItem).isMock === true;
+                return (
                 <tr key={record.id}>
-                  <td className="record-id">{formatRecordId(record.id)}</td>
+                  <td className="record-id">{formatRecordId(record)}</td>
                   <td>{record.cell_design}</td>
                   <td>{record.cathode_active_material}</td>
                   <td>{record.anode_active_material}</td>
@@ -328,15 +354,18 @@ const RecordsContent: React.FC = () => {
                     >
                       {t('design.electrode.records.viewResults', 'View Results')}
                     </button>
-                    <button
-                      className="action-button delete-button"
-                      onClick={() => handleDelete(record.id)}
-                    >
-                      {t('design.electrode.records.delete', 'Delete')}
-                    </button>
+                    {!isMock && (
+                      <button
+                        className="action-button delete-button"
+                        onClick={() => handleDelete(record.id)}
+                      >
+                        {t('design.electrode.records.delete', 'Delete')}
+                      </button>
+                    )}
                   </td>
                 </tr>
-              ))
+                );
+              })
             )}
           </tbody>
         </table>
