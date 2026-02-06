@@ -254,7 +254,7 @@ export default {
         },
         example: {
             title: "Example",
-            paragraph1: "In one example, the model-based prediction estimates the battery end-of-life at approximately 1308 cycles by capturing the evolving SOH degradation trend over time. Rather than assuming a constant fade rate, the prediction projects a non-linear aging behavior, resulting in a trajectory that is consistent with the measured SOH evolution. In this case, the model uses data up to the cycle indicated by the vertical red dashed line (around 130 cycles) and excludes abnormal cycles to establish a stable degradation trend for prediction. The actual end-of-life is observed at 1396 cycles (excluding capacity check cycles), corresponding to a prediction error of approximately 6.3%.",
+            paragraph1: "In one example, the model-based prediction estimates the battery end-of-life at approximately 1308 cycles by capturing the evolving SOH degradation trend over time. Rather than assuming a constant fade rate, the prediction projects a non-linear aging behavior, resulting in a trajectory that is consistent with the measured SOH evolution. In this case, the model uses data up to the cycle indicated by the vertical red dashed line (around 143 cycles) and excludes abnormal cycles to establish a stable degradation trend for prediction. The actual end-of-life is observed at 1396 cycles (excluding capacity check cycles), corresponding to a prediction error of approximately 6.3%.",
             paragraph2: "If a simple linear extrapolation were applied instead, the lifetime would be underestimated at around 1000 cycles. This highlights the advantage of the prediction approach in providing a more accurate lifetime estimate."
         }
     },
