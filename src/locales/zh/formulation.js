@@ -269,6 +269,10 @@ export default {
     }
   },
 
+  progress: {
+    remainingHours: '预计剩余 {{hours}} 小时',
+    remainingMinutes: '预计剩余 {{minutes}} 分钟'
+  },
   status: {
     completed: '已完成',
     success: '已完成',

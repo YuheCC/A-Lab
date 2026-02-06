@@ -319,6 +319,10 @@
   font-size: 12px;
   font-weight: 500;
   text-transform: capitalize;
+
+  &.clickable {
+    cursor: pointer;
+  }
 }
 
 .status-completed {
@@ -389,10 +393,22 @@
   line-height: 1;
 }
 
+.progress-bar-row {
+  display: flex;
+  align-items: center;
+}
+
 .progress-text {
   font-size: 12px;
   color: @color-gray-600;
   vertical-align: middle;
+}
+
+.progress-remaining-time {
+  font-size: 11px;
+  color: @color-gray-400;
+  margin-top: 4px;
+  white-space: nowrap;
 }
 
 .action-button {

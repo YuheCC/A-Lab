@@ -269,6 +269,10 @@ export default {
     }
   },
 
+  progress: {
+    remainingHours: 'Est. {{hours}}h left',
+    remainingMinutes: 'Est. {{minutes}}min left'
+  },
   status: {
     completed: 'Completed',
     success: 'Completed',

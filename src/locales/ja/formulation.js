@@ -269,6 +269,10 @@ export default {
     }
   },
 
+  progress: {
+    remainingHours: '残り約 {{hours}} 時間',
+    remainingMinutes: '残り約 {{minutes}} 分'
+  },
   status: {
     completed: '完了',
     success: '完了',

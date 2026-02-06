@@ -58,6 +58,7 @@ export interface MDHistoryItem {
   updatesInfo?: MDUpdatesInfo; // 解析后的 updates 信息
   process?: number; // 进度百分比 0-100
   username?: string; // 创建者用户名
+  fail_reason?: string; // 失败原因
 }
 
 export interface MDHistoryResponse {

@@ -13,8 +13,33 @@ import Pagination from '@/components/Pagination';
 import ColumnSettings, { ColumnConfig } from '@/components/ColumnSettings';
 import { useAuthStore } from '@/models/useAuth';
 import { useMessage } from '@/components/MessageProvider';
+import { Tooltip } from '@mui/material';
 
 interface FormulationTableProps {}
+
+// 总预估时间（小时），可配置
+const TOTAL_ESTIMATED_HOURS = 15;
+
+/**
+ * 根据进度百分比解析剩余时间
+ * @param percentage 当前进度百分比 (0-100)
+ * @param totalHours 总预估时间（小时），默认 15 小时
+ * @returns { hours, minutes } 或 null（已完成/无效值时）
+ */
+const parseRemainingTime = (
+  percentage: number,
+  totalHours: number = TOTAL_ESTIMATED_HOURS
+): { hours: number; minutes: number } | null => {
+  if (percentage >= 100 || percentage < 0) return null;
+
+  const remainingHours = totalHours * (1 - percentage / 100);
+  const totalMinutes = Math.max(1, Math.ceil(remainingHours * 60));
+
+  return {
+    hours: Math.floor(totalMinutes / 60),
+    minutes: totalMinutes % 60,
+  };
+};
 
 const FormulationNew: React.FC<FormulationTableProps> = () => {
   const navigate = useNavigate();
@@ -237,6 +262,19 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
     setSelectedStatus('');
   };
 
+  // 格式化剩余时间（结合 i18n）
+  const formatRemainingTime = (percentage: number, status: string): string | null => {
+    if (status !== 'running' || percentage >= 100 || percentage < 0) return null;
+
+    const remaining = parseRemainingTime(percentage);
+    if (!remaining) return null;
+
+    if (remaining.hours > 0) {
+      return t('formulation.progress.remainingHours', 'Est. {{hours}}h left', { hours: remaining.hours });
+    }
+    return t('formulation.progress.remainingMinutes', 'Est. {{minutes}}min left', { minutes: remaining.minutes });
+  };
+
   // 检查列是否可见
   const isColumnVisible = (key: string) => {
     const column = columnConfigs.find(col => col.key === key);
@@ -366,6 +404,9 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                           const isMock = isMockRecord(record);
                           // 使用解析后的 process 字段（model.tsx 已处理过）
                           const processValue = record.process;
+                          const remainingTimeText = processValue !== undefined
+                            ? formatRemainingTime(processValue, record.status)
+                            : null;
                           return (
                             <tr key={record.id}>
                               {isColumnVisible('analysisId') && (
@@ -407,9 +448,40 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                               )}
                               {isColumnVisible('status') && (
                                 <td>
-                                  <span className={`status-badge ${statusInfo.className}`}>
-                                    {statusInfo.text}
-                                  </span>
+                                  {record.fail_reason ? (
+                                    <Tooltip
+                                      title={record.fail_reason}
+                                      arrow
+                                      placement="top"
+                                      slotProps={{
+                                        tooltip: {
+                                          sx: {
+                                            backgroundColor: '#1f2937',
+                                            color: '#ffffff',
+                                            fontSize: '12px',
+                                            lineHeight: 1.5,
+                                            padding: '6px 10px',
+                                            borderRadius: '6px',
+                                            maxWidth: 320,
+                                            wordBreak: 'break-word',
+                                          },
+                                        },
+                                        arrow: {
+                                          sx: {
+                                            color: '#1f2937',
+                                          },
+                                        },
+                                      }}
+                                    >
+                                      <span className={`status-badge ${statusInfo.className} clickable`}>
+                                        {statusInfo.text}
+                                      </span>
+                                    </Tooltip>
+                                  ) : (
+                                    <span className={`status-badge ${statusInfo.className}`}>
+                                      {statusInfo.text}
+                                    </span>
+                                  )}
                                 </td>
                               )}
                               {isColumnVisible('progress') && (
@@ -421,13 +493,18 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                                     </div>
                                   ) : processValue !== undefined ? (
                                     <>
-                                      <div className="progress-bar-container">
-                                        <div 
-                                          className="progress-bar-fill" 
-                                          style={{ width: `${processValue}%` }}
-                                        />
+                                      <div className="progress-bar-row">
+                                        <div className="progress-bar-container">
+                                          <div 
+                                            className="progress-bar-fill" 
+                                            style={{ width: `${processValue}%` }}
+                                          />
+                                        </div>
+                                        <span className="progress-text">{processValue}%</span>
                                       </div>
-                                      <span className="progress-text">{processValue}%</span>
+                                      {remainingTimeText && (
+                                        <div className="progress-remaining-time">{remainingTimeText}</div>
+                                      )}
                                     </>
                                   ) : (
                                     <span className="progress-text">-</span>

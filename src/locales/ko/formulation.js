@@ -269,6 +269,10 @@ export default {
     }
   },
 
+  progress: {
+    remainingHours: '예상 {{hours}}시간 남음',
+    remainingMinutes: '예상 {{minutes}}분 남음'
+  },
   status: {
     completed: '완료',
     success: '완료',
