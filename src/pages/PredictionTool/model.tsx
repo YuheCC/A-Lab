@@ -220,7 +220,13 @@ export const trainModel = async (
 export const getBaseModelList = async (
   params?: Omit<ModelListParams, 'namespace' | 'base_model_id'>
 ): Promise<ModelListResponse> => {
-  try { 
+  try {
+    // Check if user is logged in
+    if (!isUserLoggedIn()) {
+      console.log('User not logged in, returning empty base model list');
+      return { total: 0, data: [] };
+    }
+
     const response = await getModelListAPI({
       ...params,
       namespace: MODEL_NAMESPACE,
@@ -248,6 +254,12 @@ export const getModelList = async (
   params?: Omit<ModelListParams, 'namespace'>
 ): Promise<ModelListResponse> => {
   try {
+    // Check if user is logged in
+    if (!isUserLoggedIn()) {
+      console.log('User not logged in, returning empty model list');
+      return { total: 0, data: [] };
+    }
+
     const response = await getModelListAPI({
       ...params,
       namespace: MODEL_NAMESPACE,

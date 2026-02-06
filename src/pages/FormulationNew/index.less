@@ -48,63 +48,10 @@
   margin: 12px 24px 8px 0px;
 }
 
-/* Tab styles - based on GuideTooltip tab styles */
-.formulation-tabs-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-start;
-  margin-bottom: 8px;
-  padding-bottom: 0;
-}
-
-.formulation-tabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 0;
-  border-bottom: none;
-  padding-bottom: 16px;
-}
-
-.formulation-tab {
-  padding: 12px 24px;
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  font-size: 14px;
-  font-weight: 500;
-  color: @color-gray-500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  position: relative;
-  margin-bottom: -1px;
-}
-
-.formulation-tab:hover {
-  color: @color-text-primary;
-}
-
-.formulation-tab.active {
-  color: @color-accent;
-  border-bottom-color: @color-accent;
-}
-
-.formulation-tab-content {
-  min-height: 400px;
-}
+/* Tab styles removed - now using TabSection component */
 
 .formulation-tab-panel {
-  animation: fadeInPanel 0.3s ease-out;
-}
-
-@keyframes fadeInPanel {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  /* Panel wrapper for tab content */
 }
 
 .analysis-filters {

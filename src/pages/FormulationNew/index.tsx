@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from '@umijs/max';
+import { useNavigate, useSearchParams, useLocation } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { X, RefreshCw } from 'lucide-react';
 import Button from '@/components/Button';
@@ -11,6 +11,7 @@ import { formatIonDisplay } from './utils';
 import IntroductionNew from './components/IntroductionNew';
 import Pagination from '@/components/Pagination';
 import ColumnSettings, { ColumnConfig } from '@/components/ColumnSettings';
+import TabSection from '@/components/TabSection';
 import { useAuthStore } from '@/models/useAuth';
 import { useMessage } from '@/components/MessageProvider';
 import { Tooltip } from '@mui/material';
@@ -43,6 +44,7 @@ const parseRemainingTime = (
 
 const FormulationNew: React.FC<FormulationTableProps> = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation();
   const message = useMessage();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -89,20 +91,25 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
   ]);
 
   // 根据 URL query 参数初始化 activeTab
-  const getInitialTab = (): 'introductionNew' | 'analysis' => {
+  const getInitialTab = (): string => {
     const tabParam = searchParams.get('tab');
-    return (tabParam === 'analysis' || tabParam === 'introductionNew') ? tabParam : 'introductionNew';
+    return (tabParam === 'records' || tabParam === 'introduction') ? tabParam : 'introduction';
   };
 
-  const [activeTab, setActiveTab] = useState<'introductionNew' | 'analysis'>(getInitialTab());
+  const [activeTab, setActiveTab] = useState<string>(getInitialTab());
 
-  // 处理初始化时的 URL 参数，识别后删除 tab 参数
+  // Tab 配置
+  const tabs = [
+    { key: 'introduction', label: t('formulation.tabs.introduction', 'Introduction'), disabled: false },
+    { key: 'records', label: t('formulation.tabs.records', 'Records'), disabled: false },
+  ];
+
+  // 初始化时，如果 URL 没有 tab 参数，则设置默认值
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam && (tabParam === 'analysis' || tabParam === 'introductionNew')) {
-      // 删除 tab 参数，保持其他参数不变
+    if (!tabParam) {
       const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.delete('tab');
+      newSearchParams.set('tab', activeTab);
       setSearchParams(newSearchParams, { replace: true });
     }
   }, []);
@@ -148,17 +155,22 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
   };
 
   useEffect(() => {
-    // Reset to page 1 when filters change
-    if (currentPage === 1) {
-      fetchHistoryData(1);
-    } else {
-      setCurrentPage(1);
+    // Reset to page 1 when filters change, only fetch if records tab is active
+    if (activeTab === 'records') {
+      if (currentPage === 1) {
+        fetchHistoryData(1);
+      } else {
+        setCurrentPage(1);
+      }
     }
-  }, [debouncedSearchKeyword, selectedStatus]);
+  }, [debouncedSearchKeyword, selectedStatus, activeTab]);
 
   useEffect(() => {
-    fetchHistoryData(currentPage);
-  }, [currentPage]);
+    // Only fetch data when records tab is active
+    if (activeTab === 'records') {
+      fetchHistoryData(currentPage);
+    }
+  }, [currentPage, activeTab]);
 
   // 格式化浓度显示
   const formatConcentration = (value: number) => {
@@ -241,8 +253,12 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
   };
 
   // 处理tab切换
-  const handleTabChange = (tab: 'introductionNew' | 'analysis') => {
+  const handleTabChange = (tab: string) => {
     setActiveTab(tab);
+    // 更新URL参数
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('tab', tab);
+    setSearchParams(newSearchParams, { replace: true });
   };
 
   // 处理翻页
@@ -290,31 +306,14 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
       </div>
 
       <div className="formulation-new-table-container">
-        <div className="formulation-tabs-header">
-          <div className="formulation-tabs">
-            <button
-              className={`formulation-tab ${activeTab === 'introductionNew' ? 'active' : ''}`}
-              onClick={() => handleTabChange('introductionNew')}
-            >
-              {t('formulation.tabs.introduction', 'Introduction')}
-            </button>
-            <button
-              className={`formulation-tab ${activeTab === 'analysis' ? 'active' : ''}`}
-              onClick={() => handleTabChange('analysis')}
-            >
-              {t('formulation.tabs.records', 'Records')}
-            </button>
-          </div>
-        </div>
-
-        <div className="formulation-tab-content">
-          {activeTab === 'introductionNew' && (
+        <TabSection activeTab={activeTab} onTabChange={handleTabChange} tabs={tabs}>
+          {activeTab === 'introduction' && (
             <div className="formulation-tab-panel">
               <IntroductionNew />
             </div>
           )}
 
-          {activeTab === 'analysis' && (
+          {activeTab === 'records' && (
             <div className="formulation-tab-panel">
               {loading ? (
                 <div className="loading-state">
@@ -562,7 +561,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
               )}
             </div>
           )}
-        </div>
+        </TabSection>
       </div>
     </div>
   );
