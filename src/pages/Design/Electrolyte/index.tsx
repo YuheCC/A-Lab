@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate, useSearchParams } from '@umijs/max';
+import { useSearchParams } from '@umijs/max';
 import { useTranslation, Trans } from 'react-i18next';
+import { useAuthNavigate } from '@/hooks/useAuthNavigate';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -40,7 +41,7 @@ interface HistoryRecord {
 interface DesignPageProps {}
 
 const DesignPage: React.FC<DesignPageProps> = () => {
-  const navigate = useNavigate();
+  const navigate = useAuthNavigate();
   const { t, i18n } = useTranslation();
   const { hasPermissionNew } = useAuthStore();
   
@@ -372,7 +373,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
   };
 
   const handleViewDetails = (id: string) => {
-    navigate(`/design/electrolyte/record?id=${id}`);
+    navigate(`/design/electrolyte/record?id=${id}`, { skipVerifyAuth: true });
   };
 
   const handleDeleteRecord = async (id: string) => {

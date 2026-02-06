@@ -10,6 +10,7 @@ import { useAuthStore } from "@/models/useAuth";
 import { MessageProvider, useMessage } from "@/components/MessageProvider";
 import PricingOverlay from "@/components/PricingOverlay";
 import { usePageCleanup } from "@/hooks/usePageCleanup";
+import { VERIFY_AUTH_PARAM } from "@/hooks/useAuthNavigate";
 import { LoginModalProvider, useLoginModalContext } from "@/components/LoginModal/context";
 import LoginModal from "@/components/LoginModal";
 import { setGlobalPricingModalHandler, resetGlobalPricingModalHandler } from "@/utils/authHelpers";
@@ -45,6 +46,19 @@ const FullNavLayoutInner = () => {
     useEffect(() => {
         verifyAuth();
     }, []);
+
+    // 监听导航参数，检测 _verifyAuth 触发身份验证
+    useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        if (searchParams.has(VERIFY_AUTH_PARAM)) {
+            verifyAuth();
+            // 清理 URL 中的 _verifyAuth 参数，避免刷新时重复触发
+            searchParams.delete(VERIFY_AUTH_PARAM);
+            const cleanSearch = searchParams.toString();
+            const cleanUrl = pathname + (cleanSearch ? `?${cleanSearch}` : '') + (location.hash || '');
+            window.history.replaceState(null, '', cleanUrl);
+        }
+    }, [pathname, location.search]);
 
     // 定义登录成功后的回调函数
     const handleLoginSuccess = () => {

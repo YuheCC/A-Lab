@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from '@umijs/max';
+import { useSearchParams } from '@umijs/max';
 import CollapsibleText from '@/components/CollapsibleText';
 import FeatureCard from '../components/FeatureCard';
 import FeatureCardGroup from '../components/FeatureCardGroup';
 import TabSection from '@/components/TabSection';
+import { useAuthNavigate } from '@/hooks/useAuthNavigate';
 import IntroductionContent from './components/IntroductionContent';
 import RecordsContent from './components/RecordsContent';
 import './index.less';
@@ -19,7 +20,7 @@ const ICONS = {
 
 const ElectrodePage: React.FC = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const navigate = useAuthNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const getInitialTab = (): 'introduction' | 'records' => {

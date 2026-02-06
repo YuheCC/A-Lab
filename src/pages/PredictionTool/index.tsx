@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams, useLocation } from '@umijs/max';
+import { useSearchParams, useLocation } from '@umijs/max';
 import { useTranslation, Trans } from 'react-i18next';
 import CollapsibleText from '@/components/CollapsibleText';
 import FeatureCard from '@/pages/Design/components/FeatureCard';
 import FeatureCardGroup from '@/pages/Design/components/FeatureCardGroup';
 import TabSection from '@/components/TabSection';
 import { useAuthStore } from '@/models/useAuth';
+import { useAuthNavigate } from '@/hooks/useAuthNavigate';
 import Introduction from './components/Introduction';
 import RecordsContent from './components/RecordsContent';
 import ModelsContent from './components/ModelsContent';
@@ -18,7 +19,7 @@ const ICONS = {
 };
 
 const PredictionTool: React.FC = () => {
-  const navigate = useNavigate();
+  const navigate = useAuthNavigate();
   const location = useLocation();
   const { t } = useTranslation();
   const { hasPermissionNew } = useAuthStore();
