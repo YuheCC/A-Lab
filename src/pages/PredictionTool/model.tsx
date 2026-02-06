@@ -196,12 +196,7 @@ export const trainModel = async (
 export const getBaseModelList = async (
   params?: Omit<ModelListParams, 'namespace' | 'base_model_id'>
 ): Promise<ModelListResponse> => {
-  try {
-    if (!isUserLoggedIn()) {
-      console.log('User not logged in, returning mock model data');
-      return { total: mockModelList.length, data: mockModelList };
-    }
-
+  try { 
     const response = await getModelListAPI({
       ...params,
       namespace: MODEL_NAMESPACE,
@@ -213,10 +208,10 @@ export const getBaseModelList = async (
     }
 
     console.log('No base model data found, returning mock data');
-    return { total: mockModelList.length, data: mockModelList };
-  } catch (error) {
+    return { total: 0, data: [] };
+  } catch (error) {   
     console.error('Get base model list failed:', error);
-    return { total: mockModelList.length, data: mockModelList };
+    return { total: 0, data: [] };
   }
 };
 
@@ -229,11 +224,6 @@ export const getModelList = async (
   params?: Omit<ModelListParams, 'namespace'>
 ): Promise<ModelListResponse> => {
   try {
-    if (!isUserLoggedIn()) {
-      console.log('User not logged in, returning mock model data');
-      return { total: mockModelList.length, data: mockModelList };
-    }
-
     const response = await getModelListAPI({
       ...params,
       namespace: MODEL_NAMESPACE,
