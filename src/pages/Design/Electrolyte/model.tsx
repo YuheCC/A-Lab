@@ -23,9 +23,47 @@ export const isMockRecord = (record: PerformanceHistoryItem | MockPerformanceHis
 
 // Get performance history list with mock data fallback for not logged in users
 export const getHistoryList = async (params?: any): Promise<{ data: PerformanceHistoryResponse }> => {
-  // Check if user is logged in
-  if (!isUserLoggedIn()) {
-    console.log('User not logged in, returning mock data');
+  try {
+    // Check if user is logged in
+    if (!isUserLoggedIn()) {
+      console.log('User not logged in, returning mock data');
+      return {
+        data: {
+          total: mockPerformanceHistory.length,
+          data: mockPerformanceHistory
+        }
+      };
+    }
+
+    // Fetch real data
+    const response = await getPerformanceHistoryList(params);
+
+    // Check if response is valid and has data
+    if (response && response.data && response.data.data && Array.isArray(response.data.data)) {
+      // If data is empty, return mock data
+      if (response.data.data.length === 0) {
+        console.log('No history data found, returning mock data');
+        return {
+          data: {
+            total: mockPerformanceHistory.length,
+            data: mockPerformanceHistory
+          }
+        };
+      }
+      return response;
+    }
+
+    // If response is invalid, return mock data
+    console.log('Invalid response, returning mock data');
+    return {
+      data: {
+        total: mockPerformanceHistory.length,
+        data: mockPerformanceHistory
+      }
+    };
+  } catch (error) {
+    console.error('Error fetching history list:', error);
+    // On error, return mock data
     return {
       data: {
         total: mockPerformanceHistory.length,
@@ -33,10 +71,6 @@ export const getHistoryList = async (params?: any): Promise<{ data: PerformanceH
       }
     };
   }
-
-  // Fetch real data
-  const response = await getPerformanceHistoryList(params);
-  return response;
 };
 
 // Get performance history detail with mock data fallback for not logged in users

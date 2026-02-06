@@ -641,12 +641,14 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                                 >
                                   {t('design.history.actions.viewResults', 'View Results')}
                                 </button>
-                                <button
-                                  className="action-button delete-button"
-                                  onClick={() => handleDeleteRecord(record.id)}
-                                >
-                                  {t('design.history.actions.delete', 'Delete')}
-                                </button>
+                                {!record.rawData?.isMock && (
+                                  <button
+                                    className="action-button delete-button"
+                                    onClick={() => handleDeleteRecord(record.id)}
+                                  >
+                                    {t('design.history.actions.delete', 'Delete')}
+                                  </button>
+                                )}
                               </td>
                             </tr>
                             );
