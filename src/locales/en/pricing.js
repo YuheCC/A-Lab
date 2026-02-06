@@ -184,6 +184,8 @@ export default {
     intelligentFindFriends: "Intelligent Find-Friends",
     formulate: "Formulate",
     design: "Design",
+    designElectrolyte: "Electrolyte Design",
+    designElectrode: "Electrode Design",
     predict: "Predict",
     dataSecurity: "Data Security",
     dataSecurityOnCloud: "On Cloud",
@@ -417,7 +419,7 @@ export default {
         description: "6 properties result in 1-2 weeks: contact SES"
       }
     },
-    design: {
+    designElectrolyte: {
       basic: {
         text: "View only",
         description: "(1 full example)"
@@ -444,6 +446,28 @@ export default {
       joint: {
         text: "25°C Cycle Life\n25°C CE/Rate Performance\n45°C Cycle Life\n45°C CE"
       }
+    },
+    designElectrode: {
+      basic: {
+        text: "View only",
+        description: "(1 full example)"
+      },
+      research: {
+        text: "View only",
+        description: "(1 full example)"
+      },
+      explorer: {
+        text: "View only",
+        description: "(1 full example)"
+      },
+      team: {
+        text: "View only",
+        description: "(1 full example)"
+      },
+      enterprise1: {},
+      enterprise2: {},
+      enterprise3: {},
+      joint: {}
     },
     predict: {
       basic: {

@@ -184,6 +184,8 @@ export default {
     intelligentFindFriends: "Intelligent Find-Friends",
     formulate: "フォーミュレーション",
     design: "デザイン",
+    designElectrolyte: "電解質デザイン",
+    designElectrode: "電極デザイン",
     predict: "予測",
     dataSecurity: "データセキュリティ",
     dataSecurityOnCloud: "クラウド",
@@ -417,7 +419,7 @@ export default {
         description: "6つの特性が1-2週間で結果：SESに連絡"
       }
     },
-    design: {
+    designElectrolyte: {
       basic: {
         text: "ビューのみ",
         description: "（1つの完全な例）"
@@ -444,6 +446,28 @@ export default {
       joint: {
         text: "25°Cサイクル寿命\n25°C CE/レート性能\n45°Cサイクル寿命\n45°C CE"
       }
+    },
+    designElectrode: {
+      basic: {
+        text: "ビューのみ",
+        description: "（1つの完全な例）"
+      },
+      research: {
+        text: "ビューのみ",
+        description: "（1つの完全な例）"
+      },
+      explorer: {
+        text: "ビューのみ",
+        description: "（1つの完全な例）"
+      },
+      team: {
+        text: "ビューのみ",
+        description: "（1つの完全な例）"
+      },
+      enterprise1: {},
+      enterprise2: {},
+      enterprise3: {},
+      joint: {}
     },
     predict: {
       basic: {

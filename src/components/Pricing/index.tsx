@@ -543,10 +543,10 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
     });
   };
 
-  // 获取 Design 的值
-  const getDesignValues = (plans: PlanConfig[]) => {
+  // 获取 Design Electrolyte 的值
+  const getDesignElectrolyteValues = (plans: PlanConfig[]) => {
     return plans.map((plan) => {
-      const featureData = t(`pricing.features.design.${plan.id}`, { returnObjects: true }) as { text?: string; description?: string };
+      const featureData = t(`pricing.features.designElectrolyte.${plan.id}`, { returnObjects: true }) as { text?: string; description?: string };
       const hasCheckIcon = !['basic', 'research'].includes(plan.id);
       
       return (
@@ -556,6 +556,30 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
             <div className={`pricing-cell-text ${!hasCheckIcon ? 'gray' : ''}`} style={{ whiteSpace: 'pre-line' }}>
               {featureData.text}
             </div>
+          )}
+          {featureData.description && (
+            <div className={`pricing-cell-description ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.description}</div>
+          )}
+        </div>
+      );
+    });
+  };
+
+  // 获取 Design Electrode 的值
+  const getDesignElectrodeValues = (plans: PlanConfig[]) => {
+    return plans.map((plan) => {
+      const featureData = t(`pricing.features.designElectrode.${plan.id}`, { returnObjects: true }) as { text?: string; description?: string };
+      const hasCheckIcon = ['enterprise1', 'enterprise2', 'enterprise3', 'joint'].includes(plan.id);
+      
+      if (!featureData.text && hasCheckIcon) {
+        return <CheckIcon />;
+      }
+      
+      return (
+        <div className="pricing-cell-content">
+          {hasCheckIcon && <CheckIcon />}
+          {featureData.text && (
+            <div className={`pricing-cell-text ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.text}</div>
           )}
           {featureData.description && (
             <div className={`pricing-cell-description ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.description}</div>
@@ -710,7 +734,8 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
         <div className="pricing-section-header">
           <div className="pricing-section-title">{t('pricing.featureTitles.design')}</div>
         </div>
-        {renderFeatureRow('design', t('pricing.featureTitles.design'), getDesignValues(plans))}
+        {renderFeatureRow('design-electrolyte', t('pricing.featureTitles.designElectrolyte'), getDesignElectrolyteValues(plans), false, true)}
+        {renderFeatureRow('design-electrode', t('pricing.featureTitles.designElectrode'), getDesignElectrodeValues(plans), false, true)}
 
         {/* Predict */}
         <div className="pricing-section-header">

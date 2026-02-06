@@ -184,6 +184,8 @@ export default {
     intelligentFindFriends: "智能找好友",
     formulate: "配方",
     design: "设计",
+    designElectrolyte: "电解质设计",
+    designElectrode: "电极设计",
     predict: "预测",
     dataSecurity: "数据安全",
     dataSecurityOnCloud: "云端",
@@ -417,7 +419,7 @@ export default {
         description: "6个性能指标1-2周内出结果：联系SES"
       }
     },
-    design: {
+    designElectrolyte: {
       basic: {
         text: "仅查看",
         description: "（1个完整示例）"
@@ -444,6 +446,28 @@ export default {
       joint: {
         text: "25°C循环寿命\n25°C CE/倍率性能\n45°C循环寿命\n45°C CE"
       }
+    },
+    designElectrode: {
+      basic: {
+        text: "仅查看",
+        description: "（1个完整示例）"
+      },
+      research: {
+        text: "仅查看",
+        description: "（1个完整示例）"
+      },
+      explorer: {
+        text: "仅查看",
+        description: "（1个完整示例）"
+      },
+      team: {
+        text: "仅查看",
+        description: "（1个完整示例）"
+      },
+      enterprise1: {},
+      enterprise2: {},
+      enterprise3: {},
+      joint: {}
     },
     predict: {
       basic: {
