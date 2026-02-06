@@ -99,13 +99,18 @@ const DesignPage: React.FC<DesignPageProps> = () => {
   // Model options for records filter (top 100 models)
   const [recordModelOptions, setRecordModelOptions] = useState<ModelListItem[]>([]);
 
-  // Parse and validate record ID format (e.g., "DS-001" -> "1", "76" -> "76")
+  // Parse and validate record ID format (e.g., "DS-001" -> "1", "76" -> "76", "example" -> "354")
   const parseRecordId = (input: string): string | null => {
     if (!input || input.trim() === '') {
       return '';
     }
 
     const trimmedInput = input.trim();
+
+    // Check if it's "example" (case insensitive) - map to mock data ID
+    if (trimmedInput.toLowerCase() === 'example') {
+      return '354';
+    }
 
     // Check if it matches DS-XXX format
     const dsMatch = trimmedInput.match(/^DS-(\d+)$/i);
@@ -629,7 +634,9 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                             const actualPositive = record.temp25Count + record.temp45Count;
                             return (
                             <tr key={record.id}>
-                              <td className="record-id">DS-{String(record.id).padStart(3, '0')}</td>
+                              <td className="record-id">
+                                {record.rawData?.isMock ? 'example' : `DS-${String(record.id).padStart(3, '0')}`}
+                              </td>
                               <td className="smiles-cell">{record.smiles}</td>
                               <td>{record.modelName || '-'}</td>
                               <td>{totalPositive > 0 ? `${actualPositive}/${totalPositive}` : '-'}</td>
