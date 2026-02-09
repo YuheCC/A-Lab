@@ -410,23 +410,45 @@ const PredictPage: React.FC = () => {
     setCathodeActiveMaterial(DEFAULT_VALUES.cathodeActiveMaterial);
     
     // 重置阳极参数
-    setAnodeCMC(1.52);
-    setAnodeSBR(2.21);
-    setAnodePAA(2.33);
-    setAnodeSuperP(1.4);
-    setAnodeSWCNT(0.41);
+    const defaultAnodeCMC = 1.52;
+    const defaultAnodeSBR = 2.21;
+    const defaultAnodePAA = 2.33;
+    const defaultAnodeSuperP = 1.4;
+    const defaultAnodeSWCNT = 0.41;
+    
+    setAnodeCMC(defaultAnodeCMC);
+    setAnodeSBR(defaultAnodeSBR);
+    setAnodePAA(defaultAnodePAA);
+    setAnodeSuperP(defaultAnodeSuperP);
+    setAnodeSWCNT(defaultAnodeSWCNT);
     setAnodePressDensity(1.5);
-    setAnodeSCBI(0);
-    setAnodeGrSI(0);
-    setAnodeArealLoading(0);
+    
+    // 计算阳极活性物质的默认值
+    const totalActiveMaterial = 100 - (defaultAnodeCMC + defaultAnodeSBR + defaultAnodePAA + defaultAnodeSuperP + defaultAnodeSWCNT);
+    const defaultAnodeSCBI = Number((totalActiveMaterial * 0.12).toFixed(2));
+    const defaultAnodeGrSI = Number((totalActiveMaterial * 0.88).toFixed(2));
+    setAnodeSCBI(defaultAnodeSCBI);
+    setAnodeGrSI(defaultAnodeGrSI);
     
     // 重置阴极参数
-    setCathodeKF9700(1.24);
-    setCathodeCN01Y(0.5);
-    setCathodeSuperC65(2.04);
-    setCathodeArealLoading(2.93);
+    const defaultCathodeKF9700 = 1.24;
+    const defaultCathodeCN01Y = 0.5;
+    const defaultCathodeSuperC65 = 2.04;
+    const defaultCathodeArealLoading = 2.93;
+    
+    setCathodeKF9700(defaultCathodeKF9700);
+    setCathodeCN01Y(defaultCathodeCN01Y);
+    setCathodeSuperC65(defaultCathodeSuperC65);
+    setCathodeArealLoading(defaultCathodeArealLoading);
     setCathodePressDensity(3.52);
-    setCathodeNCMA(0);
+    
+    // 计算阴极活性物质的默认值
+    const defaultCathodeNCMA = Number((100 - (defaultCathodeKF9700 + defaultCathodeCN01Y + defaultCathodeSuperC65)).toFixed(2));
+    setCathodeNCMA(defaultCathodeNCMA);
+    
+    // 计算阳极面载量的默认值
+    const defaultAnodeArealLoading = Number(((defaultCathodeArealLoading / 0.9142) * 1.07 * 0.878).toFixed(2));
+    setAnodeArealLoading(defaultAnodeArealLoading);
     
     // 重置电解液参数
     setElectrolyteContent(2.322);
