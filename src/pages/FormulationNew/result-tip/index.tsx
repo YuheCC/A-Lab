@@ -3,7 +3,7 @@ import { useNavigate } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import GuideTooltip from '../components/GuideTooltip';
 import PropertiesTable from '../components/PropertiesTable';
-import './index.css';
+import './index.less';
 
 interface ResultTipProps {}
 

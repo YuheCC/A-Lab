@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import './FindFriendAdvancedOptions.css';
+import './FindFriendAdvancedOptions.less';
 import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import { Info } from 'lucide-react';
 
@@ -16,6 +16,9 @@ interface AdvancedProps {
   // New in your changes
   showHypothetical: boolean;
   setShowHypothetical: (v: boolean) => void;
+  prioritizePublished: boolean;
+  setPrioritizePublished: (v: boolean) => void;
+  showPrioritizePublished?: boolean;
   numResults: number;
   setNumResults: (v: number) => void;
 
@@ -47,6 +50,9 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
 
   showHypothetical,
   setShowHypothetical,
+  prioritizePublished,
+  setPrioritizePublished,
+  showPrioritizePublished = true,
   numResults,
   setNumResults,
 
@@ -138,27 +144,44 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
         <div
           style={{
             display: 'flex',
-            alignItems: 'center',
+            alignItems: 'flex-start',
             justifyContent: 'space-between',
             gap: '12px',
             flexWrap: 'wrap',
           }}
         >
-          <label className="ff-advanced-label" style={{ display: 'flex', alignItems: 'center' }}>
-            <input
-              type="checkbox"
-              checked={showHypothetical}
-              onChange={(e) => {
-                if (handleGuardedInteraction(e)) return;
-                setShowHypothetical(e.target.checked);
-              }}
-              aria-disabled={isReadOnly}
-            />
-            <span style={{ marginLeft: 4 }}>{t('search.showHypothetical')}</span>
-            <InfoTooltip title={t('search.showHypotheticalTooltip')} placement="top">
-              <Info size={16} className="ff-info-icon" />
-            </InfoTooltip>
-          </label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <label className="ff-advanced-label" style={{ display: 'flex', alignItems: 'center' }}>
+              <input
+                type="checkbox"
+                checked={showHypothetical}
+                onChange={(e) => {
+                  if (handleGuardedInteraction(e)) return;
+                  setShowHypothetical(e.target.checked);
+                }}
+                aria-disabled={isReadOnly}
+              />
+              <span style={{ marginLeft: 4 }}>{t('search.showHypothetical')}</span>
+              <InfoTooltip title={t('search.showHypotheticalTooltip')} placement="top">
+                <Info size={16} className="ff-info-icon" />
+              </InfoTooltip>
+            </label>
+
+            {showPrioritizePublished && (
+              <label className="ff-advanced-label" style={{ display: 'flex', alignItems: 'center' }}>
+                <input
+                  type="checkbox"
+                  checked={prioritizePublished}
+                  onChange={(e) => {
+                    if (handleGuardedInteraction(e)) return;
+                    setPrioritizePublished(e.target.checked);
+                  }}
+                  aria-disabled={isReadOnly}
+                />
+                <span style={{ marginLeft: 4 }}>{t('search.prioritizePublished', 'Prioritize Published Molecules')}</span>
+              </label>
+            )}
+          </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span className="ff-advanced-label">{t('search.resultsToDisplay', 'Results to display')}</span>

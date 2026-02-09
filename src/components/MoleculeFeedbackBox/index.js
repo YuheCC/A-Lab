@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { authFetch, getAPIUrl } from '../../utils.js';
+import { buildAutoFetchURL } from '@/services/config/autoFetch';
 import { ThumbsDown, ThumbsUp } from 'lucide-react';
 
-import './MoleculeFeedbackBox.css';
+import './MoleculeFeedbackBox.less';
 
 const API_URL = getAPIUrl();
 
@@ -54,7 +55,8 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
       }
 
       // Submit feedback to backend
-      const response = await authFetch(`${API_URL}/api/feedback`, {
+      const feedbackUrl = buildAutoFetchURL('feedback');
+      const response = await authFetch(feedbackUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

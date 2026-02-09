@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { OrganicSearch, InorganicSearch, ThirdSearch } from "./components";
 import AnionsSearch from "./components/AnionsSearch";
-import "./Search.css";
+import "./Search.less";
 import { useNavigate } from '@umijs/max';
 import { useAuthStore } from '@/models/useAuth';
 

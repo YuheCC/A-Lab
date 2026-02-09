@@ -12,17 +12,18 @@ const AnionsMolecules = () => {
     const nodePopupRef = useRef<any>(null);
     const [node, setNode] = useState<any>(null);
 
-    const { data, loading, error, fetchData } = useAnionsPlotDataStore();
+    const { data, loading, error, fetchData, fetchInitialData } = useAnionsPlotDataStore();
 
     const [showMapFooter, setShowMapFooter] = useState(true);
     const [showTooltip, setShowTooltip] = useState(false);
 
-    // 组件挂载时获取数据
+    // 组件挂载时获取数据（如果为空）
     useEffect(() => {
         if (data.length === 0) {
+            fetchInitialData();
             fetchData();
         }
-    }, [data.length, fetchData]);
+    }, [data.length, fetchData, fetchInitialData]);
 
     // Generate cluster descriptions dynamically
     const renderClusterDescriptions = () => {

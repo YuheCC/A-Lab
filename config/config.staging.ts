@@ -6,8 +6,15 @@ export default defineConfig({
     '@': path.resolve(__dirname, '../src'),
   },
   define: {
-    'ShowFindFriendsAdvancedOptions': true,
+    // Environment configuration
+    'ENVIRONMENT': 'staging',
     'BASE_URL': "https://api-sh.ses.ai",
+    'WS_BASE_URL': "https://api-sh.ses.ai",
+
+    // Feature flags
+    'ShowFindFriendsAdvancedOptions': true,
+
+    // External service URLs
     'explorer_url': "https://buy.stripe.com/test_9B66oGgL2dPh0C12Mzebu01",
     'team_url': "https://buy.stripe.com/test_9B600iamEeTl1G572Pebu02",
   },

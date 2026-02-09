@@ -130,6 +130,23 @@ pnpm start:prod
 3. **环境配置**：
    确保目标环境的 BaseURL 配置正确
 
+## 📚 文档资源
+
+### 环境开发指南
+
+有关环境配置、部署和故障排查的详细信息，请参阅：
+
+- **[Environment Guide (English)](./ENVIRONMENT_GUIDE.md)** - 包含 Development、Staging、Production、Box 和 US 所有环境的完整指南
+- **[环境指南 (中文)](./ENVIRONMENT_GUIDE.zh-CN.md)** - 完整的环境配置、部署和故障排查指南
+
+环境指南涵盖：
+- 详细的环境设置和配置
+- 开发工作流程
+- Docker 部署（Box 环境）
+- AWS Amplify 部署（Staging/Production/US 环境）
+- 配置最佳实践和改进建议
+- 常见问题排查
+
 ## 🤝 贡献指南
 
 1. Fork 项目

@@ -1,8 +1,14 @@
 import request from "@/services/request";
+import { urlConfig } from "@/services/config/urlConfig";
+import { getPerformanceEndpoint } from "./endpoints";
+import { sseRequest } from "@/services/sseRequest";
 
 // 电池系统相关接口
 export async function getBatterySystemList(params?: any) {
-    return request("/api/batterySystem/list", {
+    const env = urlConfig.getEnvironment();
+    const endpoint = getPerformanceEndpoint(env, 'batterySystemList');
+    const url = urlConfig.buildFullURL(endpoint);
+    return request(url, {
         method: "GET",
         params,
     });
@@ -13,6 +19,7 @@ export interface PerformanceHistoryItem {
     id: number;
     battery_system_id: number;
     smiles: string;
+    model_id?: number;  // 当前记录使用的模型 ID
     temperature_25_CE_prob?: string | null;
     temperature_25_CE_prop?: string | null;
     temperature_25_CE_label?: string | null;
@@ -45,6 +52,7 @@ export interface PerformanceHistoryDetailResponse {
     id: number;
     battery_system_id: number;
     smiles: string;
+    model_id?: number;  // 当前记录使用的模型 ID
     temperature_25_CE_prob?: string | null;
     temperature_25_CE_prop?: string | null;
     temperature_25_CE_label?: string | null;
@@ -68,20 +76,29 @@ export interface PerformanceHistoryDetailResponse {
 
 // Performance历史记录相关接口
 export async function getPerformanceHistoryList(params?: any) {
-    return request("/api/cellPerformance/history/list", {
+    const env = urlConfig.getEnvironment();
+    const endpoint = getPerformanceEndpoint(env, 'historyList');
+    const url = urlConfig.buildFullURL(endpoint);
+    return request(url, {
         method: "GET",
         params,
     });
 }
 
 export async function getPerformanceHistoryDetail(id: number) {
-    return request(`/api/cellPerformance/history/detail?id=${id}`, {
+    const env = urlConfig.getEnvironment();
+    const endpoint = getPerformanceEndpoint(env, 'historyDetail');
+    const url = urlConfig.buildFullURL(endpoint);
+    return request(`${url}?id=${id}`, {
         method: "GET",
     });
 }
 
 export async function deletePerformanceHistory(id: number) {
-    return request("/api/cellPerformance/history/delete", {
+    const env = urlConfig.getEnvironment();
+    const endpoint = getPerformanceEndpoint(env, 'historyDelete');
+    const url = urlConfig.buildFullURL(endpoint);
+    return request(url, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
@@ -94,6 +111,7 @@ export async function deletePerformanceHistory(id: number) {
 export interface PerformancePredictionRequest {
     smiles: string;
     battery_system_id: number;
+    model_id?: string;
 }
 
 export interface PerformancePredictionResponse {
@@ -116,7 +134,10 @@ export interface PerformancePredictionResponse {
 }
 
 export async function predictPerformance(params: PerformancePredictionRequest) {
-    return request("/api/cellPerformance/model_predict", {
+    const env = urlConfig.getEnvironment();
+    const endpoint = getPerformanceEndpoint(env, 'modelPredict');
+    const url = urlConfig.buildFullURL(endpoint);
+    return request(url, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
@@ -139,11 +160,31 @@ export interface LLMAnalysisResponse {
 }
 
 export async function requestLLMAnalysis(params: LLMAnalysisRequest) {
-    return request("/api/cellPerformance/llm_analysis", {
+    const env = urlConfig.getEnvironment();
+    const endpoint = getPerformanceEndpoint(env, 'llmAnalysis');
+    const url = urlConfig.buildFullURL(endpoint);
+    return request(url, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
         },
+        data: params,
+    });
+}
+
+// LLM Analysis SSE Stream API
+export interface LLMAnalysisStreamRequest {
+    id: number;
+    battery_system_id: number;
+    lang: string;
+}
+
+/**
+ * 使用 SSE 流式接收 LLM 分析结果
+ */
+export async function requestLLMAnalysisStream(params: LLMAnalysisStreamRequest): Promise<Response> {
+    return sseRequest('/api/cellPerformance/llm_analysis', {
+        method: 'POST',
         data: params,
     });
 }

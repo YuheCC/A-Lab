@@ -1,0 +1,21 @@
+<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 加号：代表新建，位于左上角 -->
+  <path d="M5 3V9M2 6H8" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- 烧瓶主体：调整曲线使其更优雅 -->
+  <path d="M17 9V3H11V9L7.5 16.2C7.2 17.2 7.8 18.5 9 18.5H19C20.2 18.5 20.8 17.2 20.5 16.2L17 9Z" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- 瓶口细节：增加厚度感 -->
+  <path d="M10.5 3H17.5" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round"/>
+  
+  <!-- 刻度线：表现测量精度 -->
+  <path d="M16.5 11.5H18" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M17 13.5H18.5" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- 液体：使用柔和的波浪线 -->
+  <path d="M10 15.5C11.5 15 13 16 14.5 15.5C16 15 17 15 19 15.5" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round"/>
+  
+  <!-- 气泡：增加活跃感 -->
+  <circle cx="13" cy="12" r="1" fill="#3B82F6"/>
+  <circle cx="15" cy="10.5" r="0.5" fill="#3B82F6"/>
+</svg>

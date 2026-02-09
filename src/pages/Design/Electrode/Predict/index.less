@@ -1,0 +1,316 @@
+@import '@/styles/variables.less';
+
+// 外层容器
+.electrode-predict-container {
+  background: #ffffff;
+  min-height: calc(100vh - 66px);
+  padding: 24px;
+}
+
+// 标题和返回按钮区域 - 占满宽度，不受限制
+.electrode-predict-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.electrode-predict-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+// 内容容器 - 限制最大宽度
+.electrode-predict-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.electrode-predict-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: @color-text-primary;
+  margin: 0;
+}
+
+.electrode-predict-new-btn {
+  background: @color-text-primary;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background: #374151;
+  }
+}
+
+.electrode-predict-back-btn {
+  background: @color-gray-100;
+  color: @color-gray-700;
+  border: 1px solid @color-gray-300;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background: @color-gray-200;
+    border-color: @color-gray-400;
+  }
+}
+
+// 操作区域
+.electrode-predict-operation-area {
+  background: #ffffff;
+  padding: 24px 0;
+}
+
+// 区域样式
+.electrode-predict-section {
+  margin-bottom: 32px;
+}
+
+.electrode-predict-section-title {
+  font-size: 20px;
+  font-weight: @font-weight-semibold;
+  color: @color-gray-800;
+  margin: 0 0 24px 0;
+}
+
+// 表单容器
+.electrode-predict-form-container {
+  background: #ffffff;
+  border: 1px solid @color-gray-200;
+  border-radius: 12px;
+  padding: 32px;
+}
+
+.electrode-predict-form-item {
+  margin-bottom: 24px;
+
+  &--full {
+    width: 100%;
+  }
+}
+
+.electrode-predict-label {
+  display: block;
+  font-size: 14px;
+  font-weight: @font-weight-medium;
+  color: @color-gray-700;
+  margin-bottom: 8px;
+}
+
+.electrode-predict-label-small {
+  display: block;
+  font-size: 12px;
+  font-weight: @font-weight-medium;
+  color: @color-gray-700;
+  margin-bottom: 8px;
+}
+
+// 下拉选择框
+.electrode-predict-select {
+  width: 100%;
+  height: 38px;
+}
+
+// 输入框
+.electrode-predict-input {
+  width: 100%;
+  height: 38px;
+  border-radius: @radius-md;
+  border-color: @color-gray-200;
+  font-size: 14px;
+  color: @color-gray-700;
+
+  &:hover {
+    border-color: @color-accent;
+  }
+
+  &:focus {
+    border-color: @color-accent;
+    box-shadow: 0 0 0 2px rgba(86, 178, 106, 0.1);
+  }
+
+  &::placeholder {
+    color: @color-gray-400;
+  }
+}
+
+// 电极网格布局
+.electrode-predict-electrode-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 24px;
+}
+
+.electrode-predict-electrode-section {
+  .electrode-predict-label {
+    margin-bottom: 8px;
+  }
+
+  .electrode-predict-select {
+    margin-bottom: 24px;
+  }
+}
+
+// 错误提示样式
+.electrode-predict-error-message {
+  margin-top: 8px;
+  color: #ff4d4f;
+  font-size: 13px;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  
+  &::before {
+    content: '⚠';
+    margin-right: 6px;
+    font-size: 14px;
+  }
+}
+
+.electrode-predict-subsection-title {
+  font-size: 14px;
+  font-weight: @font-weight-medium;
+  color: @color-gray-700;
+  margin: 37px 0 16px 0;
+}
+
+// 参数容器
+.electrode-predict-parameters-container {
+  background: @color-gray-50;
+  border: 1px solid @color-gray-200;
+  border-radius: @radius-md;
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// 尺寸输入区域
+.electrode-predict-dimension-section {
+  margin-top: 24px;
+}
+
+.electrode-predict-dimension-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.electrode-predict-dimension-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .ant-input {
+    height: 38px;
+    border-radius: @radius-md;
+    border-color: @color-gray-200;
+    font-size: 14px;
+    color: @color-gray-700;
+
+    &:hover {
+      border-color: @color-accent;
+    }
+
+    &:focus {
+      border-color: @color-accent;
+      box-shadow: 0 0 0 2px rgba(86, 178, 106, 0.1);
+    }
+
+    &::placeholder {
+      color: @color-gray-400;
+    }
+  }
+}
+
+// 计算按钮
+.electrode-predict-calculate-btn-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+// 按钮样式已迁移到 @/components/Button 组件中
+
+// 结果容器
+.electrode-predict-results-container {
+  background: #ffffff;
+  border: 1px solid @color-gray-200;
+  border-radius: 12px;
+  padding: 32px;
+}
+
+.electrode-predict-results-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px 64px;
+}
+
+// 响应式设计
+@media (max-width: 1200px) {
+  .electrode-predict-electrode-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .electrode-predict-container {
+    padding: 16px;
+  }
+
+  .electrode-predict-dimension-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .electrode-predict-results-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ============ 材料描述 Tooltip 内容样式 ============
+// 注意：Tooltip 外观样式（图标容器、overlay）已统一到 global.less 中
+.electrode-material-tooltip {
+  &__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: @color-text-primary;
+    margin-bottom: 8px;
+  }
+
+  &__composition {
+    font-size: 14px;
+    color: @color-text-primary;
+    margin-bottom: 8px;
+    line-height: 1.5;
+
+    strong {
+      font-weight: 600;
+    }
+  }
+
+  &__content {
+    font-size: 14px;
+    color: @color-text-primary;
+    line-height: 1.6;
+  }
+}

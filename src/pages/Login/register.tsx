@@ -1,7 +1,10 @@
 import { useState } from "react";
+import './Login.less';
 import { useNavigate } from "umi";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/models/useAuth";
+import { ReactComponent as EyeIcon } from '@/assets/svg/eye.svg';
+import { ReactComponent as EyeOffIcon } from '@/assets/svg/eyeOff.svg';
 
 // Register component
 const RegisterPage = () => {
@@ -14,6 +17,8 @@ const RegisterPage = () => {
   const [error, setError] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   const navigate = useNavigate();
   const { isLoading, register } = useAuthStore();
@@ -113,26 +118,46 @@ const RegisterPage = () => {
 
           <div className="form-group">
             <label htmlFor="password">{t('auth.form.password')}</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder={t('auth.form.passwordPlaceholder')}
-              required
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={t('auth.form.passwordPlaceholder')}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "隐藏密码" : "显示密码"}
+              >
+                {showPassword ? <EyeIcon /> : <EyeOffIcon />}
+              </button>
+            </div>
           </div>
 
           <div className="form-group">
             <label htmlFor="confirmPassword">{t('auth.form.confirmPassword')}</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder={t('auth.form.confirmPasswordPlaceholder')}
-              required
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder={t('auth.form.confirmPasswordPlaceholder')}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                aria-label={showConfirmPassword ? "隐藏密码" : "显示密码"}
+              >
+                {showConfirmPassword ? <EyeIcon /> : <EyeOffIcon />}
+              </button>
+            </div>
           </div>
 
           <div className="form-group">

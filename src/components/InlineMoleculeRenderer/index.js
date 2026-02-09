@@ -5,11 +5,12 @@ import remarkGfm from 'remark-gfm';
 import MolCard from '@/components/MolCard/index.js';
 import { useAuthStore } from '@/models/useAuth';
 import { COMMERCIAL_SCORE_MAP } from '@/utils';
+import { extractIsPublished, buildPublicationProp, insertPublicationProp } from '@/utils/publicationStatus';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
 import { ENABLE_CASRN_DISPLAY } from '@/constants/featureFlags';
 import rehypeRaw from 'rehype-raw';
 import { createLlmGradeProp, ReasoningModal } from '@/components/LlmGrade';
-import './InlineMoleculeRenderer.css';
+import './InlineMoleculeRenderer.less';
 
 const renderAnionCommercialScore = (score) => {
   if (score === null || score === undefined) {
@@ -189,7 +190,8 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
         UMAP_0: moleculeData.UMAP_0,
         UMAP_1: moleculeData.UMAP_1,
         grade: moleculeData.grade,
-        reasoning: moleculeData.reasoning
+        reasoning: moleculeData.reasoning,
+        is_published: extractIsPublished(moleculeData)
       };
       onMoleculeClick(transformedMolecule);
     }
@@ -239,13 +241,15 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
 
   // Transform the inline molecule data to MolCard format for hover popup
   const transformToMolCardProps = (moleculeData) => {
-    if (!moleculeData) return { propGroups: [], foldPropGroups: [] };
+    if (!moleculeData) return { propGroups: [], foldPropGroups: [], publicationStatus: undefined };
 
     const rawCation = moleculeData.cation ?? moleculeData.CATION;
     const normalizedCation = typeof rawCation === 'string' ? rawCation.trim() : rawCation;
     const isAnion = Boolean(moleculeData.is_anion ?? moleculeData.IS_ANION ?? normalizedCation);
+    const publicationStatus = extractIsPublished(moleculeData);
+    const publicationProp = buildPublicationProp(publicationStatus);
 
-    const propGroups = [
+    const basePropGroups = [
       { label: 'SMILES', value: moleculeData.SMILES, span: 2, show: canShowColumn('smiles') },
     ];
 
@@ -267,10 +271,10 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
       ? createLlmGradeProp(moleculeData.grade, moleculeData.reasoning, setReasoningText)
       : null;
     if (gradeProp) {
-      propGroups.push(gradeProp);
+      basePropGroups.push(gradeProp);
     }
 
-    propGroups.push(
+    basePropGroups.push(
       { label: 'Mol Weight', value: moleculeData.molecular_weight, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
       { label: 'HOMO', value: moleculeData.HOMO_eV?.toFixed(4), suffix: ' eV', show: canShowColumn('HOMO_eV') },
       { label: 'LUMO', value: moleculeData.LUMO_eV?.toFixed(4), suffix: ' eV', show: canShowColumn('LUMO_eV') },
@@ -282,14 +286,14 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
       const volumeRaw = moleculeData.vdw_volume_angstroms3 ?? moleculeData.VDW_VOLUME_ANGSTROMS3;
       const fluorideBdeRaw = moleculeData.fluoride_bde_ev ?? moleculeData.FLUORIDE_BDE_EV;
       if (canShowColumn('vdw_volume_angstroms3')) {
-        propGroups.push({
+        basePropGroups.push({
           label: 'Molecular Volume',
           value: volumeRaw !== undefined && volumeRaw !== null ? formatMaybeNumber(volumeRaw) : 'N/A',
           suffix: volumeRaw !== undefined && volumeRaw !== null ? ' Å³' : undefined,
         });
       }
       if (canShowColumn('fluoride_bde_ev')) {
-        propGroups.push({
+        basePropGroups.push({
           label: 'F Dissociation Energy',
           value: fluorideBdeRaw !== undefined && fluorideBdeRaw !== null ? formatMaybeNumber(fluorideBdeRaw) : 'N/A',
           suffix: fluorideBdeRaw !== undefined && fluorideBdeRaw !== null ? ' eV' : undefined,
@@ -297,21 +301,21 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
       }
     } else {
       if (canShowColumn('predicted_MP_celsius')) {
-        propGroups.push({ label: 'Predicted MP', value: moleculeData.predicted_MP_celsius != null ? formatMaybeNumber(moleculeData.predicted_MP_celsius) : undefined, suffix: ' °C' });
+        basePropGroups.push({ label: 'Predicted MP', value: moleculeData.predicted_MP_celsius != null ? formatMaybeNumber(moleculeData.predicted_MP_celsius) : undefined, suffix: ' °C' });
       }
       if (canShowColumn('predicted_BP_celsius')) {
-        propGroups.push({ label: 'Predicted BP', value: moleculeData.predicted_BP_celsius != null ? formatMaybeNumber(moleculeData.predicted_BP_celsius) : undefined, suffix: ' °C' });
+        basePropGroups.push({ label: 'Predicted BP', value: moleculeData.predicted_BP_celsius != null ? formatMaybeNumber(moleculeData.predicted_BP_celsius) : undefined, suffix: ' °C' });
       }
       if (canShowColumn('predicted_FP_celsius')) {
-        propGroups.push({ label: 'Predicted FP', value: moleculeData.predicted_FP_celsius != null ? formatMaybeNumber(moleculeData.predicted_FP_celsius) : undefined, suffix: ' °C' });
+        basePropGroups.push({ label: 'Predicted FP', value: moleculeData.predicted_FP_celsius != null ? formatMaybeNumber(moleculeData.predicted_FP_celsius) : undefined, suffix: ' °C' });
       }
       if (canShowColumn('combustion_enthalpy_ev')) {
-        propGroups.push({ label: 'Combustion Enthalpy', value: moleculeData.COMBUSTION_ENTHALPY_EV != null ? formatMaybeNumber(moleculeData.COMBUSTION_ENTHALPY_EV) : undefined, suffix: ' eV' });
+        basePropGroups.push({ label: 'Combustion Enthalpy', value: moleculeData.COMBUSTION_ENTHALPY_EV != null ? formatMaybeNumber(moleculeData.COMBUSTION_ENTHALPY_EV) : undefined, suffix: ' eV' });
       }
     }
 
     if (moleculeData.COMMERCIAL_SCORE !== undefined) {
-      propGroups.push({
+      basePropGroups.push({
         label: 'Commercial Viability',
         value: renderAnionCommercialScore(moleculeData.COMMERCIAL_SCORE),
         span: 2,
@@ -319,6 +323,7 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
         show: canShowColumn('commercial_score')
       });
     }
+    const propGroups = insertPublicationProp(basePropGroups, publicationProp);
 
     const umapX = moleculeData.UMAP_0 != null ? formatMaybeNumber(moleculeData.UMAP_0, 4) : undefined;
     const umapY = moleculeData.UMAP_1 != null ? formatMaybeNumber(moleculeData.UMAP_1, 4) : undefined;
@@ -380,10 +385,11 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
     return {
       propGroups: filteredPropGroups,
       foldPropGroups: filteredFoldPropGroups,
+      publicationStatus,
     };
   };
 
-  const moleculeCardProps = hoveredObject ? transformToMolCardProps(hoveredObject.data) : { propGroups: [], foldPropGroups: [] };
+  const moleculeCardProps = hoveredObject ? transformToMolCardProps(hoveredObject.data) : { propGroups: [], foldPropGroups: [], publicationStatus: undefined };
 
   return (
     <>
@@ -407,6 +413,7 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
               showMoreDetails={true}
               propGroups={moleculeCardProps.propGroups}
               foldPropGroups={moleculeCardProps.foldPropGroups}
+              publicationStatus={moleculeCardProps.publicationStatus}
               cation={hoveredObject.data?.cation ?? hoveredObject.data?.CATION}
               onMouseEnter={() => {
                 // Keep popup open when hovering over it

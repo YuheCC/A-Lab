@@ -3,7 +3,7 @@ import { useNavigate } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import FormulationModule from '../components/FormulationModule';
 import GuideTooltip from '../components/GuideTooltip';
-import './index.css';
+import './index.less';
 
 const CreatePage: React.FC = () => {
   const navigate = useNavigate();

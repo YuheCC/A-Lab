@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import './index.css';
+import './index.less';
 
 interface Option {
   id: string | number;

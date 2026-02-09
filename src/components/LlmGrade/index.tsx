@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconButton } from '@mui/material';
 import { Info } from 'lucide-react';
-import './index.css';
+import './index.less';
 
 interface ReasoningButtonProps {
   reasoning?: string;

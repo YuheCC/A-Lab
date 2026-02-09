@@ -1,0 +1,450 @@
+@import '@/styles/variables.less';
+
+.formulation-new-container {
+  background: #ffffff;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.formulation-header {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.formulation-title-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.formulation-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: @color-text-primary;
+  margin: 0;
+  display: inline-block;
+}
+
+.formulation-subtitle {
+  font-size: 14px;
+  color: @color-text-secondary;
+  margin: 0;
+}
+
+// 按钮样式已迁移到 @/components/Button 组件中
+
+.formulation-new-table-container {
+  overflow-x: hidden;
+  padding: 20px 0px;
+}
+
+/* Action section styles */
+.formulation-action-section {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 12px 24px 8px 0px;
+}
+
+/* Tab styles removed - now using TabSection component */
+
+.formulation-tab-panel {
+  /* Panel wrapper for tab content */
+}
+
+.analysis-filters {
+  display: flex;
+  gap: 12px;
+  margin: 16px 30px;
+  align-items: center;
+  flex-wrap: wrap;
+
+  .analysis-search-input {
+    flex: 1;
+    min-width: 200px;
+    max-width: 300px;
+    height: 32px;
+    padding: 0 10px;
+    border: 1px solid #d1d5dc;
+    border-radius: 6px;
+    font-size: 13px;
+    color: @color-gray-700;
+    background: #ffffff;
+    transition: border-color 0.2s;
+
+    &::placeholder {
+      color: @color-gray-400;
+    }
+
+    &:hover {
+      border-color: @color-gray-400;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: @color-accent;
+      box-shadow: 0 0 0 3px rgba(86, 178, 106, 0.1);
+    }
+  }
+
+  .analysis-status-filter {
+    min-width: 140px;
+    max-width: 180px;
+    height: 32px;
+    padding: 0 10px;
+    border: 1px solid #d1d5dc;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #d7dadf;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &.has-value {
+      color: @color-gray-700;
+    }
+
+    option {
+      color: @color-gray-700;
+    }
+
+    option[value=""][disabled] {
+      display: none;
+    }
+
+    &:hover {
+      border-color: @color-gray-400;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: @color-accent;
+      box-shadow: 0 0 0 3px rgba(86, 178, 106, 0.1);
+    }
+  }
+
+  .clear-filters-button {
+    padding: 0;
+    border: none;
+    background: none;
+    font-size: 14px;
+    color: @color-gray-500;
+    cursor: pointer;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+
+    &:hover {
+      color: @color-gray-700;
+    }
+
+    &:active {
+      color: @color-gray-800;
+    }
+
+    svg {
+      flex-shrink: 0;
+    }
+  }
+
+  .formulation-refresh-button {
+    padding: 6px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: @color-gray-500;
+    margin-left: auto;
+
+    &:hover {
+      color: @color-gray-700;
+    }
+
+    &:active {
+      color: @color-gray-800;
+      svg {
+        animation: spin 0.5s ease-in-out;
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.records-count-text {
+  margin: 12px 30px;
+  font-size: 14px;
+  color: @color-gray-500;
+}
+
+.analysis-table-wrapper {
+  /* padding handled by formulation-new-table-container */
+  overflow-x: auto;
+  width: calc(100% - 60px);
+  margin: 0 30px;
+}
+
+.analysis-table {
+  width: 100%;
+  min-width: 1200px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.analysis-table thead th {
+  background: @color-gray-50;
+  color: @color-gray-700;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid @color-gray-200;
+  white-space: nowrap;
+}
+
+.analysis-table tbody td {
+  padding: 16px;
+  border-bottom: 1px solid @color-gray-100;
+  color: @color-gray-800;
+  vertical-align: top;
+}
+
+.analysis-table tbody tr:hover {
+  background: @color-gray-50;
+}
+
+.analysis-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.analysis-id {
+  font-weight: 600;
+  color: @color-gray-800;
+}
+
+.created-date {
+  min-width: 150px;
+  white-space: nowrap;
+}
+
+.salt-info,
+.solvent-info {
+  max-width: 200px;
+}
+
+.compound-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.compound-item {
+  font-size: 14px;
+  color: @color-gray-800;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+
+  &.clickable {
+    cursor: pointer;
+  }
+}
+
+.status-completed {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-running {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-failed {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.status-pending {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.status-unknown {
+  background: @color-gray-100;
+  color: @color-gray-500;
+}
+
+.actions-cell {
+  white-space: nowrap;
+}
+
+.progress-cell {
+  min-width: 120px;
+}
+
+.progress-bar-container {
+  width: 80px;
+  height: 6px;
+  background: @color-gray-200;
+  border-radius: 3px;
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: @color-accent;
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
+.progress-failed-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.progress-bar-failed {
+  background: @color-gray-300;
+}
+
+.progress-failed-icon {
+  font-size: 12px;
+  font-weight: 700;
+  color: @color-gray-600;
+  line-height: 1;
+}
+
+.progress-bar-row {
+  display: flex;
+  align-items: center;
+}
+
+.progress-text {
+  font-size: 12px;
+  color: @color-gray-600;
+  vertical-align: middle;
+}
+
+.progress-remaining-time {
+  font-size: 11px;
+  color: @color-gray-400;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+.action-button {
+  border: none;
+  background: none;
+  color: @color-gray-500;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-right: 8px;
+  transition: color 0.2s;
+}
+
+.action-button:last-child {
+  margin-right: 0;
+}
+
+.view-button:hover {
+  color: @color-gray-800;
+  background: @color-gray-100;
+}
+
+.retry-button:hover {
+  color: @color-accent;
+  background: rgba(86, 178, 106, 0.1);
+}
+
+.delete-button:hover {
+  color: #dc2626;
+  background: #fee2e2;
+}
+
+.loading-state,
+.error-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: @color-gray-500;
+}
+
+.error-state {
+  color: #dc2626;
+}
+
+.no-data {
+  text-align: center;
+  padding: 48px 24px;
+  color: @color-gray-500;
+  font-style: italic;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .formulation-new-container {
+    padding: 16px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .analysis-table {
+    font-size: 12px;
+  }
+
+  .analysis-table thead th,
+  .analysis-table tbody td {
+    padding: 8px 12px;
+  }
+
+  .salt-info,
+  .solvent-info {
+    max-width: 150px;
+  }
+}
+
+@media (max-width: 768px) {
+  .formulation-new-container {
+    padding: 16px;
+  }
+
+  .formulation-header {
+    margin-bottom: 16px;
+  }
+
+  .analysis-table {
+    min-width: 1000px;
+  }
+}

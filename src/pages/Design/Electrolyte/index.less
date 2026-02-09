@@ -1,0 +1,505 @@
+@import '@/styles/variables.less';
+
+.design-tool-container {
+  background: #ffffff;
+  padding: @spacing-xl @spacing-3xl;
+  min-height: calc(100vh - 116px);
+
+  .design-header {
+    margin-bottom: 16px;
+  }
+
+  .design-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: @color-text-primary;
+    margin: 0 0 8px 0;
+  }
+
+  .design-subtitle {
+    font-size: 14px;
+    color: @color-text-secondary;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  // FeatureCardGroup margin
+  .feature-card-group {
+    margin-bottom: @spacing-xl;
+  }
+
+  .design-tool-table-container {
+    overflow-x: hidden;
+  }
+
+  .design-tabs-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    margin-bottom: 8px;
+    padding-bottom: 0;
+  }
+
+  .design-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 16px;
+  }
+
+  .design-tab {
+    padding: 12px 24px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-size: 14px;
+    font-weight: 500;
+    color: @color-gray-500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    margin-bottom: -1px;
+
+    &:hover {
+      color: @color-text-primary;
+    }
+
+    &.active {
+      color: @color-accent;
+      border-bottom-color: @color-accent;
+    }
+  }
+
+  .design-tab-content {
+    min-height: 400px;
+    margin: 0 auto;
+  }
+
+  .design-tab-panel {
+    animation: fadeInPanel 0.3s ease-out;
+  }
+
+  @keyframes fadeInPanel {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .models-filters {
+    display: flex;
+    gap: 12px;
+    margin: 16px 30px;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .models-search-input {
+      flex: 1;
+      min-width: 200px;
+      max-width: 300px;
+      height: 32px;
+      padding: 0 10px;
+      border: 1px solid #d1d5dc;
+      border-radius: 6px;
+      font-size: 13px;
+      color: @color-gray-700;
+      background: #ffffff;
+      transition: border-color 0.2s;
+
+      &::placeholder {
+        color: @color-gray-400;
+      }
+
+      &:hover {
+        border-color: @color-gray-400;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: @color-accent;
+        box-shadow: 0 0 0 3px rgba(86, 178, 106, 0.1);
+      }
+    }
+
+    .models-status-filter,
+    .models-base-model-filter {
+      min-width: 140px;
+      max-width: 180px;
+      height: 32px;
+      padding: 0 10px;
+      border: 1px solid #d1d5dc;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #9da3af;
+      background: #ffffff;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      // When a value is selected, add this class to show normal text color
+      &.has-value {
+        color: @color-gray-700;
+      }
+
+      option {
+        color: @color-gray-700;
+      }
+
+      // Hide placeholder option in dropdown
+      option[value=""][disabled] {
+        display: none;
+      }
+
+      &:hover {
+        border-color: @color-gray-400;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: @color-accent;
+        box-shadow: 0 0 0 3px rgba(86, 178, 106, 0.1);
+      }
+    }
+
+    .clear-filters-button {
+      padding: 0;
+      border: none;
+      background: none;
+      font-size: 14px;
+      color: @color-gray-500;
+      cursor: pointer;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+
+      &:hover {
+        color: @color-gray-700;
+      }
+
+      &:active {
+        color: @color-gray-800;
+      }
+
+      svg {
+        flex-shrink: 0;
+      }
+    }
+
+    .design-refresh-button {
+      padding: 6px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: @color-gray-500;
+      margin-left: auto;
+
+      &:hover {
+        color: @color-gray-700;
+      }
+
+      &:active {
+        color: @color-gray-800;
+        svg {
+          animation: spin 0.5s ease-in-out;
+        }
+      }
+    }
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .models-count-text {
+    margin: 12px 30px;
+    font-size: 14px;
+    color: @color-gray-500;
+  }
+
+  .records-filters {
+    display: flex;
+    gap: 12px;
+    margin: 16px 30px;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .records-search-input {
+      flex: 1;
+      min-width: 200px;
+      max-width: 300px;
+      height: 32px;
+      padding: 0 10px;
+      border: 1px solid #d1d5dc;
+      border-radius: 6px;
+      font-size: 13px;
+      color: @color-gray-700;
+      background: #ffffff;
+      transition: border-color 0.2s;
+
+      &::placeholder {
+        color: @color-gray-400;
+      }
+
+      &:hover {
+        border-color: @color-gray-400;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: @color-accent;
+        box-shadow: 0 0 0 3px rgba(86, 178, 106, 0.1);
+      }
+    }
+
+    .records-model-filter {
+      min-width: 140px;
+      max-width: 180px;
+      height: 32px;
+      padding: 0 10px;
+      border: 1px solid #d1d5dc;
+      border-radius: 6px;
+      font-size: 13px;
+      color: @color-gray-700;
+      background: #ffffff;
+      cursor: pointer;
+      transition: border-color 0.2s;
+
+      &:hover {
+        border-color: @color-gray-400;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: @color-accent;
+        box-shadow: 0 0 0 3px rgba(86, 178, 106, 0.1);
+      }
+    }
+
+    .records-date-filter {
+      // Styles moved to component sx prop for better specificity
+    }
+
+    .clear-filters-button {
+      padding: 0;
+      border: none;
+      background: none;
+      font-size: 14px;
+      color: @color-gray-500;
+      cursor: pointer;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+
+      &:hover {
+        color: @color-gray-700;
+      }
+
+      &:active {
+        color: @color-gray-800;
+      }
+
+      svg {
+        flex-shrink: 0;
+      }
+    }
+
+    .design-refresh-button {
+      padding: 6px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: @color-gray-500;
+      margin-left: auto;
+
+      &:hover {
+        color: @color-gray-700;
+      }
+
+      &:active {
+        color: @color-gray-800;
+        svg {
+          animation: spin 0.5s ease-in-out;
+        }
+      }
+    }
+  }
+
+  .records-count-text {
+    margin: 12px 30px;
+    font-size: 14px;
+    color: @color-gray-500;
+  }
+
+  .records-table-wrapper {
+    overflow-x: auto;
+    width: calc(100% - 60px);
+    margin: 0 30px;
+  }
+
+  .records-table {
+    width: 100%;
+    min-width: 1000px;
+    border-collapse: collapse;
+    font-size: 14px;
+
+    thead th {
+      background: @color-gray-50;
+      color: @color-gray-700;
+      font-weight: 600;
+      text-align: left;
+      padding: 12px 16px;
+      border-bottom: 1px solid @color-gray-200;
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 16px;
+      border-bottom: 1px solid @color-gray-100;
+      color: @color-gray-800;
+      vertical-align: top;
+    }
+
+    tbody tr {
+      &:hover {
+        background: @color-gray-50;
+      }
+
+      &:last-child td {
+        border-bottom: none;
+      }
+    }
+  }
+
+  .record-id {
+    font-weight: 600;
+    color: @color-gray-800;
+  }
+
+  .smiles-cell {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: monospace;
+  }
+
+  .file-name {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .model-name-link {
+    color: @color-accent;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    text-decoration: underline;
+    &:hover {
+      color: #40904a;
+    }
+  }
+
+  .model-name-text {
+    color: @color-gray-700;
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  .created-date {
+    min-width: 150px;
+    white-space: nowrap;
+  }
+
+  .actions-cell {
+    white-space: nowrap;
+  }
+
+  .action-button {
+    border: none;
+    background: none;
+    color: @color-gray-500;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-right: 8px;
+    transition: color 0.2s;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  .view-button:hover {
+    color: @color-gray-800;
+    background: @color-gray-100;
+  }
+
+  .delete-button:hover {
+    color: #dc2626;
+    background: #fee2e2;
+  }
+
+  .loading-state,
+  .error-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: @color-gray-500;
+  }
+
+  .error-state {
+    color: #dc2626;
+  }
+
+  .no-data {
+    text-align: center;
+    padding: 48px 24px;
+    color: @color-gray-500;
+    font-style: italic;
+  }
+
+  @media (max-width: 1024px) {
+    padding: 16px;
+
+    .records-table {
+      font-size: 12px;
+
+      thead th,
+      tbody td {
+        padding: 8px 12px;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 16px;
+
+    .records-table {
+      min-width: 800px;
+    }
+  }
+}

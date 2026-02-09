@@ -1,0 +1,97 @@
+@import '@/styles/variables.less';
+
+.design-create-container {
+  background: #ffffff;
+  min-height: calc(100vh - 66px);
+  padding: 24px;
+}
+
+.design-create-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.design-create-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.right-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.design-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: @color-text-primary;
+  margin: 0;
+}
+
+.new-design-button {
+  background: @color-text-primary;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: #374151;
+  }
+}
+
+.back-button {
+  background: @color-gray-100;
+  color: @color-gray-700;
+  border: 1px solid @color-gray-300;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: @color-gray-200;
+    border-color: @color-gray-400;
+  }
+}
+
+.back-to-list-button {
+  background: none;
+  border: 1px solid @color-gray-200;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: @color-gray-700;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: @color-accent;
+    color: @color-accent;
+  }
+}
+
+.design-subtitle-wrapper {
+  margin-bottom: 24px;
+}
+
+.design-subtitle {
+  font-size: 14px;
+  color: @color-text-secondary;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.design-operation-area {
+  background: #ffffff;
+}

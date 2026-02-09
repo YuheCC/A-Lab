@@ -1,264 +1,147 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from '@umijs/max';
-import { useTranslation } from 'react-i18next';
-import { getHistoryList, deleteHistory } from './model';
-import { normalizeServerDate } from '@/utils/messageUtils';
+import { useSearchParams, useLocation } from '@umijs/max';
+import { useTranslation, Trans } from 'react-i18next';
+import CollapsibleText from '@/components/CollapsibleText';
+import FeatureCard from '@/pages/Design/components/FeatureCard';
+import FeatureCardGroup from '@/pages/Design/components/FeatureCardGroup';
+import TabSection from '@/components/TabSection';
+import { useAuthStore } from '@/models/useAuth';
+import { useAuthNavigate } from '@/hooks/useAuthNavigate';
 import Introduction from './components/Introduction';
-import Pagination from './components/Pagination';
+import RecordsContent from './components/RecordsContent';
+import ModelsContent from './components/ModelsContent';
 import './index.less';
 
-interface FileRecord {
-  id: string;
-  name: string;
-  date: string;
-  batteryCount: number;
-  avgCirculation: string;
-  avgCycleLife1: number;
-  avgCycleLife2: number;
-  isMock?: boolean;
-  rawData?: any;
-}
+// 本地图标路径
+const ICONS = {
+  newPrediction: "/design/electrode/icon-result-prediction.svg",
+  train: "/design/electrode/icon-train.svg"
+};
 
-interface PredictionToolProps {}
-
-const PredictionTool: React.FC<PredictionToolProps> = () => {
-  const navigate = useNavigate();
+const PredictionTool: React.FC = () => {
+  const navigate = useAuthNavigate();
+  const location = useLocation();
   const { t } = useTranslation();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [historyData, setHistoryData] = useState<FileRecord[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(20);
-  const [total, setTotal] = useState(0);
+  const { hasPermissionNew } = useAuthStore();
 
-  const getInitialTab = (): 'introduction' | 'records' => {
+  // 检查是否有 train 权限
+  const canTrain = hasPermissionNew('cell_life:train');
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const getInitialTab = (): string => {
+    // Check if navigation state has activeTab (from train page)
+    const stateTab = (location.state as any)?.activeTab;
+    // 如果没有 train 权限且试图访问 models tab，则重定向到 introduction
+    if (stateTab === 'models' && !canTrain) return 'introduction';
+    if (stateTab === 'models') return 'models';
+
     const tabParam = searchParams.get('tab');
-    return (tabParam === 'records' || tabParam === 'introduction') ? tabParam : 'introduction';
+    // 如果没有 train 权限且试图访问 models tab，则重定向到 introduction
+    if (tabParam === 'models' && !canTrain) return 'introduction';
+    return (tabParam === 'records' || tabParam === 'introduction' || tabParam === 'models') ? tabParam : 'introduction';
   };
 
-  const [activeTab, setActiveTab] = useState<'introduction' | 'records'>(getInitialTab());
+  const [activeTab, setActiveTab] = useState<string>(getInitialTab());
 
+  // 根据权限动态生成 tabs，没有 train 权限时不显示 models tab
+  const tabs = [
+    { key: 'introduction', label: t('predictionTool.tabs.introduction', 'Introduction'), disabled: false },
+    { key: 'records', label: t('predictionTool.tabs.records', 'Records'), disabled: false },
+    ...(canTrain ? [{ key: 'models', label: t('predictionTool.tabs.models', 'Models'), disabled: false }] : [])
+  ];
+
+  // 初始化时,如果URL没有tab参数且没有从state传递,则设置默认值
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam && (tabParam === 'records' || tabParam === 'introduction')) {
+    const stateTab = (location.state as any)?.activeTab;
+    if (!tabParam && !stateTab) {
       const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.delete('tab');
+      newSearchParams.set('tab', activeTab);
+      setSearchParams(newSearchParams, { replace: true });
+    } else if (stateTab && !tabParam) {
+      // 如果是从state传递的tab,同步到URL
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.set('tab', activeTab);
       setSearchParams(newSearchParams, { replace: true });
     }
   }, []);
 
-  const transformApiDataToFileRecord = (apiData: any): FileRecord => {
-    const avgCycleLife1 = apiData.avg_cycle_life_1 || 0;
-    const avgCycleLife2 = apiData.avg_cycle_life_2 || 0;
-    const avgCycleLife = avgCycleLife1 > 0 ? avgCycleLife1 : avgCycleLife2;
-
-    return {
-      id: apiData.id.toString(),
-      name: apiData.file_name,
-      date: new Date(normalizeServerDate(apiData.created_at)).toLocaleString('zh-CN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      }),
-      batteryCount: apiData.barcode_count,
-      avgCirculation: avgCycleLife > 0 ? `${avgCycleLife.toFixed(0)}` : t('predictionTool.results.unknown'),
-      avgCycleLife1: avgCycleLife1,
-      avgCycleLife2: avgCycleLife2,
-      isMock: apiData.isMock || false,
-      rawData: apiData
-    };
-  };
-
-  const fetchHistoryData = async (page: number = currentPage) => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await getHistoryList({ page, page_size: pageSize });
-      const transformedData = response.data.map(transformApiDataToFileRecord);
-      setHistoryData(transformedData);
-      setTotal(response.total);
-    } catch (err) {
-      console.error('Failed to fetch prediction history:', err);
-      setError(err instanceof Error ? err.message : t('predictionTool.history.loading.error', '获取历史记录失败'));
-      setHistoryData([]);
-      setTotal(0);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // 当权限变化时，如果当前在 models tab 但没有权限，则切换到 introduction
   useEffect(() => {
-    if (activeTab === 'records') {
-      fetchHistoryData(currentPage);
+    if (activeTab === 'models' && !canTrain) {
+      setActiveTab('introduction');
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.set('tab', 'introduction');
+      setSearchParams(newSearchParams, { replace: true });
     }
-  }, [activeTab, currentPage]);
+  }, [canTrain, activeTab]);
 
   const handleNewPrediction = () => {
-    window.open('/predict/create', '_blank');
+    navigate('/predict/create');
   };
 
-  const handleViewDetails = (id: string) => {
-    navigate(`/predict/detail?id=${id}`);
+  const handleTrain = () => {
+    navigate('/predict/train');
   };
 
-  const handleDeleteRecord = async (id: string) => {
-    const record = historyData.find(h => h.id === id);
-    if (record && record.isMock) {
-      alert(t('predictionTool.history.cannotDeleteDemo', 'Cannot delete demo records'));
-      return;
-    }
-
-    if (!confirm(t('predictionTool.history.deleteConfirm', '确定要删除这条记录吗？'))) {
-      return;
-    }
-
-    try {
-      await deleteHistory({ id: parseInt(id) });
-      // 删除后重新获取当前页数据
-      await fetchHistoryData(currentPage);
-    } catch (err) {
-      console.error('Failed to delete record:', err);
-      setError(err instanceof Error ? err.message : t('predictionTool.history.deleteFailed', '删除记录失败'));
-    }
-  };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const handleTabChange = (tab: 'introduction' | 'records') => {
+  const handleTabChange = (tab: string) => {
     setActiveTab(tab);
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    // 更新URL参数
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('tab', tab);
+    setSearchParams(newSearchParams, { replace: true });
   };
 
   return (
-    <div className="prediction-tool-container">
-      <div className="prediction-header">
-        <h1 className="prediction-title">{t('predictionTool.title')}</h1>
-        <p className="prediction-subtitle">
+    <div id="prediction-tool-page">
+      <div className="prediction-tool-page__header">
+        <h1 className="prediction-tool-page__title">
+          {t('predictionTool.title')}
+        </h1>
+        <CollapsibleText className="prediction-tool-page__subtitle">
           {t('predictionTool.subtitle')}
-        </p>
+        </CollapsibleText>
       </div>
 
-      <div className="prediction-action-section">
-        <button className="new-prediction-button" onClick={handleNewPrediction}>
-          + {t('predictionTool.history.newPrediction', 'New Prediction')}
-        </button>
-      </div>
+      <FeatureCardGroup
+        columns={{
+          default: 1,
+          sm: 2,
+          lg: 4,
+        }}
+        gap={16}
+      >
+        <FeatureCard
+          icon={<img src={ICONS.newPrediction} alt="" style={{ width: 20, height: 20 }} />}
+          title={t('predictionTool.features.newPrediction.title', 'New Prediction')}
+          description={t('predictionTool.features.newPrediction.description', 'Create a new battery cycle life prediction based on early cycle data')}
+          iconBgColor="#dbeafe"
+          onClick={handleNewPrediction}
+        />
+        <FeatureCard
+          icon={<img src={ICONS.train} alt="" style={{ width: 20, height: 20 }} />}
+          title={t('predictionTool.features.train.title', 'Train Model')}
+          description={t('predictionTool.features.train.description', 'Train a custom prediction model using your own battery data')}
+          iconBgColor="#fef3c6"
+          onClick={canTrain ? handleTrain : undefined}
+          disabled={!canTrain}
+          disabledTip={!canTrain ? (
+            <Trans
+              i18nKey="predictionTool.trainDisabledTip"
+              components={{
+                emailLink: <a href="mailto:mu.sales@ses.ai" />
+              }}
+            />
+          ) : undefined}
+        />
+      </FeatureCardGroup>
 
-      <div className="prediction-tool-table-container">
-        <div className="prediction-tabs-header">
-          <div className="prediction-tabs">
-            <button
-              className={`prediction-tab ${activeTab === 'introduction' ? 'active' : ''}`}
-              onClick={() => handleTabChange('introduction')}
-            >
-              {t('predictionTool.tabs.introduction', 'Introduction')}
-            </button>
-            <button
-              className={`prediction-tab ${activeTab === 'records' ? 'active' : ''}`}
-              onClick={() => handleTabChange('records')}
-            >
-              {t('predictionTool.tabs.records', 'Records')}
-            </button>
-          </div>
-        </div>
-
-        <div className="prediction-tab-content">
-          {activeTab === 'introduction' && (
-            <div className="prediction-tab-panel">
-              <Introduction />
-            </div>
-          )}
-
-          {activeTab === 'records' && (
-            <div className="prediction-tab-panel">
-              {loading ? (
-                <div className="loading-state">
-                  <p>{t('predictionTool.history.loadingText', 'Loading...')}</p>
-                </div>
-              ) : error ? (
-                <div className="error-state">
-                  <p>{t('predictionTool.history.error', 'Error')}: {error}</p>
-                </div>
-              ) : (
-                <>
-                  <div className="records-table-wrapper">
-                    <table className="records-table">
-                      <thead>
-                        <tr>
-                          <th>{t('predictionTool.list.columns.recordId', 'Record ID')}</th>
-                          <th>{t('predictionTool.list.columns.fileName', 'File Name')}</th>
-                          <th>{t('predictionTool.list.columns.batteryCount', 'Battery Count')}</th>
-                          <th>{t('predictionTool.list.columns.avgCycleLife', 'Avg Cycle Life')}</th>
-                          <th>{t('predictionTool.list.columns.created', 'Created')}</th>
-                          <th>{t('predictionTool.list.columns.actions', 'Actions')}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {historyData.length === 0 ? (
-                          <tr>
-                            <td colSpan={6} className="no-data">
-                              {t('predictionTool.history.noResults', 'No prediction records found.')}
-                            </td>
-                          </tr>
-                        ) : (
-                          historyData.map((record) => (
-                            <tr key={record.id}>
-                              <td className="record-id">PR-{String(record.id).padStart(3, '0')}</td>
-                              <td className="file-name">{record.name}</td>
-                              <td>{record.batteryCount}</td>
-                              <td>{record.avgCirculation} {t('predictionTool.results.cycleUnit')}</td>
-                              <td className="created-date">{formatDate(record.date)}</td>
-                              <td className="actions-cell">
-                                <button
-                                  className="action-button view-button"
-                                  onClick={() => handleViewDetails(record.id)}
-                                >
-                                  {t('predictionTool.history.actions.viewDetails', 'View Details')}
-                                </button>
-                                {!record.isMock && (
-                                  <button
-                                    className="action-button delete-button"
-                                    onClick={() => handleDeleteRecord(record.id)}
-                                  >
-                                    {t('predictionTool.history.actions.delete', 'Delete')}
-                                  </button>
-                                )}
-                              </td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                  <Pagination
-                    current={currentPage}
-                    total={total}
-                    pageSize={pageSize}
-                    onChange={handlePageChange}
-                  />
-                </>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
+      <TabSection activeTab={activeTab} onTabChange={handleTabChange} tabs={tabs}>
+        {activeTab === 'introduction' && <Introduction />}
+        {activeTab === 'records' && <RecordsContent />}
+        {activeTab === 'models' && <ModelsContent />}
+      </TabSection>
     </div>
   );
 };

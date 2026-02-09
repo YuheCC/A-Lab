@@ -5,6 +5,8 @@ import { Plus, ChevronDown, ChevronUp, Info } from 'lucide-react';
 import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import { type MoleculeProperties, type SimilarMolecule } from '@/services/chat/moleculeService';
 import { authFetch, getAPIUrl, COMMERCIAL_SCORE_MAP } from '@/utils.js';
+import { extractIsPublished, buildPublicationProp } from '@/utils/publicationStatus';
+import { buildAutoFetchURL } from '@/services/config/autoFetch';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
 import { ENABLE_CASRN_DISPLAY } from '@/constants/featureFlags';
 import { useAuthStore } from '@/models/useAuth';
@@ -130,6 +132,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     }, [userPermissions]);
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
     const [showHypothetical, setShowHypothetical] = useState(false);
+    const [prioritizePublished, setPrioritizePublished] = useState(true);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
     const additiveOptionsMap = useMemo(
@@ -452,8 +455,35 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         const casCollapseDisplay = casCollapseValue ?? fallbackValue;
         const shouldRenderCollapsibleSection = showFunctionalGroups || showCas || showUmapX || showUmapY;
         const hasCollapsedProperties = showCas || showUmapX || showUmapY;
+        const publicationStatus = extractIsPublished(raw, cardProperties);
+        const publicationProp = buildPublicationProp(publicationStatus, t);
+        const publicationPlacement = publicationProp
+            ? (grade !== undefined && grade !== null
+                ? 'afterGrade'
+                : showSmiles
+                    ? 'afterSmiles'
+                    : 'beforeOthers')
+            : null;
+        const publicationClass = publicationStatus === undefined
+            ? ''
+            : publicationStatus
+                ? 'molecule-card-published'
+                : 'molecule-card-novel';
+        const publicationValueStyle = publicationProp
+            ? {
+                fontWeight: 700,
+                ...(publicationProp.valueStyle || {}),
+                ...(publicationProp.color ? { color: publicationProp.color } : {}),
+            }
+            : undefined;
+        const publicationElement = publicationProp ? (
+            <div className="molecule-card-property-item publication-status">
+                <span className="molecule-card-property-label">{publicationProp.label}:</span>
+                <span className="molecule-card-property-value" style={publicationValueStyle}>{publicationProp.value}</span>
+            </div>
+        ) : null;
         return (
-            <div className="molecule-card">
+            <div className={`molecule-card ${publicationClass}`}>
                 <div className="molecule-card-header">
                     <h3 className="molecule-card-name">{name}</h3>
                     <div className="custom-button-group">
@@ -507,12 +537,15 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             </span>
                         </div>
                     )}
+                    {publicationPlacement === 'afterGrade' && publicationElement}
                     {showSmiles && (
                         <div className="molecule-card-property-item">
                             <span className="molecule-card-property-label">{t('molecular.nodePopup.smiles')}:</span>
                             <span className="molecule-card-property-value">{cardProperties.smiles || '-'}</span>
                         </div>
                     )}
+                    {publicationPlacement === 'afterSmiles' && publicationElement}
+                    {publicationPlacement === 'beforeOthers' && publicationElement}
                     {showMolWeight && (
                         <div className="molecule-card-property-item">
                             <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.molWeight')}:</span>
@@ -840,7 +873,6 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                         }}
                         style={{
                             marginTop: '12px',
-                            minHeight: '100px',
                             backgroundColor: isFindFriendsLocked ? '#f1f5f9' : undefined,
                             color: isFindFriendsLocked ? '#94a3b8' : undefined,
                             cursor: isFindFriendsLocked ? 'not-allowed' : 'text',
@@ -883,6 +915,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             setStructureWeight={setStructureWeight}
                             showHypothetical={showHypothetical}
                             setShowHypothetical={setShowHypothetical}
+                            prioritizePublished={prioritizePublished}
+                            setPrioritizePublished={setPrioritizePublished}
                             numResults={numResults}
                             setNumResults={setNumResults}
                             userPermissions={userPermissions || undefined}
@@ -945,7 +979,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             commercialViability,
             umapX: normalizeCoordinate(umapX),
             umapY: normalizeCoordinate(umapY),
-            functionalGroups: Array.isArray(functionalGroups) ? JSON.stringify(functionalGroups) : (functionalGroups ?? undefined)
+            functionalGroups: Array.isArray(functionalGroups) ? JSON.stringify(functionalGroups) : (functionalGroups ?? undefined),
+            isPublished: extractIsPublished(raw)
         };
     };
 
@@ -983,7 +1018,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             commercialViability,
             umapX: normalizeCoordinate((moleculeData as any).UMAP_0 ?? (moleculeData as any).umap_x ?? (moleculeData as any).x),
             umapY: normalizeCoordinate((moleculeData as any).UMAP_1 ?? (moleculeData as any).umap_y ?? (moleculeData as any).y),
-            functionalGroups: Array.isArray(functionalGroups) ? JSON.stringify(functionalGroups) : (functionalGroups ?? undefined)
+            functionalGroups: Array.isArray(functionalGroups) ? JSON.stringify(functionalGroups) : (functionalGroups ?? undefined),
+            isPublished: extractIsPublished(moleculeData)
         };
     };
 
@@ -999,7 +1035,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             params.set('umap_type', 'anions');
         }
 
-        const queryUrl = `${API_URL}/api/molecule_details?${params.toString()}`;
+        const baseUrl = buildAutoFetchURL('moleculeDetails');
+        const queryUrl = `${baseUrl}?${params.toString()}`;
         const resp = await authFetch(queryUrl, { method: 'GET' });
         const data = await resp.json();
         if (!resp.ok) throw new Error(data?.detail || 'Failed to fetch molecule details');
@@ -1017,6 +1054,9 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             commercial_scores: showHypothetical ? [0, 1, 2, 3] : [1, 2, 3],
             num_results: numResults,
         };
+        if (!useAnionDatabase) {
+            payload.apply_published_balance = prioritizePublished;
+        }
         if (molType) {
             payload.mol_type = molType;
         }
@@ -1089,7 +1129,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             payload.selected_molecule_str = selectedMoleculeStr;
         }
 
-        const resp = await authFetch(`${API_URL}/api/llm/find-friend-with-image`, {
+        const findFriendUrl = buildAutoFetchURL('findFriendWithImage');
+        const resp = await authFetch(findFriendUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)

@@ -117,6 +117,20 @@ export default {
     newConfiguration: 'New Configuration'
   },
 
+  simulationParameters: {
+    title: 'Molecular Simulation Parameters'
+  },
+
+  temperature: {
+    label: 'Temperature (K)',
+    validation: {
+      empty: 'Temperature cannot be empty',
+      invalid: 'Please enter a valid temperature value',
+      tooLow: 'Temperature cannot be lower than 238.15 K',
+      tooHigh: 'Temperature cannot be higher than 378.15 K'
+    }
+  },
+
   saltConfiguration: {
     title: 'Salts Configuration'
   },
@@ -162,7 +176,13 @@ export default {
   },
 
   fraction: {
-    label: 'Fraction (min: 0.05)'
+    label: 'Fraction (min: 0.05)',
+    validation: {
+      empty: 'Fraction cannot be empty',
+      invalid: 'Please enter a valid fraction value',
+      tooLow: 'Fraction cannot be lower than 0.05',
+      tooHigh: 'Fraction cannot be higher than 1'
+    }
   },
 
   removeSolvent: 'Remove solvent',
@@ -200,9 +220,16 @@ export default {
     calculatingDesc: 'MD simulation using polarizable force field is time consuming. The system will notify you regarding the job status.',
     notice2: 'You can close this page without affecting the background calculation process'
   },
+  filters: {
+    searchPlaceholder: 'Search Analysis ID...',
+    statusPlaceholder: 'Select Status',
+    clearFilters: 'Clear Filters',
+    refresh: 'Refresh'
+  },
   history: {
     title: 'Analysis Records',
     newAnalysis: 'New Analysis',
+    showingRecords: 'Showing {{count}} of {{total}} records',
     loading: {
       message: 'Loading...',
       error: 'Error'
@@ -219,7 +246,11 @@ export default {
       viewDetails: 'View Result',
       delete: 'Delete',
       deleteConfirm: 'Are you sure you want to delete this record?',
-      deleteFailed: 'Failed to delete record'
+      deleteFailed: 'Failed to delete record',
+      retry: 'Retry',
+      retryConfirm: 'Are you sure you want to retry this record?',
+      retrySuccess: 'Retry successful',
+      retryFailed: 'Failed to retry record'
     }
   },
   list: {
@@ -230,12 +261,18 @@ export default {
       solventFraction: 'Solvent (Fraction)',
       solventFractionType: 'Fraction Type (Solvent)',
       concentration: 'Salt Concentration',
-      created: 'Created',
+      creator: 'Creator',
+      created: 'Created Time',
       status: 'Status',
+      progress: 'Progress',
       actions: 'Actions'
     }
   },
 
+  progress: {
+    remainingHours: 'Est. {{hours}}h left',
+    remainingMinutes: 'Est. {{minutes}}min left'
+  },
   status: {
     completed: 'Completed',
     success: 'Completed',

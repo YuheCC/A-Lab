@@ -130,6 +130,23 @@ pnpm start:prod
 3. **Environment Configuration**:
    Ensure the target environment's BaseURL configuration is correct
 
+## 📚 Documentation
+
+### Environment Guide
+
+For detailed information about environment configuration, deployment, and troubleshooting, please refer to:
+
+- **[Environment Guide (English)](./ENVIRONMENT_GUIDE.md)** - Complete guide for all environments including Development, Staging, Production, Box, and US
+- **[环境指南 (中文)](./ENVIRONMENT_GUIDE.zh-CN.md)** - 完整的环境配置、部署和故障排查指南
+
+The environment guide covers:
+- Detailed environment setup and configuration
+- Development workflow
+- Docker deployment (Box environment)
+- AWS Amplify deployment (Staging/Production/US)
+- Configuration best practices and recommendations
+- Troubleshooting common issues
+
 ## 🤝 Contributing
 
 1. Fork the project

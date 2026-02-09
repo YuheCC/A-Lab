@@ -117,6 +117,20 @@ export default {
     newConfiguration: '새 구성'
   },
 
+  simulationParameters: {
+    title: '분자 시뮬레이션 매개변수'
+  },
+
+  temperature: {
+    label: '온도 (K)',
+    validation: {
+      empty: '온도를 입력해 주세요',
+      invalid: '유효한 온도 값을 입력해 주세요',
+      tooLow: '온도는 238.15 K 이상이어야 합니다',
+      tooHigh: '온도는 378.15 K 이하여야 합니다'
+    }
+  },
+
   saltConfiguration: {
     title: '염 구성'
   },
@@ -162,7 +176,13 @@ export default {
   },
 
   fraction: {
-    label: '분율 (최소: 0.05)'
+    label: '분율 (최소: 0.05)',
+    validation: {
+      empty: '분율을 입력해주세요',
+      invalid: '유효한 분율 값을 입력해주세요',
+      tooLow: '분율은 0.05 미만일 수 없습니다',
+      tooHigh: '분율은 1을 초과할 수 없습니다'
+    }
   },
 
   removeSolvent: '용매 제거',
@@ -200,9 +220,16 @@ export default {
     calculatingDesc: '편극 역장 기반 분자동역학 시뮬레이션은 오랜 시간이 소요됩니다. 예상 시간 후에 결과를 확인할 수 있으며, 시스템에서 계산 상태를 알려드립니다',
     notice2: '이 페이지를 닫아도 백그라운드 계산 프로세스에는 영향을 주지 않습니다'
   },
+  filters: {
+    searchPlaceholder: '분석 ID 검색...',
+    statusPlaceholder: '상태 선택',
+    clearFilters: '필터 지우기',
+    refresh: '새로고침'
+  },
   history: {
     title: '분석 기록',
     newAnalysis: '새 분석',
+    showingRecords: '{{count}} / {{total}} 개의 기록 표시 중',
     loading: {
       message: '로딩 중...',
       error: '오류'
@@ -219,7 +246,11 @@ export default {
       viewDetails: '결과 보기',
       delete: '삭제',
       deleteConfirm: '이 기록을 삭제하시겠습니까?',
-      deleteFailed: '기록 삭제에 실패했습니다'
+      deleteFailed: '기록 삭제에 실패했습니다',
+      retry: '다시 시도',
+      retryConfirm: '이 기록을 다시 시도하시겠습니까?',
+      retrySuccess: '다시 시도에 성공했습니다',
+      retryFailed: '다시 시도하는 데 실패했습니다'
     }
   },
   list: {
@@ -230,12 +261,18 @@ export default {
       solventFraction: '용매 (분율)',
       solventFractionType: '분율 유형 (용매)',
       concentration: '염 농도',
-      created: '생성일',
+      creator: '생성자',
+      created: '생성 시간',
       status: '상태',
+      progress: '진행률',
       actions: '작업'
     }
   },
 
+  progress: {
+    remainingHours: '예상 {{hours}}시간 남음',
+    remainingMinutes: '예상 {{minutes}}분 남음'
+  },
   status: {
     completed: '완료',
     success: '완료',

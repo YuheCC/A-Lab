@@ -11,8 +11,10 @@ declare module '*.svg' {
   export default src;
 }
 
-// 添加全局变量声明
+// Global variable declarations from UmiJS define
 declare const BASE_URL: string;
+declare const ENVIRONMENT: 'production' | 'staging' | 'development' | 'box' | 'us';
+declare const WS_BASE_URL: string;
 declare const explorer_url: string;
 declare const team_url: string;
 declare const ShowFindFriendsAdvancedOptions: boolean;

@@ -1,0 +1,518 @@
+@import '@/styles/variables.less';
+
+// 外层容器
+.electrode-optimize-container {
+  background: #ffffff;
+  min-height: calc(100vh - 66px);
+  padding: @spacing-xl;
+
+  .parameter-input__label{
+    font-size: @font-size-base;
+  }
+
+  .parameter-input__number {
+    height: 28px;
+    font-size: @font-size-base;
+
+    .ant-input-number-input {
+      font-size: @font-size-base;
+      height: 26px;
+      line-height: 26px;
+    }
+  }
+}
+
+// 标题和返回按钮区域
+.electrode-optimize-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.electrode-optimize-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.electrode-optimize-title {
+  font-size: @font-size-xl;
+  font-weight: @font-weight-semibold;
+  color: @color-text-primary;
+  margin: 0;
+}
+
+.electrode-optimize-new-btn {
+  background: @color-text-primary;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: @font-size-base;
+  font-weight: @font-weight-medium;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background: #374151;
+  }
+}
+
+.electrode-optimize-back-btn {
+  background: @color-gray-100;
+  color: @color-gray-700;
+  border: 1px solid @color-gray-300;
+  border-radius: @radius-md;
+  padding: @spacing-sm @spacing-lg;
+  font-size: @font-size-base;
+  font-weight: @font-weight-medium;
+  cursor: pointer;
+  transition: @transition-fast;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background: @color-gray-200;
+    border-color: @color-gray-400;
+  }
+}
+
+// 内容容器
+.electrode-optimize-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 0;
+}
+
+// Section 区域
+.electrode-optimize-section {
+  margin-bottom: @spacing-2xl;
+}
+
+.electrode-optimize-section-title {
+  font-size: 20px;
+  font-weight: @font-weight-semibold;
+  color: @color-gray-800;
+  margin: 0 0 @spacing-xl 0;
+}
+
+// 表单容器
+.electrode-optimize-form-container {
+  background: #ffffff;
+}
+
+// 子分组（独立边框卡片）
+.electrode-optimize-subsection {
+  margin-bottom: @spacing-xl;
+  padding: @spacing-xl;
+  border: 1px solid @color-gray-200;
+  border-radius: @radius-lg;
+  background: #ffffff;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.electrode-optimize-subsection-title {
+  font-size: @font-size-base;
+  font-weight: @font-weight-semibold;
+  color: @color-gray-900;
+  margin: 0 0 @spacing-lg 0;
+}
+
+// 表单行（两列布局）
+.electrode-optimize-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: @spacing-lg;
+  margin-bottom: @spacing-lg;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  // 三列布局（Cathode Dimension）
+  &--triple {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+.electrode-optimize-form-item {
+  display: flex;
+  flex-direction: column;
+
+  .electrode-optimize-form-row & {
+    margin-bottom: 0;
+  }
+}
+
+.electrode-optimize-label {
+  display: block;
+  font-size: @font-size-base;
+  font-weight: @font-weight-medium;
+  color: @color-gray-700;
+  margin-bottom: @spacing-sm;
+}
+
+// 输入框样式
+.electrode-optimize-input {
+  width: 100%;
+  height: 38px;
+  padding: 0 @spacing-md;
+  font-size: @font-size-base;
+  color: @color-gray-900;
+  background: #ffffff;
+  border: 1px solid @color-gray-200;
+  border-radius: @radius-md;
+  transition: @transition-fast;
+
+  &::placeholder {
+    color: @color-gray-400;
+  }
+
+  &:hover {
+    border-color: @color-accent;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: @color-accent;
+    box-shadow: 0 0 0 3px rgba(86, 178, 106, 0.1);
+  }
+
+  &--disabled {
+    background: @color-gray-50;
+    color: @color-gray-500;
+    cursor: not-allowed;
+
+    &:hover {
+      border-color: @color-gray-200;
+    }
+  }
+}
+
+.electrode-optimize-select {
+  width: 100%;
+
+  .ant-select-selector {
+    height: 38px !important;
+    border-radius: @radius-md !important;
+    border-color: @color-gray-200 !important;
+    padding: 0 @spacing-md !important;
+    display: flex !important;
+    align-items: center !important;
+
+    .ant-select-selection-placeholder {
+      line-height: 38px !important;
+    }
+
+    .ant-select-selection-item {
+      line-height: 38px !important;
+    }
+  }
+
+  .ant-select-selector:hover {
+    border-color: @color-accent !important;
+  }
+
+  &.ant-select-focused .ant-select-selector {
+    border-color: @color-accent !important;
+    box-shadow: 0 0 0 3px rgba(86, 178, 106, 0.1) !important;
+  }
+}
+
+// 错误提示样式
+.electrode-optimize-error-message {
+  margin-top: @spacing-sm;
+  color: #ff4d4f;
+  font-size: 13px;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+
+  &::before {
+    content: '⚠';
+    margin-right: 6px;
+    font-size: 14px;
+  }
+}
+
+// 参数区域
+.electrode-optimize-parameters {
+  margin-top: @spacing-2xl;
+  display: flex;
+  flex-direction: column;
+  gap: @spacing-xl;
+}
+
+// Calculate 按钮
+.electrode-optimize-calculate-btn-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: @spacing-2xl;
+}
+
+// 按钮样式已迁移到 @/components/Button 组件中
+
+// 表格样式
+.electrode-optimize-table {
+  // 表头样式
+  .ant-table-thead > tr > .ant-table-cell {
+    background: @color-gray-50 !important;
+    color: @color-gray-700 !important;
+    font-weight: @font-weight-semibold !important;
+    font-size: 14px !important;
+    padding: @spacing-md @spacing-lg !important;
+    border-bottom: 1px solid @color-gray-200 !important;
+  }
+
+  // 表格内容样式
+  .ant-table {
+    tbody td {
+      padding: @spacing-lg;
+      border-bottom: 1px solid @color-gray-100;
+      color: @color-gray-800;
+      font-size: 14px;
+    }
+
+    tbody tr:hover {
+      background: @color-gray-50;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+  }
+
+  // Details 链接样式
+  .electrode-optimize-details-link {
+    color: @color-accent;
+    cursor: pointer;
+    font-weight: @font-weight-medium;
+    text-decoration: none;
+    transition: color @transition-fast;
+
+    &:hover {
+      color: darken(@color-accent, 10%);
+      text-decoration: underline;
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 1024px) {
+  .electrode-optimize-container {
+    padding: @spacing-lg;
+  }
+}
+
+@media (max-width: 768px) {
+  .electrode-optimize-subsection {
+    padding: @spacing-lg;
+  }
+
+  .electrode-optimize-form-row {
+    grid-template-columns: 1fr;
+
+    &--triple {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .electrode-optimize-table {
+    overflow-x: auto;
+
+    .ant-table {
+      min-width: 800px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .electrode-optimize-container {
+    padding: @spacing-md;
+  }
+
+  .electrode-optimize-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: @spacing-md;
+  }
+
+  .electrode-optimize-back-btn {
+    align-self: flex-end;
+  }
+}
+
+// ============ 空态样式 ============
+.electrode-optimize-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  text-align: center;
+}
+
+.electrode-optimize-empty-icon {
+  position: relative;
+  margin-bottom: @spacing-xl;
+}
+
+.electrode-optimize-empty-icon-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #f0fdf5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.electrode-optimize-empty-dot {
+  position: absolute;
+  border-radius: 50%;
+  background: @color-accent;
+
+  &--top {
+    width: 10px;
+    height: 10px;
+    top: -4px;
+    right: -4px;
+    opacity: 0.6;
+  }
+
+  &--bottom {
+    width: 8px;
+    height: 8px;
+    bottom: 8px;
+    left: -8px;
+    opacity: 0.4;
+  }
+}
+
+.electrode-optimize-empty-title {
+  font-size: @font-size-lg;
+  font-weight: @font-weight-semibold;
+  color: @color-gray-800;
+  margin: 0 0 @spacing-md 0;
+}
+
+.electrode-optimize-empty-description {
+  font-size: @font-size-base;
+  color: @color-gray-500;
+  margin: 0;
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+// ============ 额外推荐区域样式 ============
+
+// 折叠提示栏
+.electrode-optimize-additional-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: @color-positive-light-bg-alt;
+  border: 1px solid @color-positive-border;
+  border-radius: @radius-lg;
+  padding: @spacing-lg @spacing-xl;
+  margin-top: @spacing-xl;
+  margin-bottom: @spacing-lg;
+  gap: @spacing-lg;
+}
+
+.electrode-optimize-additional-banner-text {
+  color: @color-gray-800;
+  font-size: @font-size-base;
+  font-weight: @font-weight-normal;
+  flex: 1;
+}
+
+// 额外推荐区域
+.electrode-optimize-additional-section {
+  animation: fadeInPanel 0.3s ease-out;
+  overflow: hidden;
+}
+
+// 额外推荐区域 - 折叠动画
+.electrode-optimize-additional-section.collapsing {
+  animation: fadeOutPanel 0.3s ease-out forwards;
+}
+
+@keyframes fadeOutPanel {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 1000px;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+    max-height: 0;
+  }
+}
+
+// 额外推荐表格 - 偏差值高亮（红色）
+.electrode-optimize-table-additional {
+  .deviated-value {
+    color: @color-error;
+    font-weight: @font-weight-semibold;
+  }
+}
+
+// 淡入动画
+@keyframes fadeInPanel {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 响应式适配 - 折叠提示栏
+@media (max-width: 768px) {
+  .electrode-optimize-additional-banner {
+    flex-direction: column;
+    gap: @spacing-md;
+    text-align: center;
+  }
+}
+
+// ============ 材料描述 Tooltip 内容样式 ============
+// 注意：Tooltip 外观样式（图标容器、overlay）已统一到 global.less 中
+.electrode-material-tooltip {
+  &__title {
+    font-size: @font-size-base;
+    font-weight: @font-weight-semibold;
+    color: @color-text-primary;
+    margin-bottom: @spacing-sm;
+  }
+
+  &__composition {
+    font-size: @font-size-base;
+    color: @color-text-primary;
+    margin-bottom: @spacing-sm;
+    line-height: 1.5;
+
+    strong {
+      font-weight: @font-weight-semibold;
+    }
+  }
+
+  &__content {
+    font-size: @font-size-base;
+    color: @color-text-primary;
+    line-height: 1.6;
+  }
+}

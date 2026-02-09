@@ -2,13 +2,14 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { useParams, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import type { Message, ToolStats } from '@/utils/messageUtils';
-import { createAssistantMessage, isAssistantMessage, createUserMessage } from '@/utils/messageUtils';
+import { createAssistantMessage, isAssistantMessage, createUserMessage, normalizeServerDateToISOString } from '@/utils/messageUtils';
 import type { ChatHistoryItem } from '../components/History';
 import { useChat } from '../hooks/useChat';
 import { chatService } from '@/services/chat/chatService';
 import { globalWebSocketManager } from '@/services/chat/wsService';
 import { useMoleculePanel } from '../hooks/useMoleculePanel';
-import { authFetch, getAPIUrl } from '@/utils.js';
+import { authFetch } from '@/utils.js';
+import { buildAutoFetchURL } from '@/services/config/autoFetch';
 import type { QueryLimitInfo, QueryLimitsSummary } from '@/types/queryLimit';
 import { normalizeLimitInfo } from '@/utils/queryLimit';
 import { useAuthStore } from '@/models/useAuth';
@@ -199,8 +200,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // 获取使用次数限制
     const fetchQueryLimit = useCallback(async () => {
         try {
-            const API_URL = getAPIUrl();
-            const response = await authFetch(`${API_URL}/query_limit`, {
+            const queryLimitUrl = buildAutoFetchURL('queryLimit');
+            const response = await authFetch(queryLimitUrl, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
@@ -344,6 +345,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             console.error('全局WebSocket错误:', error);
             setWsConnected(false);
             setIsLoading(false);
+            // Don't show error message to user when websocket disconnects
+            /*
             let errorMessage = t('chatbox.chat.sendFailed');
             if ((error as any).message && (error as any).message.includes('timeout')) {
                 errorMessage = t('chatbox.errors.connectionTimeout');
@@ -351,6 +354,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 errorMessage = t('chatbox.errors.serverConnectionFailed');
             }
             addBotMessage(errorMessage, false);
+            */
         });
 
         const unsubscribeMessage = globalWebSocketManager.onMessage((raw) => {
@@ -372,6 +376,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const messageBody = data?.data ?? data;
             const extraData = extractExtraData(messageBody);
             const toolStats = extractToolStats(messageBody);
+            // 提取 msg_type 字段，用于业务场景区分（如判断是否显示 PDF 下载按钮）
+            const msgType = data?.msg_type ?? data?.msgType ?? messageBody?.msg_type ?? messageBody?.msgType;
 
             // 若无 chat_id 或与当前会话不匹配，忽略
             if (!incomingChatId || !currentChatId || Number(incomingChatId) !== currentChatId) {
@@ -417,15 +423,19 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                         content: botChunksRef.current[key],
                         showRegenerate: existingMessage.showRegenerate ?? isNewSessionMessage,
                         ...(extraData ? { extraData } : {}),
-                        ...(toolStats ? { toolStats } : {})
+                        ...(toolStats ? { toolStats } : {}),
+                        ...(msgType ? { msg_type: msgType } : {})
                     } as Message
-                    : createAssistantMessage(botChunksRef.current[key], targetId, isNewSessionMessage);
+                    : createAssistantMessage(botChunksRef.current[key], targetId, isNewSessionMessage, msgType);
 
                 if (extraData) {
                     (updatedMessage as Message).extraData = extraData;
                 }
                 if (toolStats) {
                     (updatedMessage as Message).toolStats = toolStats;
+                }
+                if (msgType) {
+                    (updatedMessage as Message).msg_type = msgType;
                 }
 
                 // 使用精确更新，避免全量刷新
@@ -438,7 +448,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 for (const possibleId of possibleIds) {
                     const existingMessage = messages.find(msg => String(msg.id) === String(possibleId));
                     if (existingMessage) {
-                        upsertMessage({ ...existingMessage, extraData });
+                        upsertMessage({ ...existingMessage, extraData, ...(msgType ? { msg_type: msgType } : {}) });
                         break;
                     }
                 }
@@ -450,7 +460,20 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 for (const possibleId of possibleIds) {
                     const existingMessage = messages.find(msg => String(msg.id) === String(possibleId));
                     if (existingMessage) {
-                        upsertMessage({ ...existingMessage, toolStats });
+                        upsertMessage({ ...existingMessage, toolStats, ...(msgType ? { msg_type: msgType } : {}) });
+                        break;
+                    }
+                }
+            }
+
+            // 单独处理 msg_type 更新（当没有 chunk、extraData、toolStats 时）
+            if (msgType && !(isChunk && chunk) && !extraData && !toolStats && messageId !== undefined && messageId !== null) {
+                const key = String(messageId);
+                const possibleIds = [key, `assistant-${key}`];
+                for (const possibleId of possibleIds) {
+                    const existingMessage = messages.find(msg => String(msg.id) === String(possibleId));
+                    if (existingMessage) {
+                        upsertMessage({ ...existingMessage, msg_type: msgType });
                         break;
                     }
                 }
@@ -459,6 +482,20 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (isDone) {
                 setIsLoading(false);
                 if (messageId !== undefined && messageId !== null) {
+                    const key = String(messageId);
+                    const possibleIds = [key, `assistant-${key}`];
+                    const finishedAtIso = new Date().toISOString();
+                    for (const possibleId of possibleIds) {
+                        const existingMessage = messages.find(msg => String(msg.id) === String(possibleId));
+                        if (existingMessage) {
+                            upsertMessage({
+                                ...existingMessage,
+                                savedAt: finishedAtIso,
+                                timestamp: new Date(finishedAtIso),
+                            });
+                            break;
+                        }
+                    }
                     delete botChunksRef.current[String(messageId)];
                 }
             }
@@ -558,7 +595,20 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if(answerData?.id){
             // 新聊天的消息应该显示 regenerate
             const isNewSessionMessage = sessionStartTime ? new Date() > sessionStartTime : true;
-            addBotMessage(answerData?.content, isNewSessionMessage, `assistant-${answerData?.id}`);
+            const normalizedCreatedAt = (answerData?.created_at || answerData?.createdAt)
+                ? normalizeServerDateToISOString((answerData?.created_at || answerData?.createdAt) as any)
+                : undefined;
+            const normalizedUpdatedAt = (answerData?.updated_at || answerData?.updatedAt)
+                ? normalizeServerDateToISOString((answerData?.updated_at || answerData?.updatedAt) as any)
+                : normalizedCreatedAt;
+            addBotMessage({
+                id: `assistant-${answerData?.id}`,
+                role: 'assistant',
+                content: answerData?.content,
+                createdAt: normalizedCreatedAt,
+                savedAt: normalizedUpdatedAt,
+                timestamp: normalizedUpdatedAt ? new Date(normalizedUpdatedAt) : undefined,
+            } as Message, isNewSessionMessage, `assistant-${answerData?.id}`);
         }
         
         // 在历史记录的非置顶位置增加新创建的聊天
@@ -585,7 +635,20 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if(answerData?.id){
             // 当前会话中的新消息应该显示 regenerate
             const isNewSessionMessage = sessionStartTime ? new Date() > sessionStartTime : true;
-            addBotMessage(answerData?.content, isNewSessionMessage, `assistant-${answerData?.id}`);
+            const normalizedCreatedAt = (answerData?.created_at || answerData?.createdAt)
+                ? normalizeServerDateToISOString((answerData?.created_at || answerData?.createdAt) as any)
+                : undefined;
+            const normalizedUpdatedAt = (answerData?.updated_at || answerData?.updatedAt)
+                ? normalizeServerDateToISOString((answerData?.updated_at || answerData?.updatedAt) as any)
+                : normalizedCreatedAt;
+            addBotMessage({
+                id: `assistant-${answerData?.id}`,
+                role: 'assistant',
+                content: answerData?.content,
+                createdAt: normalizedCreatedAt,
+                savedAt: normalizedUpdatedAt,
+                timestamp: normalizedUpdatedAt ? new Date(normalizedUpdatedAt) : undefined,
+            } as Message, isNewSessionMessage, `assistant-${answerData?.id}`);
         }
         
         // 在已有聊天发送消息后，将该聊天提升至非置顶位置第一条
@@ -613,7 +676,20 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if(answerData?.id){
             // 更新消息应该显示 regenerate
             const isNewSessionMessage = sessionStartTime ? new Date() > sessionStartTime : true;
-            addBotMessage(answerData?.content, isNewSessionMessage, `assistant-${answerData?.id}`);
+            const normalizedCreatedAt = (answerData?.created_at || answerData?.createdAt)
+                ? normalizeServerDateToISOString((answerData?.created_at || answerData?.createdAt) as any)
+                : undefined;
+            const normalizedUpdatedAt = (answerData?.updated_at || answerData?.updatedAt)
+                ? normalizeServerDateToISOString((answerData?.updated_at || answerData?.updatedAt) as any)
+                : normalizedCreatedAt;
+            addBotMessage({
+                id: `assistant-${answerData?.id}`,
+                role: 'assistant',
+                content: answerData?.content,
+                createdAt: normalizedCreatedAt,
+                savedAt: normalizedUpdatedAt,
+                timestamp: normalizedUpdatedAt ? new Date(normalizedUpdatedAt) : undefined,
+            } as Message, isNewSessionMessage, `assistant-${answerData?.id}`);
         }
         await triggerMessageByMode(
             sid,

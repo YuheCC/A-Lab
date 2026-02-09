@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import Pricing from '@/components/Pricing';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/models/useAuth';
-import './PricingOverlay.css';
+import './PricingOverlay.less';
 
 interface PricingOverlayProps {
   visible: boolean;

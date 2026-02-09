@@ -1,0 +1,236 @@
+@import '@/styles/variables.less';
+
+// Mixin for badge base styles
+.badge-base() {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: @badge-height;
+  padding: @badge-padding;
+  border-radius: @badge-radius;
+  font-size: @badge-font-size;
+  font-weight: @font-weight-medium;
+  margin-bottom: @spacing-md;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+// Common Component prefix
+.cc-performance-badge {
+  .badge-base();
+
+  &__text {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: @badge-font-size;
+    line-height: 1;
+    font-weight: @font-weight-medium;
+    text-align: center;
+    gap: @spacing-xs;
+  }
+
+  &__arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+
+    svg {
+      display: block;
+    }
+  }
+
+  // Positive variants
+  &--positive-light {
+    background: @color-positive-light-bg;
+    color: @color-positive-light-text;
+  }
+
+  &--positive-medium {
+    background: @color-positive-medium-bg;
+    color: @color-positive-medium-text;
+  }
+
+  &--positive-dark {
+    background: @color-positive-dark-bg;
+    color: @color-positive-dark-text;
+
+    .cc-performance-badge__text {
+      font-weight: @font-weight-semibold;
+    }
+  }
+
+  // Negative variants
+  &--negative-light {
+    background: @color-negative-light-bg;
+    color: @color-negative-light-text;
+  }
+
+  &--negative-medium {
+    background: @color-negative-medium-bg;
+    color: @color-negative-medium-text;
+  }
+
+  &--negative-dark {
+    background: @color-negative-dark-bg;
+    color: @color-negative-dark-text;
+
+    .cc-performance-badge__text {
+      font-weight: @font-weight-semibold;
+    }
+  }
+
+  // Unknown/Neutral variants
+  &--unknown-light,
+  &--unknown-medium,
+  &--unknown-dark {
+    background: @color-neutral-bg;
+    color: @color-neutral-text;
+  }
+
+  // CE only variant (border instead of background)
+  &--ce-only {
+    padding: @badge-ce-padding;
+    width: @badge-ce-width;
+    background: transparent !important;
+
+    &.cc-performance-badge--positive-light {
+      border: 1px solid @color-positive-light-text;
+    }
+
+    &.cc-performance-badge--positive-medium {
+      color: @color-positive-medium-bg;
+      border: 1px solid @color-positive-medium-bg;
+    }
+
+    &.cc-performance-badge--positive-dark {
+      color: @color-positive-dark-bg;
+      border: 1px solid @color-positive-dark-bg;
+    }
+
+    &.cc-performance-badge--negative-light {
+      border: 1px solid @color-negative-light-text;
+    }
+
+    &.cc-performance-badge--negative-medium {
+      color: @color-negative-medium-bg;
+      border: 1px solid @color-negative-medium-bg;
+    }
+
+    &.cc-performance-badge--negative-dark {
+      color: @color-negative-dark-bg;
+      border: 1px solid @color-negative-dark-bg;
+    }
+  }
+}
+
+// PredictionModule prefix (pm-)
+.pm-performance-result-badge {
+  .badge-base();
+
+  &__text {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: @badge-font-size;
+    line-height: 1;
+    font-weight: @font-weight-medium;
+    text-align: center;
+    gap: @spacing-xs;
+  }
+
+  &__arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+
+    svg {
+      display: block;
+    }
+  }
+
+  // Positive variants
+  &--positive-light {
+    background: @color-positive-light-bg;
+    color: @color-positive-light-text;
+  }
+
+  &--positive-medium {
+    background: @color-positive-medium-bg;
+    color: @color-positive-medium-text;
+  }
+
+  &--positive-dark {
+    background: @color-positive-dark-bg;
+    color: @color-positive-dark-text;
+
+    .pm-performance-result-badge__text {
+      font-weight: @font-weight-semibold;
+    }
+  }
+
+  // Negative variants
+  &--negative-light {
+    background: @color-negative-light-bg;
+    color: @color-negative-light-text;
+  }
+
+  &--negative-medium {
+    background: @color-negative-medium-bg;
+    color: @color-negative-medium-text;
+  }
+
+  &--negative-dark {
+    background: @color-negative-dark-bg;
+    color: @color-negative-dark-text;
+
+    .pm-performance-result-badge__text {
+      font-weight: @font-weight-semibold;
+    }
+  }
+
+  // Unknown/Neutral variants
+  &--unknown-light,
+  &--unknown-medium,
+  &--unknown-dark {
+    background: @color-neutral-bg;
+    color: @color-neutral-text;
+  }
+
+  // CE only variant
+  &--ce-only {
+    padding: @badge-ce-padding;
+    width: @badge-ce-width;
+    background: transparent !important;
+
+    &.pm-performance-result-badge--positive-light {
+      border: 1px solid @color-positive-light-text;
+    }
+
+    &.pm-performance-result-badge--positive-medium {
+      color: @color-positive-medium-bg;
+      border: 1px solid @color-positive-medium-bg;
+    }
+
+    &.pm-performance-result-badge--positive-dark {
+      color: @color-positive-dark-bg;
+      border: 1px solid @color-positive-dark-bg;
+    }
+
+    &.pm-performance-result-badge--negative-light {
+      border: 1px solid @color-negative-light-text;
+    }
+
+    &.pm-performance-result-badge--negative-medium {
+      color: @color-negative-medium-bg;
+      border: 1px solid @color-negative-medium-bg;
+    }
+
+    &.pm-performance-result-badge--negative-dark {
+      color: @color-negative-dark-bg;
+      border: 1px solid @color-negative-dark-bg;
+    }
+  }
+}

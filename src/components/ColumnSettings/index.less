@@ -1,0 +1,199 @@
+@import '@/styles/variables.less';
+
+.column-settings {
+  position: relative;
+  display: inline-block;
+
+  .column-settings-trigger {
+    padding: 6px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: @color-gray-500;
+
+    &:hover {
+      color: @color-gray-700;
+    }
+
+    &:active {
+      color: @color-gray-800;
+    }
+  }
+
+  .column-settings-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    min-width: 200px;
+    background: #ffffff;
+    border: 1px solid @color-gray-200;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    padding: 12px 0;
+
+    .column-settings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px 8px;
+      border-bottom: 1px solid @color-gray-100;
+      margin-bottom: 8px;
+
+      .column-settings-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: @color-gray-800;
+      }
+
+      .column-settings-count {
+        font-size: 12px;
+        color: @color-gray-500;
+      }
+    }
+
+    .column-settings-actions {
+      display: flex;
+      gap: 8px;
+      padding: 0 16px 8px;
+      border-bottom: 1px solid @color-gray-100;
+      margin-bottom: 8px;
+
+      .column-settings-action-btn {
+        flex: 1;
+        padding: 4px 8px;
+        border: 1px solid @color-gray-300;
+        background: #ffffff;
+        border-radius: 4px;
+        font-size: 12px;
+        color: @color-gray-700;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+          border-color: @color-accent;
+          color: @color-accent;
+        }
+      }
+    }
+
+    .column-settings-list {
+      max-height: 300px;
+      overflow-y: auto;
+
+      .column-settings-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 16px;
+        cursor: pointer;
+        transition: background 0.2s;
+        user-select: none;
+
+        &:hover:not(.disabled) {
+          background: @color-gray-50;
+        }
+
+        &.disabled {
+          cursor: not-allowed;
+          opacity: 0.5;
+        }
+
+        input[type='checkbox'] {
+          position: absolute;
+          opacity: 0;
+          cursor: pointer;
+          height: 0;
+          width: 0;
+
+          &:disabled {
+            cursor: not-allowed;
+          }
+        }
+
+        // 自定义复选框容器
+        .column-settings-item-checkbox {
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          min-width: 16px;
+          margin-right: 8px;
+          border: 1.5px solid @color-gray-400;
+          border-radius: 3px;
+          background: #ffffff;
+          transition: all 0.2s;
+
+          // 勾的样式
+          &::after {
+            content: '';
+            position: absolute;
+            display: none;
+            left: 4.5px;
+            top: 1.5px;
+            width: 4px;
+            height: 8px;
+            border: solid @color-accent;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+          }
+        }
+
+        // 选中状态
+        input[type='checkbox']:checked ~ .column-settings-item-checkbox {
+          border-color: @color-accent;
+
+          &::after {
+            display: block;
+          }
+        }
+
+        // hover 状态
+        &:hover:not(.disabled) input[type='checkbox']:not(:disabled) ~ .column-settings-item-checkbox {
+          border-color: @color-accent;
+        }
+
+        // 禁用状态
+        input[type='checkbox']:disabled ~ .column-settings-item-checkbox {
+          border-color: @color-gray-300;
+          background: @color-gray-50;
+          cursor: not-allowed;
+
+          &::after {
+            border-color: @color-gray-400;
+          }
+        }
+
+        .column-settings-item-label {
+          font-size: 14px;
+          color: @color-gray-700;
+          flex: 1;
+        }
+      }
+    }
+
+    // 滚动条样式
+    .column-settings-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .column-settings-list::-webkit-scrollbar-track {
+      background: @color-gray-100;
+      border-radius: 3px;
+    }
+
+    .column-settings-list::-webkit-scrollbar-thumb {
+      background: @color-gray-400;
+      border-radius: 3px;
+
+      &:hover {
+        background: @color-gray-500;
+      }
+    }
+  }
+}

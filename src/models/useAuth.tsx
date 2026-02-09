@@ -9,20 +9,34 @@ interface AuthState {
     isLoading: boolean;
     isAuthenticated: boolean;
     userPermissions: string | null;
+    permissionsNew: string[];
     userName: string | null;
     token: string | null;
     error: string | null;
     userInfo: any | null;
     isAdvancedTier: boolean;
     organization_name: string | null;
-    login: (data: { username: string, password: string }) => Promise<{ success: boolean, error?: string | undefined, data?: any }>;
+    login: (data: { username: string, password: string }) => Promise<{ success: boolean, error?: string | undefined, message?: string, data?: any }>;
     register: (data: { username: string, email: string, first_name: string, last_name: string, organization_name: string, password: string }) => Promise<{ success: boolean, message?: any, error?: string, data?: any }>;
     verifyCode: (data: { verify_id: string, code: string }) => Promise<{ success: boolean, message?: any, error?: string, data?: any }>;
     verifyForgotPassword: (data: { verify_id: string, code: string }) => Promise<{ success: boolean, message?: any, error?: string, data?: any }>;
     logout: () => Promise<void>;
     verifyAuth: () => Promise<void>;
     hasPermission: (permissionsList?: string[]) => boolean;
+    hasPermissionNew: (permission: string) => boolean;
 }
+
+// 解析 permissions_new JSON 字符串为数组
+const parsePermissionsNew = (permissionsNewStr: string | null | undefined): string[] => {
+    if (!permissionsNewStr) return [];
+    try {
+        const parsed = JSON.parse(permissionsNewStr);
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+        console.error('Failed to parse permissions_new:', e);
+        return [];
+    }
+};
 
 export const useAuthStore = create<AuthState>((set, get) => ({
 
@@ -30,6 +44,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     isLoading: false,
     isAuthenticated: false,
     userPermissions: null,
+    permissionsNew: [],
     userName: null,
     token: null,
     error: null,
@@ -40,7 +55,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         const token = localStorage.getItem('token');
         const permissions = localStorage.getItem('permissions') || '';
         const organizationName = localStorage.getItem('organization_name');
-        set({ userPermissions: permissions, organization_name: organizationName, isLoading: true });
+        const permissionsNewStr = localStorage.getItem('permissions_new');
+        const permissionsNew = parsePermissionsNew(permissionsNewStr);
+        set({ userPermissions: permissions, permissionsNew, organization_name: organizationName, isLoading: true });
 
         if (!token) {
             set({
@@ -48,6 +65,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 isAuthenticated: false,
                 initialAuthLoaded: true,
                 userPermissions: permissions || 'research',
+                permissionsNew: [],
                 userInfo: null,
                 isAdvancedTier: false,
                 organization_name: organizationName || null,
@@ -67,11 +85,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 localStorage.removeItem('token');
                 localStorage.removeItem('username');
                 localStorage.removeItem('permissions');
+                localStorage.removeItem('permissions_new');
                 localStorage.removeItem('organization_name');
                 localStorage.removeItem('email');
                 set({
                     isAuthenticated: false,
                     userPermissions: 'research',
+                    permissionsNew: [],
                     isLoading: false,
                     initialAuthLoaded: true,
                     userInfo: null,
@@ -79,9 +99,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                     organization_name: null,
                 });
                 return;
-            }
-            if (response?.ok === false) {
-                throw new Error(response?.data?.detail || 'Failed to verify authentication');
             }
             const data = response.data;
 
@@ -95,11 +112,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             if (data.email) {
                 localStorage.setItem('email', data.email);
             }
+            // 存储 permissions_new
+            if (data.permissions_new) {
+                localStorage.setItem('permissions_new', data.permissions_new);
+            }
+            const parsedPermissionsNew = parsePermissionsNew(data.permissions_new);
 
             set({
                 isAuthenticated: true,
                 userName: data.username,
                 userPermissions: data.permissions || 'research',
+                permissionsNew: parsedPermissionsNew,
                 isLoading: false,
                 initialAuthLoaded: true,
                 userInfo: data,
@@ -111,11 +134,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             localStorage.removeItem('token');
             localStorage.removeItem('username');
             localStorage.removeItem('permissions');
+            localStorage.removeItem('permissions_new');
             localStorage.removeItem('organization_name');
             localStorage.removeItem('email');
             set({
                 isAuthenticated: false,
                 userPermissions: 'research',
+                permissionsNew: [],
                 isLoading: false,
                 initialAuthLoaded: true,
                 userInfo: null,
@@ -132,6 +157,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             const response: any = await loginService({ username, password });
             const data = response.data;
             const isAdvancedTier = ['admin', 'enterprise', 'joint'].includes(data.permissions);
+            const parsedPermissionsNew = parsePermissionsNew(data.permissions_new);
 
             set({
                 isAuthenticated: true,
@@ -139,6 +165,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 token: data.access_token,
                 userName: data.username,
                 userPermissions: data.permissions || '',
+                permissionsNew: parsedPermissionsNew,
                 userInfo: data,
                 isAdvancedTier: isAdvancedTier,
                 organization_name: data.organization_name || null,
@@ -154,12 +181,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             if (data.email) {
                 localStorage.setItem('email', data.email);
             }
-            return { success: response?.ok !== false, data: data, message: data.message || data.detail || "" };
-            
+            // 存储 permissions_new
+            if (data.permissions_new) {
+                localStorage.setItem('permissions_new', data.permissions_new);
+            }
+            return { success: true, data: data, message: data.message || data.detail || "" };
+
         } catch (error) {
-            const errorMessage = (error as any)?.detail || 'Authentication failed';
+            const errorMessage = (error as any)?.msg || 'Authentication failed';
             set({ isLoading: false, error: errorMessage });
-            return { success: false, error: errorMessage }
+            return { success: false, error: errorMessage, message: errorMessage }
         }
     },
 
@@ -167,12 +198,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         localStorage.removeItem('token');
         localStorage.removeItem('username');
         localStorage.removeItem('permissions');
+        localStorage.removeItem('permissions_new');
         localStorage.removeItem('organization_name');
         localStorage.removeItem('email');
         set({
             isAuthenticated: false,
             token: null,
             userPermissions: null,
+            permissionsNew: [],
             userName: null,
             isLoading: false,
             error: null,
@@ -195,15 +228,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 error: null,
             })
 
-            return { success: response?.ok !== false, data: data, message: data.message || data.detail || "" };
+            return { success: true, data: data, message: data.message || data.detail || "" };
 
         } catch (error) {
-            const errorMessage = (error as any)?.detail || 'Network error occurred';
+            const errorMessage = (error as any)?.msg || 'Network error occurred';
             set({
                 error: errorMessage,
                 isLoading: false
             });
-            return { success: false, error: errorMessage }
+            return { success: false, error: errorMessage, message: errorMessage }
         }
     },
 
@@ -218,15 +251,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 error: null,
             })
 
-            return { success: response?.ok !== false, data: data, message: data.message || data.detail || "" };
+            return { success: true, data: data, message: data.message || data.detail || "" };
 
         } catch (error) {
-            const errorMessage = (error as any)?.detail || 'Network error occurred';
+            const errorMessage = (error as any)?.msg || 'Network error occurred';
             set({
                 error: errorMessage,
                 isLoading: false
             });
-            return { success: false, error: errorMessage }
+            return { success: false, error: errorMessage, message: errorMessage }
         }
     },
 
@@ -241,15 +274,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 error: null,
             })
 
-            return { success: response?.ok !== false, data: data, message: data.message || data.detail || "" };
+            return { success: true, data: data, message: data.message || data.detail || "" };
 
         } catch (error) {
-            const errorMessage = (error as any)?.detail || 'Network error occurred';
+            const errorMessage = (error as any)?.msg || 'Network error occurred';
             set({
                 error: errorMessage,
                 isLoading: false
             });
-            return { success: false, error: errorMessage }
+            return { success: false, error: errorMessage, message: errorMessage }
         }
     },
 
@@ -258,6 +291,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
         const { userPermissions } = get();
         return userPermissions ? permissionsList.includes(userPermissions) : false;
+    },
+
+    hasPermissionNew: (permission: string) => {
+        const { permissionsNew } = get();
+        return permissionsNew.includes(permission);
     }
 }))
 

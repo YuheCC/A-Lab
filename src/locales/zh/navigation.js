@@ -9,6 +9,8 @@ export default {
     favorites: "收藏",
     predict: "预测",
     design: "设计",
+    electrolyte: "电解液",
+    electrode: "电极",
     formulation: "配方",
     manufacturing: "生产",
     about: "关于",

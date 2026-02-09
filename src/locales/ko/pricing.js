@@ -184,6 +184,8 @@ export default {
     intelligentFindFriends: "지능형 친구 찾기",
     formulate: "포뮬레이션",
     design: "디자인",
+    designElectrolyte: "전해질 디자인",
+    designElectrode: "전극 디자인",
     predict: "예측",
     dataSecurity: "데이터 보안",
     dataSecurityOnCloud: "클라우드",
@@ -417,7 +419,7 @@ export default {
         description: "6가지 속성을 1-2주 내에 결과 제공: SES 연락"
       }
     },
-    design: {
+    designElectrolyte: {
       basic: {
         text: "뷰 전용",
         description: "（1개 전체 예시）"
@@ -444,6 +446,28 @@ export default {
       joint: {
         text: "25°C 사이클 수명\n25°C CE/레이트 성능\n45°C 사이클 수명\n45°C CE"
       }
+    },
+    designElectrode: {
+      basic: {
+        text: "뷰 전용",
+        description: "（1개 전체 예시）"
+      },
+      research: {
+        text: "뷰 전용",
+        description: "（1개 전체 예시）"
+      },
+      explorer: {
+        text: "뷰 전용",
+        description: "（1개 전체 예시）"
+      },
+      team: {
+        text: "뷰 전용",
+        description: "（1개 전체 예시）"
+      },
+      enterprise1: {},
+      enterprise2: {},
+      enterprise3: {},
+      joint: {}
     },
     predict: {
       basic: {

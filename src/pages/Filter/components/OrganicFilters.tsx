@@ -151,7 +151,15 @@ const OrganicFilters = () => {
     const nodePopupRef = useRef<NodePopupRef>(null);
 
     const { userPermissions, isAuthenticated } = useAuthStore();
-    const { data, loading, error } = usePlotDataStore(); 
+    const { data, loading, error, fetchData, fetchInitialData } = usePlotDataStore();
+
+    // 组件挂载时获取数据
+    useEffect(() => {
+        if (data.length === 0) {
+            fetchInitialData();
+            fetchData();
+        }
+    }, [data.length, fetchData, fetchInitialData]);
 
     const [filteredGraphData, setFilteredGraphData] = useState<Node[]>(data);
     const [tempFilterRanges, setTempFilterRanges] = useState<{ [key: string]: [number, number] }>({});

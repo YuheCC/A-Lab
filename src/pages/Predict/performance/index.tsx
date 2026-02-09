@@ -5,7 +5,7 @@ import InfoTooltip from '@/components/InfoTooltip';
 import PredictionModule from './components/PredictionModule';
 import HistoryModule from './components/HistoryModule';
 import ResultModal from './components/ResultModal';
-import './index.css';
+import './index.less';
 
 interface PredictionResult {
   id: string;

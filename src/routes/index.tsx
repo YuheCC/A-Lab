@@ -43,12 +43,56 @@ export default  [
         component: "PredictionTool/detail"
     },
     {
+        path: "/predict/model-detail",
+        component: "PredictionTool/model-detail"
+    },
+    {
+        path: "/predict/train",
+        component: "PredictionTool/train"
+    },
+    {
         path: "/manufacture",
         component: "Manufacturing"
     },
     {
         path: '/design',
-        component: "Predict/performance"
+        redirect: '/design/electrolyte'
+    },
+    {
+        path: '/design/electrolyte',
+        component: "Design/Electrolyte"
+    },
+    {
+        path: '/design/electrolyte/create',
+        component: "Design/Electrolyte/create"
+    },
+    {
+        path: '/design/electrolyte/record',
+        component: "Design/Electrolyte/record"
+    },
+    {
+        path: '/design/electrolyte/model-detail',
+        component: "Design/Electrolyte/model-detail"
+    },
+    {
+        path: '/design/electrolyte/train',
+        component: "Design/Electrolyte/train"
+    },
+    {
+        path: '/design/electrode',
+        component: "Design/Electrode"
+    },
+    {
+        path: '/design/electrode/predict',
+        component: "Design/Electrode/Predict"
+    },
+    {
+        path: '/design/electrode/optimize',
+        component: "Design/Electrode/Optimize"
+    },
+    {
+        path: '/design/electrode/detail/:id',
+        component: "Design/Electrode/Detail"
     },
     {
         path: "/formulate",
@@ -113,5 +157,9 @@ export default  [
         path: "/reset-password",
         component: "Login/resetPassword",
         layout: false,
+    },
+    {
+        path: "*",
+        component: "404",
     },
 ]

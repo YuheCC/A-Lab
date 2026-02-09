@@ -1,18 +1,20 @@
 import { Outlet, useLocation } from "umi";
 import Header from "@/components/Header";
-import { useAnionsPlotDataStore, usePlotDataStore } from "@/models/usePlotData";
 import { useEffect, useState, createContext } from "react";
 // import "./index.less";
 import { useTranslation } from "react-i18next";
 import { COMMERCIAL_SCORE_MAP } from "@/utils";
 import { authFetch, getAPIUrl } from "@/utils";
+import { buildAutoFetchURL } from "@/services/config/autoFetch";
 import { useAuthStore } from "@/models/useAuth";
 import { MessageProvider, useMessage } from "@/components/MessageProvider";
 import PricingOverlay from "@/components/PricingOverlay";
 import { usePageCleanup } from "@/hooks/usePageCleanup";
+import { VERIFY_AUTH_PARAM } from "@/hooks/useAuthNavigate";
 import { LoginModalProvider, useLoginModalContext } from "@/components/LoginModal/context";
 import LoginModal from "@/components/LoginModal";
 import { setGlobalPricingModalHandler, resetGlobalPricingModalHandler } from "@/utils/authHelpers";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 const API_URL = getAPIUrl();
 
@@ -24,8 +26,6 @@ const FullNavLayoutInner = () => {
     const pathname = location.pathname;
     const isChatPage = pathname.includes('/chat') || pathname.includes('/ask');
     const isPredictPage = pathname.includes('/predict');
-    const { fetchInitialData , fetchData} = usePlotDataStore();
-    const { fetchInitialData: fetchInitialDataAnions, fetchData: fetchDataAnions } = useAnionsPlotDataStore();
     const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState<any>({});
     const { t, i18n } = useTranslation();
     const { verifyAuth } = useAuthStore();
@@ -46,6 +46,19 @@ const FullNavLayoutInner = () => {
     useEffect(() => {
         verifyAuth();
     }, []);
+
+    // 监听导航参数，检测 _verifyAuth 触发身份验证
+    useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        if (searchParams.has(VERIFY_AUTH_PARAM)) {
+            verifyAuth();
+            // 清理 URL 中的 _verifyAuth 参数，避免刷新时重复触发
+            searchParams.delete(VERIFY_AUTH_PARAM);
+            const cleanSearch = searchParams.toString();
+            const cleanUrl = pathname + (cleanSearch ? `?${cleanSearch}` : '') + (location.hash || '');
+            window.history.replaceState(null, '', cleanUrl);
+        }
+    }, [pathname, location.search]);
 
     // 定义登录成功后的回调函数
     const handleLoginSuccess = () => {
@@ -126,7 +139,8 @@ const FullNavLayoutInner = () => {
             umap_y: molecule.y || null
           };
     
-          const response = await authFetch(`${API_URL}/favorites`, {
+          const favoritesUrl = buildAutoFetchURL('favorites');
+          const response = await authFetch(favoritesUrl, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -185,12 +199,6 @@ const FullNavLayoutInner = () => {
         }
     };
 
-    useEffect(() => {
-        fetchInitialData();
-        fetchData();
-        fetchInitialDataAnions();
-        fetchDataAnions();
-    }, []);
     const getMainContainerClassName = () => {
         if (isChatPage) {
             return 'main-container chat-container';
@@ -219,11 +227,17 @@ const FullNavLayoutInner = () => {
           }}
         >
           <FavoriteContext.Provider value={{ moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites }}>
-              <Header />
-              <div className={`${getMainContainerClassName()} ${language}-page`}>
-                  <Outlet />
+              <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+                <Header />
+                <ErrorBoundary>
+                  <div
+                    className={`${getMainContainerClassName()} ${language}-page`}
+                  >
+                      <Outlet />
+                  </div>
+                </ErrorBoundary>
               </div>
-              <PricingOverlay 
+              <PricingOverlay
                   visible={showPricingOverlay}
                   onClose={() => {
                     setShowPricingOverlay(false)

@@ -1,0 +1,112 @@
+@import '@/styles/variables.less';
+
+.mol-editor-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    border: solid 1px @color-gray-300;
+    background-color: #fff;
+}
+
+.mol-editor-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px 8px 0;
+}
+
+.mol-editor-banner {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(220, 38, 38, 0.95);
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.mol-editor-import-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    color: #0f172a;
+}
+
+.mol-editor-import-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.mol-editor-import-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.mol-editor-import-button:disabled:hover {
+    background-color: transparent;
+}
+
+.mol-editor-import-button:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+.mol-editor {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    background-color: transparent;
+}
+
+.mol-editor-container .tips {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    background-color: #eaeaea;
+    font-size: 12px;
+    padding: 5px 10px;
+}
+
+/* Kekule Overrides */
+.K-Widget .K-Button {
+    padding: 5px;
+    border: none !important;
+}
+
+.K-Chem-InnerToolbar .K-Pri-Glyph-Content {
+    width: 16px;
+    height: 16px;
+}
+.K-Chem-Composer-Editor-Stage {
+    margin: 4px;
+}
+
+.K-Chem-Composer .K-Chem-Editor {
+    border-radius: 4px;
+}
+
+.K-Chem-MolAtomAndFormulaIaController>.K-Pri-Glyph-Content, .K-Chem-MolAtomIaController>.K-Pri-Glyph-Content {
+    /* Lucide Atom Icon*/
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWF0b20taWNvbiBsdWNpZGUtYXRvbSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMSIvPjxwYXRoIGQ9Ik0yMC4yIDIwLjJjMi4wNC0yLjAzLjAyLTcuMzYtNC41LTExLjktNC41NC00LjUyLTkuODctNi41NC0xMS45LTQuNS0yLjA0IDIuMDMtLjAyIDcuMzYgNC41IDExLjkgNC41NCA0LjUyIDkuODcgNi41NCAxMS45IDQuNVoiLz48cGF0aCBkPSJNMTUuNyAxNS43YzQuNTItNC41NCA2LjU0LTkuODcgNC41LTExLjktMi4wMy0yLjA0LTcuMzYtLjAyLTExLjkgNC41LTQuNTIgNC41NC02LjU0IDkuODctNC41IDExLjkgMi4wMyAyLjA0IDcuMzYuMDIgMTEuOS00LjVaIi8+PC9zdmc+)
+}
+
+.K-Chem-Composer-Assoc-Toolbar .K-Chem-MolAtomIaController>.K-Pri-Glyph-Content {
+    /* Lucide Atom Icon*/
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWF0b20taWNvbiBsdWNpZGUtYXRvbSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMSIvPjxwYXRoIGQ9Ik0yMC4yIDIwLjJjMi4wNC0yLjAzLjAyLTcuMzYtNC41LTExLjktNC41NC00LjUyLTkuODctNi41NC0xMS45LTQuNS0yLjA0IDIuMDMtLjAyIDcuMzYgNC41IDExLjkgNC41NCA0LjUyIDkuODcgNi41NCAxMS45IDQuNVoiLz48cGF0aCBkPSJNMTUuNyAxNS43YzQuNTItNC41NCA2LjU0LTkuODcgNC41LTExLjktMi4wMy0yLjA0LTcuMzYtLjAyLTExLjkgNC41LTQuNTIgNC41NC02LjU0IDkuODctNC41IDExLjkgMi4wMyAyLjA0IDcuMzYuMDIgMTEuOS00LjVaIi8+PC9zdmc+)
+}

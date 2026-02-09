@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Info } from 'lucide-react';
 import PropertiesTable from '../PropertiesTable';
-import './index.css';
+import './index.less';
 
 const IntroductionNew: React.FC = () => {
   const { t } = useTranslation();

@@ -1,0 +1,48 @@
+@import '@/styles/variables.less';
+
+.design-introduction {
+  padding: 0px 24px 96px 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  &__content {
+    line-height: 1.8;
+    color: @color-text-primary;
+  }
+
+  &__paragraph {
+    margin-bottom: 20px;
+    font-size: 16px;
+    text-align: justify;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__gallery {
+    margin: 32px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  &__figure {
+    margin: 0;
+    padding: 0 124px;
+  }
+
+  &__figure-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: @color-text-primary;
+    margin-bottom: 12px;
+  }
+
+  &__image {
+    max-width: 100%;
+    height: auto;
+    margin-left: 24px;
+  }
+}
+

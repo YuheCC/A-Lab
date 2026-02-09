@@ -6,7 +6,7 @@ import { useChatStore } from "@/models/useChat";
 import { useShallow } from "zustand/react/shallow";
 import CustomButton from "@/components/CustomButton/index.js";
 
-import './ChatHistorySidebar.css'; 
+import './ChatHistorySidebar.less'; 
 
 export const ChatItem = ({ chatId, chatName, isActive, onConfirmDelete, onClick, loading }) => {
     return (

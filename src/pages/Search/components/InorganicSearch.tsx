@@ -2,7 +2,9 @@ import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
 import { useMemo, useState, useRef, useEffect, useContext, useCallback } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
+import { extractIsPublished, buildPublicationProp, insertPublicationProp } from '@/utils/publicationStatus';
 import { raiseResponseError } from '@/utils/errorHelpers';
+import { buildAutoFetchURL } from "@/services/config/autoFetch";
 import { findFriends } from "@/services/findFriends";
 import { useInorganicPlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
@@ -44,6 +46,7 @@ interface InorganicMoleculeData {
     image?: string;
     grade?: number;
     reasoning?: string;
+    is_published?: boolean;
     properties: {
         molwt: number;
         homo_eV: number;
@@ -76,6 +79,7 @@ interface InorganicSimilarMolecule {
     image?: string;
     grade?: number;
     reasoning?: string;
+    is_published?: boolean;
     cluster: number;
     // 无机分子特有的属性
     sulfur_content?: number;
@@ -134,6 +138,7 @@ const InorganicSearch = () => {
     const defaultCompute = useMemo(() => 'Disabled', []);
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
     const [showHypothetical, setShowHypothetical] = useState(false);
+    const [prioritizePublished, setPrioritizePublished] = useState(true);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
 
@@ -575,6 +580,7 @@ const InorganicSearch = () => {
                 image: mol.image,
                 grade: mol.grade,
                 reasoning: mol.reasoning,
+                is_published: extractIsPublished(mol),
                 properties: {
                     molwt: mol.molecular_weight,
                     homo_eV: mol.HOMO_eV,
@@ -661,7 +667,7 @@ const InorganicSearch = () => {
 
         try {
             // 使用无机分子搜索接口
-            let searchEndpoint = `${API_URL}/api/llm/search-new`;
+            const searchEndpoint = buildAutoFetchURL('search');
             const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : selectedMolType;
             const molTypeParam = molTypeToSend ? `&mol_type=${encodeURIComponent(molTypeToSend)}` : '';
 
@@ -746,6 +752,7 @@ const InorganicSearch = () => {
                             molType: molTypeToSend,
                             computeLevel: computeToSend,
                             showHypothetical,
+                            prioritizePublished,
                             includeQuery,
                             queryString,
                             isInorganic: true,
@@ -976,6 +983,8 @@ const InorganicSearch = () => {
                                 setStructureWeight={setStructureWeight}
                                 showHypothetical={showHypothetical}
                                 setShowHypothetical={setShowHypothetical}
+                                prioritizePublished={prioritizePublished}
+                                setPrioritizePublished={setPrioritizePublished}
                                 numResults={numResults}
                                 setNumResults={setNumResults}
                                 cathode={cathode}
@@ -1066,8 +1075,10 @@ const InorganicSearch = () => {
                                                 gradeDetails
                                             );
                                             const gradeProp = !overallScoreProp && gradeDetails?.show ? gradeDetails : null;
+                                            const isPublished = extractIsPublished(molecule, molecule.rawData, molecule.properties);
+                                            const publicationProp = buildPublicationProp(isPublished, t);
 
-                                            const propGroups = [
+                                            const basePropGroups = [
                                                 { label: t('search.properties.smiles'), value: molecule.smiles, span: 4 },
                                                 ...(overallScoreProp ? [overallScoreProp] : gradeProp ? [gradeProp] : []),
                                                 { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
@@ -1081,6 +1092,7 @@ const InorganicSearch = () => {
                                                 { label: 'Nitrogen Content', value: molecule.properties?.nitrogen_content, span: 2, suffix: ' %' },
                                                 { label: 'Halogen Content', value: molecule.properties?.halogen_content, span: 2, suffix: ' %' }
                                             ].filter(Boolean);
+                                            const propGroups = insertPublicationProp(basePropGroups, publicationProp);
 
                                             const foldPropGroups = [
                                                 ...(casFoldProp ? [casFoldProp] : []),
@@ -1096,6 +1108,7 @@ const InorganicSearch = () => {
                                                     showMoreDetails={false}
                                                     large={true}
                                                     cation={molecule.cation ?? molecule.rawData?.cation ?? molecule.rawData?.CATION}
+                                                    publicationStatus={isPublished}
                                                     propGroups={propGroups} foldPropGroups={foldPropGroups}>
                                                     <div style={{ display: 'flex', flexFlow: 'column', textAlign: 'center', width: '100%' }}>
                                                         <div style={{ display: 'flex', flexFlow: 'row', gap: '5px', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -1187,8 +1200,10 @@ const InorganicSearch = () => {
                                                 structureScoreSummary,
                                                 gradeDetails
                                             );
+                                            const isPublished = extractIsPublished(molecule);
+                                            const publicationProp = buildPublicationProp(isPublished, t);
 
-                                            const propGroups = [
+                                            const basePropGroups = [
                                                 { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4 },
                                                 ...(overallScoreProp ? [overallScoreProp] : []),
                                                 { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
@@ -1202,6 +1217,7 @@ const InorganicSearch = () => {
                                                 { label: 'Nitrogen Content', value: molecule.nitrogen_content, span: 2, suffix: ' %' },
                                                 { label: 'Halogen Content', value: molecule.halogen_content, span: 2, suffix: ' %' }
                                             ].filter(Boolean);
+                                            const propGroups = insertPublicationProp(basePropGroups, publicationProp);
 
                                             return (
                                                 <MolCard
@@ -1211,6 +1227,7 @@ const InorganicSearch = () => {
                                                     showMoreDetails={false}
                                                     large={true}
                                                     cation={molecule.cation ?? (molecule as any)?.CATION}
+                                                    publicationStatus={isPublished}
                                                     propGroups={propGroups} 
                                                     foldPropGroups={[
                                                         ...(casFoldProp ? [casFoldProp] : []),

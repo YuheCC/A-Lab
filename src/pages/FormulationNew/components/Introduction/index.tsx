@@ -1,6 +1,6 @@
 import React from 'react';
 import PropertiesTable from '../PropertiesTable';
-import './index.css';
+import './index.less';
 
 const Introduction: React.FC = () => {
   return (
