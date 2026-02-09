@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Download } from 'lucide-react';
 import { downloadFile, type HistoryDetailResponse } from '@/services/prediction/predictionTool';
 import { getHistoryDetail } from '../model';
+import type { MockHistoryDetailResponse } from '../example';
 import { formatUTCDateTime } from '@/utils/dateUtils';
 import CycleLifeScatterChart from '../components/CycleLifeScatterChart';
 import CycleLifeLineChart from '../components/CycleLifeLineChart';
@@ -15,7 +16,7 @@ const DetailPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [detailData, setDetailData] = useState<HistoryDetailResponse | null>(null);
+  const [detailData, setDetailData] = useState<HistoryDetailResponse | MockHistoryDetailResponse | null>(null);
   const [downloading, setDownloading] = useState(false);
   const [selectedBarcode, setSelectedBarcode] = useState<string | undefined>();
 
@@ -53,6 +54,18 @@ const DetailPage: React.FC = () => {
 
   const handleDownload = async () => {
     if (!detailData?.file_name) return;
+
+    // example 数据直接下载静态文件，不调用接口
+    const isMockData = (detailData as MockHistoryDetailResponse).isMock;
+    if (isMockData) {
+      const link = document.createElement('a');
+      link.href = '/predict/demo.csv';
+      link.download = 'demo.csv';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return;
+    }
 
     setDownloading(true);
     try {
