@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@umijs/max';
 import { LeftOutlined } from '@ant-design/icons';
@@ -30,6 +30,8 @@ import {
   dimensionParameterRanges,
 } from '../validation';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useAuthStore } from '@/models/useAuth';
+import { PricingContext } from '@/layouts/index';
 import './index.less';
 import { Info } from 'lucide-react';
 
@@ -39,6 +41,8 @@ const OptimizePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const message = useMessage();
+  const { userPermissions } = useAuthStore();
+  const pricingContext = useContext(PricingContext);
 
   // 表单状态
   const [formData, setFormData] = useState<DesignTargetsFormData>({
@@ -219,6 +223,12 @@ const OptimizePage: React.FC = () => {
 
   // 处理查看详情
   const handleViewDetails = (record: DesignRecommendation, index: number, isInvalid = false) => {
+    // 权限判断：非 enterprise 以上权限，显示会员升级框
+    if (!['admin', 'enterprise','enterprise1', 'enterprise2', 'enterprise3', 'joint'].includes(userPermissions || '')) {
+      pricingContext?.setShowUpgradeModal?.(true);
+      return;
+    }
+
     // 根据来源从 fullResults.valid 或 fullResults.invalid 获取详情数据
     const sourceData = isInvalid ? fullResults.invalid : fullResults.valid;
     const fullData = sourceData[index];

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import type { TFunction } from 'i18next';
 import { LeftOutlined } from '@ant-design/icons';
 import { Select, Table, Modal } from 'antd';
@@ -13,6 +13,8 @@ import type { OptimizeGroupedResultDTO } from '@/services/electrode/types';
 import type { DeviatedFieldType } from '../Optimize/types';
 import { PARAMETER_RANGES } from '../Optimize/types';
 import Button from '@/components/Button';
+import { useAuthStore } from '@/models/useAuth';
+import { PricingContext } from '@/layouts/index';
 import './index.less';
 
 const { Option } = Select;
@@ -116,6 +118,9 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
   modelResult,
   onGoBack,
 }) => {
+  const { userPermissions } = useAuthStore();
+  const pricingContext = useContext(PricingContext);
+
   // Modal 状态
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedResult, setSelectedResult] = useState<OptimizeResultItemDTO | null>(null);
@@ -199,6 +204,12 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
 
   // 处理查看详情
   const handleViewDetails = (record: OptimizeResultItemDTO, index: number, isInvalid: boolean = false) => {
+    // 权限判断：非 enterprise 以上权限，显示会员升级框
+    if (!['admin', 'enterprise','enterprise1', 'enterprise2', 'enterprise3', 'joint'].includes(userPermissions || '')) {
+      pricingContext?.setShowUpgradeModal?.(true);
+      return;
+    }
+
     setSelectedResult(record);
     // 如果是 invalid 数据，索引需要加上 valid 数据的长度
     const actualIndex = isInvalid ? modelResult.valid.length + index : index;
