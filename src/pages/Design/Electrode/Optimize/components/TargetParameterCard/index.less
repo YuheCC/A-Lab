@@ -1,0 +1,153 @@
+@import '@/styles/variables.less';
+
+.target-parameter-card {
+  background: #ffffff;
+  border: 1px solid @color-gray-200;
+  border-radius: @radius-lg;
+  padding: @spacing-xl;
+  display: flex;
+  flex-direction: column;
+
+  // ========================
+  // 标题和输入框区域
+  // ========================
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: @spacing-lg;
+  }
+
+  &__title {
+    font-size: @font-size-base;
+    font-weight: @font-weight-semibold;
+    color: @color-gray-900;
+  }
+
+  &__inputs {
+    display: flex;
+    align-items: center;
+    gap: @spacing-sm;
+  }
+
+  &__input {
+    width: 70px;
+    height: 28px;
+    border-radius: @radius-sm;
+    border-color: @color-gray-200;
+    font-size: @font-size-sm;
+
+    &:hover {
+      border-color: @color-accent;
+    }
+
+    &:focus,
+    &.ant-input-number-focused {
+      border-color: @color-accent;
+      box-shadow: 0 0 0 2px rgba(86, 178, 106, 0.1);
+    }
+
+    .ant-input-number-input {
+      font-size: @font-size-sm;
+      color: @color-gray-700;
+      padding: 4px 8px;
+      height: 26px;
+    }
+  }
+
+  &__separator {
+    color: @color-gray-500;
+    font-size: @font-size-sm;
+    user-select: none;
+  }
+
+  // ========================
+  // 曲线 + Slider 合体区域
+  // ========================
+  &__body {
+    width: 100%;
+  }
+
+  &__svg {
+    display: block;
+    width: 100%;
+    height: 70px;
+  }
+
+  // Slider 通过负 margin 上移，让轨道中心与曲线基线重合
+  // Slider 总高 16px，轨道居中于 8px 处，所以上移 8px
+  &__slider-wrapper {
+    margin-top: -8px;
+  }
+
+  &__slider {
+    margin: 0;
+
+    &.ant-slider {
+      height: 16px;
+      padding-block: 0;
+    }
+
+    .ant-slider-rail {
+      background-color: @color-gray-200;
+      height: 3px;
+      border-radius: 9999px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .ant-slider-track {
+      background-color: @color-accent;
+      height: 3px;
+      border-radius: 9999px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .ant-slider-handle {
+      width: 12px;
+      height: 12px;
+      top: 50% !important;
+      transform: translateX(-50%) translateY(-50%) !important;
+      margin-top: 0 !important;
+      border: 2px solid @color-accent !important;
+      border-radius: 50% !important;
+      background-color: #ffffff !important;
+
+      &::after {
+        display: none;
+      }
+
+      &:hover,
+      &:focus,
+      &.ant-slider-handle-dragging {
+        border-color: @color-accent !important;
+        box-shadow: 0 0 0 4px rgba(86, 178, 106, 0.1) !important;
+      }
+    }
+
+    &:hover .ant-slider-track {
+      background-color: @color-accent;
+    }
+  }
+}
+
+// ========================
+// 响应式适配
+// ========================
+@media (max-width: 768px) {
+  .target-parameter-card {
+    padding: @spacing-lg;
+
+    &__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: @spacing-sm;
+    }
+
+    &__inputs {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+}

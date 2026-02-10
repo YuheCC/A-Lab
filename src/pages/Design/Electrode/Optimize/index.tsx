@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef, useContext, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@umijs/max';
 import { LeftOutlined } from '@ant-design/icons';
@@ -7,7 +7,7 @@ import type { ColumnsType } from 'antd/es/table';
 import Button from '@/components/Button';
 import { useMessage } from '@/components/MessageProvider';
 import type { OptimizeResultItemDTO } from '@/services/electrode/types';
-import ParameterInput from '../Predict/components/ParameterInput';
+import TargetParameterCard from './components/TargetParameterCard';
 import DesignDetailsModal from './components/DesignDetailsModal';
 import { getOptimizeRecommendations } from './model';
 import {
@@ -43,6 +43,30 @@ const OptimizePage: React.FC = () => {
   const message = useMessage();
   const { userPermissions } = useAuthStore();
   const pricingContext = useContext(PricingContext);
+
+  // Mock 分布数据（模拟后端返回的数据）
+  // 使用 useMemo 保证数据引用稳定，避免组件重渲染时重新生成随机数据导致曲线抖动
+  const mockDistributionData = useMemo(() => {
+    const generate = (min: number, max: number, mean: number, stdDev: number, count: number = 200) => {
+      const data: number[] = [];
+      for (let i = 0; i < count; i++) {
+        // Box-Muller 变换生成正态分布
+        const u1 = Math.random();
+        const u2 = Math.random();
+        const z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+        const value = mean + z0 * stdDev;
+        data.push(Math.max(min, Math.min(max, value)));
+      }
+      return data;
+    };
+
+    return {
+      designCapacity: generate(0.01, 600, 150, 80),
+      specificEnergy: generate(30, 340, 200, 50),
+      thickness: generate(0.4, 15, 6, 2.5),
+      volumetricEnergyDensity: generate(530, 1060, 800, 120),
+    };
+  }, []);
 
   // 表单状态
   const [formData, setFormData] = useState<DesignTargetsFormData>({
@@ -558,45 +582,45 @@ const OptimizePage: React.FC = () => {
 
               {/* 参数滑块 */}
               <div className="electrode-optimize-parameters">
-                <ParameterInput
-                  mode="range"
-                  label={`${t('design.electrode.optimize.designCapacity')} (Ah)`}
-                  rangeValue={formData.designCapacity}
-                  onRangeChange={(value) => setFormData({ ...formData, designCapacity: value })}
+                <TargetParameterCard
+                  title={`${t('design.electrode.optimize.designCapacity')} (Ah)`}
+                  value={formData.designCapacity}
+                  onChange={(value) => setFormData({ ...formData, designCapacity: value })}
                   min={PARAMETER_RANGES.designCapacity.min}
                   max={PARAMETER_RANGES.designCapacity.max}
                   step={PARAMETER_RANGES.designCapacity.step}
                   minDiff={PARAMETER_RANGES.designCapacity.minDiff}
+                  data={mockDistributionData.designCapacity}
                 />
-                <ParameterInput
-                  mode="range"
-                  label={`${t('design.electrode.optimize.specificEnergy')} (Wh/kg)`}
-                  rangeValue={formData.specificEnergy}
-                  onRangeChange={(value) => setFormData({ ...formData, specificEnergy: value })}
+                <TargetParameterCard
+                  title={`${t('design.electrode.optimize.specificEnergy')} (Wh/kg)`}
+                  value={formData.specificEnergy}
+                  onChange={(value) => setFormData({ ...formData, specificEnergy: value })}
                   min={PARAMETER_RANGES.specificEnergy.min}
                   max={PARAMETER_RANGES.specificEnergy.max}
                   step={PARAMETER_RANGES.specificEnergy.step}
                   minDiff={PARAMETER_RANGES.specificEnergy.minDiff}
+                  data={mockDistributionData.specificEnergy}
                 />
-                <ParameterInput
-                  mode="range"
-                  label={`${t('design.electrode.optimize.jellyRollThickness')} (mm)`}
-                  rangeValue={formData.thickness}
-                  onRangeChange={(value) => setFormData({ ...formData, thickness: value })}
+                <TargetParameterCard
+                  title={`${t('design.electrode.optimize.jellyRollThickness')} (mm)`}
+                  value={formData.thickness}
+                  onChange={(value) => setFormData({ ...formData, thickness: value })}
                   min={PARAMETER_RANGES.thickness.min}
                   max={PARAMETER_RANGES.thickness.max}
                   step={PARAMETER_RANGES.thickness.step}
                   minDiff={PARAMETER_RANGES.thickness.minDiff}
+                  data={mockDistributionData.thickness}
                 />
-                <ParameterInput
-                  mode="range"
-                  label={`${t('design.electrode.optimize.volumetricEnergyDensity')} (Wh/L)`}
-                  rangeValue={formData.volumetricEnergyDensity}
-                  onRangeChange={(value) => setFormData({ ...formData, volumetricEnergyDensity: value })}
+                <TargetParameterCard
+                  title={`${t('design.electrode.optimize.volumetricEnergyDensity')} (Wh/L)`}
+                  value={formData.volumetricEnergyDensity}
+                  onChange={(value) => setFormData({ ...formData, volumetricEnergyDensity: value })}
                   min={PARAMETER_RANGES.volumetricEnergyDensity.min}
                   max={PARAMETER_RANGES.volumetricEnergyDensity.max}
                   step={PARAMETER_RANGES.volumetricEnergyDensity.step}
                   minDiff={PARAMETER_RANGES.volumetricEnergyDensity.minDiff}
+                  data={mockDistributionData.volumetricEnergyDensity}
                 />
               </div>
             </div>

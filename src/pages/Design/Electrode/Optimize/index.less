@@ -247,8 +247,8 @@
 // 参数区域
 .electrode-optimize-parameters {
   margin-top: @spacing-2xl;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: @spacing-xl;
 }
 
@@ -324,6 +324,11 @@
     &--triple {
       grid-template-columns: 1fr;
     }
+  }
+
+  // 参数区域响应式：小屏单列
+  .electrode-optimize-parameters {
+    grid-template-columns: 1fr;
   }
 
   .electrode-optimize-table {
