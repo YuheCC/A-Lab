@@ -1,4 +1,6 @@
 import request from "@/services/request";
+import { urlConfig } from "@/services/config/urlConfig";
+import { getPredictionEndpoint } from "./endpoints";
 
 // 预测接口返回数据类型定义
 export interface PredictResponse {
@@ -17,6 +19,7 @@ export interface PredictResponse {
 // 预测接口参数类型定义
 export interface PredictParams {
   file: File;
+  model_id?: string;
 }
 
 // 历史记录列表接口参数类型
@@ -39,6 +42,14 @@ export interface BarcodeData {
   cycle_life_2: number | null;
   cycle_life_1_cycles_detail?: Record<string, number>;
   cycle_life_1_predict_detail?: any;
+  model_result?: {
+    original_cycles: number[];
+    original_sohs: number[];
+    predicted_cycles: number[];
+    predicted_sohs: number[];
+    max_cycle?: number;
+    predicted_value?: number;
+  };
   history_id: number;
   status: string;
   created_at: string;
@@ -76,8 +87,16 @@ export const predict = async (params: PredictParams): Promise<HistoryDetailRespo
   const formData = new FormData();
   formData.append('file', params.file);
 
+  // 添加 model_id 参数
+  if (params.model_id) {
+    formData.append('model_id', params.model_id);
+  }
+
   // 1. 调用预测接口，获取任务ID
-  const response = await request('/api/cellLife/model_predict', {
+  const env = urlConfig.getEnvironment();
+  const endpoint = getPredictionEndpoint(env, 'modelPredict');
+  const url = urlConfig.buildFullURL(endpoint);
+  const response = await request(url, {
     method: 'POST',
     data: formData,
     headers: {
@@ -87,12 +106,9 @@ export const predict = async (params: PredictParams): Promise<HistoryDetailRespo
 
   const taskId = response?.data?.id;
 
-  if (!taskId && (response.status !== 401 && response.status !== 402)) {
+  // request 会在 401/402 时自动抛出错误，这里只需检查 taskId
+  if (!taskId) {
     throw new Error('预测任务创建失败，未返回任务ID');
-  }
-
-  if(!taskId) {
-    return null;
   }
 
   // 2. 轮询获取结果
@@ -147,11 +163,15 @@ const pollPredictionResult = async (taskId: number): Promise<HistoryDetailRespon
 export const getHistoryList = async (params: HistoryListParams = {}): Promise<HistoryListResponse> => {
   const { page = 1, page_size = 2 } = params;
   
-  const response = await request('/api/cellLife/history/list', {
+  const env = urlConfig.getEnvironment();
+  const endpoint = getPredictionEndpoint(env, 'historyList');
+  const url = urlConfig.buildFullURL(endpoint);
+  const response = await request(url, {
     method: 'GET',
     params: {
       page,
       page_size,
+      ...params,
     },
   });
 
@@ -164,7 +184,10 @@ export const getHistoryList = async (params: HistoryListParams = {}): Promise<Hi
  * @returns Promise<HistoryDetailResponse> 历史记录详情
  */
 export const getHistoryDetail = async (id: number): Promise<HistoryDetailResponse> => {
-  const response = await request('/api/cellLife/history/detail', {
+  const env = urlConfig.getEnvironment();
+  const endpoint = getPredictionEndpoint(env, 'historyDetail');
+  const url = urlConfig.buildFullURL(endpoint);
+  const response = await request(url, {
     method: 'GET',
     params: {
       id,
@@ -180,7 +203,10 @@ export const getHistoryDetail = async (id: number): Promise<HistoryDetailRespons
  * @returns Promise<DeleteHistoryResponse> 删除结果
  */
 export const deleteHistory = async (params: DeleteHistoryParams): Promise<DeleteHistoryResponse> => {
-  const response = await request('/api/cellLife/history/delete', {
+  const env = urlConfig.getEnvironment();
+  const endpoint = getPredictionEndpoint(env, 'historyDelete');
+  const url = urlConfig.buildFullURL(endpoint);
+  const response = await request(url, {
     method: 'POST',
     data: params,
     headers: {
@@ -197,7 +223,10 @@ export const deleteHistory = async (params: DeleteHistoryParams): Promise<Delete
  * @returns Promise<Blob> 文件内容
  */
 export const downloadFile = async (params: FileDownloadParams): Promise<Blob> => {
-  const response = await request('/api/file/get', {
+  const env = urlConfig.getEnvironment();
+  const endpoint = getPredictionEndpoint(env, 'fileGet');
+  const url = urlConfig.buildFullURL(endpoint);
+  const response = await request(url, {
     method: 'GET',
     params: {
       filename: params.filename,
@@ -217,5 +246,5 @@ export const getFileDownloadUrl = (filename: string): string => {
   const baseURL = process.env.NODE_ENV === 'development' 
     ? 'http://127.0.0.1:8008' 
     : 'https://prod-api.ses.ai';
-  return `${baseURL}/api/file/get?filename=${encodeURIComponent(filename)}`;
+  return `${baseURL}/api/user/files/get?filename=${encodeURIComponent(filename)}`;
 };

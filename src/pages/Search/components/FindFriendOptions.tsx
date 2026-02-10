@@ -46,6 +46,9 @@ interface FindFriendOptionsProps {
   setStructureWeight: (v: number) => void;
   showHypothetical: boolean;
   setShowHypothetical: (v: boolean) => void;
+  prioritizePublished: boolean;
+  setPrioritizePublished: (v: boolean) => void;
+  showPrioritizePublished?: boolean;
   numResults: number;
   setNumResults: (v: number) => void;
   cathode: string;
@@ -89,6 +92,9 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
   setStructureWeight,
   showHypothetical,
   setShowHypothetical,
+  prioritizePublished,
+  setPrioritizePublished,
+  showPrioritizePublished = true,
   numResults,
   setNumResults,
   cathode,
@@ -451,6 +457,9 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                 setStructureWeight={setStructureWeight}
                 showHypothetical={showHypothetical}
                 setShowHypothetical={setShowHypothetical}
+                prioritizePublished={prioritizePublished}
+                setPrioritizePublished={setPrioritizePublished}
+                showPrioritizePublished={showPrioritizePublished}
                 numResults={numResults}
                 setNumResults={setNumResults}
                 userPermissions={userPermissions}

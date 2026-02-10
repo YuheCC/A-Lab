@@ -20,6 +20,7 @@ export default {
         dislike: "Dislike",
         editQuestion: "Edit Question",
         copy: "Copy",
+        downloadPdf: "Download PDF",
         regenerate: "Regenerate",
         sendFailed: "Failed to send message, please try again later.",
         regenerateFailed: "Failed to regenerate, please try again later.",

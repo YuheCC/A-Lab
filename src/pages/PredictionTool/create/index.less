@@ -1,18 +1,47 @@
+@import '@/styles/variables.less';
+
 .create-page-container {
   background: #ffffff;
   padding: 24px;
 
+  .model-select__trigger {
+    min-height: 24px;
+  }
+
   .create-content {
     border-radius: 8px;
-    padding: 20px;
   }
 
   .create-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
     margin-bottom: 20px;
+  }
+
+  .right-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .new-prediction-button {
+    background: @color-text-primary;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background: #374151;
+    }
   }
 
   .prediction-header-wrapper {
@@ -24,14 +53,14 @@
   .prediction-title {
     font-size: 24px;
     font-weight: 600;
-    color: #1e293b;
+    color: @color-text-primary;
     margin: 0;
   }
 
-  .back-to-list-button {
-    background: #f3f4f6;
-    color: #374151;
-    border: 1px solid #d1d5db;
+  .back-button {
+    background: @color-gray-100;
+    color: @color-gray-700;
+    border: 1px solid @color-gray-300;
     border-radius: 6px;
     padding: 8px 16px;
     font-size: 14px;
@@ -40,8 +69,26 @@
     transition: all 0.2s;
 
     &:hover {
-      background: #e5e7eb;
-      border-color: #9ca3af;
+      background: @color-gray-200;
+      border-color: @color-gray-400;
+    }
+  }
+
+  // 保持向后兼容（如果其他地方有使用）
+  .back-to-list-button {
+    background: @color-gray-100;
+    color: @color-gray-700;
+    border: 1px solid @color-gray-300;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: @color-gray-200;
+      border-color: @color-gray-400;
     }
   }
 
@@ -51,7 +98,7 @@
 
   .prediction-subtitle {
     font-size: 14px;
-    color: #64748b;
+    color: @color-text-secondary;
     line-height: 1.5;
     margin: 0;
   }
@@ -88,10 +135,10 @@
     &:not(:last-child)::after {
       content: '';
       position: absolute;
-      right: -66px;
+      right: -90px;
       width: 60px;
       height: 1px;
-      background: #d1d5db;
+      background: @color-gray-300;
       top: 50%;
       transform: translateY(-50%);
     }
@@ -104,17 +151,17 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #e2e8f0;
-    color: #64748b;
+    background: @color-gray-200;
+    color: @color-text-secondary;
     flex-shrink: 0;
 
     &.active {
-      background: #1e293b;
+      background: @color-text-primary;
       color: #ffffff;
     }
 
     &.completed {
-      background: #1e293b;
+      background: @color-text-primary;
       color: #ffffff;
     }
   }
@@ -122,14 +169,14 @@
   .step-text {
     font-size: 14px;
     font-weight: 500;
-    color: #64748b;
+    color: @color-text-secondary;
 
     &.active {
-      color: #1e293b;
+      color: @color-text-primary;
     }
 
     &.completed {
-      color: #1e293b;
+      color: @color-text-primary;
     }
   }
 
@@ -152,20 +199,20 @@
     box-sizing: border-box;
 
     &:hover {
-      border-color: #56B26A;
+      border-color: @color-accent;
     }
   }
 
   .upload-title {
     font-size: 16px;
     font-weight: 500;
-    color: #1e293b;
+    color: @color-text-primary;
     margin: 0 0 8px 0;
   }
 
   .upload-subtitle {
     font-size: 14px;
-    color: #64748b;
+    color: @color-text-secondary;
     margin: 0 0 20px 0;
   }
 
@@ -179,7 +226,7 @@
   }
 
   .select-file-btn {
-    background: #1e293b;
+    background: @color-text-primary;
     color: #ffffff;
     border: none;
     padding: 10px 20px;
@@ -200,10 +247,121 @@
     margin: 0 auto;
   }
 
+  // 模型选择区域
+  .step-content-model-selection {
+    margin-bottom: 24px;
+
+    .step-content-model-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: @color-text-primary;
+      margin-bottom: 8px;
+    }
+
+    .step-content-model-select {
+      width: 100%;
+    }
+  }
+
+  // 文件上传区域
+  .step-content-upload-section {
+    margin-bottom: 24px;
+
+    .step-content-upload-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: @color-text-primary;
+      margin-bottom: 8px;
+    }
+
+    .step-content-upload-icon {
+      color: @color-gray-400;
+      margin-bottom: 16px;
+    }
+
+    .step-content-uploaded-file {
+      border: 1px solid @color-gray-200;
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: @color-gray-50;
+
+      .step-content-file-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .step-content-file-icon {
+          color: @color-text-secondary;
+        }
+
+        .step-content-file-details {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+
+          .step-content-file-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: @color-text-primary;
+          }
+
+          .step-content-file-size {
+            font-size: 12px;
+            color: @color-text-secondary;
+          }
+        }
+      }
+
+      .step-content-remove-file {
+        font-size: 13px;
+        color: #dc2626;
+        cursor: pointer;
+        transition: color 0.2s;
+
+        &:hover {
+          color: #b91c1c;
+        }
+      }
+    }
+  }
+
+  // 操作按钮区域
+  .step-content-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+
+    .step-content-start-btn {
+      background: @color-text-primary;
+      color: #ffffff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+
+      &:hover:not(:disabled) {
+        background: #334155;
+      }
+
+      &:disabled {
+        background: #cbd5e1;
+        cursor: not-allowed;
+      }
+    }
+  }
+
   .data-format-tip {
     margin-top: 24px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: @color-gray-50;
+    border: 1px solid @color-gray-200;
     border-radius: 8px;
     padding: 16px;
     text-align: left;
@@ -218,20 +376,20 @@
     justify-content: space-between;
     margin-bottom: 12px;
     padding-bottom: 8px;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid @color-gray-200;
   }
 
   .tip-title {
     font-size: 14px;
     font-weight: 600;
-    color: #1e293b;
+    color: @color-text-primary;
     display: flex;
     align-items: center;
     gap: 6px;
   }
 
   .tip-sample-link {
-    color: #56B26A;
+    color: @color-accent;
     font-size: 12px;
     font-weight: 500;
     cursor: pointer;
@@ -258,7 +416,7 @@
   }
 
   .tip-label {
-    color: #64748b;
+    color: @color-text-secondary;
     font-weight: 500;
     min-width: 64px;
     flex-shrink: 0;
@@ -270,7 +428,7 @@
   }
 
   .tip-value {
-    color: #374151;
+    color: @color-gray-700;
     font-weight: 400;
   }
 
@@ -286,7 +444,7 @@
 
   .prediction-area {
     background: #ffffff;
-    border: 1px solid #e5e7eb;
+    border: 1px solid @color-gray-200;
     border-radius: 12px;
     padding: 32px;
     width: 100%;
@@ -309,7 +467,7 @@
   .section-title {
     font-size: 14px;
     font-weight: 600;
-    color: #1e293b;
+    color: @color-text-primary;
     margin: 0;
   }
 
@@ -319,7 +477,7 @@
     gap: 4px;
     background: none;
     border: none;
-    color: #56B26A;
+    color: @color-accent;
     font-size: 12px;
     font-weight: 500;
     cursor: pointer;
@@ -334,8 +492,8 @@
   }
 
   .file-info-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: @color-gray-50;
+    border: 1px solid @color-gray-200;
     border-radius: 8px;
     padding: 14px;
   }
@@ -349,7 +507,7 @@
   .file-icon {
     width: 18px;
     height: 18px;
-    color: #64748b;
+    color: @color-text-secondary;
     flex-shrink: 0;
   }
 
@@ -360,18 +518,18 @@
   .file-name-display {
     font-size: 13px;
     font-weight: 600;
-    color: #1e293b;
+    color: @color-text-primary;
     margin-bottom: 3px;
   }
 
   .file-meta {
     font-size: 11px;
-    color: #64748b;
+    color: @color-text-secondary;
   }
 
   .start-prediction-btn {
     width: 100%;
-    background: #1e293b;
+    background: @color-text-primary;
     color: #ffffff;
     border: none;
     padding: 6px 20px;
@@ -390,11 +548,11 @@
     }
 
     &:disabled {
-      background: #94a3b8;
+      background: @color-gray-400;
       cursor: not-allowed;
 
       &:hover {
-        background: #94a3b8;
+        background: @color-gray-400;
       }
     }
   }
@@ -402,8 +560,8 @@
   .prediction-progress {
     margin: 24px 0;
     padding: 20px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: @color-gray-50;
+    border: 1px solid @color-gray-200;
     border-radius: 8px;
   }
 
@@ -417,19 +575,19 @@
   .progress-label {
     font-size: 13px;
     font-weight: 500;
-    color: #1e293b;
+    color: @color-text-primary;
   }
 
   .progress-percentage {
     font-size: 13px;
     font-weight: 600;
-    color: #1e293b;
+    color: @color-text-primary;
   }
 
   .progress-bar {
     width: 100%;
     height: 8px;
-    background: #e2e8f0;
+    background: @color-gray-200;
     border-radius: 4px;
     overflow: hidden;
     margin-bottom: 12px;
@@ -437,14 +595,14 @@
 
   .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #1e293b 0%, #334155 100%);
+    background: linear-gradient(90deg, @color-text-primary 0%, #334155 100%);
     border-radius: 4px;
     transition: width 0.3s ease;
   }
 
   .progress-text {
     font-size: 12px;
-    color: #64748b;
+    color: @color-text-secondary;
     margin: 0;
     text-align: center;
   }
@@ -460,7 +618,7 @@
 
   .results-stats-card {
     background: #ffffff;
-    border: 1px solid #e5e7eb;
+    border: 1px solid @color-gray-200;
     border-radius: 12px;
     padding: 16px;
   }
@@ -480,14 +638,14 @@
   .stats-label {
     font-size: 12px;
     font-weight: 500;
-    color: #64748b;
+    color: @color-text-secondary;
     margin-bottom: 8px;
   }
 
   .stats-value {
     font-size: 14px;
     font-weight: 600;
-    color: #1e293b;
+    color: @color-text-primary;
   }
 
   .results-table-card {
@@ -497,7 +655,7 @@
   .results-table {
     border-radius: 8px;
     overflow: hidden;
-    border: 1px solid #e5e7eb;
+    border: 1px solid @color-gray-200;
   }
 
   .prediction-table {
@@ -505,7 +663,7 @@
     border-collapse: collapse;
 
     thead {
-      background: #f8fafc;
+      background: @color-gray-50;
     }
 
     th {
@@ -513,15 +671,15 @@
       text-align: left;
       font-size: 13px;
       font-weight: 600;
-      color: #374151;
-      border-bottom: 1px solid #e5e7eb;
+      color: @color-gray-700;
+      border-bottom: 1px solid @color-gray-200;
     }
 
     td {
       padding: 16px 20px;
       font-size: 14px;
-      color: #1e293b;
-      border-bottom: 1px solid #f1f5f9;
+      color: @color-text-primary;
+      border-bottom: 1px solid @color-gray-100;
     }
 
     tbody tr {
@@ -530,7 +688,7 @@
       }
 
       &:hover {
-        background: #f8fafc;
+        background: @color-gray-50;
       }
 
       &.selected-row {
@@ -565,7 +723,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      cursor: help;
     }
 
     .cycle-life-cell {
@@ -586,7 +743,7 @@
     }
 
     .step-item:not(:last-child)::after {
-      right: -86px;
+      right: -120px;
       width: 80px;
     }
 
@@ -664,7 +821,7 @@
     }
 
     .step-item:not(:last-child)::after {
-      right: -76px;
+      right: -105px;
       width: 70px;
     }
 
@@ -736,6 +893,11 @@
       padding: 0 20px;
       width: calc(100% - 40px);
     }
+
+    .step-item:not(:last-child)::after {
+      right: -60px;
+      width: 40px;
+    }
   }
 
   @media (max-width: 768px) {
@@ -745,6 +907,22 @@
       flex-direction: column;
       gap: 12px;
       align-items: stretch;
+    }
+
+    .right-actions {
+      flex-direction: row;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .new-prediction-button {
+      flex: 1;
+      text-align: center;
+    }
+
+    .back-button {
+      flex: 1;
+      text-align: center;
     }
 
     .back-to-list-button {
@@ -760,7 +938,7 @@
     }
 
     .step-item:not(:last-child)::after {
-      right: -26px;
+      right: -30px;
       width: 20px;
     }
 

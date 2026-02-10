@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import MessageEdit from '../MessageEdit';
-import './MessageList.css';
+import './MessageList.less';
 import { InlineMoleculeRenderer } from '@/components/InlineMoleculeRenderer/index.js';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import {
@@ -11,7 +11,7 @@ import {
   isUserMessage,
   isAssistantMessage,
   isSystemMessage,
-  normalizeServerDate
+  isDeepSpaceMessage,
 } from '@/utils/messageUtils';
 import type { ToolStats } from '@/utils/messageUtils';
 
@@ -139,8 +139,9 @@ interface MessageListProps {
 
 import { useChatContext } from '../../context/ChatContext';
 import FeedbackBox from '@/components/FeedbackBox/index.js';
-import { ThumbsUp, ThumbsDown } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Download, Loader2 } from 'lucide-react';
 import { useAuthStore } from '@/models/useAuth';
+import { chatService } from '@/services/chat/chatService';
 
 const MessageList: FC<MessageListProps> = ({
   messages =  [],
@@ -165,10 +166,24 @@ const MessageList: FC<MessageListProps> = ({
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [showFeedbackBox, setShowFeedbackBox] = useState(false);
   const [feedbackData, setFeedbackData] = useState<any>(null);
+  const [downloadingMessageId, setDownloadingMessageId] = useState<string | null>(null);
   const userPermissions = useAuthStore(state => state.userPermissions);
+  const isAdmin = userPermissions === 'admin';
 
   // 取上下文消息源
   const resolvedMessages: Message[] = (ctxMessages && ctxMessages.length > 0 ? ctxMessages : messages) as Message[];
+
+  const parseMessageDate = useCallback((input: any): Date => {
+    if (!input) return new Date();
+    if (input instanceof Date) return new Date(input);
+    const trimmed = String(input).trim();
+    const hasTimezone = /[zZ]$|[+-]\d{2}:?\d{2}$/.test(trimmed);
+    const normalized = hasTimezone
+      ? trimmed
+      : (trimmed.includes('T') ? trimmed : trimmed.replace(' ', 'T'));
+    const parsed = new Date(normalized);
+    return isNaN(parsed.getTime()) ? new Date() : parsed;
+  }, []);
 
   // 滚动到底部的函数
   const scrollToBottom = () => {
@@ -193,22 +208,41 @@ const MessageList: FC<MessageListProps> = ({
     return { lastUserId: u, lastAssistantId: a };
   }, [resolvedMessages]);
 
+  const getMessageDate = useCallback((message: Message | undefined): Date | null => {
+    if (!message) return null;
+    const raw = (message as any)?.savedAt
+      ?? (message as any)?.updated_at
+      ?? (message as any)?.createdAt
+      ?? (message as any)?.created_at
+      ?? message.timestamp;
+    if (!raw) return null;
+    return parseMessageDate(raw as any);
+  }, [parseMessageDate]);
+
+  const lastUserMessageTime = useMemo(() => {
+    const lastUser = resolvedMessages.slice().reverse().find(m => isUserMessage(m));
+    return getMessageDate(lastUser as Message);
+  }, [resolvedMessages, getMessageDate]);
+
   // 思考中：仅针对最后一条助手消息且内容为空，并且需要显示计时
   // is_running为false时不显示计时（历史消息），is_running为true或undefined时显示计时（新消息）
   const thinkingTarget = useMemo(() => {
+    // Find the last assistant placeholder that is still running/empty
     for (let i = resolvedMessages.length - 1; i >= 0; i--) {
       const msg = resolvedMessages[i] as Message & { created_at?: string };
       if (isAssistantMessage(msg) && 
           (!msg.content || String(msg.content).trim() === '') &&
           msg.is_running !== false) { // is_running为false的历史消息不显示计时，新消息（undefined）或明确需要计时（true）的消息显示计时
-        const createdAt: Date = msg.timestamp
-          ? normalizeServerDate(msg.timestamp as any)
-          : (msg.created_at ? normalizeServerDate(msg.created_at) : new Date());
-        return { id: msg.id, createdAt };
+        // Timer should start from last user message if available; otherwise fall back to assistant timestamp
+        const fallback = msg.timestamp
+          ? parseMessageDate(msg.timestamp as any)
+          : (msg.created_at ? parseMessageDate(msg.created_at) : new Date());
+        const startAt = lastUserMessageTime || fallback;
+        return { id: msg.id, createdAt: startAt };
       }
     }
     return null;
-  }, [resolvedMessages]);
+  }, [resolvedMessages, parseMessageDate, lastUserMessageTime]);
 
   // 已等待时长（秒）
   const [thinkingElapsed, setThinkingElapsed] = useState<number>(0);
@@ -266,6 +300,32 @@ const MessageList: FC<MessageListProps> = ({
     }
   };
 
+  const getSavedAtLabel = useCallback((message: Message): string | null => {
+    if ((!isUserMessage(message) && !isAssistantMessage(message))) {
+      return null;
+    }
+    const raw = (message as any)?.savedAt
+      ?? (message as any)?.updated_at
+      ?? (message as any)?.createdAt
+      ?? (message as any)?.created_at
+      ?? message.timestamp;
+    if (!raw) return null;
+    const date = parseMessageDate(raw as any);
+    const datePart = date.toLocaleDateString(undefined, { year: 'numeric', month: '2-digit', day: '2-digit' });
+    const timePart = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZoneName: 'short' });
+    return `${datePart} ${timePart}`;
+  }, [isAdmin, parseMessageDate]);
+
+  const renderSavedTimestamp = (message: Message) => {
+    const label = getSavedAtLabel(message);
+    if (!label) return null;
+    return (
+      <div className="message-timestamp" title={label}>
+        {label}
+      </div>
+    );
+  };
+
   // 处理复制消息
   const handleCopyMessage = async (content: string, messageId: string) => {
     try {
@@ -312,6 +372,18 @@ const MessageList: FC<MessageListProps> = ({
   // 处理开始编辑
   const handleStartEdit = (messageId: string) => {
     setEditingMessageId(messageId);
+  };
+
+  // 处理下载 PDF
+  const handleDownloadPdf = async (messageId: string) => {
+    try {
+      setDownloadingMessageId(messageId);
+      await chatService.downloadMessagePdf(messageId);
+    } catch (error) {
+      console.error('Failed to download PDF:', error);
+    } finally {
+      setDownloadingMessageId(null);
+    }
   };
 
   // InlineMoleculeRenderer 将负责解析与高亮分子及 hover 浮层
@@ -373,6 +445,24 @@ const MessageList: FC<MessageListProps> = ({
           )}
         </button>
 
+        {/* 下载 PDF 按钮 */}
+        {
+          isDeepSpaceMessage(message) && (
+            <button
+              className={`action-btn download-btn ${downloadingMessageId === message.id ? 'loading' : ''}`}
+              onClick={() => handleDownloadPdf(message.id)}
+              title={t('chatbox.chat.downloadPdf') || 'Download PDF'}
+              disabled={downloadingMessageId === message.id}
+            >
+              {downloadingMessageId === message.id ? (
+                <Loader2 size={16} className="spinner" />
+              ) : (
+                <Download size={16} />
+              )}
+            </button>
+          )
+        }
+
         {/* 编辑按钮 - 仅最后一条用户消息显示 */}
         {isUserMessage(message) && lastUserId === message.id && (
           <button
@@ -405,8 +495,8 @@ const MessageList: FC<MessageListProps> = ({
   // 渲染带按钮的系统消息
   const renderBotMessageWithButton = (message: Message, buttonText: string) => {
     return (
-      <div className="message-wrapper bot">
-        <div className="message">
+      <div className="chat__message-wrapper chat__message-wrapper--bot">
+        <div className="chat__message chat__message--bot">
           <InlineMoleculeRenderer content={message.content} onMoleculeClick={forwardMoleculeClick} />
           <button
             className="molecule-btn"
@@ -441,7 +531,7 @@ const MessageList: FC<MessageListProps> = ({
     // 如果正在编辑，显示编辑组件
     if (editingMessageId === message.id && isUserMessage(message)) {
       return (
-        <div key={message.id} className="message-wrapper user">
+        <div key={message.id} className="chat__message-wrapper chat__message-wrapper--user">
           <MessageEdit
             originalText={message.content}
             onSave={(newText) => handleEditMessage(message.id, newText)}
@@ -453,48 +543,52 @@ const MessageList: FC<MessageListProps> = ({
 
     if (isUserMessage(message)) {
       return (
-        <div key={message.id} className="message-wrapper user">
+        <div key={message.id} className="chat__message-wrapper chat__message-wrapper--user">
           <div className="message-container">
-            <div className="message">
+            <div className="chat__message chat__message--user">
               {message.content}
             </div>
+            {renderSavedTimestamp(message)}
+            {renderMessageActions(message)}
           </div>
-          {renderMessageActions(message)}
         </div>
       );
     } else if (isAssistantMessage(message) || isSystemMessage(message)) {
       // system消息按assistant样式展示
       return (
-        <div key={message.id} className="message-wrapper bot">
-          {isAssistantMessage(message) && thinkingTarget && thinkingTarget.id === message.id && (!message.content || String(message.content).trim() === '') ? (
-            <div className="message">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontVariantNumeric: 'tabular-nums', color: '#6b7280' }}>{thinkingElapsedLabel}</span>
+        <div key={message.id} className="chat__message-wrapper chat__message-wrapper--bot">
+          <div className="message-container">
+            {isAssistantMessage(message) && thinkingTarget && thinkingTarget.id === message.id && (!message.content || String(message.content).trim() === '') ? (
+              <div className="chat__message chat__message--bot">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontVariantNumeric: 'tabular-nums', color: '#6b7280' }}>{thinkingElapsedLabel}</span>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="message">
-              {isAssistantMessage(message) && (
-                <ToolStatsDisplay toolStats={message.toolStats} />
-              )}
-              <InlineMoleculeRenderer content={message.content} onMoleculeClick={forwardMoleculeClick} />
-              {/* 渲染extraData - 仅助手消息显示 */}
-              {(() => {
-                if (!isAssistantMessage(message) || !message.extraData) return null;
-                const filteredEntries = Object.entries(message.extraData as Record<string, any>)
-                  .filter(([key]) => key !== 'tool_stats' && key !== 'toolStats');
-                if (filteredEntries.length === 0) return null;
-                const filteredData = Object.fromEntries(filteredEntries);
-                return (
-                  <SupplementalData
-                    data={filteredData as Record<string, any>}
-                    onMoleculeClick={forwardMoleculeClick}
-                  />
-                );
-              })()}
-            </div>
-          )}
-          {renderMessageActions(message)}
+            ) : (
+              <div className="chat__message chat__message--bot">
+                {isAssistantMessage(message) && (
+                  <ToolStatsDisplay toolStats={message.toolStats} />
+                )}
+                <InlineMoleculeRenderer content={message.content} onMoleculeClick={forwardMoleculeClick} />
+                {/* 渲染extraData - 仅助手消息显示 */}
+                {(() => {
+                  if (!isAssistantMessage(message) || !message.extraData) return null;
+                  const filteredEntries = Object.entries(message.extraData as Record<string, any>)
+                    .filter(([key]) => key !== 'tool_stats' && key !== 'toolStats');
+                  if (filteredEntries.length === 0) return null;
+                  const filteredData = Object.fromEntries(filteredEntries);
+                  return (
+                    <SupplementalData
+                      data={filteredData as Record<string, any>}
+                      onMoleculeClick={forwardMoleculeClick}
+                    />
+                  );
+                })()}
+              </div>
+            )}
+            {renderSavedTimestamp(message)}
+            {renderMessageActions(message)}
+          </div>
         </div>
       );
     }
@@ -517,6 +611,7 @@ const MessageList: FC<MessageListProps> = ({
           responseContent={feedbackData.responseContent}
           contextContent1={feedbackData.contextContent1}
           queryType="normal_chat"
+          useMultiAgent={false}
           onClose={() => setShowFeedbackBox(false)}
         />
       )}

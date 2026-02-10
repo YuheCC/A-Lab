@@ -1,0 +1,516 @@
+import request from "@/services/request";
+
+// ============= Response Type =============
+
+/**
+ * Extended response type that includes ok field for error handling
+ * When ok === false, it means the request failed and data contains error info
+ */
+interface RequestResponse<T = any> {
+  ok?: false;
+  data: T;
+  status?: number;
+  statusText?: string;
+  headers?: any;
+  [key: string]: any;
+}
+
+// ============= Train Model Types =============
+
+/**
+ * Train model request parameters
+ */
+export interface TrainModelParams {
+  model_name: string;
+  remark: string;
+  base_model_name?: string;
+  base_model_id?: number;
+  data_files: File | File[];
+  namespace: string;
+  train_params?: string; // JSON stringified object containing cathode, anode, benchmarkElectrolyte, cellDesign
+}
+
+/**
+ * Train model response
+ */
+export interface TrainModelResponse {
+  id: string;
+}
+
+// ============= Model List Types =============
+
+/**
+ * Model list request parameters
+ */
+export interface ModelListParams {
+  page?: number;
+  page_size?: number;
+  namespace: string;
+  base_model_id?: number;
+  keyword?: string;
+  status?: string;
+  base_model_name?: string;
+}
+
+/**
+ * Model list item
+ */
+export interface ModelListItem {
+  id: number;
+  model_name: string;
+  base_model_name: string;
+  base_model_id?: number;
+  base_model?: string;
+  model_type?: number; // 1: ratePerformance, 2: ce, 3: cycleLife
+  status: 'training' | 'trained' | 'online' | 'offline' | 'fail';
+  created_at: string;
+  created_by: string;
+  created_by_name?: string;
+  updated_at: string;
+  updated_by: string;
+  train_params?: string; // JSON stringified object containing cathode, anode, benchmarkElectrolyte, cellDesign
+}
+
+/**
+ * Model list response
+ */
+export interface ModelListResponse {
+  total: number;
+  data: ModelListItem[];
+}
+
+// ============= Model Detail Types =============
+
+/**
+ * Model detail request parameters
+ */
+export interface ModelDetailParams {
+  model_id: string;
+  namespace?: string;
+}
+
+/**
+ * Training result
+ */
+export interface TrainResult {
+  accuracy?: string;
+  loss?: string;
+  epochs?: number;
+  training_time?: string;
+  validation_score?: string;
+  [key: string]: any;
+}
+
+/**
+ * Prediction record
+ */
+export interface PredictionRecord {
+  id?: string;
+  file_name?: string;
+  battery_count?: number;
+  avg_cycle_life?: number;
+  created_at?: string;
+  [key: string]: any;
+}
+
+/**
+ * Model detail response
+ */
+export interface ModelDetailResponse {
+  id: string;
+  model_name: string;
+  model_type?: number; // 1: ratePerformance, 2: ce, 3: cycleLife
+  status: string;
+  remark: string;
+  created_at: string;
+  base_model_name: string;
+  base_model_id: number;
+  created_by: string;
+  created_by_name: string;
+  updated_at: string;
+  updated_by: string;
+  updated_by_name: string;
+  train_result: TrainResult;
+  prediction_result: PredictionRecord[];
+}
+
+// ============= Deploy Model Types =============
+
+/**
+ * Deploy model request parameters
+ */
+export interface DeployModelParams {
+  model_id: string;
+  namespace: string;
+}
+
+/**
+ * Deploy model response
+ */
+export interface DeployModelResponse {
+  success?: boolean;
+  [key: string]: any;
+}
+
+// ============= Undeploy Model Types =============
+
+/**
+ * Undeploy model request parameters
+ */
+export interface UndeployModelParams {
+  model_id: string;
+  namespace: string;
+}
+
+/**
+ * Undeploy model response
+ */
+export interface UndeployModelResponse {
+  success?: boolean;
+  [key: string]: any;
+}
+
+// ============= Remove Model Types =============
+
+/**
+ * Remove model request parameters
+ */
+export interface RemoveModelParams {
+  model_id: string;
+  namespace: string;
+}
+
+/**
+ * Remove model response
+ */
+export interface RemoveModelResponse {
+  success?: boolean;
+  [key: string]: any;
+}
+
+// ============= Model Prediction Types =============
+
+/**
+ * Model prediction request parameters
+ */
+export interface ModelPredictParams {
+  data_files: File;
+  model_id: string;
+  namespace: string;
+}
+
+/**
+ * Model prediction response
+ */
+export interface ModelPredictResponse {
+  [key: string]: any;
+}
+
+// ============= Model File List Types =============
+
+/**
+ * Model file list request parameters
+ */
+export interface ModelFileListParams {
+  model_id: string;
+  namespace: string;
+}
+
+/**
+ * Model file item
+ */
+export interface ModelFileItem {
+  name: string;
+  path: string;
+  size: number;
+}
+
+/**
+ * Model file list response (array of files)
+ */
+export type ModelFileListResponse = ModelFileItem[];
+
+// ============= Model Metrics Types =============
+
+/**
+ * Model metrics request parameters
+ */
+export interface ModelMetricsParams {
+  model_id: string;
+  namespace: string;
+}
+
+/**
+ * Metrics data for base or train
+ * 支持三种格式：
+ * 1. 直接数值：{ rmse: 0.5, r2: 0.8 }
+ * 2. 嵌套对象（model_type=2）：{ Accuracy: {0: 0.238}, F1_Score: {0: 0.192} }
+ * 3. 数组格式：{ MAE: [27.83, 39.47], MAPE: [0.108, 0.128], RMSE: [28.37, 51.19] }
+ *    数组中索引 0 代表训练前，索引 1 代表训练后
+ */
+export interface MetricsData {
+  rmse?: number;
+  r2?: number;
+  Accuracy?: number | { [key: string]: number };
+  F1_Score?: number | { [key: string]: number };
+  AUC?: number | { [key: string]: number };
+  Precision?: number | { [key: string]: number };
+  Recall?: number | { [key: string]: number };
+  MAE?: number | number[];
+  MAPE?: number | number[];
+  RMSE?: number | number[];
+  [key: string]: number | number[] | { [key: string]: number } | undefined;
+}
+
+/**
+ * Model metrics response
+ * 兼容新老格式：可能返回 { base, train } 对象，也可能直接返回 { MAE, MAPE, RMSE }
+ */
+export interface ModelMetricsResponse {
+  base?: MetricsData;
+  train?: MetricsData;
+  [key: string]: number | MetricsData | undefined;
+}
+
+// ============= Model Train Log Types =============
+
+/**
+ * Model train log request parameters
+ */
+export interface ModelTrainLogParams {
+  model_id: string;
+  namespace: string;
+}
+
+// ============= Model File Download Types =============
+
+/**
+ * Model file download request parameters
+ */
+export interface ModelFileDownloadParams {
+  model_id: string;
+  file_path: string;
+  namespace: string;
+}
+
+// ============= API Functions =============
+
+/**
+ * Train a new model
+ * @param params Training parameters including model name, remark, base model, data files, and namespace
+ * @returns Promise<TrainModelResponse> Training response with model ID
+ */
+export const trainModel = async (params: TrainModelParams): Promise<TrainModelResponse> => {
+  const formData = new FormData();
+  formData.append('model_name', params.model_name);
+  formData.append('remark', params.remark);
+  if (params.base_model_name) {
+    formData.append('base_model_name', params.base_model_name as string);
+  }
+  if (params.base_model_id) {
+    formData.append('base_model_id', params.base_model_id.toString());
+  }
+  // Support single file or multiple files
+  if (Array.isArray(params.data_files)) {
+    params.data_files.forEach((file) => {
+      formData.append('data_files', file);
+    });
+  } else {
+    formData.append('data_files', params.data_files);
+  }
+  formData.append('namespace', params.namespace);
+
+  // Add train_params if provided
+  if (params.train_params) {
+    formData.append('train_params', params.train_params);
+  }
+
+  const response = await request('/api/ai/model/train', {
+    method: 'POST',
+    data: formData,
+    // Don't set Content-Type, request.ts will handle it automatically
+  }) as RequestResponse<TrainModelResponse>;
+
+  return response.data;
+};
+
+/**
+ * Get model list
+ * @param params Query parameters including page, page_size, namespace, base_model_id, keyword, status, and base_model_name
+ * @returns Promise<ModelListResponse> Model list with pagination
+ */
+export const getModelList = async (params: ModelListParams): Promise<ModelListResponse> => {
+  const response = await request('/api/ai/model/list', {
+    method: 'GET',
+    params: {
+      page: params.page,
+      page_size: params.page_size,
+      namespace: params.namespace,
+      base_model_id: params.base_model_id,
+      keyword: params.keyword,
+      status: params.status,
+      base_model_name: params.base_model_name,
+    },
+  });
+
+  return response.data;
+};
+
+/**
+ * Get model detail by ID
+ * @param params Query parameters including model_id and optional namespace
+ * @returns Promise<ModelDetailResponse> Model detail information
+ */
+export const getModelDetail = async (params: ModelDetailParams): Promise<ModelDetailResponse> => {
+  const response = await request('/api/ai/model/detail', {
+    method: 'GET',
+    params: {
+      model_id: params.model_id,
+      namespace: params.namespace,
+    },
+  });
+
+  return response.data;
+};
+
+/**
+ * Deploy model (make it online)
+ * @param params Deploy parameters including model_id and namespace
+ * @returns Promise<DeployModelResponse> Deploy result
+ */
+export const deployModel = async (params: DeployModelParams): Promise<DeployModelResponse> => {
+  const response = await request('/api/ai/model/deploy', {
+    method: 'POST',
+    params: {
+      model_id: params.model_id,
+      namespace: params.namespace,
+    },
+  }) as RequestResponse<DeployModelResponse>;
+
+  return response.data;
+};
+
+/**
+ * Undeploy model (make it offline)
+ * @param params Undeploy parameters including model_id and namespace
+ * @returns Promise<UndeployModelResponse> Undeploy result
+ */
+export const undeployModel = async (params: UndeployModelParams): Promise<UndeployModelResponse> => {
+  const response = await request('/api/ai/model/undeploy', {
+    method: 'POST',
+    params: {
+      model_id: params.model_id,
+      namespace: params.namespace,
+    },
+  }) as RequestResponse<UndeployModelResponse>;
+
+  return response.data;
+};
+
+/**
+ * Remove/delete a model
+ * @param params Remove parameters with model_id
+ * @returns Promise<RemoveModelResponse> Remove result
+ */
+export const removeModel = async (params: RemoveModelParams): Promise<RemoveModelResponse> => {
+  const response = await request('/api/ai/model/remove', {
+    method: 'POST',
+    params: {
+      model_id: params.model_id,
+      namespace: params.namespace,
+    },
+  }) as RequestResponse<RemoveModelResponse>;
+
+  return response.data;
+};
+
+/**
+ * Run model prediction
+ * @param params Prediction parameters including data_files, model_id, and namespace
+ * @returns Promise<ModelPredictResponse[]> Prediction results array
+ */
+export const modelPredict = async (params: ModelPredictParams): Promise<ModelPredictResponse[]> => {
+  const formData = new FormData();
+  formData.append('data_files', params.data_files);
+  formData.append('model_id', params.model_id);
+  formData.append('namespace', params.namespace);
+
+  const response = await request('/api/ai/model/predict', {
+    method: 'POST',
+    data: formData,
+    // Don't set Content-Type, request.ts will handle it automatically
+  }) as RequestResponse<ModelPredictResponse[]>;
+
+  return response.data;
+};
+
+/**
+ * Get model file list
+ * @param params Query parameters including model_id and namespace
+ * @returns Promise<ModelFileListResponse> File list
+ */
+export const getModelFileList = async (params: ModelFileListParams): Promise<ModelFileListResponse> => {
+  const response = await request('/api/ai/model/file_list', {
+    method: 'GET',
+    params: {
+      model_id: params.model_id,
+      namespace: params.namespace,
+    },
+  });
+
+  return response.data;
+};
+
+/**
+ * Get model metrics
+ * @param params Query parameters including model_id and namespace
+ * @returns Promise<ModelMetricsResponse> Model metrics data
+ */
+export const getModelMetrics = async (params: ModelMetricsParams): Promise<ModelMetricsResponse> => {
+  const response = await request('/api/ai/model/metrics', {
+    method: 'GET',
+    params: {
+      model_id: params.model_id,
+      namespace: params.namespace,
+    },
+  });
+
+  return response.data;
+};
+
+/**
+ * Get model train log
+ * @param params Query parameters including model_id and namespace
+ * @returns Promise<Blob> Train log file blob
+ */
+export const getModelTrainLog = async (params: ModelTrainLogParams): Promise<Blob> => {
+  const response = await request('/api/ai/model/train_log', {
+    method: 'GET',
+    params: {
+      model_id: params.model_id,
+      namespace: params.namespace,
+    },
+    responseType: 'blob',
+  });
+
+  return response.data;
+};
+
+/**
+ * Download model training file
+ * @param params Query parameters including model_id, file_path and namespace
+ * @returns Promise<Blob> File blob for download
+ */
+export const downloadModelFile = async (params: ModelFileDownloadParams): Promise<Blob> => {
+  const response = await request('/api/ai/model/file_download', {
+    method: 'GET',
+    params: {
+      model_id: params.model_id,
+      file_path: params.file_path,
+      namespace: params.namespace,
+    },
+    responseType: 'blob',
+  });
+
+  return response.data;
+};

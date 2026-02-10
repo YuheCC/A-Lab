@@ -10,6 +10,7 @@ import { AUTO_HOVER_MOLECULE_THRESHOLD } from '@/constants/map';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
 import { ENABLE_CASRN_DISPLAY } from '@/constants/featureFlags';
 import { WebMercatorViewport } from '@deck.gl/core';
+import { extractIsPublished, buildPublicationProp, insertPublicationProp } from '@/utils/publicationStatus';
 
 // Define a color mapping for clusters (23 distinct colors) as RGB arrays
 const hexToRgb = (hex) => {
@@ -356,13 +357,16 @@ const UMAPClusterPlotDeck = ({
 
     const buildHoverPropGroups = useCallback((dataNode) => {
         if (!dataNode) {
-            return { propGroups: [], foldPropGroups: [] };
+            return { propGroups: [], foldPropGroups: [], publicationStatus: undefined };
         }
 
         const properties = dataNode.properties || {};
         const raw = dataNode.rawData ?? {};
 
-        const propGroups = [
+        const publicationStatus = extractIsPublished(dataNode, raw, properties);
+        const publicationProp = buildPublicationProp(publicationStatus, t);
+
+        const propGroups = insertPublicationProp([
             { label: t('molecular.nodePopup.smiles'), value: dataNode.smiles, span: 2, show: isColumnVisibleForUser('smiles', userPermissions) },
             { label: t('molecular.umapPlot.properties.cluster'), value: properties.CLUSTER, show: isColumnVisibleForUser('cluster', userPermissions) },
             { label: t('molecular.umapPlot.properties.molWeight'), value: properties.molwt, suffix: t('molecular.umapPlot.units.gPerMol'), show: isColumnVisibleForUser('molecular_weight', userPermissions) },
@@ -411,7 +415,7 @@ const UMAPClusterPlotDeck = ({
                 value: properties.fluoride_bde_ev,
                 show: molecularType === "anions" && isColumnVisibleForUser('fluoride_bde_ev', userPermissions)
             }
-        ];
+        ], publicationProp);
 
         const foldPropGroups = [];
 
@@ -489,7 +493,7 @@ const UMAPClusterPlotDeck = ({
             show: isColumnVisibleForUser('functional_groups', userPermissions),
         });
 
-        return { propGroups, foldPropGroups };
+        return { propGroups, foldPropGroups, publicationStatus };
     }, [molecularType, t, userPermissions]);
 
     // Calculate bounds from data to fit the view
@@ -913,6 +917,7 @@ const UMAPClusterPlotDeck = ({
                 }}
                 propGroups={hoverCardProps.propGroups}
                 foldPropGroups={hoverCardProps.foldPropGroups}
+                publicationStatus={hoverCardProps.publicationStatus}
             />
         ) : null}
         {autoHoverLayouts.map(layout => {
@@ -1004,7 +1009,7 @@ const UMAPClusterPlotDeck = ({
                                 {layoutIndex + 1}
                             </div>
                             {(() => {
-                                const { propGroups, foldPropGroups } = buildHoverPropGroups(node);
+                                const { propGroups, foldPropGroups, publicationStatus } = buildHoverPropGroups(node);
                                 return (
                                     <MolCard
                                         showMoreDetails={false}
@@ -1013,6 +1018,7 @@ const UMAPClusterPlotDeck = ({
                                         compact={isBasicTierUser}
                                         propGroups={propGroups}
                                         foldPropGroups={foldPropGroups}
+                                        publicationStatus={publicationStatus}
                                     />
                                 );
                             })()}

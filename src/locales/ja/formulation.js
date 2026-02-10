@@ -117,6 +117,20 @@ export default {
     newConfiguration: '新規構成'
   },
 
+  simulationParameters: {
+    title: '分子シミュレーションパラメータ'
+  },
+
+  temperature: {
+    label: '温度 (K)',
+    validation: {
+      empty: '温度を入力してください',
+      invalid: '有効な温度値を入力してください',
+      tooLow: '温度は238.15 K以上にしてください',
+      tooHigh: '温度は378.15 K以下にしてください'
+    }
+  },
+
   saltConfiguration: {
     title: '塩の構成'
   },
@@ -162,7 +176,13 @@ export default {
   },
 
   fraction: {
-    label: '分率（最小: 0.05）'
+    label: '分率（最小: 0.05）',
+    validation: {
+      empty: '分率を入力してください',
+      invalid: '有効な分率を入力してください',
+      tooLow: '分率は 0.05 未満にはできません',
+      tooHigh: '分率は 1 を超えることはできません'
+    }
   },
 
   removeSolvent: '溶媒を削除',
@@ -200,9 +220,16 @@ export default {
     calculatingDesc: '偏極力場に基づく分子動力学シミュレーションには長時間を要します。予定時間後に結果を確認でき、システムが計算状況をお知らせします',
     notice2: 'このページを閉じても、バックグラウンド計算プロセスには影響しません'
   },
+  filters: {
+    searchPlaceholder: '解析IDを検索...',
+    statusPlaceholder: 'ステータスを選択',
+    clearFilters: 'フィルタークリア',
+    refresh: '更新'
+  },
   history: {
     title: '解析記録',
     newAnalysis: '新規解析',
+    showingRecords: '{{count}} / {{total}} 件の記録を表示中',
     loading: {
       message: '読み込み中...',
       error: 'エラー'
@@ -219,7 +246,11 @@ export default {
       viewDetails: '結果を見る',
       delete: '削除',
       deleteConfirm: 'この記録を削除しますか？',
-      deleteFailed: '記録の削除に失敗しました'
+      deleteFailed: '記録の削除に失敗しました',
+      retry: '再試行',
+      retryConfirm: 'この記録を再試行しますか？',
+      retrySuccess: '再試行に成功しました',
+      retryFailed: '再試行に失敗しました'
     }
   },
   list: {
@@ -230,12 +261,18 @@ export default {
       solventFraction: '溶媒（分率）',
       solventFractionType: '分率タイプ（溶媒）',
       concentration: '塩濃度',
+      creator: '作成者',
       created: '作成日時',
       status: 'ステータス',
+      progress: '進捗',
       actions: '操作'
     }
   },
 
+  progress: {
+    remainingHours: '残り約 {{hours}} 時間',
+    remainingMinutes: '残り約 {{minutes}} 分'
+  },
   status: {
     completed: '完了',
     success: '完了',

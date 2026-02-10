@@ -51,6 +51,12 @@ export default {
     intelligentFindFriendsLimitLabel: '本月剩余：{{remaining}} / {{limit}}',
     showHypothetical: '显示假想分子',
     showHypotheticalTooltip: '包括由我们的算法生成但未收录于公开目录的候选分子；其可用性和可合成性无法确定。',
+    prioritizePublished: '优先已发表的分子',
+    publicationStatus: {
+      label: '状态',
+      published: 'Published',
+      novel: 'Unexplored',
+    },
     computeDisabled: '禁用',
     computeLow: '低',
     computeMedium: '中',

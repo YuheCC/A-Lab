@@ -1,69 +1,176 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from '@umijs/max';
+import { useNavigate, useSearchParams, useLocation } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
-import { deleteMDHistory, MDHistoryItem } from '@/services/formulation/md';
+import { X, RefreshCw } from 'lucide-react';
+import Button from '@/components/Button';
+import { deleteMDHistory, rerunMDSimulation, MDHistoryItem } from '@/services/formulation/md';
 import { getHistoryList, isMockRecord } from './model';
-import './index.css';
+import './index.less';
 import { normalizeServerDate } from "@/utils/messageUtils";
 import { formatIonDisplay } from './utils';
 import IntroductionNew from './components/IntroductionNew';
+import Pagination from '@/components/Pagination';
+import ColumnSettings, { ColumnConfig } from '@/components/ColumnSettings';
+import TabSection from '@/components/TabSection';
+import { useAuthStore } from '@/models/useAuth';
+import { useMessage } from '@/components/MessageProvider';
+import { Tooltip } from '@mui/material';
 
 interface FormulationTableProps {}
 
+// 总预估时间（小时），可配置
+const TOTAL_ESTIMATED_HOURS = 15;
+
+/**
+ * 根据进度百分比解析剩余时间
+ * @param percentage 当前进度百分比 (0-100)
+ * @param totalHours 总预估时间（小时），默认 15 小时
+ * @returns { hours, minutes } 或 null（已完成/无效值时）
+ */
+const parseRemainingTime = (
+  percentage: number,
+  totalHours: number = TOTAL_ESTIMATED_HOURS
+): { hours: number; minutes: number } | null => {
+  if (percentage >= 100 || percentage < 0) return null;
+
+  const remainingHours = totalHours * (1 - percentage / 100);
+  const totalMinutes = Math.max(1, Math.ceil(remainingHours * 60));
+
+  return {
+    hours: Math.floor(totalMinutes / 60),
+    minutes: totalMinutes % 60,
+  };
+};
+
 const FormulationNew: React.FC<FormulationTableProps> = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation();
+  const message = useMessage();
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [historyData, setHistoryData] = useState<MDHistoryItem[]>([]);
-  const [currentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(20);
+  const [total, setTotal] = useState(0);
+  
+  // 权限判断
+  const { hasPermissionNew } = useAuthStore();
+  const canRerun = hasPermissionNew('formulation:admin');
 
-  // 根据 URL query 参数初始化 activeTab
-  const getInitialTab = (): 'introductionNew' | 'analysis' => {
-    const tabParam = searchParams.get('tab');
-    return (tabParam === 'analysis' || tabParam === 'introductionNew') ? tabParam : 'introductionNew';
+  // Filter state
+  const [searchKeyword, setSearchKeyword] = useState<string>('');
+  const [debouncedSearchKeyword, setDebouncedSearchKeyword] = useState<string>('');
+  const [selectedStatus, setSelectedStatus] = useState<string>('');
+
+  // Handle search on blur or Enter key
+  const handleSearchTrigger = () => {
+    setDebouncedSearchKeyword(searchKeyword);
   };
 
-  const [activeTab, setActiveTab] = useState<'introductionNew' | 'analysis'>(getInitialTab());
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearchTrigger();
+    }
+  };
 
-  // 处理初始化时的 URL 参数，识别后删除 tab 参数
+  // Column settings state - 使用 titleKey 支持多语言切换
+  const [columnConfigs, setColumnConfigs] = useState<ColumnConfig[]>([
+    { key: 'analysisId', title: 'Analysis ID', titleKey: 'formulation.list.columns.analysisId', visible: true, disabled: true },
+    { key: 'saltFraction', title: 'Salt (Fraction)', titleKey: 'formulation.list.columns.saltFraction', visible: true },
+    { key: 'saltFractionType', title: 'Fraction Type (Salt)', titleKey: 'formulation.list.columns.saltFractionType', visible: false },
+    { key: 'solventFraction', title: 'Solvent (Fraction)', titleKey: 'formulation.list.columns.solventFraction', visible: true },
+    { key: 'solventFractionType', title: 'Fraction Type (Solvent)', titleKey: 'formulation.list.columns.solventFractionType', visible: false },
+    { key: 'concentration', title: 'Concentration', titleKey: 'formulation.list.columns.concentration', visible: true },
+    { key: 'status', title: 'Status', titleKey: 'formulation.list.columns.status', visible: true },
+    { key: 'progress', title: 'Progress', titleKey: 'formulation.list.columns.progress', visible: true },
+    { key: 'creator', title: 'Creator', titleKey: 'formulation.list.columns.creator', visible: false },
+    { key: 'created', title: 'Created Time', titleKey: 'formulation.list.columns.created', visible: false },
+    { key: 'actions', title: 'Actions', titleKey: 'formulation.list.columns.actions', visible: true, disabled: true },
+  ]);
+
+  // 根据 URL query 参数初始化 activeTab
+  const getInitialTab = (): string => {
+    const tabParam = searchParams.get('tab');
+    return (tabParam === 'records' || tabParam === 'introduction') ? tabParam : 'introduction';
+  };
+
+  const [activeTab, setActiveTab] = useState<string>(getInitialTab());
+
+  // Tab 配置
+  const tabs = [
+    { key: 'introduction', label: t('formulation.tabs.introduction', 'Introduction'), disabled: false },
+    { key: 'records', label: t('formulation.tabs.records', 'Records'), disabled: false },
+  ];
+
+  // 初始化时，如果 URL 没有 tab 参数，则设置默认值
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam && (tabParam === 'analysis' || tabParam === 'introductionNew')) {
-      // 删除 tab 参数，保持其他参数不变
+    if (!tabParam) {
       const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.delete('tab');
+      newSearchParams.set('tab', activeTab);
       setSearchParams(newSearchParams, { replace: true });
     }
   }, []);
 
   // 获取历史记录数据
-  const fetchHistoryData = async (page: number = 1) => {
+  const fetchHistoryData = async (page: number = currentPage) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await getHistoryList({ page, page_size: pageSize });
+      const params: any = {
+        page,
+        page_size: pageSize,
+      };
+
+      // Add search keyword if provided (去除非数字字符，只保留数字部分)
+      if (debouncedSearchKeyword) {
+        params.id = debouncedSearchKeyword.replace(/\D/g, '');
+      }
+
+      // Add status filter if selected
+      if (selectedStatus) {
+        params.status = selectedStatus;
+      }
+
+      const response = await getHistoryList(params);
 
       if (response && response.data && response.data.data) {
         setHistoryData(response.data.data);
+        setTotal(response.data.total || 0);
       } else {
         setHistoryData([]);
+        setTotal(0);
       }
     } catch (err) {
       console.error('Failed to fetch MD history:', err);
       setError(err instanceof Error ? err.message : t('formulation.history.loading.error', '获取历史记录失败'));
       setHistoryData([]);
+      setTotal(0);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchHistoryData(currentPage);
-  }, [currentPage]);
+    // Reset to page 1 when filters change, only fetch if records tab is active
+    if (activeTab === 'records') {
+      if (currentPage === 1) {
+        fetchHistoryData(1);
+      } else {
+        setCurrentPage(1);
+      }
+    }
+  }, [debouncedSearchKeyword, selectedStatus, activeTab]);
+
+  useEffect(() => {
+    // Only fetch data when records tab is active
+    if (activeTab === 'records') {
+      fetchHistoryData(currentPage);
+    }
+  }, [currentPage, activeTab]);
 
   // 格式化浓度显示
   const formatConcentration = (value: number) => {
@@ -88,7 +195,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
       'completed': { text: t('formulation.status.completed', '已完成'), className: 'status-completed' },
       'success': { text: t('formulation.status.success', '已完成'), className: 'status-completed' },
       'running': { text: t('formulation.status.running', '运行中'), className: 'status-running' },
-      'failed': { text: t('formulation.status.failed', '失败'), className: 'status-failed' },
+      'fail': { text: t('formulation.status.failed', '失败'), className: 'status-failed' },
       'pending': { text: t('formulation.status.pending', '等待中'), className: 'status-pending' }
     };
     return statusMap[status] || { text: status, className: 'status-unknown' };
@@ -119,6 +226,22 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
     }
   };
 
+  // 处理重试记录
+  const handleRerunRecord = async (id: number | string) => {
+    if (!confirm(t('formulation.history.actions.retryConfirm', '确定要重试这条记录吗？'))) {
+      return;
+    }
+
+    try {
+      await rerunMDSimulation(Number(id));
+      message.success(t('formulation.history.actions.retrySuccess', '重试成功'));
+      await fetchHistoryData(currentPage);
+    } catch (err) {
+      console.error('Failed to rerun MD simulation:', err);
+      message.error(err instanceof Error ? err.message : t('formulation.history.actions.retryFailed', '重试失败'));
+    }
+  };
+
   // 处理新建分析
   const handleNewAnalysis = () => {
     window.open('/formulate/create', '_blank');
@@ -130,44 +253,67 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
   };
 
   // 处理tab切换
-  const handleTabChange = (tab: 'introductionNew' | 'analysis') => {
+  const handleTabChange = (tab: string) => {
     setActiveTab(tab);
+    // 更新URL参数
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('tab', tab);
+    setSearchParams(newSearchParams, { replace: true });
+  };
+
+  // 处理翻页
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  // 处理状态变化
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedStatus(e.target.value);
+  };
+
+  // 清除筛选器
+  const handleClearFilters = () => {
+    setSearchKeyword('');
+    setDebouncedSearchKeyword('');
+    setSelectedStatus('');
+  };
+
+  // 格式化剩余时间（结合 i18n）
+  const formatRemainingTime = (percentage: number, status: string): string | null => {
+    if (status !== 'running' || percentage >= 100 || percentage < 0) return null;
+
+    const remaining = parseRemainingTime(percentage);
+    if (!remaining) return null;
+
+    if (remaining.hours > 0) {
+      return t('formulation.progress.remainingHours', 'Est. {{hours}}h left', { hours: remaining.hours });
+    }
+    return t('formulation.progress.remainingMinutes', 'Est. {{minutes}}min left', { minutes: remaining.minutes });
+  };
+
+  // 检查列是否可见
+  const isColumnVisible = (key: string) => {
+    const column = columnConfigs.find(col => col.key === key);
+    return column ? column.visible : true;
   };
 
   return (
     <div className="formulation-new-container">
       <div className="formulation-action-section">
-        <button className="new-analysis-button" onClick={handleNewAnalysis}>
+        <Button variant="primary" onClick={handleNewAnalysis}>
           + {t('formulation.history.newAnalysis', 'New Analysis')}
-        </button>
+        </Button>
       </div>
 
       <div className="formulation-new-table-container">
-        <div className="formulation-tabs-header">
-          <div className="formulation-tabs">
-            <button
-              className={`formulation-tab ${activeTab === 'introductionNew' ? 'active' : ''}`}
-              onClick={() => handleTabChange('introductionNew')}
-            >
-              {t('formulation.tabs.introduction', 'Introduction')}
-            </button>
-            <button
-              className={`formulation-tab ${activeTab === 'analysis' ? 'active' : ''}`}
-              onClick={() => handleTabChange('analysis')}
-            >
-              {t('formulation.tabs.records', 'Records')}
-            </button>
-          </div>
-        </div>
-
-        <div className="formulation-tab-content">
-          {activeTab === 'introductionNew' && (
+        <TabSection activeTab={activeTab} onTabChange={handleTabChange} tabs={tabs}>
+          {activeTab === 'introduction' && (
             <div className="formulation-tab-panel">
               <IntroductionNew />
             </div>
           )}
 
-          {activeTab === 'analysis' && (
+          {activeTab === 'records' && (
             <div className="formulation-tab-panel">
               {loading ? (
                 <div className="loading-state">
@@ -178,94 +324,244 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                   <p>{t('formulation.history.loading.error', 'Error')}: {error}</p>
                 </div>
               ) : (
-                <div className="analysis-table-wrapper">
-                  <table className="analysis-table">
-                  <thead>
-                    <tr>
-                      <th>{t('formulation.list.columns.analysisId', 'Analysis ID')}</th>
-                      <th>{t('formulation.list.columns.saltFraction', 'Salt (Fraction)')}</th>
-                      <th>{t('formulation.list.columns.saltFractionType', 'Fraction Type (Salt)')}</th>
-                      <th>{t('formulation.list.columns.solventFraction', 'Solvent (Fraction)')}</th>
-                      <th>{t('formulation.list.columns.solventFractionType', 'Fraction Type (Solvent)')}</th>
-                      <th>{t('formulation.list.columns.concentration', 'Concentration')}</th>
-                      <th>{t('formulation.list.columns.created', 'Created')}</th>
-                      <th>{t('formulation.list.columns.status', 'Status')}</th>
-                      <th>{t('formulation.list.columns.actions', 'Actions')}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {historyData.length === 0 ? (
-                      <tr>
-                        <td colSpan={9} className="no-data">
-                          {t('formulation.history.noResults.message', 'No analysis records found.')}
-                        </td>
-                      </tr>
-                    ) : (
-                      historyData.map((record) => {
-                        const statusInfo = formatStatus(record.status);
-                        const isMock = isMockRecord(record);
-                        return (
-                          <tr key={record.id}>
-                            <td className="analysis-id">
-                              {isMock ? record.id : `AN-${String(record.id).padStart(3, '0')}`}
-                            </td>
-                            <td className="salt-info">
-                              <div className="compound-list">
-                                {formatIonDisplay(record.cation_name)}
-                                {record.anion_name_list.map((anion, idx) => (
-                                  <div key={idx} className="compound-item">
-                                    {formatIonDisplay(anion)}({record.anion_fractions[idx]})
-                                  </div>
-                                ))}
-                              </div>
-                            </td>
-                            <td>{record.anion_fractions_type === 'mole' ? t('formulation.fractionType.mole', 'Molar fraction') : t('formulation.fractionType.weight', 'Weight fraction')}</td>
-                            <td className="solvent-info">
-                              <div className="compound-list">
-                                {record.solvent_smiles_list.map((solvent, idx) => (
-                                  <div key={idx} className="compound-item" title={solvent + ' (' + record.solvent_fractions[idx] + ')'}>
-                                    {solvent}({record.solvent_fractions[idx]})
-                                  </div>
-                                ))}
-                              </div>
-                            </td>
-                            <td>{record.solvent_fractions_type === 'mole' ? t('formulation.fractionType.mole', 'Molar fraction') : t('formulation.fractionType.weight', 'Weight fraction')}</td>
-                            <td>{formatConcentration(record.cation_molality)}</td>
-                            <td className="created-date">{formatDate(normalizeServerDate(record.created_at).toISOString())}</td>
-                            <td>
-                              <span className={`status-badge ${statusInfo.className}`}>
-                                {statusInfo.text}
-                              </span>
-                            </td>
-                            <td className="actions-cell">
-                              {record.status === 'success' && (
-                              <button
-                                className="action-button view-button"
-                                onClick={() => handleViewDetails(record)}
-                              >
-                                {t('formulation.history.actions.viewDetails', 'View Details')}
-                              </button>
-                              )}
-                              {!isMock && (
-                                <button
-                                  className="action-button delete-button"
-                                  onClick={() => handleDeleteRecord(record.id)}
-                                >
-                                  {t('formulation.history.actions.delete', 'Delete')}
-                                </button>
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })
+                <>
+                  <div className="analysis-filters">
+                    <input
+                      type="text"
+                      className="analysis-search-input"
+                      value={searchKeyword}
+                      onChange={(e) => setSearchKeyword(e.target.value)}
+                      onBlur={handleSearchTrigger}
+                      onKeyDown={handleSearchKeyDown}
+                      placeholder={t('formulation.filters.searchPlaceholder', 'Search Analysis ID...')}
+                    />
+                    <select
+                      className={`analysis-status-filter ${selectedStatus ? 'has-value' : ''}`}
+                      value={selectedStatus}
+                      onChange={handleStatusChange}
+                      aria-label={t('formulation.filters.statusPlaceholder', 'Select Status')}
+                    >
+                      <option value="" disabled hidden>{t('formulation.filters.statusPlaceholder', 'Select Status')}</option>
+                      <option value="success">{t('formulation.status.success', 'Completed')}</option>
+                      <option value="running">{t('formulation.status.running', 'Running')}</option>
+                      <option value="fail">{t('formulation.status.failed', 'Failed')}</option>
+                      <option value="pending">{t('formulation.status.pending', 'Pending')}</option>
+                    </select>
+
+                    {(searchKeyword || selectedStatus) && (
+                      <button className="clear-filters-button" onClick={handleClearFilters}>
+                        <X size={16} />
+                        <span>{t('formulation.filters.clearFilters', 'Clear Filters')}</span>
+                      </button>
                     )}
-                  </tbody>
-                </table>
-                </div>
+                    <button
+                      className="formulation-refresh-button"
+                      onClick={() => fetchHistoryData(currentPage)}
+                      aria-label={t('formulation.filters.refresh', 'Refresh')}
+                    >
+                      <RefreshCw size={16} />
+                    </button>
+                    <ColumnSettings
+                      columns={columnConfigs}
+                      onChange={setColumnConfigs}
+                      storageKey="formulation-table-columns"
+                    />
+                  </div>
+                  <div className="records-count-text">
+                    {t('formulation.history.showingRecords', 'Showing {{count}} of {{total}} records', {
+                      count: historyData.length,
+                      total: total
+                    })}
+                  </div>
+                  <div className="analysis-table-wrapper">
+                    <table className="analysis-table">
+                    <thead>
+                      <tr>
+                        {isColumnVisible('analysisId') && <th>{t('formulation.list.columns.analysisId', 'Analysis ID')}</th>}
+                        {isColumnVisible('saltFraction') && <th>{t('formulation.list.columns.saltFraction', 'Salt (Fraction)')}</th>}
+                        {isColumnVisible('saltFractionType') && <th>{t('formulation.list.columns.saltFractionType', 'Fraction Type (Salt)')}</th>}
+                        {isColumnVisible('solventFraction') && <th>{t('formulation.list.columns.solventFraction', 'Solvent (Fraction)')}</th>}
+                        {isColumnVisible('solventFractionType') && <th>{t('formulation.list.columns.solventFractionType', 'Fraction Type (Solvent)')}</th>}
+                        {isColumnVisible('concentration') && <th>{t('formulation.list.columns.concentration', 'Concentration')}</th>}
+                        {isColumnVisible('status') && <th>{t('formulation.list.columns.status', 'Status')}</th>}
+                        {isColumnVisible('progress') && <th>{t('formulation.list.columns.progress', 'Progress')}</th>}
+                        {isColumnVisible('creator') && <th>{t('formulation.list.columns.creator', 'Creator')}</th>}
+                        {isColumnVisible('created') && <th>{t('formulation.list.columns.created', 'Created Time')}</th>}
+                        {isColumnVisible('actions') && <th>{t('formulation.list.columns.actions', 'Actions')}</th>}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {historyData.length === 0 ? (
+                        <tr>
+                          <td colSpan={columnConfigs.filter(col => col.visible).length} className="no-data">
+                            {t('formulation.history.noResults.message', 'No analysis records found.')}
+                          </td>
+                        </tr>
+                      ) : (
+                        historyData.map((record) => {
+                          const statusInfo = formatStatus(record.status);
+                          const isMock = isMockRecord(record);
+                          // 使用解析后的 process 字段（model.tsx 已处理过）
+                          const processValue = record.process;
+                          const remainingTimeText = processValue !== undefined
+                            ? formatRemainingTime(processValue, record.status)
+                            : null;
+                          return (
+                            <tr key={record.id}>
+                              {isColumnVisible('analysisId') && (
+                                <td className="analysis-id">
+                                  {isMock ? record.id : `AN-${String(record.id).padStart(3, '0')}`}
+                                </td>
+                              )}
+                              {isColumnVisible('saltFraction') && (
+                                <td className="salt-info">
+                                  <div className="compound-list">
+                                    {formatIonDisplay(record.cation_name)}
+                                    {record.anion_name_list.map((anion, idx) => (
+                                      <div key={idx} className="compound-item">
+                                        {formatIonDisplay(anion)}({record.anion_fractions[idx]})
+                                      </div>
+                                    ))}
+                                  </div>
+                                </td>
+                              )}
+                              {isColumnVisible('saltFractionType') && (
+                                <td>{record.anion_fractions_type === 'mole' ? t('formulation.fractionType.mole', 'Molar fraction') : t('formulation.fractionType.weight', 'Weight fraction')}</td>
+                              )}
+                              {isColumnVisible('solventFraction') && (
+                                <td className="solvent-info">
+                                  <div className="compound-list">
+                                    {record.solvent_smiles_list.map((solvent, idx) => (
+                                      <div key={idx} className="compound-item" title={solvent + ' (' + record.solvent_fractions[idx] + ')'}>
+                                        {solvent}({record.solvent_fractions[idx]})
+                                      </div>
+                                    ))}
+                                  </div>
+                                </td>
+                              )}
+                              {isColumnVisible('solventFractionType') && (
+                                <td>{record.solvent_fractions_type === 'mole' ? t('formulation.fractionType.mole', 'Molar fraction') : t('formulation.fractionType.weight', 'Weight fraction')}</td>
+                              )}
+                              {isColumnVisible('concentration') && (
+                                <td>{formatConcentration(record.cation_molality)}</td>
+                              )}
+                              {isColumnVisible('status') && (
+                                <td>
+                                  {record.fail_reason ? (
+                                    <Tooltip
+                                      title={record.fail_reason}
+                                      arrow
+                                      placement="top"
+                                      slotProps={{
+                                        tooltip: {
+                                          sx: {
+                                            backgroundColor: '#1f2937',
+                                            color: '#ffffff',
+                                            fontSize: '12px',
+                                            lineHeight: 1.5,
+                                            padding: '6px 10px',
+                                            borderRadius: '6px',
+                                            maxWidth: 320,
+                                            wordBreak: 'break-word',
+                                          },
+                                        },
+                                        arrow: {
+                                          sx: {
+                                            color: '#1f2937',
+                                          },
+                                        },
+                                      }}
+                                    >
+                                      <span className={`status-badge ${statusInfo.className} clickable`}>
+                                        {statusInfo.text}
+                                      </span>
+                                    </Tooltip>
+                                  ) : (
+                                    <span className={`status-badge ${statusInfo.className}`}>
+                                      {statusInfo.text}
+                                    </span>
+                                  )}
+                                </td>
+                              )}
+                              {isColumnVisible('progress') && (
+                                <td className="progress-cell">
+                                  {record.status === 'fail' ? (
+                                    <div className="progress-failed-wrapper">
+                                      <div className="progress-bar-container progress-bar-failed" />
+                                      <span className="progress-failed-icon">×</span>
+                                    </div>
+                                  ) : processValue !== undefined ? (
+                                    <>
+                                      <div className="progress-bar-row">
+                                        <div className="progress-bar-container">
+                                          <div 
+                                            className="progress-bar-fill" 
+                                            style={{ width: `${processValue}%` }}
+                                          />
+                                        </div>
+                                        <span className="progress-text">{processValue}%</span>
+                                      </div>
+                                      {remainingTimeText && (
+                                        <div className="progress-remaining-time">{remainingTimeText}</div>
+                                      )}
+                                    </>
+                                  ) : (
+                                    <span className="progress-text">-</span>
+                                  )}
+                                </td>
+                              )}
+                              {isColumnVisible('creator') && (
+                                <td className="creator-cell">{record.username || '-'}</td>
+                              )}
+                              {isColumnVisible('created') && (
+                                <td className="created-date">{formatDate(normalizeServerDate(record.created_at).toISOString())}</td>
+                              )}
+                              {isColumnVisible('actions') && (
+                                <td className="actions-cell">
+                                  {record.status === 'success' && (
+                                  <button
+                                    className="action-button view-button"
+                                    onClick={() => handleViewDetails(record)}
+                                  >
+                                    {t('formulation.history.actions.viewDetails', 'View Details')}
+                                  </button>
+                                  )}
+                                  {record.status === 'fail' && canRerun && !isMock && (
+                                    <button
+                                      className="action-button retry-button"
+                                      onClick={() => handleRerunRecord(record.id)}
+                                    >
+                                      {t('formulation.history.actions.retry', 'Retry')}
+                                    </button>
+                                  )}
+                                  {!isMock && (
+                                    <button
+                                      className="action-button delete-button"
+                                      onClick={() => handleDeleteRecord(record.id)}
+                                    >
+                                      {t('formulation.history.actions.delete', 'Delete')}
+                                    </button>
+                                  )}
+                                </td>
+                              )}
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                  </div>
+                  <Pagination
+                    current={currentPage}
+                    total={total}
+                    pageSize={pageSize}
+                    onChange={handlePageChange}
+                  />
+                </>
               )}
             </div>
           )}
-        </div>
+        </TabSection>
       </div>
     </div>
   );

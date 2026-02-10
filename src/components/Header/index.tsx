@@ -157,7 +157,22 @@ const Header = () => {
                 {renderNavLink('/search', t('navigation.header.search'), pathname === '/search', isCommonUser)}
                 {/* {renderNavLink('/filter', t('navigation.header.filter'), pathname === '/filter', isCommonUser)} */}
                 {renderNavLink('/formulate', t('navigation.header.formulation'), pathname === '/formulate', isCommonUser)}
-                {renderNavLink('/design', t('navigation.header.design'), pathname === '/design', isCommonUser)}
+                <div
+                    className={`nav-dropdown-container ${isCommonUser ? 'disabled' : ''} ${isNavDropdownHovered ? 'hovered' : ''}`}
+                    onMouseEnter={handleNavDropdownMouseEnter}
+                    onMouseLeave={handleNavDropdownMouseLeave}
+                    ref={navDropdownRef}
+                >
+                    {renderNavLink('/design', t('navigation.header.design'), pathname.startsWith('/design'), isCommonUser)}
+                    <div
+                        className="nav-dropdown"
+                        onMouseEnter={handleNavDropdownMouseEnter}
+                        onMouseLeave={handleNavDropdownMouseLeave}
+                    >
+                        {renderDropdownItem('/design/electrolyte', t('navigation.header.electrolyte'), pathname.startsWith('/design/electrolyte'), isCommonUser)}
+                        {renderDropdownItem('/design/electrode', t('navigation.header.electrode'), pathname.startsWith('/design/electrode'), isCommonUser)}
+                    </div>
+                </div>
                 {renderNavLink('/predict', t('navigation.header.predict'), pathname === '/predict', isCommonUser)}
                 {renderNavLink('/manufacture', t('navigation.header.manufacturing'), pathname === '/manufacturing', isCommonUser)}
                 {/* <div 

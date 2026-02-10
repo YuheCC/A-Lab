@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useImperativeHandle, forwardRef, useCallback } from 'react';
 import MolEditor from '../MolEditor';
-import './Search.css';
+import './Search.less';
 import { useTranslation } from 'react-i18next';
 import benPenSvg from '@/assets/svg/benPen.svg';
 import InfoTooltip from '@/components/InfoTooltip';

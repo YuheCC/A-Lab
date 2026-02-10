@@ -9,6 +9,8 @@ export default {
     favorites: "Favorites",
     predict: "Predict",
     design: "Design",
+    electrolyte: "Electrolyte",
+    electrode: "Electrode",
     formulation: "Formulate",
     manufacturing: "Manufacture",
     about: "About",

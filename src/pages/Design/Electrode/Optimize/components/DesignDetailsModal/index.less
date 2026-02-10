@@ -1,0 +1,228 @@
+@import '@/styles/variables.less';
+
+.design-details-modal {
+  // Modal 整体样式 
+  .ant-modal-content {
+    border-radius: 8px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  }
+
+  .ant-modal-header {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 20px 24px;
+    flex-shrink: 0;
+
+    .ant-modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+  }
+
+  .ant-modal-body {
+    padding: 0 24px 24px 24px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: calc(90vh - 70px);
+
+    // 自定义滚动条样式
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #d9d9d9;
+      border-radius: 3px;
+
+      &:hover {
+        background: #bfbfbf;
+      }
+    }
+  }
+
+  .ant-modal-close {
+    top: 20px;
+    right: 24px;
+    color: #999;
+  }
+
+  // 加载状态
+  .designdetail-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+  }
+
+  // 内容区域
+  .designdetail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  // Section 样式
+  .designdetail-section {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  .designdetail-section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 16px 0;
+  }
+
+  // Performance Prediction 网格
+  .designdetail-performance-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .designdetail-performance-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .designdetail-performance-label {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.4;
+  }
+
+  .designdetail-performance-value {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1a1a1a;
+    line-height: 1;
+
+    .designdetail-performance-unit {
+      font-size: 14px;
+      font-weight: 400;
+      color: #666;
+      margin-left: 4px;
+    }
+  }
+
+  // Design 网格
+  .designdetail-design-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px 40px;
+  }
+
+  .designdetail-design-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .designdetail-design-info-label {
+    font-size: 13px;
+    color: #666;
+  }
+
+  .designdetail-design-info-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  // Cathode & Anode 并排布局
+  .designdetail-electrodes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .designdetail-electrode-section {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  .designdetail-electrode-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 16px 0;
+    padding-left: 12px;
+    border-left: 4px solid #1890ff;
+    position: relative;
+  }
+
+  .designdetail-cathode-title {
+    border-left-color: #1890ff;
+  }
+
+  .designdetail-anode-title {
+    border-left-color: #52c41a;
+  }
+
+  // 参数区域
+  .designdetail-parameters {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  // 参数项样式（类似 Ant Design Descriptions）
+  .designdetail-parameter-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+  }
+
+  .designdetail-parameter-label {
+    font-size: 14px;
+    font-weight: 400;
+    color: #666;
+    flex: 1;
+  }
+
+  .designdetail-parameter-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a1a1a;
+    text-align: right;
+    min-width: 80px;
+    padding-left: 24px;
+  }
+
+  // 响应式：平板及以下
+  @media (max-width: 1024px) {
+    .designdetail-performance-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .designdetail-design-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .designdetail-electrodes-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .designdetail-performance-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .designdetail-design-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

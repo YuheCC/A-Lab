@@ -1,0 +1,52 @@
+@import '@/styles/variables.less';
+
+.collapsible-text-wrapper {
+  position: relative;
+  padding-right: 28px; // 为箭头按钮预留空间
+}
+
+.collapsible-text {
+  font-size: 14px;
+  color: @color-text-secondary;
+  line-height: 1.5;
+  margin: 0;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+
+  &.expanded {
+    -webkit-line-clamp: unset !important;
+    line-clamp: unset !important;
+    max-height: none !important;
+  }
+}
+
+.collapsible-text-toggle-button {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 2px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: @color-text-secondary;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: #475569;
+    background: @color-gray-100;
+    border-radius: 4px;
+  }
+
+  .toggle-icon {
+    transition: transform 0.3s ease;
+
+    &.expanded {
+      transform: rotate(180deg);
+    }
+  }
+}

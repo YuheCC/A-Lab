@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type PerformanceHistoryItem } from '@/services/prediction/performance';
 import { getHistoryList, getHistoryDetail, deleteHistory, getBatterySystemOptions, isMockRecord } from '../model';
-import './HistoryModule.css';
+import './HistoryModule.less';
 import { normalizeServerDate } from '@/utils/messageUtils';
 import { ArrowUpIcon } from './ArrowIcons';
 

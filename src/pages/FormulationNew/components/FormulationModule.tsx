@@ -1,8 +1,9 @@
 import React, { useState, useCallback, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
+import Button from '@/components/Button';
 import { runMDSimulation, MDRunParams } from '@/services/formulation/md';
 import ResultTip from '@/components/ResultTip';
-import './FormulationModule.css';
+import './FormulationModule.less';
 import { useNavigate } from '@umijs/max';
 import { formatIonDisplay } from '../utils';
 import { PricingContext } from '@/layouts/index';
@@ -15,6 +16,10 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pricingContext = useContext(PricingContext);
+
+  // Molecular Simulation Parameters State
+  const [temperature, setTemperature] = useState('298.15');
+
   // Salt Configuration State
   const [selectedCation, setSelectedCation] = useState('Li');
   const [selectedAnions, setSelectedAnions] = useState<string[]>(['PF6']);
@@ -38,6 +43,41 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   // SMILES validation state
   const [smilesErrors, setSmilesErrors] = useState<{[key: number]: string}>({});
   const [showValidation, setShowValidation] = useState(false);
+
+  // Solvent fraction validation state
+  const [solventFractionErrors, setSolventFractionErrors] = useState<{[key: number]: string}>({});
+
+  // Anion fraction validation state
+  const [anionFractionErrors, setAnionFractionErrors] = useState<{[key: string]: string}>({});
+
+  // Temperature validation state
+  const [temperatureError, setTemperatureError] = useState<string | null>(null);
+
+  // Temperature validation logic
+  const validateTemperature = (temp: string): string | null => {
+    if (temp.trim() === '') {
+      return t('formulation.temperature.validation.empty', 'Temperature cannot be empty');
+    }
+
+    const tempValue = parseFloat(temp);
+    if (isNaN(tempValue)) {
+      return t('formulation.temperature.validation.invalid', 'Please enter a valid temperature value');
+    }
+
+    if (tempValue < 238.15) {
+      return t('formulation.temperature.validation.tooLow', 'Temperature cannot be lower than 238.15 K');
+    }
+
+    if (tempValue > 378.15) {
+      return t('formulation.temperature.validation.tooHigh', 'Temperature cannot be higher than 378.15 K');
+    }
+
+    return null;
+  };
+
+  const isValidTemperature = () => {
+    return validateTemperature(temperature) === null;
+  };
 
   // Validation logic
   const isValidConfiguration = () => {
@@ -87,6 +127,39 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
     return null;
   };
 
+  // Solvent fraction validation logic
+  const validateSolventFraction = (fraction: string): string | null => {
+    if (fraction.trim() === '') {
+      return t('formulation.fraction.validation.empty', 'Fraction cannot be empty');
+    }
+
+    const fractionValue = parseFloat(fraction);
+    if (isNaN(fractionValue)) {
+      return t('formulation.fraction.validation.invalid', 'Please enter a valid fraction value');
+    }
+
+    if (fractionValue < 0.05) {
+      return t('formulation.fraction.validation.tooLow', 'Fraction cannot be lower than 0.05');
+    }
+
+    if (fractionValue > 1) {
+      return t('formulation.fraction.validation.tooHigh', 'Fraction cannot be higher than 1');
+    }
+
+    return null;
+  };
+
+  // Check if all solvent fractions are valid
+  const hasValidSolventFractions = () => {
+    const activeSolvents = solvents.filter(s => s.smiles.trim() !== '');
+    return activeSolvents.every(s => validateSolventFraction(s.fraction) === null);
+  };
+
+  // Check if all anion fractions are valid
+  const hasValidAnionFractions = () => {
+    return selectedAnions.every(anion => validateSolventFraction(anionFractions[anion] || '0') === null);
+  };
+
   // Validate all SMILES strings
   const validateAllSMILES = () => {
     const errors: {[key: number]: string} = {};
@@ -115,6 +188,20 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
       setSmilesErrors(prev => {
         const newErrors = { ...prev };
         delete newErrors[id];
+        return newErrors;
+      });
+    }
+
+    // Validate fraction when user changes it
+    if (field === 'fraction') {
+      const error = validateSolventFraction(value);
+      setSolventFractionErrors(prev => {
+        const newErrors = { ...prev };
+        if (error) {
+          newErrors[id] = error;
+        } else {
+          delete newErrors[id];
+        }
         return newErrors;
       });
     }
@@ -216,6 +303,18 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
       ...prev,
       [anion]: value
     }));
+
+    // Validate fraction when user changes it
+    const error = validateSolventFraction(value);
+    setAnionFractionErrors(prev => {
+      const newErrors = { ...prev };
+      if (error) {
+        newErrors[anion] = error;
+      } else {
+        delete newErrors[anion];
+      }
+      return newErrors;
+    });
   };
 
   // Remove ionic symbols from ion names for API
@@ -234,19 +333,47 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
 
   const anionOptions = [
     { value: 'PF6', label: 'PF₆⁻', subLabel: 'Hexafluorophosphate', available: true, disabledText: "" },
-    { value: 'BF4', label: 'BF₄⁻', subLabel: 'Tetrafluoroborate', available: true, disabledText: "" },
     { value: 'FSI', label: 'FSI⁻', subLabel: 'Bis(fluorosulfonyl)imide', available: true, disabledText: "" },
-    { value: 'TFSI', label: 'TFSI⁻', subLabel: 'Bis(trifluoromethylsulfonyl)imide', available: true, disabledText: "" }
+    { value: 'TFSI', label: 'TFSI⁻', subLabel: 'Bis(trifluoromethylsulfonyl)imide', available: true, disabledText: "" },
+    { value: 'BF4', label: 'BF₄⁻', subLabel: 'Tetrafluoroborate', available: false, disabledText: t('formulation.comingSoon2', 'To be available in MU2') }
   ];
 
   const handleCalculate = async () => {
     // Show validation errors
     setShowValidation(true);
 
+    // Validate temperature
+    const tempError = validateTemperature(temperature);
+    setTemperatureError(tempError);
+
     // Validate SMILES
     const smilesValid = validateAllSMILES();
 
-    if (!isValidConfiguration() || !isValidSolventConfiguration() || !smilesValid) {
+    // Validate all solvent fractions
+    const fractionErrors: {[key: number]: string} = {};
+    solvents.forEach(solvent => {
+      if (solvent.smiles.trim() !== '') {
+        const error = validateSolventFraction(solvent.fraction);
+        if (error) {
+          fractionErrors[solvent.id] = error;
+        }
+      }
+    });
+    setSolventFractionErrors(fractionErrors);
+    const solventFractionsValid = Object.keys(fractionErrors).length === 0;
+
+    // Validate all anion fractions
+    const anionErrors: {[key: string]: string} = {};
+    selectedAnions.forEach(anion => {
+      const error = validateSolventFraction(anionFractions[anion] || '0');
+      if (error) {
+        anionErrors[anion] = error;
+      }
+    });
+    setAnionFractionErrors(anionErrors);
+    const anionFractionsValid = Object.keys(anionErrors).length === 0;
+
+    if (!isValidConfiguration() || !isValidSolventConfiguration() || !smilesValid || tempError !== null || !solventFractionsValid || !anionFractionsValid) {
       return;
     }
 
@@ -265,11 +392,12 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
           .map(s => parseFloat(s.fraction)),
         anion_name_list: selectedAnions.map(anion => cleanIonName(anion)),
         anion_fractions: selectedAnions.map(anion => parseFloat(anionFractions[anion] || '0')),
-        anion_fractions_type: "mole",
+        anion_fractions_type: fractionType,
         cation_name: cleanIonName(selectedCation),
         num_cations: 40, // 默认值，可以根据需要调整
         cation_molality: parseFloat(totalSaltConcentration),
-        simulation_box_size: 500.0 // 默认值，可以根据需要调整
+        simulation_box_size: 500.0, // 默认值，可以根据需要调整
+        temperature: parseFloat(temperature)
       };
 
       const response = await runMDSimulation(params);
@@ -322,6 +450,8 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
 
   // Reset function
   const resetFormulationState = useCallback(() => {
+    setTemperature('298.15');
+    setTemperatureError(null);
     setSelectedCation('Li');
     setSelectedAnions(['PF6']);
     setTotalSaltConcentration('1.00');
@@ -337,6 +467,8 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
     setCurrentView('configuration');
     setError(null);
     setSmilesErrors({});
+    setSolventFractionErrors({});
+    setAnionFractionErrors({});
     setShowValidation(false);
   }, []);
 
@@ -358,6 +490,39 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
 
   return (
     <div className="formulation-module">
+      {/* Molecular Simulation Parameters */}
+      <div className="module-section">
+        <h2>{t('formulation.simulationParameters.title', 'Molecular Simulation Parameters')}</h2>
+
+        <div className="module-content-card">
+          <div className="form-group">
+            <label>{t('formulation.temperature.label', 'Temperature (K)')}</label>
+            <input
+              type="text"
+              inputMode="decimal"
+              pattern="[0-9]*\.?[0-9]*"
+              value={temperature}
+              onChange={(e) => {
+                const val = e.target.value;
+                // 只允许输入数字和小数点
+                if (val === '' || /^[0-9]*\.?[0-9]*$/.test(val)) {
+                  setTemperature(val);
+                  // Validate on change
+                  const error = validateTemperature(val);
+                  setTemperatureError(error);
+                }
+              }}
+              className={`concentration-input ${temperatureError && showValidation ? 'error' : ''}`}
+            />
+            {temperatureError && showValidation && (
+              <div className="smiles-error-message">
+                {temperatureError}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="module-section">
         <h2>{t('formulation.saltConfiguration.title', 'Salt Configuration')}</h2>
 
@@ -394,8 +559,8 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
                 >
                   <div className="ion-symbol">{option.label}</div>
                   <div className="ion-name">{option.subLabel}</div>
-                  {!option.available && (
-                    <div className="coming-soon">{t('formulation.comingSoon', 'Will be available soon')}</div>
+                  {!option.available && option.disabledText && (
+                    <div className="coming-soon">{option.disabledText}</div>
                   )}
                 </div>
               ))}
@@ -406,10 +571,17 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
           <div className="form-group">
             <label>{t('formulation.totalSaltConcentration.label', 'Total Salt Concentration (mol/kg)')}</label>
             <input
-              type="number"
-              step="0.01"
+              type="text"
+              inputMode="decimal"
+              pattern="[0-9]*\.?[0-9]*"
               value={totalSaltConcentration}
-              onChange={(e) => setTotalSaltConcentration(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                // 只允许输入数字和小数点
+                if (val === '' || /^[0-9]*\.?[0-9]*$/.test(val)) {
+                  setTotalSaltConcentration(val);
+                }
+              }}
               className="concentration-input"
             />
           </div>
@@ -417,16 +589,26 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
           {/* Anion Fractions */}
           {selectedAnions.map((anion) => (
             <div key={anion} className="form-group">
-              <label>{`${formatIonDisplay(anion)} Fraction`}</label>
+              <label>{`${formatIonDisplay(anion)} ${t('formulation.fraction.label', 'Fraction (min: 0.05)')}`}</label>
               <input
-                type="number"
-                step="0.01"
-                min="0"
-                max="1"
-                value={anionFractions[anion] || '0'}
-                onChange={(e) => updateAnionFraction(anion, e.target.value)}
-                className="fraction-input"
+                type="text"
+                inputMode="decimal"
+                pattern="[0-9]*\.?[0-9]*"
+                value={anionFractions[anion] ?? ''}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  // 只允许输入数字和小数点
+                  if (val === '' || /^[0-9]*\.?[0-9]*$/.test(val)) {
+                    updateAnionFraction(anion, val);
+                  }
+                }}
+                className={`fraction-input ${anionFractionErrors[anion] ? 'error' : ''}`}
               />
+              {anionFractionErrors[anion] && (
+                <div className="smiles-error-message">
+                  {anionFractionErrors[anion]}
+                </div>
+              )}
             </div>
           ))}
 
@@ -501,15 +683,25 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
                   <label>{t('formulation.fraction.label', 'Fraction (min: 0.05)')}</label>
                   <div className="fraction-input-with-remove">
                     <input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      max="1"
+                      type="text"
+                      inputMode="decimal"
+                      pattern="[0-9]*\.?[0-9]*"
                       value={solvent.fraction}
-                      onChange={(e) => updateSolvent(solvent.id, 'fraction', e.target.value)}
-                      className="fraction-input"
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        // 只允许输入数字和小数点
+                        if (val === '' || /^[0-9]*\.?[0-9]*$/.test(val)) {
+                          updateSolvent(solvent.id, 'fraction', val);
+                        }
+                      }}
+                      className={`fraction-input ${solventFractionErrors[solvent.id] ? 'error' : ''}`}
                     />
                   </div>
+                  {solventFractionErrors[solvent.id] && (
+                    <div className="smiles-error-message">
+                      {solventFractionErrors[solvent.id]}
+                    </div>
+                  )}
                 </div>
                 <div className="remove-button-group">
                   {solvents.length > 1 && (
@@ -600,13 +792,15 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
 
       {/* Submit Configuration Button */}
       <div className="submit-section">
-        <button
-          className={`submit-btn ${isCalculating ? 'calculating' : ''}`}
+        <Button
+          variant="primary"
+          size="mlarge"
+          loading={isCalculating}
           onClick={handleCalculate}
-          disabled={isCalculating || !isValidConfiguration() || !isValidSolventConfiguration()}
+          disabled={isCalculating || !isValidConfiguration() || !isValidSolventConfiguration() || !hasValidSolventFractions() || !hasValidAnionFractions()}
         >
-          {isCalculating ? t('formulation.ui.calculating', 'Calculating...') : t('formulation.submit.button', 'Submit Configuration')}
-        </button>
+          {t('formulation.submit.button', 'Submit Configuration')}
+        </Button>
       </div>
 
     </div>

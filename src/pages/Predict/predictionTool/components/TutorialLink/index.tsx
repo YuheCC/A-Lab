@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BookOpen } from 'lucide-react';
-import './TutorialLink.css';
+import './TutorialLink.less';
 
 const TutorialLink: React.FC = () => {
   const { t } = useTranslation();

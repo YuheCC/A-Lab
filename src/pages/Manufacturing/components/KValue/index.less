@@ -1,3 +1,5 @@
+@import '@/styles/variables.less';
+
 .kvalue-result-layout {
   display: flex;
   gap: 24px;
@@ -19,7 +21,7 @@
     .kvalue-panel-title {
       font-size: 16px;
       font-weight: 600;
-      color: #333;
+      color: @color-text-primary;
       margin-bottom: 16px;
       padding-bottom: 12px;
       border-bottom: 1px solid #e8e8e8;
@@ -86,12 +88,12 @@
       .kvalue-loading-text {
         font-size: 16px;
         font-weight: 500;
-        color: #333;
+        color: @color-text-primary;
       }
 
       .kvalue-loading-progress {
         font-size: 14px;
-        color: #666;
+        color: @color-gray-500;
       }
 
       @keyframes kvalue-spin {
@@ -117,7 +119,7 @@
     .kvalue-table-header {
       font-size: 16px;
       font-weight: 600;
-      color: #333;
+      color: @color-text-primary;
       margin-bottom: 16px;
       padding-bottom: 12px;
       border-bottom: 1px solid #e8e8e8;
@@ -143,7 +145,7 @@
           text-align: left;
           font-size: 14px;
           font-weight: 600;
-          color: #333;
+          color: @color-text-primary;
           border-bottom: 2px solid #e8e8e8;
         }
       }
@@ -153,13 +155,13 @@
           transition: background 0.2s ease;
 
           &:hover {
-            background: #f5f5f5;
+            background: @color-gray-100;
           }
 
           td {
             padding: 12px 16px;
             font-size: 14px;
-            color: #666;
+            color: @color-gray-500;
             border-bottom: 1px solid #f0f0f0;
           }
 
@@ -177,7 +179,7 @@
       align-items: center;
       justify-content: center;
       height: 100%;
-      color: #999;
+      color: @color-text-muted;
       font-size: 14px;
       padding: 40px 0;
     }

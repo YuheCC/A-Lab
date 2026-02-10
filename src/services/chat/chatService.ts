@@ -2,7 +2,8 @@ import type { Message } from '@/pages/Chat/components/MessageList';
 import type { ToolStats } from '@/utils/messageUtils';
 import type { ChatHistoryItem } from '@/pages/Chat/components/History';
 import request from '@/services/request';
-import { getAPIUrl } from '@/utils';
+import { urlConfig } from '@/services/config/urlConfig';
+import { CHAT_ENDPOINTS, getChatEndpoint, getChatWSConfig } from './endpoints';
 
 export interface ChatResponse {
   content: string;
@@ -22,10 +23,12 @@ import { createChatWebSocketStream, createChatWebSocketStreamWebSocketOnly } fro
 
 export class ChatService {
   private static instance: ChatService;
-  private baseUrl: string;
+  private constructor() {}
 
-  private constructor() {
-    this.baseUrl = getAPIUrl() || '/api';
+  private buildEndpoint(endpoint: keyof typeof CHAT_ENDPOINTS.default) {
+    const env = urlConfig.getEnvironment();
+    const path = getChatEndpoint(env, endpoint);
+    return urlConfig.buildFullURL(path);
   }
 
   public static getInstance(): ChatService {
@@ -100,6 +103,14 @@ export class ChatService {
     if (extraData && typeof extraData === 'object' && 'extra_data' in extraData) {
       extraData = extraData.extra_data;
     }
+
+    const savedAtSource = serverMessage.role === 'assistant'
+      ? (serverMessage.updated_at ?? serverMessage.created_at ?? serverMessage.createdAt ?? serverMessage.savedAt ?? serverMessage.timestamp)
+      : (serverMessage.created_at ?? serverMessage.createdAt ?? serverMessage.savedAt ?? serverMessage.timestamp);
+    const normalizedSavedAt = savedAtSource ? this.normalizeServerDate(savedAtSource).toISOString() : undefined;
+    const normalizedTimestamp = serverMessage.timestamp
+      ? this.normalizeServerDate(serverMessage.timestamp)
+      : (normalizedSavedAt ? new Date(normalizedSavedAt) : undefined);
     
     return {
       ...serverMessage,
@@ -107,7 +118,9 @@ export class ChatService {
       extraData: extraData,
       toolStats: this.parseToolStats(serverMessage.tool_stats ?? serverMessage.toolStats),
       // 确保时间戳格式正确
-      timestamp: serverMessage.timestamp ? this.normalizeServerDate(serverMessage.timestamp) : undefined,
+      timestamp: normalizedTimestamp,
+      createdAt: normalizedSavedAt,
+      savedAt: normalizedSavedAt,
       // 移除后端的extra_data字段，避免重复
       extra_data: undefined,
       tool_stats: undefined
@@ -117,11 +130,12 @@ export class ChatService {
 
   async sendMessage(message: string, mode: 'regular' | 'deep-space' | 'lightning' | 'ask' | 'clarify' = 'regular', chatId?: string): Promise<ChatResponse> {
     try {
-      const resp = await request('/chat/send', {
+      const url = this.buildEndpoint('send');
+
+      const resp = await request(url, {
         method: 'POST',
         data: { message, mode, chatId },
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       const data = resp.data;
       return {
         content: data.content,
@@ -139,11 +153,12 @@ export class ChatService {
 
   async regenerateResponse(messageId: string): Promise<ChatResponse> {
     try {
-      const resp = await request('/chat/regenerate', {
+      const url = this.buildEndpoint('regenerate');
+
+      const resp = await request(url, {
         method: 'POST',
         data: { messageId },
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       const data = resp.data;
       return {
         content: data.content,
@@ -173,7 +188,7 @@ export class ChatService {
       chatId, 
       message, 
       mode = 'regular', 
-      path = '/ws/socket.io', 
+      path, 
       protocols, 
       websocketOnly = false,
       onOpen, 
@@ -181,6 +196,10 @@ export class ChatService {
       onError, 
       onClose 
     } = options || {};
+    const env = urlConfig.getEnvironment();
+    const wsConfig = getChatWSConfig(env);
+    const resolvedPath = path || wsConfig.path;
+    const baseUrl = urlConfig.getWSBaseURL();
     
     console.log('chatId', chatId);
     console.log('使用WebSocket-only模式:', websocketOnly);
@@ -188,8 +207,8 @@ export class ChatService {
     const createStreamFn = websocketOnly ? createChatWebSocketStreamWebSocketOnly : createChatWebSocketStream;
     
     return createStreamFn({
-      baseUrl: this.baseUrl,
-      path,
+      baseUrl,
+      path: resolvedPath,
       chatId,
       message,
       mode,
@@ -213,14 +232,14 @@ export class ChatService {
   //获取置顶聊天列表
   async getPinnedChatList(): Promise<ChatHistoryItem[]> {
     try {
-      const resp = await request('/api/chat/list', {
+      const url = this.buildEndpoint('list');
+      const resp = await request(url, {
         params: {
           pinned: true,
           limit: 100,
         },
         method: 'GET',
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
 
       const list = Array.isArray(resp.data) ? resp.data : [];
       return list
@@ -242,7 +261,8 @@ export class ChatService {
   // 获取聊天列表
   async getChatList(start?: string, limit: number = 20): Promise<ChatHistoryItem[]> {
     try {
-      const resp = await request('/api/chat/list', {
+      const url = this.buildEndpoint('list');
+      const resp = await request(url, {
         params: {
           pinned: false,
           start: start || null,
@@ -250,7 +270,6 @@ export class ChatService {
         },
         method: 'GET',
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       console.log('resp.data', resp.data);
       return (resp.data || [])?.map((item: any) => ({
         ...item,
@@ -283,13 +302,13 @@ export class ChatService {
 
   async getChatById(chatId: number): Promise<{ title: string; messages: Message[] }> {
     try {
-      const resp = await request(`/api/chat/detail`, {
+      const url = this.buildEndpoint('detail');
+      const resp = await request(url, {
         method: 'GET',
         params: {
           id: chatId,
         },
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       const data = resp.data;
       
       // 映射后端消息数据到前端格式
@@ -308,11 +327,11 @@ export class ChatService {
   // only create a new chat with a chat_name
   async createChat(title: string): Promise<any> {
     try {
-      const resp = await request('/api/chat/new', {
+      const url = this.buildEndpoint('create');
+      const resp = await request(url, {
         method: 'POST',
         data: { chat_name: title },
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       return resp.data;
     } catch (error) {
       console.error('Failed to create chat:', error);
@@ -323,16 +342,16 @@ export class ChatService {
   // send a new message to the chat, return a response id
   async createNewMessage(chatId: number, message: string, model: string = 'o3'): Promise<any> {
     try {
-      const resp = await request('/api/chat/message/new', {
+      const url = this.buildEndpoint('messageNew');
+      const resp = await request(url, {
         method: 'POST',
-        data: { 
-            chat_id: chatId, 
+        data: {
+            chat_id: chatId,
             model,
             content: message,
             role: 'user',
         },
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       return resp.data;
     } catch (error) {
       console.error('Failed to new message:', error);
@@ -343,17 +362,17 @@ export class ChatService {
   // update a message with a new content
   async updateMessage(chatId: number, messageId: string, message: string, model: string = 'o3'): Promise<any> {
     try {
-      const resp = await request('/api/chat/message/update', {
+      const url = this.buildEndpoint('messageUpdate');
+      const resp = await request(url, {
         method: 'POST',
-        data: { 
+        data: {
             id: messageId,
-            chat_id: chatId, 
+            chat_id: chatId,
             model,
             content: message,
             role: 'user',
         },
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       return resp.data;
     } catch (error) {
       console.error('Failed to update message:', error);
@@ -366,12 +385,13 @@ export class ChatService {
       // 处理管理员开关参数
       const ragEnabled = extraOptions?.disableLiteratureSearch === false ? true : (extraOptions?.ragEnabled ?? false);
       
-      const resp = await request('/api/llm/ask', {
+      const url = this.buildEndpoint('llmAsk');
+      const resp = await request(url, {
         method: 'POST',
-        data: { 
-          chat_id: chatId, 
+        data: {
+          chat_id: chatId,
           answer_id: answerId,
-          messages, 
+          messages,
           session_id: sessionId,
           model,
           ragEnabled,
@@ -383,7 +403,6 @@ export class ChatService {
           llm_compute_power: extraOptions?.llmComputePower,
         },
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       return resp.data;
     } catch (error) {
       console.error('Failed to trigger message as user:', error);
@@ -416,11 +435,11 @@ export class ChatService {
         payload.dump_state = true;
       }
       
-      const resp = await request('/api/llm/multi-agent', {
+      const url = this.buildEndpoint('multiAgent');
+      const resp = await request(url, {
         method: 'POST',
         data: payload,
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       return resp.data;
     } catch (error) {
       console.error('Failed to trigger message as deep space:', error);
@@ -453,11 +472,11 @@ export class ChatService {
         payload.dump_state = true;
       }
       
-      const resp = await request('/api/llm/multi-agent/clarify', {
+      const url = this.buildEndpoint('multiAgentClarify');
+      const resp = await request(url, {
         method: 'POST',
         data: payload,
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       return resp.data;
     } catch (error) {
       console.error('Failed to trigger message as claritai:', error);
@@ -467,7 +486,8 @@ export class ChatService {
 
   async saveChat(chatId: number, title: string, messages: Message[]): Promise<boolean> {
     try {
-      const resp = await request('/chat/save', {
+      const url = this.buildEndpoint('save');
+      const resp = await request(url, {
         method: 'POST',
         data: { chatId, title, messages },
       });
@@ -480,7 +500,8 @@ export class ChatService {
 
   async deleteChat(chatId: number): Promise<boolean> {
     try {
-      const resp = await request(`/api/chat/delete`, {
+      const url = this.buildEndpoint('delete');
+      const resp = await request(url, {
         method: 'POST',
         data: { id: chatId },
       });
@@ -493,15 +514,15 @@ export class ChatService {
 
   async searchChats(query: string): Promise<ChatHistoryItem[]> {
     try {
-      const resp = await request('/api/chat/list', {
+      const url = this.buildEndpoint('list');
+      const resp = await request(url, {
         method: 'GET',
-        params: { 
-          search_text: query, 
+        params: {
+          search_text: query,
           limit: 10,
           pinned: false,
         },
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       const list = resp.data || [];
       return (list || [])?.map((item: any) => ({
         ...item,
@@ -519,7 +540,8 @@ export class ChatService {
 
   async renameChat(chatId: number, newTitle: string): Promise<boolean> {
     try {
-      const resp = await request(`/api/chat/update`, {
+      const url = this.buildEndpoint('update');
+      const resp = await request(url, {
         method: 'POST',
         data: { id: chatId, chat_name: newTitle },
       });
@@ -532,7 +554,8 @@ export class ChatService {
 
   async togglePinChat(chatId: number, isPinned: boolean): Promise<boolean> {
     try {
-      const resp = await request(`/api/chat/update`, {
+      const url = this.buildEndpoint('update');
+      const resp = await request(url, {
         method: 'POST',
         data: { id: chatId, pinned: isPinned },
       });
@@ -540,6 +563,35 @@ export class ChatService {
     } catch (error) {
       console.error('Failed to toggle pin chat:', error);
       return false;
+    }
+  }
+
+  /**
+   * 下载消息的 PDF 文件
+   * @param messageId - 消息ID
+   */
+  async downloadMessagePdf(messageId: string): Promise<void> {
+    try {
+      const url = this.buildEndpoint('downloadPdf');
+      const resp = await request(url, {
+        method: 'POST',
+        data: { messageId },
+        responseType: 'blob',
+      });
+
+      // 创建下载链接
+      const blob = new Blob([resp.data], { type: 'application/pdf' });
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `message_${messageId}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error('Failed to download message PDF:', error);
+      throw error;
     }
   }
 }

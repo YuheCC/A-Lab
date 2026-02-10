@@ -1,0 +1,241 @@
+@import '@/styles/variables.less';
+
+/* Molcard Component Styles */
+.molcard-container {
+  display: flex;
+  flex-flow:column;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid @color-gray-300;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.molcard-container.molcard-published {
+  background: linear-gradient(135deg, #fff7ed, #fffaf0);
+  border-color: @color-warning-light;
+  box-shadow: 0 2px 10px rgba(251, 146, 60, 0.12);
+}
+
+.molcard-container.molcard-novel {
+  background: linear-gradient(135deg, #f0f9ff, #ecfeff);
+  border-color: @color-info-light;
+  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.12);
+}
+
+.molcard-vertical .molcard-visualization {
+  display: flex;
+  justify-content: center;
+  width: calc(100% - 10px);
+  max-width: none;
+}
+
+.molcard-visualization {
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  width: 200px;
+  max-width: 200px;
+  margin-right: 5px;
+}
+
+.molcard-compact .molcard-visualization {
+  min-height: 140px;
+  width: 140px;
+  max-width: 140px;
+  padding: 4px;
+}
+
+.molcard-vertical .molcard-info-panel {
+  border-left: none;
+  border-top: 1px solid @color-gray-300;
+  max-width: none;
+  min-width: 0;
+}
+
+.molcard-info-panel {
+  padding: 10px;
+  border-left: 1px solid @color-gray-300;
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  color: @color-text-primary;
+  max-width: 250px;
+  min-width: 200px;
+}
+
+.molcard-compact .molcard-info-panel {
+  padding: 8px;
+  max-width: 220px;
+  min-width: 170px;
+}
+
+.molcard-property-group {
+  position: relative;
+  display: flex;
+  flex-flow: column;
+  font-size: 12px;
+}
+.molcard-property-group label {
+  font-weight: 600;
+  font-size:10px;
+}
+.molcard-property-group code {
+  font-family: 'Arial', sans-serif;
+  font-size: 12px;
+  color: #555;
+  max-width: 200px;
+  display: block;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  line-height: 1.4;
+}
+
+.molcard-compact .molcard-property-group {
+  font-size: 11px;
+}
+
+.molcard-compact .molcard-property-group label {
+  font-size: 9px;
+}
+
+.molcard-compact .molcard-property-group code {
+  font-size: 11px;
+  max-width: 180px;
+}
+
+.molcard-footer-expanded .molcard-property-group code {
+  max-width: none;
+}
+
+.molcard-container .molcard-footer {
+  background-color: @color-gray-100;
+  border-top: 1px solid @color-gray-300;
+  font-size: 12px;
+}
+
+.molcard-container .molcard-footer-expanded {
+  background: @color-gray-100;
+  cursor: pointer;
+  border-top: 1px solid @color-gray-300;
+  font-size: 12px;
+}
+.molcard-container .molcard-footer-expanded:hover {
+  background-color: #ebebeb;
+}
+
+.molcard-expand-controls {
+  padding: 5px;
+  user-select: none;
+  display: flex;
+  flex-flow:row;
+  align-items: center;
+  border-bottom: 1px solid @color-gray-300;
+}
+
+.molcard-expand-controls .molcard-control-icon {
+  margin-right: 10px;
+  padding: 5px;
+  border-radius: 4px;
+  background-color: transparent;
+}
+.molcard-expand-controls .molcard-control-icon:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+}
+
+.molcard-info-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 5px;
+  gap: 5px;
+}
+
+.molcard-compact .molcard-info-content {
+  gap: 4px;
+}
+.molcard-large .molcard-info-content {
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 100px));
+}
+
+.molcard-expanded-content {
+  gap: 5px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  padding: 10px;
+  font-size: 12px;
+  color: @color-text-primary;
+}
+
+.molcard-controls {
+  user-select: none;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  display: flex;
+  flex-flow:row;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid @color-gray-300;
+  border-radius: 4px;
+  padding: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.molcard-controls .molcard-control-icon {
+  padding: 5px;
+  border-radius:4px;
+  background-color:transparent;
+}
+.molcard-controls .molcard-control-icon:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+}
+.molcard-children {
+  padding: 5px;
+}
+
+.molcard-large .molcard-expanded-content .molcard-property-group code {
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.molcard-large .molcard-property-group code {
+  font-size:14px;
+  max-width: none;
+}
+.molcard-large .molcard-info-panel {
+  max-width: none;
+}
+
+/* 错误消息样式 */
+.molcard-error {
+  background-color: @color-error-bg;
+  color: @color-error-text;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid @color-error-border;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* 信息标题样式 */
+.molcard-info-title {
+  font-size: 14px;
+  font-weight: @font-weight-semibold;
+  color: @color-text-primary;
+  margin-bottom: 8px;
+}
+
+/* 底部提示文本样式 */
+.molcard-info-footer-text {
+  font-size: 12px;
+  color: @color-text-secondary;
+  user-select: none;
+}

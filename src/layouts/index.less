@@ -1,3 +1,5 @@
+@import '@/styles/variables.less';
+
 // body {
 //   margin: 0;
 //   font-family: Arial, sans-serif;
@@ -21,8 +23,8 @@ code {
 //   overflow: hidden;
 //   width: 100%;
 //   height: 100%;
-//   background-color: #f1f1f1;
-//   color: #333;
+//   background-color: @color-gray-100;
+//   color: @color-text-primary;
 //   line-height: 1.6;
 // }
 
@@ -36,7 +38,7 @@ code {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f1f1f1;
+  background-color: @color-gray-100;
   overflow: hidden; /* Prevent scrolling issues */
 }
 
@@ -49,7 +51,7 @@ code {
 }
 
 .navbar {
-  background-color: #f1f1f1;
+  background-color: @color-gray-100;
   border-bottom: 1px solid black;
   padding: 1rem;
   display: flex;
@@ -76,14 +78,14 @@ code {
 }
 
 .navbar-link {
-  color: #333;
+  color: @color-text-primary;
   text-decoration: none;
   font-size: 14px;
   transition: color 0.2s ease;
 }
 
 .navbar-link.active {
-  color: #56B26A;
+  color: @color-accent;
   text-decoration: underline;
 }
 
@@ -97,7 +99,7 @@ code {
   display: flex;
   background-color: #fff;
   padding: 0 20px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid @color-gray-300;
   justify-content: center;
 }
 
@@ -108,7 +110,7 @@ code {
   border: none;
   border-bottom: 3px solid transparent;
   font-size: 16px;
-  color: #666;
+  color: @color-gray-500;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -124,10 +126,10 @@ code {
 }
 
 .App-header {
-  background-color: #f1f1f1;
-  color: #333;
+  background-color: @color-gray-100;
+  color: @color-text-primary;
   padding: 10px 20px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid @color-gray-300;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -137,7 +139,7 @@ code {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
-  color: #333;
+  color: @color-text-primary;
 }
 
 .stats-container {
@@ -156,7 +158,7 @@ code {
   flex-direction: row;
   flex: 1;
   min-height: 0; /* Prevent flex item from growing beyond parent */
-  background-color: #f1f1f1;
+  background-color: @color-gray-100;
   overflow: hidden; /* Prevent scrolling issues */
   position: relative;
 }
@@ -179,7 +181,7 @@ code {
   background-color: #fff;
   min-width: 300px;
   max-width: 400px;
-  border: 1px solid #ddd;
+  border: 1px solid @color-gray-300;
   border-radius: 4px;
   margin: 10px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -187,8 +189,8 @@ code {
 
 .info-panel h2 {
   margin-top: 0;
-  color: #333;
-  border-bottom: 1px solid #ddd;
+  color: @color-text-primary;
+  border-bottom: 1px solid @color-gray-300;
   padding-bottom: 10px;
   font-size: 1.3rem;
   display: flex;
@@ -214,7 +216,7 @@ code {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #666;
+  color: @color-gray-500;
   font-size: 1.2rem;
 }
 
@@ -268,16 +270,16 @@ code {
   overflow-y: auto;
   padding: 20px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  color: #333;
+  color: @color-text-primary;
   position: relative;
-  border: 1px solid #ddd;
+  border: 1px solid @color-gray-300;
 }
 
 /* Black background popup styling */
 .black-bg {
   background-color: #000;
   color: #fff;
-  border: 1px solid #333;
+  border: 1px solid @color-text-primary;
 }
 
 .white-text {
@@ -323,7 +325,7 @@ code {
   border: none;
   font-size: 28px;
   font-weight: bold;
-  color: #666;
+  color: @color-gray-500;
   cursor: pointer;
   transition: color 0.2s;
 }
@@ -358,15 +360,15 @@ code {
 
 /* Popup heading styles */
 .popup-content h2 {
-  color: #333;
+  color: @color-text-primary;
   margin-top: 0;
   margin-bottom: 20px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid @color-gray-300;
 }
 
 .popup-content h3 {
-  color: #333;
+  color: @color-text-primary;
   margin-top: 20px;
   margin-bottom: 10px;
   font-size: 1.1rem;
@@ -387,7 +389,7 @@ code {
   border-radius: 4px;
   max-height: 100px;
   overflow-y: auto;
-  border: 1px solid #eee;
+  border: 1px solid @color-gray-200;
 }
 
 /* Property table style */
@@ -399,7 +401,7 @@ code {
 
 .property-table td {
   padding: 8px 10px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid @color-gray-200;
   text-align: center; /* Center the content within cells */
 }
 
@@ -410,7 +412,7 @@ code {
 }
 
 .property-value {
-  color: #333;
+  color: @color-text-primary;
   font-family: 'Arial, sans-serif';
   word-break: break-all;
 }
@@ -424,10 +426,10 @@ code {
   white-space: pre-wrap;
   font-family: 'Arial, sans-serif';
   font-size: 0.9rem;
-  color: #666;
+  color: @color-gray-500;
   max-height: 200px;
   overflow-y: auto;
-  border: 1px solid #eee;
+  border: 1px solid @color-gray-200;
 }
 
 /* Filters styles */
@@ -456,7 +458,7 @@ code {
 
 .slider-label {
   font-size: 14px;
-  color: #333;
+  color: @color-text-primary;
   font-weight: 500;
 }
 
@@ -479,7 +481,7 @@ code {
 }
 
 .inactive-filter .slider-value {
-  color: #999;
+  color: @color-text-muted;
 }
 
 .filter-wrapper {
@@ -494,7 +496,7 @@ code {
 .reset-filter-button {
   background: none;
   border: none;
-  color: #666;
+  color: @color-gray-500;
   cursor: pointer;
   font-size: 18px;
   padding: 4px 8px;
@@ -504,13 +506,13 @@ code {
 
 .reset-filter-button:hover {
   background: #f0f0f0;
-  color: #333;
+  color: @color-text-primary;
 }
 
 .reset-button {
   background: none;
-  border: 1px solid #ccc;
-  color: #666;
+  border: 1px solid @color-gray-300;
+  color: @color-gray-500;
   cursor: pointer;
   font-size: 12px;
   padding: 4px 8px;
@@ -521,8 +523,8 @@ code {
 
 .reset-button:hover {
   background: #f0f0f0;
-  color: #333;
-  border-color: #999;
+  color: @color-text-primary;
+  border-color: @color-text-muted;
 }
 
 /* Active and inactive filter classes for Material UI slider styling */
@@ -555,7 +557,7 @@ code {
 }
 
 .header-link {
-  color: #666;
+  color: @color-gray-500;
   text-decoration: none;
   font-size: 1rem;
   transition: color 0.2s ease;
@@ -563,24 +565,24 @@ code {
 }
 
 .header-link:hover {
-  color: #333;
+  color: @color-text-primary;
 }
 
 .header-link.active {
-  color: #333;
+  color: @color-text-primary;
   text-decoration: underline;
 }
 
 .header-link.molecular-discovery {
   text-decoration: underline;
-  color: #333;
+  color: @color-text-primary;
 }
 
 /* About Page Styles */
 .about-container {
   display: flex;
   padding: 20px;
-  background-color: #f1f1f1;
+  background-color: @color-gray-100;
   min-height: calc(100vh - 60px);
 }
 
@@ -638,7 +640,7 @@ code {
 .feature-section {
   margin-bottom: 2.5rem;
   padding: 2rem;
-  background-color: #f8f9fa;
+  background-color: @color-gray-50;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -698,7 +700,7 @@ code {
   padding: 1rem 1.5rem;
   background-color: #fff;
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid @color-gray-200;
 }
 
 .feature-examples li {
@@ -896,7 +898,7 @@ code {
   top: 100%;
   left: 0;
   background-color: #fff;
-  border: 1px solid #ddd;
+  border: 1px solid @color-gray-300;
   border-radius: 0 0 4px 4px;
   overflow: hidden;
   width: 100%;
@@ -910,7 +912,7 @@ code {
 }
 
 .dropdown-option:hover {
-  background-color: #f5f5f5;
+  background-color: @color-gray-100;
 }
 
 .search-results {
@@ -929,22 +931,22 @@ code {
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
-  border: 1px solid #eee;
+  border: 1px solid @color-gray-200;
 }
 
 .molecule-details h2 {
   margin-top: 0;
   margin-bottom: 20px;
   font-size: 1.3rem;
-  color: #333;
-  border-bottom: 1px solid #ddd;
+  color: @color-text-primary;
+  border-bottom: 1px solid @color-gray-300;
   padding-bottom: 10px;
 }
 
 .molecule-data h3 {
   margin-top: 0;
   font-size: 1.1rem;
-  color: #333;
+  color: @color-text-primary;
   margin-bottom: 15px;
 }
 
@@ -979,7 +981,7 @@ code {
   align-items: flex-start;
   flex: 1;
   min-height: 0; /* Prevent flex item from growing beyond parent */
-  background-color: #f1f1f1;
+  background-color: @color-gray-100;
   /* Allow vertical overflow so the sticky sidebar can calculate its
      offset correctly, but keep horizontal clipping */
   overflow-x: hidden;
@@ -993,7 +995,7 @@ code {
   align-items: flex-start;
   flex: 1;
   min-height: 0;
-  background-color: #f1f1f1;
+  background-color: @color-gray-100;
   overflow-x: hidden;
   overflow-y: visible;
   position: relative;
@@ -1007,8 +1009,8 @@ code {
   margin: 20px auto;
   text-align: center;
   font-size: 1.8rem;
-  color: #333;
-  border-bottom: 1px solid #ddd;
+  color: @color-text-primary;
+  border-bottom: 1px solid @color-gray-300;
   padding-bottom: 10px;
 } */
 
@@ -1024,10 +1026,10 @@ code {
 }
 
 .chatbot-content h2 {
-  color: #333;
+  color: @color-text-primary;
   margin: 0 0 10px 0;
   padding-bottom: 10px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid @color-gray-300;
 }
 
 .chatbot-header {
@@ -1037,12 +1039,12 @@ code {
 }
 
 .query-limit-display {
-  background-color: #f8f9fa;
+  background-color: @color-gray-50;
   padding: 8px 16px;
   border-radius: 20px;
   font-size: 14px;
-  color: #666;
-  border: 1px solid #ddd;
+  color: @color-gray-500;
+  border: 1px solid @color-gray-300;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1078,7 +1080,7 @@ code {
   background-color: white;
   border-radius: 8px;
   margin-bottom: 20px;
-  border: 1px solid #eee;
+  border: 1px solid @color-gray-200;
   max-height: calc(100vh - 280px); /* Add max height to prevent overflow */
 }
 
@@ -1097,7 +1099,7 @@ code {
 }
 
 .found-molecules-container {
-  border: 1px solid #ccc;
+  border: 1px solid @color-gray-300;
   border-radius: 8px;
   padding: 10px;
   /* height: calc(100vh - 279px); */
@@ -1118,7 +1120,7 @@ code {
   padding: 10px 0;
   margin-top: 0;
   z-index: 10;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid @color-gray-200;
 }
 
 .close-molecules-button {
@@ -1132,7 +1134,7 @@ code {
 }
 
 .close-molecules-button:hover {
-  color: #333;
+  color: @color-text-primary;
 }
 
 .found-molecules-container h3 {
@@ -1142,11 +1144,11 @@ code {
   padding: 10px 0;
   margin-top: 0;
   z-index: 10;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid @color-gray-200;
 }
 
 .similar-molecules-container {
-  border: 1px solid #ccc;
+  border: 1px solid @color-gray-300;
   border-radius: 8px;
   padding: 10px;
   /* height: calc(100vh - 279px); */
@@ -1164,7 +1166,7 @@ code {
   padding: 10px 0;
   margin-top: 0;
   z-index: 10;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid @color-gray-200;
 }
 
 .system-message {
@@ -1173,7 +1175,7 @@ code {
   border-radius: 12px;
   margin-bottom: 15px;
   max-width: 80%;
-  color: #333;
+  color: @color-text-primary;
 }
 
 /* Style for user messages: slightly darker grey and constrained to the right 2/3 of the chat window */
@@ -1214,7 +1216,7 @@ code {
 .chat-input {
   flex: 1;
   padding: 12px;
-  border: 1px solid #ddd;
+  border: 1px solid @color-gray-300;
   border-radius: 8px;
   font-family: 'Arial', sans-serif;
   font-size: 14px;
@@ -1246,7 +1248,7 @@ code {
   width: 100%;
   height: 100%;
   padding: 40px 20px;
-  background-color: #f8f9fa;
+  background-color: @color-gray-50;
   overflow-y: auto;
   max-height: calc(100vh - 110px);
 }
@@ -1262,14 +1264,14 @@ code {
 .enterprise-header {
   font-size: 32px;
   font-weight: 600;
-  color: #333;
+  color: @color-text-primary;
   margin-bottom: 16px;
   text-align: center;
 }
 
 .enterprise-description {
   font-size: 18px;
-  color: #666;
+  color: @color-gray-500;
   text-align: center;
   margin-bottom: 40px;
   max-width: 800px;
@@ -1329,7 +1331,7 @@ code {
   display: flex;
   align-items: center;
   font-size: 15px;
-  color: #333;
+  color: @color-text-primary;
   cursor: pointer;
   margin-right: 20px;
 }
@@ -1358,7 +1360,7 @@ code {
   align-items: center;
   justify-content: center;
   padding: 30px;
-  background-color: #f8f9fa;
+  background-color: @color-gray-50;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -1399,11 +1401,11 @@ code {
 
 .enterprise-molecule h2 {
   font-size: 24px;
-  color: #333;
+  color: @color-text-primary;
   margin-top: 0;
   margin-bottom: 20px;
   text-align: center;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid @color-gray-200;
   padding-bottom: 15px;
 }
 
@@ -1411,7 +1413,7 @@ code {
   display: flex;
   justify-content: center;
   margin: 20px 0;
-  background-color: #f8f9fa;
+  background-color: @color-gray-50;
   padding: 20px;
   border-radius: 8px;
 }
@@ -1425,7 +1427,7 @@ code {
 
 .molecule-smiles {
   margin-top: 20px;
-  background-color: #f8f9fa;
+  background-color: @color-gray-50;
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 30px;
@@ -1433,7 +1435,7 @@ code {
 
 .molecule-smiles h3 {
   font-size: 18px;
-  color: #333;
+  color: @color-text-primary;
   margin-top: 0;
   margin-bottom: 10px;
 }
@@ -1444,7 +1446,7 @@ code {
   background-color: white;
   padding: 10px;
   border-radius: 4px;
-  border: 1px solid #eee;
+  border: 1px solid @color-gray-200;
   margin: 0;
 }
 
@@ -1457,7 +1459,7 @@ code {
   
   .enterprise-search-input {
     width: 100%;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid @color-gray-200;
   }
   
   .enterprise-search-button {
@@ -1511,7 +1513,7 @@ code {
   top:0px;
   right:0px;
   bottom:0px;
-  background-color: #f8f9fa;
+  background-color: @color-gray-50;
   padding: 20px;
   background-image: linear-gradient(135deg, #f5f7fa 0%, #e6eef8 100%);
 }
@@ -1685,7 +1687,7 @@ code {
 .terms-text {
   margin-top: 10px;
   font-size: 13px;
-  color: #666;
+  color: @color-gray-500;
   text-align: center;
 }
 
@@ -1698,7 +1700,7 @@ code {
   height: 100%;
   min-height: calc(100vh - 110px);
   padding: 0;
-  background-color: #f8f9fa;
+  background-color: @color-gray-50;
   position: absolute;
   top: 0;
   left: 0;
@@ -1784,7 +1786,7 @@ code {
 }
 
 .pricing-section {
-  background-color: #f8f9fa;
+  background-color: @color-gray-50;
   padding: 40px 20px;
   margin-top: 40px;
   border-radius: 8px;
@@ -1798,7 +1800,7 @@ code {
 }
 
 .pricing-content h2 {
-  color: #333;
+  color: @color-text-primary;
   font-size: 28px;
   margin-bottom: 30px;
   position: relative;
@@ -1865,7 +1867,7 @@ code {
 .thinking-dots span {
   width: 6px;
   height: 6px;
-  background-color: #666;
+  background-color: @color-gray-500;
   border-radius: 50%;
   animation: thinking 1.4s infinite;
 }
@@ -1895,7 +1897,7 @@ code {
 
 /* Disabled state for chat input */
 .chat-input:disabled {
-  background-color: #f5f5f5;
+  background-color: @color-gray-100;
   cursor: not-allowed;
   opacity: 0.7;
 }
@@ -1913,7 +1915,7 @@ code {
   right: 20px;
   width: 300px;
   background-color: #fff;
-  border: 1px solid #ddd;
+  border: 1px solid @color-gray-300;
   border-radius: 8px;
   padding: 15px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -1930,7 +1932,7 @@ code {
   height: 80px;
   padding: 8px;
   margin-bottom: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid @color-gray-300;
   border-radius: 4px;
   resize: vertical;
 }
@@ -1950,8 +1952,8 @@ code {
 }
 
 .feedback-box .feedback-cancel {
-  background-color: #ccc;
-  color: #333;
+  background-color: @color-gray-300;
+  color: @color-text-primary;
 }
 
 .feedback-box .feedback-submit {
@@ -1962,7 +1964,7 @@ code {
 .feedback-box .feedback-status {
   margin-top: 10px;
   font-size: 14px;
-  color: #333;
+  color: @color-text-primary;
 }
 /* Add styles for the reset password button in the navbar */
 .reset-password-button {
@@ -2044,7 +2046,7 @@ code {
   flex: 1;
   min-width: 280px;
   max-width: 350px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid @color-gray-300;
   border-radius: 8px;
   padding: 30px;
   position: relative;
@@ -2091,11 +2093,11 @@ code {
   font-size: 22px;
   font-weight: 600;
   margin-bottom: 15px;
-  color: #333;
+  color: @color-text-primary;
 }
 
 .pricing-description {
-  color: #666;
+  color: @color-gray-500;
   font-size: 14px;
   line-height: 1.6;
   margin-bottom: 25px;
@@ -2109,12 +2111,12 @@ code {
 .price-amount {
   font-size: 36px;
   font-weight: 700;
-  color: #333;
+  color: @color-text-primary;
 }
 
 .price-period {
   font-size: 16px;
-  color: #666;
+  color: @color-gray-500;
 }
 
 .talk-to-sales {
@@ -2215,17 +2217,17 @@ code {
 
 .similar-molecules h3 {
   font-size: 20px;
-  color: #333;
+  color: @color-text-primary;
   margin-top: 0px;
   margin-bottom: 15px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid @color-gray-200;
   padding-bottom: 10px;
 }
 
 .similar-molecule {
   margin-bottom: 25px;
   padding-bottom: 15px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid @color-gray-300;
 }
 
 .similar-molecule:last-child {
@@ -2249,7 +2251,7 @@ code {
 
 .property-table td {
   padding: 8px 10px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid @color-gray-200;
   text-align: center; /* Center the content within cells */
 }
 
@@ -2260,7 +2262,7 @@ code {
 }
 
 .property-value {
-  color: #333;
+  color: @color-text-primary;
   font-family: 'Arial, sans-serif';
   word-break: break-all;
 }
@@ -2269,10 +2271,10 @@ code {
   margin-top: 15px;
   display: flex;
   justify-content: center;
-  background-color: #f8f9fa;
+  background-color: @color-gray-50;
   padding: 15px;
   border-radius: 8px;
-  border: 1px solid #eee;
+  border: 1px solid @color-gray-200;
 }
 
 .similar-molecule-image {
@@ -2314,9 +2316,9 @@ code {
 
 .molecule-properties h3 {
   font-size: 20px;
-  color: #333;
+  color: @color-text-primary;
   margin-bottom: 15px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid @color-gray-200;
   padding-bottom: 10px;
   text-align: center; /* Center the Properties heading */
 }
@@ -2375,9 +2377,9 @@ code {
 .nav-section {
   padding: 10px;
   margin-bottom: 15px;
-  background-color: #f8f9fa;
+  background-color: @color-gray-50;
   border-radius: 8px;
-  border: 1px solid #eee;
+  border: 1px solid @color-gray-200;
 }
 
 .nav-section h1 {
@@ -2389,9 +2391,9 @@ code {
 
 .nav-section h2 {
   font-size: 10px; /* Reduced from 20px */
-  color: #333;
+  color: @color-text-primary;
   margin-bottom: 8px; /* Reduced from 15px */
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid @color-gray-200;
   padding-bottom: 5px; /* Reduced from 10px */
 }
 
@@ -2415,7 +2417,7 @@ code {
 
 .nav-section strong {
   font-size: 9px; /* Reduced from 14px */
-  color: #333;
+  color: @color-text-primary;
 }
 
 .settings-dropdown {
@@ -2427,16 +2429,16 @@ code {
   display: none;
   position: absolute;
   right: 0;
-  background-color: #f1f1f1;
+  background-color: @color-gray-100;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
   border-radius: 4px;
-  border: 1px solid #ddd;
+  border: 1px solid @color-gray-300;
 }
 
 .settings-dropdown-content a {
-  color: #333;
+  color: @color-text-primary;
   padding: 12px 16px;
   text-decoration: none;
   display: block;
@@ -2444,7 +2446,7 @@ code {
 }
 
 .settings-dropdown-content a:hover {
-  background-color: #ddd;
+  background-color: @color-gray-300;
 }
 
 .settings-dropdown:hover .settings-dropdown-content {
@@ -2452,7 +2454,7 @@ code {
 }
 
 .settings-dropdown:hover .reset-password-button {
-  background-color: #ddd;
+  background-color: @color-gray-300;
 }
 
 /* Favorites Grid Styles */
@@ -2482,7 +2484,7 @@ code {
 
 .favorites-grid-container h2 {
   margin-bottom: 25px;
-  color: #333;
+  color: @color-text-primary;
   font-size: 26px;
   font-weight: 600;
   position: relative;
@@ -2531,7 +2533,7 @@ code {
 
 .favorite-card-header {
   padding: 15px;
-  background-color: #f8f9fa;
+  background-color: @color-gray-50;
   border-bottom: 1px solid #eaeaea;
   display: flex;
   justify-content: flex-end;
@@ -2541,7 +2543,7 @@ code {
 .favorite-card-smiles {
   font-family: 'Arial, sans-serif';
   font-size: 13px;
-  color: #333;
+  color: @color-text-primary;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -2614,23 +2616,23 @@ code {
 }
 
 .favorite-property-table .property-name {
-  color: #666;
+  color: @color-gray-500;
   font-weight: 500;
   width: 55%;
 }
 
 .favorite-property-table .property-value {
-  color: #333;
+  color: @color-text-primary;
   font-weight: 600;
   text-align: right;
 }
 
 .favorite-card-footer {
   padding: 12px 18px;
-  background-color: #f8f9fa;
+  background-color: @color-gray-50;
   border-top: 1px solid #eaeaea;
   font-size: 12px;
-  color: #666;
+  color: @color-gray-500;
   text-align: right;
 }
 
@@ -2654,7 +2656,7 @@ code {
 }
 
 .favorites-loading p {
-  color: #666;
+  color: @color-gray-500;
   font-size: 16px;
   font-weight: 500;
 }
@@ -2670,13 +2672,13 @@ code {
 }
 
 .favorites-error h3, .no-favorites h3 {
-  color: #333;
+  color: @color-text-primary;
   margin-bottom: 15px;
   font-size: 22px;
 }
 
 .favorites-error p, .no-favorites p {
-  color: #666;
+  color: @color-gray-500;
   margin-bottom: 20px;
   font-size: 16px;
   line-height: 1.6;
@@ -2845,7 +2847,7 @@ code {
   left: 0;
   width: 100%;
   height: 1px;
-  background-color: #ddd;
+  background-color: @color-gray-300;
   margin-top: 15px;
 }
 */
@@ -2853,7 +2855,7 @@ code {
 .molecule-entry, .similar-molecule {
   margin-bottom: 25px;
   padding-bottom: 15px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid @color-gray-300;
   text-align: center; /* Center the molecule entry content */
 }
 
@@ -2867,7 +2869,7 @@ code {
   padding: 15px;
   background-color: #f9f9f9;
   border-radius: 8px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid @color-gray-300;
 }
 
 .molecule-box:last-child {
@@ -2906,7 +2908,7 @@ code {
 
 .favorites-grid-container h2, .analysis-section h2 {
   margin-bottom: 25px;
-  color: #333;
+  color: @color-text-primary;
   font-size: 26px;
   font-weight: 600;
   position: relative;
@@ -2949,7 +2951,7 @@ code {
 .analysis-tab {
   padding: 8px 15px;
   border: none;
-  background-color: #f1f1f1;
+  background-color: @color-gray-100;
   font-size: 14px;
   cursor: pointer;
   border-radius: 4px;
@@ -2962,7 +2964,7 @@ code {
 }
 
 .analysis-tab:hover:not(.active) {
-  background-color: #e0e0e0;
+  background-color: @color-gray-300;
 }
 
 .molecule-checkbox {
@@ -2976,7 +2978,7 @@ code {
 
 .molecule-checkbox label {
   font-size: 12px;
-  color: #666;
+  color: @color-gray-500;
 }
 
 .selected-molecule {
@@ -2991,7 +2993,7 @@ code {
 .selected-info p {
   font-weight: 600;
   margin-bottom: 5px;
-  color: #333;
+  color: @color-text-primary;
   font-size: 14px;
 }
 
@@ -3018,7 +3020,7 @@ code {
 }
 
 .no-molecules-selected {
-  color: #999;
+  color: @color-text-muted;
   font-style: italic;
   padding: 10px 0;
   text-align: center;
@@ -3086,14 +3088,14 @@ code {
   justify-content: space-between;
   padding: 10px 20px;
   background-color: #f9f9f9;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid @color-gray-300;
   margin-bottom: 15px;
 }
 
 .favorites-search-input {
   width: 300px;
   padding: 8px 12px;
-  border: 1px solid #ccc;
+  border: 1px solid @color-gray-300;
   border-radius: 4px;
   font-size: 14px;
 }
@@ -3118,7 +3120,7 @@ code {
 .favorites-table td {
   padding: 10px 8px;
   text-align: left;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid @color-gray-200;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -3139,7 +3141,7 @@ code {
 }
 
 .favorites-table th {
-  background-color: #f1f1f1;
+  background-color: @color-gray-100;
   font-weight: 600;
   position: sticky;
   top: 0;
@@ -3237,7 +3239,7 @@ code {
   justify-content: space-between;
   padding: 10px 20px;
   background-color: #f9f9f9;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid @color-gray-300;
 }
 
 .analysis-header h2 {
@@ -3246,14 +3248,14 @@ code {
 }
 
 .selected-molecules-count {
-  color: #666;
+  color: @color-gray-500;
   font-size: 14px;
 }
 
 .close-analysis-button {
   background-color: transparent;
   border: none;
-  color: #333;
+  color: @color-text-primary;
   font-size: 24px;
   cursor: pointer;
   padding: 0 5px;
@@ -3289,7 +3291,7 @@ code {
 }
 
 .spider-chart:hover {
-  border: 1px solid #ddd;
+  border: 1px solid @color-gray-300;
 }
 
 .esp-analysis-placeholder,
@@ -3299,7 +3301,7 @@ code {
   justify-content: center;
   width: 100%;
   height: 100%;
-  color: #666;
+  color: @color-gray-500;
   font-size: 18px;
 }
 
@@ -3311,7 +3313,7 @@ code {
 .analysis-tab {
   padding: 8px 15px;
   border: none;
-  background-color: #f1f1f1;
+  background-color: @color-gray-100;
   font-size: 14px;
   cursor: pointer;
   border-radius: 4px;
@@ -3324,7 +3326,7 @@ code {
 }
 
 .analysis-tab:hover:not(.active) {
-  background-color: #e0e0e0;
+  background-color: @color-gray-300;
 }
 
 @media (max-width: 1200px) {
@@ -3372,7 +3374,7 @@ code {
 }
 
 .esp-chart:hover {
-  border: 1px solid #ddd;
+  border: 1px solid @color-gray-300;
 }
 
 .mo-chart-container {
@@ -3391,7 +3393,7 @@ code {
 }
 
 .mo-chart:hover {
-  border: 1px solid #ddd;
+  border: 1px solid @color-gray-300;
 }
 
 /* Add styles for sortable headers */
@@ -3419,18 +3421,18 @@ code {
 }
 
 .favorites-table th {
-  background-color: #f5f5f5;
+  background-color: @color-gray-100;
   position: sticky;
   top: 0;
   z-index: 10;
   padding: 10px;
   text-align: left;
-  border-bottom: 2px solid #ddd;
+  border-bottom: 2px solid @color-gray-300;
 }
 
 .favorites-table td {
   padding: 8px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid @color-gray-300;
 }
 
 .favorites-table tr:hover {
@@ -3447,7 +3449,7 @@ code {
   display: flex;
   flex-flow:row;
   background-color: rgba(255, 255, 255, 0.9);
-  border: 1px solid #ddd;
+  border: 1px solid @color-gray-300;
   border-radius: 4px;
   padding: 5px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);

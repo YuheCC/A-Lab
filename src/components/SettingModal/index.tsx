@@ -1,6 +1,6 @@
 import { useState, useImperativeHandle, forwardRef, useContext } from "react";
 import { useAuthStore } from "@/models/useAuth";
-import './settingModal.css';
+import './settingModal.less';
 import { useTranslation } from "react-i18next";
 import { verifyRedeemCode, sendEducationCode } from "@/services/auth";
 import { useMessage } from "@/components/MessageProvider";
@@ -57,18 +57,13 @@ const SettingModal = forwardRef((props, ref) => {
             const response: any = await verifyRedeemCode({
                 voucher: redeemCode,
             });
-            const { data } = response;
-            if(response.ok === false) {
-                error(data.detail || t('settings.redeem.error'));
-                return;
-            }
             setShowRedeemModal(false);
             setRedeemCode('');
             success(t('settings.redeem.success'));
             window.location.reload();
 
         } catch (err: any) {
-            error(err.detail || t('settings.redeem.error'));
+            error(err.msg || t('settings.redeem.error'));
         } finally {
             setIsRedeeming(false);
         }
@@ -108,20 +103,16 @@ const SettingModal = forwardRef((props, ref) => {
               edu_email: educationEmail.trim(),
             });
             const { data } = response;
-            if(response.ok === false) {
-                error(data.detail || t('settings.education.error'));
-                return;
-            }
             setShowEducationModal(false);
             setEducationEmail('');
             success(t('settings.education.success'));
-            
+
             // 跳转到验证页面，在URL中包含邮箱参数
             const encodedEmail = encodeURIComponent(educationEmail.trim());
             navigate(`/verify-education?id=${data.verify_id}`);
 
         } catch (err: any) {
-            error(err.detail || t('settings.education.error'));
+            error(err.msg || t('settings.education.error'));
         } finally {
             setIsSendingEducation(false);
         }

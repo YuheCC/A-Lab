@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import './index.css';
+import './index.less';
 
 // 通用的数据项接口
 export interface HistoryItem {

@@ -1,3 +1,5 @@
+import { extractIsPublished } from '@/utils/publicationStatus';
+
 export type MoleculeProperties = {
   smiles?: string;
   cation?: string;
@@ -19,6 +21,7 @@ export type MoleculeProperties = {
   functionalGroups?: string;
   commercialLink?: string;
   commercialScore?: number;
+  isPublished?: boolean;
 };
 
 export interface MoleculeDetails {
@@ -54,14 +57,14 @@ export interface SimilarMolecule {
   reasoning?: string;
 }
 
+import { urlConfig } from '../config/urlConfig';
+import { getMoleculeEndpoint } from './moleculeEndpoints';
+
 class MoleculeService {
   private static instance: MoleculeService;
-  private baseUrl: string;
 
   private constructor() {
-    // Use global BASE_URL via util helper to satisfy TS
-    const { getAPIUrl } = require('@/utils');
-    this.baseUrl = getAPIUrl() || '/api';
+    // No need to store baseUrl, use urlConfig directly
   }
 
   public static getInstance(): MoleculeService {
@@ -72,6 +75,7 @@ class MoleculeService {
   }
 
   private mapAPIResponseToMoleculeDetails(apiData: APIMoleculeDetail, name: string): MoleculeDetails {
+    const isPublished = extractIsPublished(apiData);
     return {
       name,
       properties: {
@@ -89,6 +93,7 @@ class MoleculeService {
         commercialLink: apiData.COMMERCIAL_LINK,
         commercialScore: apiData.COMMERCIAL_SCORE,
         commercialViability: this.getCommercialViabilityText(apiData.COMMERCIAL_SCORE),
+        isPublished,
         // Keep existing fields as fallback
         meltingPoint: '-',
         boilingPoint: '-',
@@ -118,14 +123,15 @@ class MoleculeService {
     const functionalGroups = raw?.functional_groups ?? raw?.FUNCTIONAL_GROUPS;
     const umapX = raw?.umap_x ?? raw?.x;
     const umapY = raw?.umap_y ?? raw?.y;
+    const isPublished = extractIsPublished(raw);
 
-        return {
-          name: originalName,
-          properties: {
-            smiles,
-            cation,
-            casrn,
-            molecularWeight: molecularWeight != null ? Number(molecularWeight) : undefined,
+    return {
+      name: originalName,
+      properties: {
+        smiles,
+        cation,
+        casrn,
+        molecularWeight: molecularWeight != null ? Number(molecularWeight) : undefined,
         meltingPoint: predictedMp != null ? `${predictedMp}` : '-',
         boilingPoint: predictedBp != null ? `${predictedBp}` : '-',
         flashPoint: predictedFp != null ? `${predictedFp}` : '-',
@@ -140,7 +146,8 @@ class MoleculeService {
         umapY: umapY != null ? Number(umapY) : 0,
         functionalGroups: typeof functionalGroups === 'string' ? functionalGroups : JSON.stringify(functionalGroups || []),
         commercialViability: this.getCommercialViabilityText(commercialScore),
-        commercialScore: commercialScore != null ? Number(commercialScore) : undefined
+        commercialScore: commercialScore != null ? Number(commercialScore) : undefined,
+        isPublished,
       }
     };
   }
@@ -156,20 +163,27 @@ class MoleculeService {
 
   async getMoleculeDetails(name: string, userPermissions?: string): Promise<MoleculeDetails> {
     try {
-      const { authFetch } = await import('@/utils');
-      
+      // Get environment-specific endpoint
+      const env = urlConfig.getEnvironment();
+      const endpoint = getMoleculeEndpoint(env, 'moleculeDetails');
+      const baseUrl = urlConfig.buildFullURL(endpoint);
+
       // 使用 molecular_details 接口，参考 MoleculeModal 的实现
       const isHighTier = ['admin', 'enterprise', 'joint'].includes(userPermissions || '');
-      let queryUrl = `${this.baseUrl}/api/molecule_details?query_type=smiles&molecule=${encodeURIComponent(name.trim())}`;
+      const params = new URLSearchParams({
+        query_type: 'smiles',
+        molecule: name.trim(),
+      });
       if (isHighTier) {
-        queryUrl += '&use_35m=true';
+        params.append('use_35m', 'true');
       }
-      
-      const resp = await authFetch(queryUrl, { method: 'GET' });
-      const data = await resp.json();
+
+      const { default: request } = await import('@/services/request');
+      const resp = await request(`${baseUrl}?${params.toString()}`, { method: 'GET' });
+      const data = resp.data;
       console.log(data);
       // 检查响应状态和错误信息
-      if (!resp.ok || data.error_type) {
+      if (data.error_type) {
         // 根据错误内容判断是否为不合法的 SMILES
         if (data?.message && typeof data.message === 'string') {
           const errorMsg = data.message.toLowerCase();
@@ -178,7 +192,7 @@ class MoleculeService {
             throw new Error('Invalid SMILES string');
           }
         }
-        throw new Error(data?.detail || data?.message || `HTTP ${resp.status}`);
+        throw new Error(data?.detail || data?.message || `API Error`);
       }
       
       // 检查 found 字段和 molecule_details 数组
@@ -190,25 +204,30 @@ class MoleculeService {
       const moleculeData = data.molecule_details[0];
       return this.mapMoleculeDetailsToMoleculeDetails(moleculeData, name);
       
-    } catch (err) {
-      // 如果是无效的 SMILES 错误，直接抛出而不使用 mock 数据
-      if (err instanceof Error && err.message === 'Invalid SMILES string') {
-        throw err;
+    } catch (err: any) {
+      // 根据错误信息判断是否为不合法的 SMILES
+      const errorMsg = (err.msg || err.message || '').toLowerCase();
+      if (errorMsg.includes('invalid')) {
+        throw new Error('Invalid SMILES string');
       }
-      
-      // 其他错误使用 mock fallback - 使用与实际API结构相似的mock数据
+
+      // 其他错误直接抛出
       throw err;
     }
   }
 
   async getSimilarMolecules(name: string, type: string = 'all'): Promise<SimilarMolecule[]> {
     try {
+      // Get environment-specific endpoint
+      const env = urlConfig.getEnvironment();
+      const endpoint = getMoleculeEndpoint(env, 'similarMolecules');
+      const url = urlConfig.buildFullURL(endpoint);
+
       const { default: request } = await import('@/services/request');
-      const resp = await request('/molecule/similar', {
+      const resp = await request(url, {
         method: 'GET',
         params: { name, type },
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP ${resp.status}`);
       return (resp.data?.items || []) as SimilarMolecule[];
     } catch (err) {
       // mock fallback (same content as original hardcoded list)

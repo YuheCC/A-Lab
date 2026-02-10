@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import './Login.less';
 import { useNavigate, useSearchParams } from "umi";
 import { useTranslation } from "react-i18next";
 import { verifyEducationCode } from "@/services/auth";
@@ -58,28 +59,24 @@ const VerifyEducationPage = () => {
     setIsLoading(true);
 
     try {
-      const response: any = await verifyEducationCode({ 
-        verify_id: id, 
-        code: code 
+      await verifyEducationCode({
+        verify_id: id,
+        code: code
       });
-      
-      if (response.ok !== false) {
-        setSuccess(true);
-        setTimeout(() => {
-          navigate('/');
-        }, 2000);
-      } else {
-        const errorMsg = response.data?.detail || '';
-        if (errorMsg.includes('expired')) {
-          setError(t('auth.verifyEducation.messages.expired'));
-        } else if (errorMsg.includes('invalid')) {
-          setError(t('auth.verifyEducation.messages.failed'));
-        } else {
-          setError(errorMsg || t('auth.verifyEducation.messages.failed'));
-        }
-      }
+
+      setSuccess(true);
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
     } catch (err: any) {
-      setError(err.detail || t('auth.verifyEducation.messages.failed'));
+      const errorMsg = err.msg || '';
+      if (errorMsg.includes('expired')) {
+        setError(t('auth.verifyEducation.messages.expired'));
+      } else if (errorMsg.includes('invalid')) {
+        setError(t('auth.verifyEducation.messages.failed'));
+      } else {
+        setError(errorMsg || t('auth.verifyEducation.messages.failed'));
+      }
     } finally {
       setIsLoading(false);
     }

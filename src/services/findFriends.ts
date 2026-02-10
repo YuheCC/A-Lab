@@ -1,4 +1,6 @@
-import { authFetch, getAPIUrl } from "@/utils";
+import request from "@/services/request";
+import { urlConfig } from "@/services/config/urlConfig";
+import { getFindFriendsEndpoint } from "./findFriends/endpoints";
 
 interface FindFriendsOptions {
   smiles: string[];
@@ -11,7 +13,9 @@ interface FindFriendsOptions {
   isInorganic?: boolean;
   isAnion?: boolean;
   showHypothetical?: boolean;
+  prioritizePublished?: boolean;
   numResults?: number;
+  umapType?: string;
 }
 
 export interface FindFriendsResult<T = any> {
@@ -32,10 +36,15 @@ export async function findFriends<T = any>(options: FindFriendsOptions): Promise
     isInorganic = false,
     showHypothetical = false,
     isAnion = false,
+    prioritizePublished,
     numResults,
+    umapType,
   } = options;
 
-  const API_URL = getAPIUrl();
+  // Get environment-specific endpoint
+  const env = urlConfig.getEnvironment();
+  const endpoint = getFindFriendsEndpoint(env, 'findFriend');
+  const url = urlConfig.buildFullURL(endpoint);
   const computeEnabled = computeLevel !== 'Disabled';
   const hasQuery = !!(queryString && queryString.trim().length > 0);
 
@@ -48,24 +57,22 @@ export async function findFriends<T = any>(options: FindFriendsOptions): Promise
     ...(isAnion && { is_anion: true }),
     ...(computeEnabled && { llm_compute_power: computeLevel.toLowerCase() }),
     commercial_scores: showHypothetical ? [0, 1, 2, 3] : [1, 2, 3],
+    ...(isAnion ? {} : { apply_published_balance: prioritizePublished ?? true }),
     ...(typeof numResults === 'number' ? { num_results: numResults } : {}),
+    ...(umapType ? { umap_type: umapType } : {}),
     ...(hasQuery && {
       query: queryString,
       response: 'No additional context is available for this query.',
     }),
   };
 
-  const response = await authFetch(`${API_URL}/api/llm/find-friend-with-image`, {
+  const response = await request(url, {
     method: 'POST',
+    data: payload,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
   });
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch similar molecules: ${response.statusText}`);
-  }
-
-  const data = await response.json();
+  const data = response.data;
   const molecules: T[] = data.similar_molecules || [];
   const messages: string[] = Array.isArray(data.messages)
     ? data.messages.map((message: any) => String(message))

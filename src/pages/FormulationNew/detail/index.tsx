@@ -7,7 +7,7 @@ import { MDHistoryDetailResponse } from '@/services/formulation/md';
 import { getHistoryDetail } from '../model';
 import GuideTooltip from '../components/GuideTooltip';
 import { formatIonDisplay } from '../utils';
-import './index.css';
+import './index.less';
 
 interface ResultData {
   system_properties?: {
@@ -360,7 +360,7 @@ const DetailPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="analysis-charts">
+          <div className="analysis-charts" style={{ display: 'none' }}>
             <h3>{t('formulation.results.analysisCharts', 'Analysis Charts')}</h3>
 
             <div className="chart-section">

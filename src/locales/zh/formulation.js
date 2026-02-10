@@ -117,6 +117,20 @@ export default {
     newConfiguration: '新建配置'
   },
 
+  simulationParameters: {
+    title: '分子模拟参数'
+  },
+
+  temperature: {
+    label: '温度 (K)',
+    validation: {
+      empty: '温度不能为空',
+      invalid: '请输入有效的温度值',
+      tooLow: '温度不能低于 238.15 K',
+      tooHigh: '温度不能高于 378.15 K'
+    }
+  },
+
   saltConfiguration: {
     title: '盐配置'
   },
@@ -162,7 +176,13 @@ export default {
   },
 
   fraction: {
-    label: '分数（最小值：0.05）'
+    label: '分数（最小值：0.05）',
+    validation: {
+      empty: '分数不能为空',
+      invalid: '请输入有效的分数值',
+      tooLow: '分数不能低于 0.05',
+      tooHigh: '分数不能高于 1'
+    }
   },
 
   removeSolvent: '移除溶剂',
@@ -200,9 +220,16 @@ export default {
     calculatingDesc: '基于极化力场的分子动力学模拟耗时较长，可在预计时间之后查看结果，系统会提醒您计算的状态',
     notice2: '您可以关闭此页面，不会影响后台计算进程'
   },
+  filters: {
+    searchPlaceholder: '搜索分析 ID...',
+    statusPlaceholder: '选择状态',
+    clearFilters: '清除筛选',
+    refresh: '刷新'
+  },
   history: {
     title: '分析记录',
     newAnalysis: '新建分析',
+    showingRecords: '显示 {{count}} / {{total}} 条记录',
     loading: {
       message: '加载中...',
       error: '错误'
@@ -219,7 +246,11 @@ export default {
       viewDetails: '查看结果',
       delete: '删除',
       deleteConfirm: '确认删除该记录？',
-      deleteFailed: '删除记录失败'
+      deleteFailed: '删除记录失败',
+      retry: '重试',
+      retryConfirm: '确定要重试这条记录吗？',
+      retrySuccess: '重试成功',
+      retryFailed: '重试失败'
     }
   },
   list: {
@@ -230,12 +261,18 @@ export default {
       solventFraction: '溶剂（分数）',
       solventFractionType: '分数类型（溶剂）',
       concentration: '盐浓度',
+      creator: '创建者',
       created: '创建时间',
       status: '状态',
+      progress: '进度',
       actions: '操作'
     }
   },
 
+  progress: {
+    remainingHours: '预计剩余 {{hours}} 小时',
+    remainingMinutes: '预计剩余 {{minutes}} 分钟'
+  },
   status: {
     completed: '已完成',
     success: '已完成',

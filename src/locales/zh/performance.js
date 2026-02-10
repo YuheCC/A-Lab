@@ -1,14 +1,14 @@
 export default {
   // Page header
   title: "添加剂对电池性能的影响",
-  subtitle: "使用基于SES内部实验数据训练的AI模型预测添加剂对电池性能指标（循环寿命、库伦效率、倍率性能）的影响",
+  subtitle: "使用基于SES内部实验数据训练的基础AI模型，或由用户数据微调的模型，来预测添加剂对电池性能指标（循环寿命、库伦效率、倍率性能）的影响",
   beta: "测试版",
   disclaimerTitle: "免责声明",
-  disclaimer: "<strong>注意：</strong>此功能通过使用内部测试数据和定义的基准电解液（溶剂：EC/EMC/DEC 比例 2:3:2；盐：1M LiPF6/LiFSI；添加剂：VC/LiDFP），比较添加和不添加添加剂的电池性能来评估新添加剂的影响。应用于不同的电池设计或基准电解液时，结果可能有所不同。未来更新将扩展功能以支持可定制的基准电解液、多添加剂评估和更大的设计灵活性。",
+  disclaimer: "<strong>注意：</strong>此功能通过使用用户定义的基准电解液，比较添加和不添加添加剂的电池性能来评估新添加剂的影响。应用于不同的电池设计或基准电解液时，结果可能有所不同。",
   
   // Battery System Selection
   batterySystemSelection: {
-    title: "电池化学选择",
+    title: "设计设置",
     label: "电池化学",
     loading: "加载中...",
     systemSpecs: {
@@ -19,7 +19,21 @@ export default {
       cellDesign: "电池设计:"
     }
   },
-  
+
+  // Model Selection
+  modelSelection: {
+    label: "模型选择",
+    placeholder: "请选择预测模型",
+    baseModel: "基础模型",
+    finetunedModels: "微调模型",
+    muModels: "MU 模型",
+    columns: {
+      modelName: "模型名称",
+      modelId: "模型ID",
+      baseModel: "基础模型"
+    }
+  },
+
   // Additive input
   additive: {
     label: "添加剂的SMILES",
@@ -192,20 +206,22 @@ export default {
   // History
   history: {
     title: "预测记录",
+    newDesign: "新增设计",
     newPrediction: "新预测",
+    train: "训练",
     searchPlaceholder: "按文件名搜索...",
+    loadingText: "加载中...",
+    error: "错误",
+    noResults: "暂无设计记录",
+    cannotDeleteDemo: "无法删除演示记录",
     status: {
       completed: "已完成"
     },
     actions: {
-      viewDetails: "查看",
+      viewResults: "查看结果",
       delete: "删除",
       deleteConfirm: "确定要删除这条记录吗？",
       deleteFailed: "删除记录失败"
-    },
-    noResults: {
-      message: "暂无预测记录。",
-      clearFilters: "清除所有筛选条件"
     },
     loading: {
       message: "正在加载历史数据...",
@@ -214,7 +230,53 @@ export default {
       failedToLoad: "加载历史数据失败"
     }
   },
-  
+
+  // Records
+  records: {
+    searchPlaceholder: "搜索record ID",
+    allModels: "所有模型",
+    clearFilters: "清除筛选",
+    showingRecords: "显示 {{count}} / {{total}} 条记录"
+  },
+
+  // Models
+  models: {
+    loadingText: "加载中...",
+    error: "错误",
+    noResults: "暂无模型",
+    showingRecords: "显示 {{count}} / {{total}} 条记录",
+    statusOnline: "上线",
+    statusTrained: "训练完成",
+    statusOffline: "下线",
+    statusTraining: "训练中",
+    statusFail: "失败",
+    filters: {
+      searchPlaceholder: "搜索模型ID或名称...",
+      allStatus: "所有状态",
+      allBaseModels: "所有基础模型",
+      selectStatus: "选择状态",
+      selectBaseModel: "选择基础模型",
+      clearFilters: "清除筛选",
+      selectDate: "选择日期",
+      refresh: "刷新"
+    },
+    columns: {
+      modelId: "模型ID",
+      modelName: "模型名称",
+      baseModel: "基础模型",
+      status: "状态",
+      created: "创建时间",
+      createdBy: "创建者",
+      actions: "操作"
+    },
+    actions: {
+      viewDetails: "查看详情"
+    }
+  },
+
   // Battery system fallback
-  batterySystemFallback: "电池系统"
+  batterySystemFallback: "电池系统",
+
+  // Train disabled tip
+  trainDisabledTip: "如需使用，请通过邮箱 <emailLink>mu.sales@ses.ai</emailLink> 联系我们的团队。"
 }

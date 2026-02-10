@@ -2,7 +2,9 @@ import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
 import { useMemo, useState, useRef, useEffect, useContext, useCallback } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP, getAPIUrl } from "@/utils";
+import { extractIsPublished, buildPublicationProp, insertPublicationProp } from '@/utils/publicationStatus';
 import { raiseResponseError } from '@/utils/errorHelpers';
+import { buildAutoFetchURL } from "@/services/config/autoFetch";
 import { findFriends } from "@/services/findFriends";
 import { buildQueryString } from "@/services/buildQueryString";
 import { useAnionsPlotDataStore } from "@/models/usePlotData";
@@ -19,7 +21,7 @@ import { FavoriteContext } from "@/layouts";
 import FindFriendOptions, { type MolTypeOption } from "./FindFriendOptions";
 import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
 import AnionsFilter, { AnionsFilterRef } from './AnionsFilter';
-import '../index.css';
+import '../index.less';
 import { useQueryLimit } from '@/hooks/useQueryLimit';
 import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
 import { useAccessModals } from '@/hooks/useAccessModals';
@@ -76,6 +78,7 @@ interface MoleculeData {
     image?: string;
     grade?: number;
     reasoning?: string;
+    is_published?: boolean;
     properties: {
         molwt: number;
         homo_eV: number;
@@ -118,6 +121,7 @@ interface SimilarMolecule {
     image?: string;
     grade?: number;
     reasoning?: string;
+    is_published?: boolean;
 }
 
 type SearchResultItem =
@@ -151,16 +155,17 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const [node, setNode] = useState<any>(null);
     const { moleculeFavoriteStatus, handleAddToFavorites } = useContext(FavoriteContext);
 
-    const { data, loading, error, fetchData } = useAnionsPlotDataStore();
+    const { data, loading, error, fetchData, fetchInitialData } = useAnionsPlotDataStore();
 
     const searchInputRef = useRef<any>(null);
 
-    // 组件挂载时获取数据
+    // 组件挂载时获取数据（如果为空）
     useEffect(() => {
         if (data.length === 0) {
+            fetchInitialData();
             fetchData();
         }
-    }, [data.length, fetchData]);
+    }, [data.length, fetchData, fetchInitialData]);
 
     const [searchResults, setsearchResults] = useState<string[] | null>(null);
     const [lastSearch, setLastSearch] = useState<string | null>(null);
@@ -183,6 +188,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const defaultCompute = useMemo(() => 'Disabled', []);
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
     const [showHypothetical, setShowHypothetical] = useState(true);
+    const [prioritizePublished, setPrioritizePublished] = useState(true);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
     const { limits: queryLimits } = useQueryLimit();
@@ -646,6 +652,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                 image: mol.image,
                 grade: mol.grade,
                 reasoning: mol.reasoning,
+                is_published: extractIsPublished(mol),
                 properties: {
                     molwt: mol.molecular_weight,
                     homo_eV: mol.HOMO_eV,
@@ -786,10 +793,12 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                 molType: molTypeToSend,
                 computeLevel: computeToSend,
                 showHypothetical,
+                prioritizePublished,
                 includeQuery,
                 queryString,
                 isAnion: true,
                 numResults,
+                umapType: 'anions',
             });
 
             setHighlightedSimilarMolecules(molecules);
@@ -833,14 +842,22 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                 return;
             }
 
-            const searchEndpoint = `${API_URL}/api/llm/search-new`;
             const molTypeLabel = selectedMolType === 'salt' ? 'primary salt' : selectedMolType;
             const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : molTypeLabel;
-            const molTypeParam = molTypeToSend ? `&mol_type=${encodeURIComponent(molTypeToSend)}` : '';
+            // Fetch the searched molecule's properties
+            const searchEndpoint = buildAutoFetchURL('search');
+            const searchParams = new URLSearchParams({
+                query: trimmedInput,
+                umap_type: 'anions',
+                is_anion: 'true',
+            });
+            if (molTypeToSend) {
+                searchParams.set('mol_type', molTypeToSend);
+            }
 
             // Fetch the searched molecule's properties
             const moleculeResponse = await authFetch(
-                `${searchEndpoint}?query=${encodeURIComponent(trimmedInput)}&umap_type=anions${molTypeParam}`
+                `${searchEndpoint}?${searchParams.toString()}`
             );
 
             // Ratelimit handling
@@ -1085,6 +1102,9 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 setStructureWeight={setStructureWeight}
                                 showHypothetical={showHypothetical}
                                 setShowHypothetical={setShowHypothetical}
+                                prioritizePublished={prioritizePublished}
+                                setPrioritizePublished={setPrioritizePublished}
+                                showPrioritizePublished={false}
                                 numResults={numResults}
                                 setNumResults={setNumResults}
                                 cathode={cathode}
@@ -1180,9 +1200,11 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                                 structureScoreSummary,
                                                 gradeDetails
                                             ) : null;
-                                            const gradeProp = ANION_SCORE_DISPLAY_ENABLED && !overallScoreProp && gradeDetails?.show ? gradeDetails : null;
+                                            const gradeProp = !overallScoreProp && gradeDetails?.show ? gradeDetails : null;
+                                            const isPublished = extractIsPublished(molecule, molecule.rawData, molecule.properties);
+                                            const publicationProp = buildPublicationProp(isPublished, t);
 
-                                            const propGroups = [
+                                            const basePropGroups = [
                                                 { label: t('search.properties.smiles'), value: molecule.smiles, span: 4, show: canShowColumn('smiles') },
                                                 ...(overallScoreProp ? [overallScoreProp] : gradeProp ? [gradeProp] : []),
                                                 { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
@@ -1194,6 +1216,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                                 { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_max_eV') },
                                                 { label: 'Commercial Viability', value: renderAnionCommercialScore(molecule.properties?.commercial_score), span: 4, wrap: true, show: canShowColumn('commercial_score')}
                                             ].filter(Boolean);
+                                            const propGroups = insertPublicationProp(basePropGroups, publicationProp);
 
                                             const foldPropGroups = [
                                                 ...(casFoldProp ? [casFoldProp] : []),
@@ -1209,6 +1232,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                                     showMoreDetails={false}
                                                     large={true}
                                                     cation={molecule.cation ?? molecule.rawData?.cation ?? molecule.rawData?.CATION}
+                                                    publicationStatus={isPublished}
                                                     propGroups={propGroups} foldPropGroups={foldPropGroups}>
                                                     {
                                                         isAuthenticated && (
@@ -1317,8 +1341,10 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                         structureScoreSummary,
                                         gradeDetails
                                     ) : null;
+                                    const isPublished = extractIsPublished(molecule);
+                                    const publicationProp = buildPublicationProp(isPublished, t);
 
-                                    const propGroups = [
+                                    const basePropGroups = [
                                         { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4, show: canShowColumn('smiles') },
                                         ...(overallScoreProp ? [overallScoreProp] : []),
                                         { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
@@ -1330,6 +1356,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                         { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_max_eV') },
                                         { label: 'Commercial Viability', value: renderAnionCommercialScore(molecule.COMMERCIAL_SCORE), span:4, wrap: true, show: canShowColumn('commercial_score')}
                                     ].filter(Boolean);
+                                    const propGroups = insertPublicationProp(basePropGroups, publicationProp);
 
                                     return (
                                         <MolCard
@@ -1339,6 +1366,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                             showMoreDetails={false}
                                             large={true}
                                             cation={molecule.cation ?? (molecule as any)?.CATION}
+                                            publicationStatus={isPublished}
                                             propGroups={propGroups}
                                             foldPropGroups={[
                                                 ...(casFoldProp ? [casFoldProp] : []),

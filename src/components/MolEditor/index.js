@@ -1,6 +1,6 @@
 import { Kekule } from 'kekule';
 import 'kekule/theme/default';
-import './MolEditor.css';
+import './MolEditor.less';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AtomIcon, Download } from 'lucide-react';
 import InfoTooltip from '@/components/InfoTooltip';
@@ -9,7 +9,7 @@ import { loadRDKit } from '@/utils/rdkitLoader';
 import { authFetch, getAPIUrl } from '@/utils';
 
 const API_URL = getAPIUrl();
-const SEARCH_ENDPOINT = `${API_URL}/api/llm/search-new`;
+const SEARCH_ENDPOINT = `${API_URL}/api/search/search-new`;
 
 const MolEditor = ({ onMolChange, style, getSmilesForImport }) => {
     const [focused, setFocused] = useState(false);

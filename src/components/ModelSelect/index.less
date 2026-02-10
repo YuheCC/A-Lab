@@ -1,0 +1,384 @@
+@import '@/styles/variables.less';
+
+.model-select {
+  position: relative;
+  width: 100%;
+
+  // 触发器
+  &__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 40px;
+    padding: @spacing-sm @spacing-md;
+    background: #ffffff;
+    border: 1px solid @color-border;
+    border-radius: @radius-md;
+    cursor: pointer;
+    transition: all @transition-fast;
+
+    &:hover:not(.disabled) {
+      border-color: @color-accent;
+    }
+
+    &:focus-visible {
+      outline: none;
+      border-color: @color-accent;
+      box-shadow: 0 0 0 2px rgba(86, 178, 106, 0.25);
+    }
+
+    &.open {
+      border-color: @color-accent;
+      box-shadow: 0 0 0 2px rgba(86, 178, 106, 0.25);
+    }
+
+    &.disabled {
+      background: @color-gray-50;
+      color: @color-text-muted;
+      cursor: not-allowed;
+    }
+  }
+
+  &__input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: @color-text-primary;
+    font-size: @font-size-base;
+    padding: 0;
+    cursor: pointer;
+
+    &:read-only {
+      cursor: pointer;
+      pointer-events: none; // 只读时不拦截点击,让父容器处理
+    }
+
+    &:not(:read-only) {
+      cursor: text;
+      pointer-events: auto; // 可编辑时需要拦截点击以便定位光标
+    }
+
+    &::placeholder {
+      color: @color-text-muted;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
+
+  &__arrow {
+    margin-left: @spacing-sm;
+    color: @color-text-secondary;
+    font-size: @font-size-xs;
+    transition: transform @transition-fast;
+    user-select: none;
+    pointer-events: none; // 不拦截点击事件,让父容器处理
+
+    .open & {
+      transform: rotate(180deg);
+    }
+  }
+
+  // 下拉框
+  &__dropdown {
+    background: #ffffff;
+    border: 1px solid @color-border;
+    border-radius: @radius-md;
+    box-shadow: @shadow-lg;
+    z-index: @z-index-dropdown;
+    overflow: hidden;
+    max-height: 500px; // 设置最大高度，防止下拉框过高
+
+    // Portal 渲染的下拉框使用 fixed 定位
+    &--portal {
+      position: fixed;
+      // 位置通过 style 属性动态设置
+      animation: modelSelectFadeIn 0.15s ease-out;
+    }
+
+    // 显示在上方时的样式
+    &--top {
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    // 显示在下方时的样式
+    &--bottom {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  // 搜索框
+  &__search {
+    padding: @spacing-md @spacing-lg;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: @color-border-light;
+    }
+
+    input {
+      width: 100%;
+      padding: @spacing-sm @spacing-md;
+      border: 1px solid @color-border;
+      border-radius: @radius-md;
+      font-size: @font-size-base;
+      transition: border-color @transition-fast;
+      box-sizing: border-box;
+
+      &:focus {
+        outline: none;
+        border-color: @color-accent;
+        box-shadow: 0 0 0 2px rgba(86, 178, 106, 0.15);
+      }
+
+      &::placeholder {
+        color: @color-text-muted;
+      }
+    }
+  }
+
+  // 加载/空状态
+  &__empty {
+    padding: @spacing-xl;
+    text-align: center;
+    color: @color-text-secondary;
+    font-size: @font-size-sm;
+  }
+}
+
+// 表格样式
+.model-select-table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow-x: hidden;
+
+  &__header {
+    display: grid;
+    grid-template-columns: var(--grid-columns);
+    gap: @spacing-md;
+    padding: @spacing-md @spacing-lg;
+    background: @color-gray-50;
+    font-weight: @font-weight-semibold;
+    font-size: @font-size-sm;
+    color: @color-text-secondary;
+    position: relative;
+    min-width: 0;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: @color-border;
+    }
+
+    .table-col-checkbox {
+      width: 40px;
+    }
+
+    > * {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &__body {
+    max-height: min(400px, calc(100vh - 200px)); // 动态调整最大高度，确保不超出视口
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    // 自定义滚动条样式
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: @color-gray-50;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: @color-gray-300;
+      border-radius: @radius-sm;
+
+      &:hover {
+        background: @color-gray-400;
+      }
+    }
+  }
+}
+
+// 表格行样式
+.model-select-table-row {
+  display: grid;
+  grid-template-columns: var(--grid-columns);
+  gap: @spacing-md;
+  padding: @spacing-md @spacing-lg;
+  cursor: pointer;
+  transition: background @transition-fast;
+  position: relative;
+  min-width: 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: @color-border-light;
+  }
+
+  &:hover {
+    background: @color-gray-50;
+  }
+
+  &--selected {
+    background: rgba(86, 178, 106, 0.1);
+
+    &:hover {
+      background: rgba(86, 178, 106, 0.15);
+    }
+  }
+
+  // 键盘导航高亮
+  &--highlighted {
+    background: @color-gray-100;
+    outline: 2px solid @color-accent;
+    outline-offset: -2px;
+  }
+
+  // 禁用状态样式
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none; // 禁止所有交互
+    
+    .table-col {
+      color: @color-text-muted;
+    }
+    
+    &:hover {
+      background: transparent; // 移除 hover 效果
+    }
+  }
+
+  .table-col {
+    color: @color-text-primary;
+    font-size: @font-size-base;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  .table-col-checkbox {
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    input[type='checkbox'] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: @color-accent;
+    }
+  }
+}
+
+// 分组样式
+.model-select-group {
+  &__header {
+    padding: @spacing-sm @spacing-lg;
+    background: @color-gray-100;
+    font-weight: @font-weight-semibold;
+    font-size: @font-size-sm;
+    color: @color-text-primary;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: @color-border;
+    }
+  }
+
+  &__body {
+    // 继承父级表格样式
+  }
+}
+
+// 加载更多按钮
+.model-select-load-more {
+  padding: @spacing-md @spacing-lg;
+  text-align: center;
+  color: @color-accent;
+  font-size: @font-size-sm;
+  cursor: pointer;
+  border-top: 1px solid @color-border-light;
+  transition: background @transition-fast;
+
+  &:hover {
+    background: @color-gray-50;
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .model-select__dropdown {
+    max-width: 100vw;
+    left: 0 !important;
+    right: 0 !important;
+  }
+
+  .model-select-table {
+    &__header {
+      font-size: @font-size-xs;
+      padding: @spacing-sm;
+    }
+
+    &__body {
+      max-height: 300px;
+    }
+  }
+
+  .model-select-table-row {
+    padding: @spacing-sm;
+
+    .table-col {
+      font-size: @font-size-sm;
+    }
+  }
+}
+
+// 下拉框淡入动画
+@keyframes modelSelectFadeIn {
+  from {
+    opacity: 0;
+    transform: scaleY(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}

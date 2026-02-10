@@ -51,6 +51,12 @@ export default {
     intelligentFindFriendsLimitLabel: '今月の残り: {{remaining}} / {{limit}}',
     showHypothetical: '仮想分子を表示',
     showHypotheticalTooltip: '公開カタログにないアルゴリズム生成候補を含めます。入手可能性と合成可能性は不確かです。',
+    prioritizePublished: '公開済み分子を優先',
+    publicationStatus: {
+      label: 'ステータス',
+      published: 'Published',
+      novel: 'Unexplored',
+    },
     computeDisabled: '無効',
     computeLow: '低',
     computeMedium: '中',

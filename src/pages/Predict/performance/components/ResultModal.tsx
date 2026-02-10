@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mui/material';
-import './ResultModal.css';
-import './PerformanceTooltip.css';
+import './ResultModal.less';
+import './PerformanceTooltip.less';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 import { ArrowDown, ArrowUp, Info } from 'lucide-react';
 import { ArrowUpIcon, ArrowDownIcon } from './ArrowIcons';

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './CustomButton.css';
+import './CustomButton.less';
 import { Button } from '@mui/material';
 
 const STATUS_HIDE_TIME = 3000; // 3 seconds

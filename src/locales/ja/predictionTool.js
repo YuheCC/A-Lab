@@ -1,10 +1,27 @@
 export default {
     // Header
     title: "早期サイクルデータをアップロードして寿命予測",
-    subtitle: "SES社内実験データで訓練されたAIモデルを使用して、リチウムイオン電池のサイクル寿命（80% SOHまでのサイクル数）を予測します。最初の100サイクル（実効サイクルなので実際の数はこれより多くなる可能性があります）のみが必要です。",
+    subtitle: "Predict は SES が開発した AI モデルで、初期サイクルの性能データを使用して、放電容量が 80% に低下するサイクル数として定義されるバッテリーサイクル寿命を推定します。このモデルは、入力として約最初の 100 の有効サイクルを使用し、有効サイクルは急激な容量変化や異常な動作がないサイクルとして定義されます。Predict は、リチウムイオン電池、ナトリウムイオン電池、アノードフリー電池など、寿命が活性イオン在庫の損失によって支配されるシステムで最も効果的に機能します。機械的損傷、設計関連の問題、内部短絡、ガス発生、リチウムめっき、電解質枯渇などの非電気化学的劣化メカニズムの存在は、予測精度に影響を与える可能性があります。",
     betaTag: "BETA",
     disclaimerTitle: "免責事項",
     disclaimer: "<strong>注意：</strong>この機能は、ユーザーが提供する初期段階のサイクリングデータのみを使用してセルサイクル寿命を予測します。セル化学や設計などの追加情報は必要ありません。このモデルは現在、標準的なサイクリング条件（実際の使用プロファイルではない）下で活性イオンが限られたバッテリーシステムに適用可能です。ユーザーは自身のテストを通じて予測を検証することをお勧めします。",
+
+    // Features
+    features: {
+        newPrediction: {
+            title: "新しい予測",
+            description: "新しい予測を実行"
+        },
+        train: {
+            title: "トレーニング",
+            description: "カスタムモデルをトレーニング"
+        }
+    },
+
+    // Create page
+    create: {
+        title: "新規予測"
+    },
 
     // Steps
     steps: {
@@ -13,13 +30,29 @@ export default {
         results: "結果表示"
     },
 
+    // Model Selection
+    modelSelection: {
+        label: "モデル選択",
+        placeholder: "モデルを選択してください",
+        baseModel: "ベースモデル",
+        finetunedModels: "ファインチューニングモデル",
+        muModels: "MUモデル",
+        columns: {
+            modelName: "モデル名",
+            modelId: "モデルID",
+            baseModel: "ベースモデル"
+        }
+    },
+
     // Upload Step
     upload: {
+        title: "データアップロード",
         selectFile: "ファイル選択",
         clickToUpload: "バッテリーデータファイルをクリックしてアップロード",
         subtitle: "現在はCSVとNewareのデフォルトファイル形式（NDA/NDAX）のみサポートしており、今後より多くのファイル形式をサポート予定です",
         uploading: "ファイルをアップロード中...",
         waitText: "お待ちください",
+        removeFile: "ファイルを削除",
         dataFormatTip: "📋 CSVデータフォーマット要件",
         sampleData: "サンプルデータ",
         requiredFields: "必須フィールド：",
@@ -66,8 +99,10 @@ export default {
 
     // Tabs
     tabs: {
+        tool: "予測ツール",
         introduction: "紹介",
-        records: "記録"
+        records: "記録",
+        models: "モデル"
     },
 
     // List
@@ -77,15 +112,26 @@ export default {
             fileName: "ファイル名",
             batteryCount: "バッテリー数",
             avgCycleLife: "サイクル寿命",
+            model: "モデル",
             created: "作成日時",
             actions: "操作"
         }
+    },
+
+    // Records
+    records: {
+        searchPlaceholder: "レコードIDで検索",
+        modelFilter: "モデルフィルター",
+        allModels: "すべてのモデル",
+        clearFilters: "フィルターをクリア",
+        showingRecords: "{{count}} / {{total}} 件のレコードを表示"
     },
 
     // History
     history: {
         title: "予測記録",
         newPrediction: "新しい予測",
+        train: "トレーニング",
         searchPlaceholder: "ファイル名で検索...",
         loadingText: "読み込み中...",
         error: "エラー",
@@ -100,7 +146,7 @@ export default {
             error: "履歴記録の取得に失敗しました"
         },
         actions: {
-            viewDetails: "詳細を表示",
+            viewResults: "結果を見る",
             delete: "削除"
         }
     },
@@ -136,6 +182,12 @@ export default {
         predictedCycleLife: "80% SOHに達するまでの予測サイクル数",
         xAxisName: "サイクル数",
         yAxisName: "放電容量",
+        xAxisLabel: "サイクルID",
+        yAxisLabel: "SOH (%)",
+        originalSoh: "オリジナル SOH",
+        originalSohUsed: "使用済みオリジナル SOH",
+        originalSohUnused: "未使用オリジナル SOH",
+        estimatedSoh: "推定 SOH",
         predictedCapacityLine: "予測容量線",
         sohPredictionLine: "80% SOH 予測線",
         value: "値",
@@ -153,7 +205,9 @@ export default {
 
     // Actions
     actions: {
-        backToList: "リストに戻る"
+        backToList: "リストに戻る",
+        back: "戻る",
+        newPrediction: "新規予測"
     },
 
     // Default Step
@@ -174,5 +228,219 @@ export default {
         point3: '既知のサイクル寿命を持つ実際のセル（各サイクルの容量保持率に基づくと1261サイクル、または容量チェックサイクルの容量保持率に基づくと1351サイクル）の場合、モデルは1321サイクルでEOLを予測しました。',
         point3_sub1: '予測誤差はわずか4.7%または2.2%であり、単純な線形外挿法（800サイクル）よりもはるかに優れています。',
         point4: '予測誤差は4.7%または2.2%であり、単純な線形外挿法（800サイクル）よりもはるかに優れています。'
-    }
+    },
+
+    // Introduction Page
+    introduction: {
+        title: "はじめに",
+        paragraph1: "このツールは、内部実験データセットで訓練されたAIモデルを使用して、放電容量保持率が80%に達するまでのサイクル数として定義されるバッテリーサイクル寿命を予測します。",
+        paragraph2: "従来の外挿法とは異なり、このモデルは非線形な劣化挙動を捉え、限られたサイクル情報に基づいて、早期のデータ駆動型の寿命終了推定を提供します。",
+        inputRequirement: {
+            title: "入力要件",
+            paragraph1: "早期サイクルのデータ（例：最初の100有効サイクル）のみが必要です。",
+            paragraph2: "有効サイクルとは、目標動作条件下での正常な劣化挙動を表し、以下のような非代表的なサイクルを除外します：",
+            item1: "診断または容量チェック（RPT）サイクル",
+            item2: "長時間休止または低レートテストサイクル",
+            item3: "実験的外乱や異常な容量ジャンプの影響を受けたサイクル"
+        },
+        applicability: {
+            title: "適用範囲",
+            paragraph1: "このモデルは、活性イオンインベントリの損失によってサイクル寿命が主に支配されるバッテリーシステム（リチウムイオン電池、ナトリウムイオン電池、アノードフリー電池を含む）で検証されています。活性材料の損失やリチウムめっきなどの他の電気化学的劣化メカニズムについては、精度が低下した推定を提供できます。タブの割れや内部短絡などの機械的要因による故障モードは、モデルの範囲外であり、予測できません。"
+        },
+        predictionAccuracy: {
+            title: "予測精度",
+            item1: "材料システムの事前知識がない一般的な使用の場合、典型的な予測誤差は±15%以内です。",
+            item2: "特定のバッテリーシステム向けにモデルを微調整すると、誤差を約±5%まで低減できます。"
+        },
+        example: {
+            title: "例",
+            paragraph1: "ある例では、モデルベースの予測が、時間の経過に伴うSOH劣化トレンドを捉えることで、バッテリー寿命終了を約1308サイクルと推定しました。一定の劣化率を仮定するのではなく、予測は非線形な劣化挙動を投影し、測定されたSOH変化と一致する軌跡を生成しました。この場合、モデルは垂直の赤い破線で示されたサイクルまでのデータ（約143サイクル）を使用し、異常なサイクルを除外して安定した劣化トレンドを確立しました。実際の寿命終了は1396サイクル（容量チェックサイクルを除く）で観測され、約6.3%の予測誤差に相当します。",
+            paragraph2: "単純な線形外挿を代わりに適用した場合、寿命は約1000サイクルで過小評価されます。これは、より正確な寿命推定を提供する予測アプローチの利点を強調しています。"
+        }
+    },
+
+    // Train
+    train: {
+        title: "新しいモデルをトレーニング",
+        back: "戻る",
+        step1: {
+            title: "モデル情報",
+            name: "モデル名",
+            namePlaceholder: "モデル名を入力",
+            remarks: "備考",
+            remarksPlaceholder: "追加のメモや備考を入力"
+        },
+        step2: {
+            title: "ベースモデル",
+            modelName: "OSES-Base-v1",
+            badge: "ベースモデル",
+            loading: "読み込み中...",
+            noModels: "利用可能なベースモデルがありません"
+        },
+        step3: {
+            title: "トレーニングデータセット",
+            ratio: "トレーニング-テスト分割比：",
+            ratioValue: "7 : 3",
+            ratioDesc: "データセットの70%がトレーニングに、30%がテストに使用されます",
+            upload: "データセットをアップロード",
+            uploadNote: "少なくとも30個のセルのデータをアップロードし、各セルは少なくともSOH=80%までサイクルしてください",
+            dragDrop: "ファイルをここにドラッグアンドドロップするか、クリックして参照",
+            formats: "対応フォーマット：CSV, NDA, NDAX",
+            dragDropMultiple: "ファイルをここにドラッグアンドドロップするか、クリックして参照",
+            formatsMultiple: "対応フォーマット：CSV, NDA, NDAX（最大{{max}}ファイル）",
+            chooseFile: "ファイルを選択",
+            chooseFiles: "ファイルを選択",
+            downloadSample: "サンプルをダウンロード",
+            removeFile: "ファイルを削除"
+        },
+        startTraining: "トレーニング開始",
+        errors: {
+            fileFormat: "サポートされていないファイル形式",
+            maxFiles: "最大{{max}}ファイルまで許可されています",
+            duplicateFiles: "一部の重複ファイルがスキップされました",
+            modelNameRequired: "モデル名を入力してください",
+            baseModelRequired: "ベースモデルを選択してください",
+            fileRequired: "トレーニングデータセットをアップロードしてください",
+            failed: "トレーニングの開始に失敗しました"
+        },
+        success: "モデルトレーニングが正常に開始されました",
+        submitting: "送信中..."
+    },
+
+    // Models
+    models: {
+        loadingText: "読み込み中...",
+        error: "エラー",
+        noResults: "モデルが見つかりません",
+        showingRecords: "{{count}} / {{total}} 件のレコードを表示",
+        statusOnline: "オンライン",
+        statusTrained: "トレーニング済み",
+        statusTraining: "トレーニング中",
+        statusOffline: "オフライン",
+        statusFail: "失敗",
+        cannotDeleteDemo: "デモモデルは削除できません",
+        deleteConfirm: "このモデルを削除してもよろしいですか？",
+        deleteFailed: "モデルの削除に失敗しました",
+        loading: {
+            error: "モデルリストの読み込みに失敗しました"
+        },
+        filters: {
+            searchPlaceholder: "モデルIDまたは名前で検索...",
+            statusPlaceholder: "ステータスを選択",
+            allStatus: "すべてのステータス",
+            allBaseModels: "すべてのベースモデル",
+            selectDate: "日付を選択",
+            refresh: "更新",
+            clearFilters: "フィルターをクリア"
+        },
+        columns: {
+            modelId: "モデルID",
+            modelName: "モデル名",
+            baseModel: "ベースモデル",
+            status: "ステータス",
+            created: "作成日時",
+            createdBy: "作成者",
+            actions: "操作"
+        },
+        actions: {
+            viewDetails: "詳細を表示",
+            delete: "削除"
+        }
+    },
+
+    // Model Detail
+    modelDetail: {
+        title: "モデル情報",
+        modelId: "モデルID：",
+        back: "戻る",
+        onlineModel: "モデルをデプロイ",
+        offlineModel: "モデルをオフライン",
+        creator: "作成者：",
+        status: "ステータス：",
+        statusOnline: "オンライン",
+        statusTrained: "トレーニング済み",
+        statusOffline: "オフライン",
+        statusTraining: "トレーニング中",
+        statusFail: "失敗",
+        created: "作成日時：",
+        remarks: "備考：",
+        baseModel: "ベースモデル",
+        trainingDataset: "トレーニングデータセット",
+        datasetName: "データセット名：",
+        fileSize: "ファイルサイズ：",
+        totalSamples: "総サンプル数：",
+        ratio: "トレーニング-テスト比：",
+        trainingResults: "トレーニング結果",
+        accuracy: "精度",
+        loss: "損失",
+        epochs: "エポック数",
+        trainingTime: "トレーニング時間",
+        validationScore: "検証スコア",
+        predictionRecords: "予測記録",
+        recordId: "ID",
+        fileName: "ファイル名",
+        batteryCount: "バッテリー数",
+        avgCycleLife: "平均サイクル寿命",
+        actions: "操作",
+        viewDetails: "詳細を表示",
+        trainingFiles: "トレーニングデータセット",
+        trainingMetrics: "トレーニング結果",
+        baseRMSE: "ベースモデル RMSE",
+        baseR2: "ベースモデル R²",
+        trainRMSE: "新モデル RMSE",
+        trainR2: "新モデル R²",
+        rmse: "RMSE",
+        r2: "R²",
+        baseModelLabel: "ベースモデル",
+        newModelLabel: "新モデル",
+        loadingText: "読み込み中...",
+        noFiles: "トレーニングファイルがありません",
+        noMetrics: "トレーニング指標がありません",
+        beforeTraining: "トレーニング前",
+        afterTraining: "トレーニング後",
+        downloadingLog: "ダウンロード中...",
+        downloadTrainLog: "トレーニングログをダウンロード",
+        downloadLogSuccess: "トレーニングログのダウンロードに成功しました",
+        downloadingFile: "ファイルをダウンロード中...",
+        downloadFileSuccess: "ファイルのダウンロードに成功しました",
+        confirmDeploy: "デプロイの確認",
+        confirmUndeploy: "オフライン化の確認",
+        confirmRemove: "削除の確認",
+        deployMessage: "このモデルをデプロイしてもよろしいですか？これにより予測に使用できるようになります。",
+        undeployMessage: "このモデルをオフラインにしてもよろしいですか？これによりオフライン状態になります。",
+        removeMessage: "このモデルを削除してもよろしいですか？この操作は元に戻せません。",
+        cancel: "キャンセル",
+        confirm: "確認",
+        deploySuccess: "モデルが正常にデプロイされました",
+        undeploySuccess: "モデルが正常にオフライン化されました",
+        removeSuccess: "モデルが正常に削除されました",
+        errors: {
+            noId: "モデルIDが必要です",
+            fetchFailed: "モデル詳細の取得に失敗しました",
+            actionFailed: "操作に失敗しました",
+            mockModel: "デモモデルは変更できません",
+            notFound: "モデルが見つかりません",
+            downloadLogFailed: "トレーニングログのダウンロードに失敗しました"
+        },
+        metricsInfo: {
+            rmse: {
+                name: "二乗平均平方根誤差",
+                description: "ŷᵢは予測サイクル数、yᵢは実際のサイクル数、Nはテストセットのサンプルサイズを表します"
+            },
+            mae: {
+                name: "平均絶対誤差",
+                description: "ŷᵢは予測サイクル数、yᵢは実際のサイクル数、Nはテストセットのサンプルサイズを表します"
+            },
+            mape: {
+                name: "平均絶対パーセント誤差",
+                description: "ŷᵢは予測サイクル数、yᵢは実際のサイクル数、Nはテストセットのサンプルサイズを表します"
+            },
+            predictedValue: "予測サイクル数",
+            actualValue: "実際のサイクル数",
+            sampleSize: "テストセットのサンプルサイズ"
+        }
+    },
+
+    // Train disabled tip
+    trainDisabledTip: "ご利用については、メール <emailLink>mu.sales@ses.ai</emailLink> で当社チームにお問い合わせください。"
 };

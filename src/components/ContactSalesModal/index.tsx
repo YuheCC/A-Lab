@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
 import { contactSales } from '@/services/auth';
-import './ContactSalesModal.css';
+import './ContactSalesModal.less';
 
 type ContactPlanType = 'enterprise1' | 'enterprise2' | 'enterprise3' | 'joint';
 

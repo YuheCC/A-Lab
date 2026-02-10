@@ -1,0 +1,191 @@
+@import '@/styles/variables.less';
+
+.feature-card-group {
+  display: grid;
+  width: 100%;
+
+  // 固定列数配置（向后兼容）
+  &--cols-1 {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  &--cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  &--cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  &--cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  &--cols-5 {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  &--cols-6 {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  // 响应式配置 - 默认（移动端优先）
+  &--cols-default-1 {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  &--cols-default-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  &--cols-default-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  &--cols-default-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  &--cols-default-5 {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  &--cols-default-6 {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  // 响应式配置 - 小屏幕 (≥768px)
+  @media (min-width: 768px) {
+    &--cols-sm-1 {
+      grid-template-columns: repeat(1, 1fr);
+    }
+
+    &--cols-sm-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    &--cols-sm-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    &--cols-sm-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    &--cols-sm-5 {
+      grid-template-columns: repeat(5, 1fr);
+    }
+
+    &--cols-sm-6 {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+
+  // 响应式配置 - 中等屏幕 (≥1024px)
+  @media (min-width: 1024px) {
+    &--cols-md-1 {
+      grid-template-columns: repeat(1, 1fr);
+    }
+
+    &--cols-md-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    &--cols-md-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    &--cols-md-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    &--cols-md-5 {
+      grid-template-columns: repeat(5, 1fr);
+    }
+
+    &--cols-md-6 {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+
+  // 响应式配置 - 大屏幕 (≥1200px)
+  @media (min-width: 1200px) {
+    &--cols-lg-1 {
+      grid-template-columns: repeat(1, 1fr);
+    }
+
+    &--cols-lg-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    &--cols-lg-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    &--cols-lg-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    &--cols-lg-5 {
+      grid-template-columns: repeat(5, 1fr);
+    }
+
+    &--cols-lg-6 {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+
+  // 响应式配置 - 超大屏幕 (≥1440px)
+  @media (min-width: 1440px) {
+    &--cols-xl-1 {
+      grid-template-columns: repeat(1, 1fr);
+    }
+
+    &--cols-xl-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    &--cols-xl-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    &--cols-xl-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    &--cols-xl-5 {
+      grid-template-columns: repeat(5, 1fr);
+    }
+
+    &--cols-xl-6 {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+
+  // 响应式配置 - 极大屏幕 (≥1920px)
+  @media (min-width: 1920px) {
+    &--cols-xxl-1 {
+      grid-template-columns: repeat(1, 1fr);
+    }
+
+    &--cols-xxl-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    &--cols-xxl-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    &--cols-xxl-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    &--cols-xxl-5 {
+      grid-template-columns: repeat(5, 1fr);
+    }
+
+    &--cols-xxl-6 {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+}

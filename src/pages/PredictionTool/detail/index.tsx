@@ -4,8 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { Download } from 'lucide-react';
 import { downloadFile, type HistoryDetailResponse } from '@/services/prediction/predictionTool';
 import { getHistoryDetail } from '../model';
-import { normalizeServerDate } from '@/utils/messageUtils';
+import type { MockHistoryDetailResponse } from '../example';
+import { formatUTCDateTime } from '@/utils/dateUtils';
 import CycleLifeScatterChart from '../components/CycleLifeScatterChart';
+import CycleLifeLineChart from '../components/CycleLifeLineChart';
 import './index.less';
 
 const DetailPage: React.FC = () => {
@@ -14,7 +16,7 @@ const DetailPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [detailData, setDetailData] = useState<HistoryDetailResponse | null>(null);
+  const [detailData, setDetailData] = useState<HistoryDetailResponse | MockHistoryDetailResponse | null>(null);
   const [downloading, setDownloading] = useState(false);
   const [selectedBarcode, setSelectedBarcode] = useState<string | undefined>();
 
@@ -53,6 +55,18 @@ const DetailPage: React.FC = () => {
   const handleDownload = async () => {
     if (!detailData?.file_name) return;
 
+    // example 数据直接下载静态文件，不调用接口
+    const isMockData = (detailData as MockHistoryDetailResponse).isMock;
+    if (isMockData) {
+      const link = document.createElement('a');
+      link.href = '/predict/demo.csv';
+      link.download = 'demo.csv';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return;
+    }
+
     setDownloading(true);
     try {
       const data = await downloadFile({ filename: detailData.file_path });
@@ -79,17 +93,6 @@ const DetailPage: React.FC = () => {
     } finally {
       setDownloading(false);
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(normalizeServerDate(dateString)).toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
   };
 
   if (loading) {
@@ -140,13 +143,6 @@ const DetailPage: React.FC = () => {
           </button>
         </div>
 
-        <div className="prediction-header">
-          <h1 className="prediction-title">{t('predictionTool.title')}</h1>
-          <p className="prediction-subtitle">
-            {t('predictionTool.subtitle')}
-          </p>
-        </div>
-
         <div className="detail-section">
           {detailData && (
             <>
@@ -183,7 +179,7 @@ const DetailPage: React.FC = () => {
                     </div>
                     <div className="stats-card">
                       <div className="stats-label">{t('predictionTool.results.predictionTime')}</div>
-                      <div className="stats-value">{formatDate(detailData.created_at)}</div>
+                      <div className="stats-value">{formatUTCDateTime(detailData.created_at, { showSeconds: true })}</div>
                     </div>
                   </div>
                 </div>
@@ -213,7 +209,7 @@ const DetailPage: React.FC = () => {
                                 <tr
                                   key={item.id}
                                   className={isSelected ? 'selected-row' : ''}
-                                  onClick={() => setSelectedBarcode(item.barcode)}
+                                  // onClick={() => setSelectedBarcode(item.barcode)}
                                   style={{ cursor: 'pointer' }}
                                 >
                                   <td className="barcode-cell" title={item.barcode}>{item.barcode}</td>
@@ -234,16 +230,39 @@ const DetailPage: React.FC = () => {
                   </div>
                 </div>
 
+                {/* 散点图或折线图展示 */}
                 {detailData.brcode_data && detailData.brcode_data.length > 0 && (
-                  <div className="chart-section">
-                    <div className="chart-container">
-                      <CycleLifeScatterChart
-                        brcodeData={detailData.brcode_data}
-                        selectedBarcode={selectedBarcode}
-                        onBarcodeSelect={setSelectedBarcode}
-                      />
-                    </div>
-                  </div>
+                  (() => {
+                    const hasModelResult = detailData.brcode_data.some(item => !!item.model_result);
+                    const hasLegacyData = detailData.brcode_data.some(item => !!item.cycle_life_1_cycles_detail);
+
+                    if (hasModelResult) {
+                      return (
+                        <div className="chart-section">
+                          <div className="chart-container">
+                            <CycleLifeLineChart
+                              brcodeData={detailData.brcode_data}
+                              // selectedBarcode={selectedBarcode}
+                              // onBarcodeSelect={setSelectedBarcode}
+                            />
+                          </div>
+                        </div>
+                      );
+                    } else if (hasLegacyData) {
+                      return (
+                        <div className="chart-section">
+                          <div className="chart-container">
+                            <CycleLifeScatterChart
+                              brcodeData={detailData.brcode_data}
+                              // selectedBarcode={selectedBarcode}
+                              // onBarcodeSelect={setSelectedBarcode}
+                            />
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()
                 )}
               </div>
             </>
