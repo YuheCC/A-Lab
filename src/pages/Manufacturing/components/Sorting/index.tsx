@@ -10,16 +10,6 @@ const Sorting: React.FC<SortingProps> = ({ onBackToIntro }) => {
 
   return (
     <>
-      {/* 完成提示 */}
-      <div className="result-header">
-        <div className="success-icon">✓</div>
-        <h3 className="result-title">{t('manufacturing.result.complete')}</h3>
-        <p className="result-desc">
-          {t('manufacturing.result.fileAnalyzed')} <span className="filename">demo_data.csv</span>{' '}
-          {t('manufacturing.result.fileSuccess')}
-        </p>
-      </div>
-
       {/* 统计卡片 */}
       <div className="stats-cards">
         <div className="stat-card">

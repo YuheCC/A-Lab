@@ -22,7 +22,7 @@ export default {
       target: 'Overhang, 정렬',
       result: {
         tree: {
-          title: '감지 목록',
+          title: 'Barcode 목록',
         },
         imageViewer: {
           title: '감지 이미지',
@@ -58,7 +58,7 @@ export default {
       target: '분용 후 K값',
       result: {
         tree: {
-          title: 'K값 목록',
+          title: 'Barcode 목록',
         },
         loading: '데이터를 로드하는 중...',
         scatterChart: {
@@ -100,7 +100,7 @@ export default {
       loading: '데이터를 로드하는 중...',
       result: {
         tree: {
-          title: '감지 목록',
+          title: 'Barcode 목록',
         },
         imageViewer: {
           title: '초음파 이미지',
@@ -111,11 +111,16 @@ export default {
         stateInfo: {
           title: '상태 정보',
         },
+        states: {
+          state1: '불충분한 침투',
+          state2: '적절한 침투',
+          state3: '과도한 침투',
+        },
       },
       charts: {
-        chart1: '배치 습윤 상태 1 분포도',
-        chart2: '배치 습윤 상태 2 분포도',
-        chart3: '배치 습윤 상태 3 분포도',
+        chart1: '불충분한 침투 분포',
+        chart2: '적절한 침투 분포',
+        chart3: '과도한 침투 분포',
       },
     },
   },
@@ -177,9 +182,11 @@ export default {
   },
   charts: {
     shap: {
-      title: '특징 중요도 요약',
+      title: '전역 특징 상관성',
       xAxisName: '평균|SHAP값|',
       seriesName: '특징 중요도',
+      summaryDescription1: '배치 요약 차트는 모델의 결정을 해석하기 위한 "글로벌 지도"입니다. 가로축은 예측 결과에 대한 각 특징의 영향력을 나타내며, 막대가 길수록 영향력이 큽니다. 세로축은 중요도에 따라 모든 특징을 위에서 아래로 나열하여 핵심 변수를 한눈에 파악할 수 있도록 도와줍니다.',
+      summaryDescription2: '차트의 점 색상은 특징 값의 크기(빨간색은 높음, 파란색은 낮음)를 나타내며, 분포는 해당 특징이 예측에 어떤 영향을 미치는지 보여줍니다. 이 차트를 통해 모델이 어떤 근거로 판단하는지 빠르게 이해하여 결과를 신뢰하고, 전략을 최적화하거나 핵심 영향 요인을 파악할 수 있습니다. 예를 들어 차트의 (Wetting) Total Time은 생산 과정의 총 침윤 시간으로, 시간이 길수록 품질에 긍정적인 영향을 미칩니다.',
     },
     scatter: {
       title: 'SHAP 산점도',
@@ -188,15 +195,25 @@ export default {
       high: '높음',
       low: '낮음',
     },
+    featureDetailAnalysis: {
+      title: '특징 상관성 분석',
+      featureAnalysisDescription1: '특징 상관 분석 차트는 데이터 내부 연관성을 탐색하는 "관계 탐지기"로, 산점도 행렬 형식으로 제공됩니다. 차트에서 색상의 농도와 숫자의 크기는 특징 간의 상관 강도(-1에서 1 사이)를 직접 정량화합니다.',
+      featureAnalysisDescription2: '이 차트를 관찰하여 상관관계가 높은 특징 그룹을 빠르게 식별할 수 있습니다. 예를 들어 raw_weight 차트에서 원자재 무게 분포가 주액 및 씰링 결과에 미치는 영향을 확인할 수 있으며, 원자재 무게가 408.5g 미만 또는 410.5g 초과일 때 주액 및 씰링 품질에 부정적인 영향을 미치는 것을 발견할 수 있습니다.',
+    },
     featureImportance: {
       title: '샘플 특징 영향 분석',
+      description: '단일 셀 폭포 차트에서 f(x)는 최종 품질 예측 확률이며, 0은 OK, 1은 NG입니다(부동 소수점 계산의 영향으로 1보다 약간 크거나 0보다 약간 작을 수 있습니다). 빨간색 화살표는 품질에 부정적인 영향을 미치는 특징을 나타내고, 파란색 화살표는 긍정적인 영향을 미치는 특징을 나타냅니다.',
     },
+  },
+  tabs: {
+    batchSummary: '배치 요약',
+    cellAnalysis: '셀 분석',
   },
   predictResult: {
     title: '예측 결과 - Sample {{index}}',
     barcode: 'Barcode',
-    predict: 'Predict',
-    actual: 'Actual',
+    predict: '예측',
+    actual: '실제',
   },
   status: {
     normal: '정상',

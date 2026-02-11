@@ -294,57 +294,33 @@ const Detection: React.FC<DetectionProps> = ({ onBackToIntro }) => {
               {t('manufacturing.modules.detection.result.table.title')}
             </div>
             <div className="dual-table-wrapper">
-              {/* Left OH Table */}
               <div className="single-table-container">
-                <div className="table-sub-header">Left OH</div>
                 <div className="table-wrapper">
-                  {tableData.left.length > 0 ? (
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>{t('manufacturing.modules.detection.result.table.ohValue')}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {tableData.left.map((row, index) => (
+                  <table>
+                    <thead>
+                      <tr>
+                        <th style={{ width: '50%' }}>Left OH (mm)</th>
+                        <th style={{ width: '50%' }}>Right OH (mm)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Math.max(tableData.left.length, tableData.right.length) > 0 ? (
+                        Array.from({
+                          length: Math.max(tableData.left.length, tableData.right.length),
+                        }).map((_, index) => (
                           <tr key={index}>
-                            <td>{row.oh_value}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  ) : (
-                    <div className="empty-state">
-                      {t('manufacturing.modules.detection.result.table.noData')}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Right OH Table */}
-              <div className="single-table-container">
-                <div className="table-sub-header">Right OH</div>
-                <div className="table-wrapper">
-                  {tableData.right.length > 0 ? (
-                    <table>
-                      <thead>
+                                                                                <td>{tableData.left[index]?.oh_value || ''}</td>
+                                                                                <td>{tableData.right[index]?.oh_value || ''}</td>                          </tr>
+                        ))
+                      ) : (
                         <tr>
-                          <th>{t('manufacturing.modules.detection.result.table.ohValue')}</th>
+                          <td colSpan={2} style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
+                            {t('manufacturing.modules.detection.result.table.noData')}
+                          </td>
                         </tr>
-                      </thead>
-                      <tbody>
-                        {tableData.right.map((row, index) => (
-                          <tr key={index}>
-                            <td>{row.oh_value}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  ) : (
-                    <div className="empty-state">
-                      {t('manufacturing.modules.detection.result.table.noData')}
-                    </div>
-                  )}
+                      )}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>

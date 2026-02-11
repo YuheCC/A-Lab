@@ -22,7 +22,7 @@ export default {
       target: 'Overhang、アライメント',
       result: {
         tree: {
-          title: '検出リスト',
+          title: 'Barcodeリスト',
         },
         imageViewer: {
           title: '検出画像',
@@ -58,7 +58,7 @@ export default {
       target: '分容後K値',
       result: {
         tree: {
-          title: 'K値リスト',
+          title: 'Barcodeリスト',
         },
         loading: 'データを読み込み中...',
         scatterChart: {
@@ -100,7 +100,7 @@ export default {
       loading: 'データを読み込み中...',
       result: {
         tree: {
-          title: '検出リスト',
+          title: 'Barcodeリスト',
         },
         imageViewer: {
           title: '超音波画像',
@@ -111,11 +111,16 @@ export default {
         stateInfo: {
           title: '状態情報',
         },
+        states: {
+          state1: '浸潤不十分',
+          state2: '適度な浸潤',
+          state3: '過剰浸潤',
+        },
       },
       charts: {
-        chart1: 'バッチ浸潤状態1分布図',
-        chart2: 'バッチ浸潤状態2分布図',
-        chart3: 'バッチ浸潤状態3分布図',
+        chart1: '浸潤不十分の分布',
+        chart2: '適度な浸潤の分布',
+        chart3: '過剰浸潤の分布',
       },
     },
   },
@@ -177,9 +182,11 @@ export default {
   },
   charts: {
     shap: {
-      title: '特徴重要性サマリー',
+      title: 'グローバル特徴相関',
       xAxisName: '平均|SHAP値|',
       seriesName: '特徴重要性',
+      summaryDescription1: 'バッチサマリーチャートは、モデルの意思決定を解釈するための「グローバルマップ」です。横軸は予測結果に対する各特徴の影響度を表し、バーが長いほど影響力が大きくなります。縦軸は重要度順にすべての特徴を上から下へ並べ、コア変数を一目で特定できるようにします。',
+      summaryDescription2: 'チャート内の点の色は特徴値の大きさ（赤は高、青は低）を表し、分布はその特徴が予測にどのように影響するかを示します。このチャートを通じて、モデルが何を根拠に判断しているかを迅速に理解し、結果を信頼し、戦略を最適化したり、重要な影響要因を特定したりできます。例えば、チャート内の（Wetting）Total Timeは生産工程における総浸潤時間であり、時間が長いほど品質に良い影響を与えます。',
     },
     scatter: {
       title: 'SHAP散布図',
@@ -188,15 +195,25 @@ export default {
       high: '高',
       low: '低',
     },
+    featureDetailAnalysis: {
+      title: '特徴相関分析',
+      featureAnalysisDescription1: '特徴相関分析チャートは、データ内部の関連性を探索する「関係検出器」であり、散布図行列形式で表示されます。チャート内では、色の濃さと数字の大きさが特徴間の相関強度（-1から1の間）を直接定量化します。',
+      featureAnalysisDescription2: 'このチャートを観察することで、相関性の高い特徴グループを迅速に識別できます。例えば、raw_weightチャートでは、入荷材料の重量分布が注液および封止結果に与える影響を確認でき、入荷材料の重量が408.5g未満または410.5gを超える場合、注液および封止の品質に悪影響を与えることがわかります。',
+    },
     featureImportance: {
       title: 'サンプル特徴影響分析',
+      description: '単一セルウォーターフォールチャートにおいて、f(x)は最終品質予測確率であり、0はOK、1はNGです（浮動小数点計算の影響により、1よりわずかに大きいか0よりわずかに小さい場合があります）。赤い矢印は品質に悪影響を与える特徴を表し、青い矢印は品質に良い影響を与える特徴を表します。',
     },
+  },
+  tabs: {
+    batchSummary: 'バッチサマリー',
+    cellAnalysis: 'セル分析',
   },
   predictResult: {
     title: '予測結果 - Sample {{index}}',
     barcode: 'Barcode',
-    predict: 'Predict',
-    actual: 'Actual',
+    predict: '予測',
+    actual: '実際',
   },
   status: {
     normal: '正常',

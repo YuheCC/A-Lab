@@ -105,7 +105,11 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeModule }) => {
 
   // 开始演示
   const handleStartDemo = () => {
-    setCurrentStep('upload');
+    setCurrentStep('result');
+    // 滚动条复位到顶部
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 0);
   };
 
   // 使用演示数据（跳转到处理步骤）
@@ -161,8 +165,8 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeModule }) => {
         <h3 className="panel-title">{t(`manufacturing.modules.${activeModule}.title`)}</h3>
       </div>
 
-      {/* 步骤指示器（除了介绍页面外都显示） */}
-      {currentStep !== 'intro' && <StepIndicator currentStep={getStepNumber()} />}
+      {/* 步骤指示器（除了介绍页面和结果页面外都显示） */}
+      {currentStep !== 'intro' && currentStep !== 'result' && <StepIndicator currentStep={getStepNumber()} />}
 
       {/* 步骤 1: 介绍页面 */}
       {currentStep === 'intro' && (
@@ -216,11 +220,11 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeModule }) => {
                 <div className="data-info-label">{t('manufacturing.dataLabels.dataType')}</div>
                 <div className="data-info-value">{t(`manufacturing.modules.${activeModule}.dataType`)}</div>
               </div>
-              <div className="data-info-card wide">
+              <div className="data-info-card">
                 <div className="data-info-label">{t('manufacturing.dataLabels.dataSource')}</div>
                 <div className="data-info-value">{t(`manufacturing.modules.${activeModule}.dataSource`)}</div>
               </div>
-              <div className="data-info-card wide">
+              <div className="data-info-card">
                 <div className="data-info-label">{t(`manufacturing.modules.${activeModule}.targetLabel`)}</div>
                 <div className="data-info-value">{t(`manufacturing.modules.${activeModule}.target`)}</div>
               </div>
@@ -357,15 +361,6 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeModule }) => {
               <Ultrasound onBackToIntro={handleBackToIntro} />
             ) : (
               <>
-                {/* 完成提示 */}
-                <div className="result-header">
-                  <div className="success-icon">✓</div>
-                  <h3 className="result-title">{t('manufacturing.result.complete')}</h3>
-                  <p className="result-desc">
-                    {t('manufacturing.result.fileAnalyzed')} <span className="filename">demo_data.csv</span> {t('manufacturing.result.fileSuccess')}
-                  </p>
-                </div>
-
                 {/* 统计卡片 */}
                 <div className="stats-cards">
                   <div className="stat-card">
