@@ -79,27 +79,9 @@ const IntroductionNew: React.FC = () => {
           <h2 className="section-title group-title">{t('formulation.introductionNew.groupStandardProperties')}</h2>
         </div>
 
-        {/* Property 01: RDF */}
-        <div className="property-item">
-          <div className="property-number">01</div>
-          <h3 className="property-title">{t('formulation.introductionNew.standardRdfTitle')}</h3>
-          <p className="property-description">
-            {t('formulation.introductionNew.standardRdfDescription')}
-          </p>
-        </div>
-
-        {/* Property 02: CN */}
-        <div className="property-item">
-          <div className="property-number">02</div>
-          <h3 className="property-title">{t('formulation.introductionNew.standardCnTitle')}</h3>
-          <p className="property-description">
-            {t('formulation.introductionNew.standardCnDescription')}
-          </p>
-        </div>
-
-        {/* Property 03: Solvation cluster analysis */}
+        {/* Property 01: Solvation cluster analysis */}
         <div className="property-item property-item-cluster">
-          <div className="property-number">03</div>
+          <div className="property-number">01</div>
           <h3 className="property-title">{t('formulation.introductionNew.standardSolvationClusterTitle')}</h3>
           <div className="property-description-wrapper">
             <p className="property-description">
@@ -155,18 +137,18 @@ const IntroductionNew: React.FC = () => {
           </div>
         </div>
 
-        {/* Property 04: Diffusivity */}
+        {/* Property 02: Diffusivity */}
         <div className="property-item">
-          <div className="property-number">04</div>
+          <div className="property-number">02</div>
           <h3 className="property-title">{t('formulation.introductionNew.standardDiffusivityTitle')}</h3>
           <p className="property-description">
             {t('formulation.introductionNew.standardDiffusivityDescription')}
           </p>
         </div>
 
-        {/* Property 05: Conductivity */}
+        {/* Property 03: Conductivity */}
         <div className="property-item property-item-with-image">
-          <div className="property-number">05</div>
+          <div className="property-number">03</div>
           <h3 className="property-title">{t('formulation.introductionNew.standardConductivityTitle')}</h3>
           <div className="property-description-wrapper">
             <p className="property-description">
@@ -193,18 +175,18 @@ const IntroductionNew: React.FC = () => {
           </div>
         </div>
 
-        {/* Property 06: Viscosity */}
+        {/* Property 04: Viscosity */}
         <div className="property-item">
-          <div className="property-number">06</div>
+          <div className="property-number">04</div>
           <h3 className="property-title">{t('formulation.introductionNew.standardViscosityTitle')}</h3>
           <p className="property-description">
             {t('formulation.introductionNew.standardViscosityDescription')}
           </p>
         </div>
 
-        {/* Property 07: Density */}
+        {/* Property 05: Density */}
         <div className="property-item">
-          <div className="property-number">07</div>
+          <div className="property-number">05</div>
           <h3 className="property-title">{t('formulation.introductionNew.standardDensityTitle')}</h3>
           <p className="property-description">
             {t('formulation.introductionNew.standardDensityDescription')}
@@ -212,10 +194,28 @@ const IntroductionNew: React.FC = () => {
         </div>
       </div>
 
-      {/* Group 2: Instructions Needed */}
+      {/* Group 2: Advanced Analysis */}
       <div className="content-section">
         <div className="group-header">
           <h2 className="section-title group-title">{t('formulation.introductionNew.groupAdvancedAnalysis')}</h2>
+        </div>
+
+        {/* Property 06: RDF */}
+        <div className="property-item">
+          <div className="property-number">06</div>
+          <h3 className="property-title">{t('formulation.introductionNew.standardRdfTitle')}</h3>
+          <p className="property-description">
+            {t('formulation.introductionNew.standardRdfDescription')}
+          </p>
+        </div>
+
+        {/* Property 07: CN */}
+        <div className="property-item">
+          <div className="property-number">07</div>
+          <h3 className="property-title">{t('formulation.introductionNew.standardCnTitle')}</h3>
+          <p className="property-description">
+            {t('formulation.introductionNew.standardCnDescription')}
+          </p>
         </div>
 
         {/* Property 08: Ion–ion correlation */}
