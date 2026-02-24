@@ -185,7 +185,7 @@ const RecordsContent: React.FC = () => {
       <div className="records-toolbar">
         <div className="records-toolbar-left">
           {/* TEMPORARY HIDDEN: Tab 切换功能暂时隐藏，默认使用 Result Prediction，后期需要恢复 */}
-          <div className="records-tabs" style={{ display: 'none' }}>
+          <div className="records-tabs">
             <Radio.Group
               value={activeSubTab}
               onChange={(e) => {
