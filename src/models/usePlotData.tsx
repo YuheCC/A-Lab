@@ -23,6 +23,7 @@ interface BasePlotDataProperties {
     combustion_enthalpy?: number;
     commercial_score?: number;
     commercial_link?: string;
+    fluoride_bde_ev?: number;
     CLUSTER: string | null;
 }
 
@@ -30,7 +31,6 @@ interface InorganicPlotDataProperties extends BasePlotDataProperties {}
 
 interface AnionsPlotDataProperties extends BasePlotDataProperties {
     vdw_volume_angstroms3?: number;
-    fluoride_bde_ev?: number;
 }
 
 interface PlotDataNode<P extends BasePlotDataProperties = BasePlotDataProperties> {
@@ -111,6 +111,7 @@ const createOrganicNode = (row: any, index: number): OrganicPlotDataNode => {
             combustion_enthalpy: row.COMBUSTION_ENTHALPY_EV,
             commercial_score: row.COMMERCIAL_SCORE,
             commercial_link: row.COMMERCIAL_LINK,
+            fluoride_bde_ev: row.FLUORIDE_BDE_EV,
             CLUSTER: handleCluster(row.CLUSTER)
         },
         rawData: row

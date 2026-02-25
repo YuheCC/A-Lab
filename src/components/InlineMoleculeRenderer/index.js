@@ -282,21 +282,22 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
       { label: 'ESP Min', value: moleculeData.ESP_min_eV?.toFixed(4), suffix: ' eV', show: canShowColumn('ESP_min_eV') },
     );
 
+    const fluorideBdeRaw = moleculeData.fluoride_bde_ev ?? moleculeData.FLUORIDE_BDE_EV;
+    if (canShowColumn('fluoride_bde_ev')) {
+      basePropGroups.push({
+        label: 'F Dissociation Energy',
+        value: fluorideBdeRaw !== undefined && fluorideBdeRaw !== null ? formatMaybeNumber(fluorideBdeRaw) : 'N/A',
+        suffix: fluorideBdeRaw !== undefined && fluorideBdeRaw !== null ? ' eV' : undefined,
+      });
+    }
+
     if (isAnion) {
       const volumeRaw = moleculeData.vdw_volume_angstroms3 ?? moleculeData.VDW_VOLUME_ANGSTROMS3;
-      const fluorideBdeRaw = moleculeData.fluoride_bde_ev ?? moleculeData.FLUORIDE_BDE_EV;
       if (canShowColumn('vdw_volume_angstroms3')) {
         basePropGroups.push({
           label: 'Molecular Volume',
           value: volumeRaw !== undefined && volumeRaw !== null ? formatMaybeNumber(volumeRaw) : 'N/A',
           suffix: volumeRaw !== undefined && volumeRaw !== null ? ' Å³' : undefined,
-        });
-      }
-      if (canShowColumn('fluoride_bde_ev')) {
-        basePropGroups.push({
-          label: 'F Dissociation Energy',
-          value: fluorideBdeRaw !== undefined && fluorideBdeRaw !== null ? formatMaybeNumber(fluorideBdeRaw) : 'N/A',
-          suffix: fluorideBdeRaw !== undefined && fluorideBdeRaw !== null ? ' eV' : undefined,
         });
       }
     } else {

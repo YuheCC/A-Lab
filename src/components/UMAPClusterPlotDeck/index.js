@@ -413,7 +413,7 @@ const UMAPClusterPlotDeck = ({
                 label: "F Dissociation Energy", 
                 suffix: " eV",
                 value: properties.fluoride_bde_ev,
-                show: molecularType === "anions" && isColumnVisibleForUser('fluoride_bde_ev', userPermissions)
+                show: (molecularType === "anions" || molecularType === "organic") && isColumnVisibleForUser('fluoride_bde_ev', userPermissions)
             }
         ], publicationProp);
 
