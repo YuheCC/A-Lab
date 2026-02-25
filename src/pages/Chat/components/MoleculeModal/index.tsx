@@ -420,7 +420,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         const showUmapX = canShowColumn('umap_0');
         const showUmapY = canShowColumn('umap_1');
         const showMolecularVolume = cardIsAnion && canShowColumn('vdw_volume_angstroms3');
-        const showFluorideBde = cardIsAnion && canShowColumn('fluoride_bde_ev');
+        const showFluorideBde = canShowColumn('fluoride_bde_ev');
         const molecularVolumeDisplay = cardProperties.molecularVolume === undefined || cardProperties.molecularVolume === null || cardProperties.molecularVolume === ''
             ? fallbackValue
             : cardProperties.molecularVolume;

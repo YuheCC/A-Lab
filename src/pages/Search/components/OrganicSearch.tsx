@@ -61,6 +61,7 @@ interface MoleculeData {
         predicted_bp?: number;
         predicted_fp_celsius?: number;
         combustion_enthalpy_ev?: number;
+        fluoride_bde_ev?: number;
         commercial_score: number;
         commercial_link?: string;
     };
@@ -80,6 +81,7 @@ interface SimilarMolecule {
     predicted_BP_celsius?: number;
     predicted_FP_celsius?: number;
     COMBUSTION_ENTHALPY_EV?: number;
+    FLUORIDE_BDE_EV?: number;
     COMMERCIAL_SCORE: number;
     COMMERCIAL_LINK?: string;
     functional_groups?: string;
@@ -102,6 +104,7 @@ const ORGANIC_PROPERTY_DEFINITIONS = [
     { columnId: 'ESP_max_eV', labelKey: 'search.properties.espMax', fallback: 'ESP Max' },
     { columnId: 'molecular_weight', labelKey: 'search.properties.molecularWeight', fallback: 'Molecular Weight' },
     { columnId: 'combustion_enthalpy_ev', labelKey: 'search.properties.combustionEnthalpy', fallback: 'Combustion Enthalpy' },
+    { columnId: 'fluoride_bde_ev', labelKey: 'search.properties.fluorideBondDissociationEnergy', fallback: 'F Bond Dissociation Energy' },
     { columnId: 'predicted_MP_celsius', labelKey: 'search.properties.predictedMp', fallback: 'Predicted Melting Point' },
     { columnId: 'predicted_BP_celsius', labelKey: 'search.properties.predictedBp', fallback: 'Predicted Boiling Point' },
     { columnId: 'predicted_FP_celsius', labelKey: 'search.properties.predictedFp', fallback: 'Predicted Flash Point' },
@@ -618,6 +621,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                     predicted_bp: mol.predicted_BP_celsius,
                     predicted_fp_celsius: mol.predicted_FP_celsius,
                     combustion_enthalpy_ev: mol.COMBUSTION_ENTHALPY_EV,
+                    fluoride_bde_ev: mol.fluoride_bde_ev ?? mol.FLUORIDE_BDE_EV,
                     commercial_score: mol.COMMERCIAL_SCORE,
                     commercial_link: mol.COMMERCIAL_LINK,
                 },
@@ -1151,6 +1155,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                                 suffix: ' eV',
                                                 show: canShowColumn('combustion_enthalpy_ev')
                                             },
+                                            { label: 'F Dissociation Energy', value: molecule.properties?.fluoride_bde_ev, suffix: ' eV', span: 2, show: canShowColumn('fluoride_bde_ev') },
                                             { label: 'HOMO', value: molecule.properties.homo_eV, span: 2, suffix: ' eV', show: canShowColumn('HOMO_eV') },
                                             { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 2, suffix: ' eV', show: canShowColumn('LUMO_eV') },
                                             { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_min_eV') },
@@ -1310,6 +1315,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                                     suffix: ' eV',
                                                     show: canShowColumn('combustion_enthalpy_ev')
                                                 },
+                                                { label: 'F Dissociation Energy', value: molecule.FLUORIDE_BDE_EV ?? molecule.fluoride_bde_ev, suffix: ' eV', span: 2, show: canShowColumn('fluoride_bde_ev') },
                                                 { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV', show: canShowColumn('HOMO_eV') },
                                                 { label: 'LUMO', value: molecule.LUMO_eV, span: 2, suffix: ' eV', show: canShowColumn('LUMO_eV') },
                                                 { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_min_eV') },

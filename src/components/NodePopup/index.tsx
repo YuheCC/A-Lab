@@ -116,7 +116,11 @@ const NodePopup = forwardRef(({ node, molecularType = 'organic'  }: NodePopupPro
                     return false;
                   }
 
-                  if(molecularType !== 'anions' && (key === 'vdw_volume_angstroms3' || key === 'fluoride_bde_ev')) {
+                  if(molecularType !== 'anions' && key === 'vdw_volume_angstroms3') {
+                    return false;
+                  }
+
+                  if(molecularType !== 'anions' && molecularType !== 'organic' && key === 'fluoride_bde_ev') {
                     return false;
                   }
 
