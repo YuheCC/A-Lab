@@ -9,8 +9,13 @@ interface TargetParameterCardProps {
   step: number;
   value: [number, number];
   onChange: (value: [number, number]) => void;
+  /** 预计算的曲线数据（x 已映射到 [min,max]，y 已归一化到 [0,1]），优先于 data 使用 */
+  curveData?: { x: number; y: number }[];
+  /** 原始数据点，用于在组件内进行 KDE 计算（curveData 不存在时使用） */
   data?: number[];
   minDiff?: number;
+  /** 只读模式：禁用滑块和输入框，值由外部公式计算 */
+  disabled?: boolean;
 }
 
 // KDE 密度曲线计算（纯函数，只依赖 data 和范围）
@@ -77,8 +82,10 @@ const TargetParameterCard: React.FC<TargetParameterCardProps> = ({
   step,
   value,
   onChange,
+  curveData,
   data,
   minDiff,
+  disabled = false,
 }) => {
   const uniqueId = useId().replace(/:/g, '');
   const [internalValue, setInternalValue] = useState<[number, number]>(value);
@@ -87,11 +94,12 @@ const TargetParameterCard: React.FC<TargetParameterCardProps> = ({
     setInternalValue(value);
   }, [value]);
 
-  // 计算 KDE 曲线数据（仅依赖 data、min、max，不随 slider 变化）
+  // 优先使用预计算的 curveData，否则从原始 data 进行 KDE 计算
   const kdeData = useMemo(() => {
+    if (curveData && curveData.length > 0) return curveData;
     if (!data || data.length === 0) return null;
     return calculateKDE(data, min, max);
-  }, [data, min, max]);
+  }, [curveData, data, min, max]);
 
   // 根据 kdeData 生成 SVG 曲线路径（仅依赖 kdeData，不受 slider 影响）
   const curvePath = useMemo(() => {
@@ -181,7 +189,7 @@ const TargetParameterCard: React.FC<TargetParameterCardProps> = ({
   const hasChart = kdeData && kdeData.length > 0;
 
   return (
-    <div className="target-parameter-card">
+    <div className={`target-parameter-card${disabled ? ' target-parameter-card--disabled' : ''}`}>
       {/* 标题和输入框 */}
       <div className="target-parameter-card__header">
         <div className="target-parameter-card__title">{title}</div>
@@ -195,6 +203,7 @@ const TargetParameterCard: React.FC<TargetParameterCardProps> = ({
             className="target-parameter-card__input"
             formatter={formatNumber}
             parser={parseNumber}
+            disabled={disabled}
           />
           <span className="target-parameter-card__separator">-</span>
           <InputNumber
@@ -206,6 +215,7 @@ const TargetParameterCard: React.FC<TargetParameterCardProps> = ({
             className="target-parameter-card__input"
             formatter={formatNumber}
             parser={parseNumber}
+            disabled={disabled}
           />
         </div>
       </div>
@@ -261,6 +271,7 @@ const TargetParameterCard: React.FC<TargetParameterCardProps> = ({
             value={internalValue}
             onChange={handleSliderChange}
             className="target-parameter-card__slider"
+            disabled={disabled}
           />
         </div>
       </div>
