@@ -1,4 +1,11 @@
 import React, { useState, useEffect, useRef, useContext, useMemo } from 'react';
+import {
+  RAW_CAPACITY,
+  RAW_THICKNESS,
+  RAW_VED,
+  RAW_GED,
+  mapCurveData,
+} from './constData';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@umijs/max';
 import { LeftOutlined } from '@ant-design/icons';
@@ -44,29 +51,32 @@ const OptimizePage: React.FC = () => {
   const { userPermissions } = useAuthStore();
   const pricingContext = useContext(PricingContext);
 
-  // Mock 分布数据（模拟后端返回的数据）
-  // 使用 useMemo 保证数据引用稳定，避免组件重渲染时重新生成随机数据导致曲线抖动
-  const mockDistributionData = useMemo(() => {
-    const generate = (min: number, max: number, mean: number, stdDev: number, count: number = 200) => {
-      const data: number[] = [];
-      for (let i = 0; i < count; i++) {
-        // Box-Muller 变换生成正态分布
-        const u1 = Math.random();
-        const u2 = Math.random();
-        const z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
-        const value = mean + z0 * stdDev;
-        data.push(Math.max(min, Math.min(max, value)));
-      }
-      return data;
-    };
-
-    return {
-      designCapacity: generate(0.01, 600, 150, 80),
-      specificEnergy: generate(30, 340, 200, 50),
-      thickness: generate(0.4, 15, 6, 2.5),
-      volumetricEnergyDensity: generate(530, 1060, 800, 120),
-    };
-  }, []);
+  // 将 CSV 原始数据映射到各参数的 [min, max] 区间（x 线性映射 + y 归一化）
+  const distributionCurves = useMemo(
+    () => ({
+      designCapacity: mapCurveData(
+        RAW_CAPACITY,
+        PARAMETER_RANGES.designCapacity.min,
+        PARAMETER_RANGES.designCapacity.max,
+      ),
+      specificEnergy: mapCurveData(
+        RAW_GED,
+        PARAMETER_RANGES.specificEnergy.min,
+        PARAMETER_RANGES.specificEnergy.max,
+      ),
+      thickness: mapCurveData(
+        RAW_THICKNESS,
+        PARAMETER_RANGES.thickness.min,
+        PARAMETER_RANGES.thickness.max,
+      ),
+      volumetricEnergyDensity: mapCurveData(
+        RAW_VED,
+        PARAMETER_RANGES.volumetricEnergyDensity.min,
+        PARAMETER_RANGES.volumetricEnergyDensity.max,
+      ),
+    }),
+    [],
+  );
 
   // 表单状态
   const [formData, setFormData] = useState<DesignTargetsFormData>({
@@ -572,6 +582,19 @@ const OptimizePage: React.FC = () => {
                   {dimensionError}
                 </div>
               )}
+
+              <div className="electrode-optimize-form-row">
+                <TargetParameterCard
+                  title={`${t('design.electrode.optimize.jellyRollThickness')} (mm)`}
+                  value={formData.thickness}
+                  onChange={(value) => setFormData({ ...formData, thickness: value })}
+                  min={PARAMETER_RANGES.thickness.min}
+                  max={PARAMETER_RANGES.thickness.max}
+                  step={PARAMETER_RANGES.thickness.step}
+                  minDiff={PARAMETER_RANGES.thickness.minDiff}
+                  curveData={distributionCurves.thickness}
+                />
+              </div>
             </div>
 
             {/* Targets 分组 */}
@@ -590,7 +613,7 @@ const OptimizePage: React.FC = () => {
                   max={PARAMETER_RANGES.designCapacity.max}
                   step={PARAMETER_RANGES.designCapacity.step}
                   minDiff={PARAMETER_RANGES.designCapacity.minDiff}
-                  data={mockDistributionData.designCapacity}
+                  curveData={distributionCurves.designCapacity}
                 />
                 <TargetParameterCard
                   title={`${t('design.electrode.optimize.specificEnergy')} (Wh/kg)`}
@@ -600,17 +623,7 @@ const OptimizePage: React.FC = () => {
                   max={PARAMETER_RANGES.specificEnergy.max}
                   step={PARAMETER_RANGES.specificEnergy.step}
                   minDiff={PARAMETER_RANGES.specificEnergy.minDiff}
-                  data={mockDistributionData.specificEnergy}
-                />
-                <TargetParameterCard
-                  title={`${t('design.electrode.optimize.jellyRollThickness')} (mm)`}
-                  value={formData.thickness}
-                  onChange={(value) => setFormData({ ...formData, thickness: value })}
-                  min={PARAMETER_RANGES.thickness.min}
-                  max={PARAMETER_RANGES.thickness.max}
-                  step={PARAMETER_RANGES.thickness.step}
-                  minDiff={PARAMETER_RANGES.thickness.minDiff}
-                  data={mockDistributionData.thickness}
+                  curveData={distributionCurves.specificEnergy}
                 />
                 <TargetParameterCard
                   title={`${t('design.electrode.optimize.volumetricEnergyDensity')} (Wh/L)`}
@@ -620,7 +633,7 @@ const OptimizePage: React.FC = () => {
                   max={PARAMETER_RANGES.volumetricEnergyDensity.max}
                   step={PARAMETER_RANGES.volumetricEnergyDensity.step}
                   minDiff={PARAMETER_RANGES.volumetricEnergyDensity.minDiff}
-                  data={mockDistributionData.volumetricEnergyDensity}
+                  curveData={distributionCurves.volumetricEnergyDensity}
                 />
               </div>
             </div>
