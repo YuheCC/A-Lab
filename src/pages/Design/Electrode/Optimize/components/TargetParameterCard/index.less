@@ -130,6 +130,47 @@
       background-color: @color-accent;
     }
   }
+
+  // ========================
+  // 只读/禁用状态
+  // ========================
+  &--disabled {
+    background: @color-gray-50;
+
+    .target-parameter-card__title {
+      color: @color-gray-500;
+    }
+
+    .target-parameter-card__input {
+      background: @color-gray-100;
+      border-color: @color-gray-200 !important;
+      cursor: not-allowed;
+
+      &:hover {
+        border-color: @color-gray-200 !important;
+      }
+
+      .ant-input-number-input {
+        color: @color-gray-500;
+        cursor: not-allowed;
+      }
+    }
+
+    .ant-slider-disabled {
+      .ant-slider-rail {
+        background-color: @color-gray-200 !important;
+      }
+
+      .ant-slider-track {
+        background-color: rgba(86, 178, 106, 0.35) !important;
+      }
+
+      .ant-slider-handle {
+        border-color: rgba(86, 178, 106, 0.5) !important;
+        cursor: not-allowed !important;
+      }
+    }
+  }
 }
 
 // ========================

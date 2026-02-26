@@ -14,6 +14,8 @@ interface TargetParameterCardProps {
   /** 原始数据点，用于在组件内进行 KDE 计算（curveData 不存在时使用） */
   data?: number[];
   minDiff?: number;
+  /** 只读模式：禁用滑块和输入框，值由外部公式计算 */
+  disabled?: boolean;
 }
 
 // KDE 密度曲线计算（纯函数，只依赖 data 和范围）
@@ -83,6 +85,7 @@ const TargetParameterCard: React.FC<TargetParameterCardProps> = ({
   curveData,
   data,
   minDiff,
+  disabled = false,
 }) => {
   const uniqueId = useId().replace(/:/g, '');
   const [internalValue, setInternalValue] = useState<[number, number]>(value);
@@ -186,7 +189,7 @@ const TargetParameterCard: React.FC<TargetParameterCardProps> = ({
   const hasChart = kdeData && kdeData.length > 0;
 
   return (
-    <div className="target-parameter-card">
+    <div className={`target-parameter-card${disabled ? ' target-parameter-card--disabled' : ''}`}>
       {/* 标题和输入框 */}
       <div className="target-parameter-card__header">
         <div className="target-parameter-card__title">{title}</div>
@@ -200,6 +203,7 @@ const TargetParameterCard: React.FC<TargetParameterCardProps> = ({
             className="target-parameter-card__input"
             formatter={formatNumber}
             parser={parseNumber}
+            disabled={disabled}
           />
           <span className="target-parameter-card__separator">-</span>
           <InputNumber
@@ -211,6 +215,7 @@ const TargetParameterCard: React.FC<TargetParameterCardProps> = ({
             className="target-parameter-card__input"
             formatter={formatNumber}
             parser={parseNumber}
+            disabled={disabled}
           />
         </div>
       </div>
@@ -266,6 +271,7 @@ const TargetParameterCard: React.FC<TargetParameterCardProps> = ({
             value={internalValue}
             onChange={handleSliderChange}
             className="target-parameter-card__slider"
+            disabled={disabled}
           />
         </div>
       </div>

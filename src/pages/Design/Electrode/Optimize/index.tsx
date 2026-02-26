@@ -95,6 +95,62 @@ const OptimizePage: React.FC = () => {
   // 错误状态
   const [dimensionError, setDimensionError] = useState<string>('');
 
+  // ============ VED-Capacity 公式联动 ============
+  // capacity = Width * Length * thickness / 1_000_000 * VED / 3.51
+
+  const canComputeLinkedRange = (
+    width: string,
+    length: string,
+    thickness: [number, number],
+  ): boolean => {
+    const w = parseFloat(width);
+    const l = parseFloat(length);
+    const [tMin, tMax] = thickness;
+    return (
+      !isNaN(w) && w > 0 &&
+      !isNaN(l) && l > 0 &&
+      tMin > 0 && tMax > 0
+    );
+  };
+
+  const computeCapacityFromVED = (
+    vedRange: [number, number],
+    width: string,
+    length: string,
+    thickness: [number, number],
+  ): [number, number] => {
+    const w = parseFloat(width);
+    const l = parseFloat(length);
+    const [tMin, tMax] = thickness;
+    const [vedMin, vedMax] = vedRange;
+    const { min: capMin, max: capMax } = PARAMETER_RANGES.designCapacity;
+    const rawMin = (w * l * tMin * vedMin) / (1_000_000 * 3.51);
+    const rawMax = (w * l * tMax * vedMax) / (1_000_000 * 3.51);
+    return [
+      Math.min(capMax, Math.max(capMin, rawMin)),
+      Math.min(capMax, Math.max(capMin, rawMax)),
+    ];
+  };
+
+  const computeVEDFromCapacity = (
+    capRange: [number, number],
+    width: string,
+    length: string,
+    thickness: [number, number],
+  ): [number, number] => {
+    const w = parseFloat(width);
+    const l = parseFloat(length);
+    const [tMin, tMax] = thickness;
+    const [capMin, capMax] = capRange;
+    const { min: vedMin, max: vedMax } = PARAMETER_RANGES.volumetricEnergyDensity;
+    const rawMin = (capMin * 3.51 * 1_000_000) / (w * l * tMax);
+    const rawMax = (capMax * 3.51 * 1_000_000) / (w * l * tMin);
+    return [
+      Math.min(vedMax, Math.max(vedMin, rawMin)),
+      Math.min(vedMax, Math.max(vedMin, rawMax)),
+    ];
+  };
+
   // ============ 防抖值 - 用于优化实时验证性能 ============
   // Dimension 字段防抖（2个）
   const debouncedWidth = useDebounce(formData.width, 300);
@@ -193,6 +249,25 @@ const OptimizePage: React.FC = () => {
           });
         }
       }, 100);
+    }
+  };
+
+  // 处理 VED 滑块变化：同步计算 capacity 范围
+  const handleVEDChange = (vedRange: [number, number]) => {
+    if (canComputeLinkedRange(formData.width, formData.length, formData.thickness)) {
+      const newCapacity = computeCapacityFromVED(
+        vedRange,
+        formData.width,
+        formData.length,
+        formData.thickness,
+      );
+      setFormData((prev) => ({
+        ...prev,
+        volumetricEnergyDensity: vedRange,
+        designCapacity: newCapacity,
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, volumetricEnergyDensity: vedRange }));
     }
   };
 
@@ -606,14 +681,14 @@ const OptimizePage: React.FC = () => {
               {/* 参数滑块 */}
               <div className="electrode-optimize-parameters">
                 <TargetParameterCard
-                  title={`${t('design.electrode.optimize.designCapacity')} (Ah)`}
-                  value={formData.designCapacity}
-                  onChange={(value) => setFormData({ ...formData, designCapacity: value })}
-                  min={PARAMETER_RANGES.designCapacity.min}
-                  max={PARAMETER_RANGES.designCapacity.max}
-                  step={PARAMETER_RANGES.designCapacity.step}
-                  minDiff={PARAMETER_RANGES.designCapacity.minDiff}
-                  curveData={distributionCurves.designCapacity}
+                  title={`${t('design.electrode.optimize.volumetricEnergyDensity')} (Wh/L)`}
+                  value={formData.volumetricEnergyDensity}
+                  onChange={handleVEDChange}
+                  min={PARAMETER_RANGES.volumetricEnergyDensity.min}
+                  max={PARAMETER_RANGES.volumetricEnergyDensity.max}
+                  step={PARAMETER_RANGES.volumetricEnergyDensity.step}
+                  minDiff={PARAMETER_RANGES.volumetricEnergyDensity.minDiff}
+                  curveData={distributionCurves.volumetricEnergyDensity}
                 />
                 <TargetParameterCard
                   title={`${t('design.electrode.optimize.specificEnergy')} (Wh/kg)`}
@@ -626,14 +701,15 @@ const OptimizePage: React.FC = () => {
                   curveData={distributionCurves.specificEnergy}
                 />
                 <TargetParameterCard
-                  title={`${t('design.electrode.optimize.volumetricEnergyDensity')} (Wh/L)`}
-                  value={formData.volumetricEnergyDensity}
-                  onChange={(value) => setFormData({ ...formData, volumetricEnergyDensity: value })}
-                  min={PARAMETER_RANGES.volumetricEnergyDensity.min}
-                  max={PARAMETER_RANGES.volumetricEnergyDensity.max}
-                  step={PARAMETER_RANGES.volumetricEnergyDensity.step}
-                  minDiff={PARAMETER_RANGES.volumetricEnergyDensity.minDiff}
-                  curveData={distributionCurves.volumetricEnergyDensity}
+                  title={`${t('design.electrode.optimize.designCapacity')} (Ah)`}
+                  value={formData.designCapacity}
+                  onChange={() => {}}
+                  min={PARAMETER_RANGES.designCapacity.min}
+                  max={PARAMETER_RANGES.designCapacity.max}
+                  step={PARAMETER_RANGES.designCapacity.step}
+                  minDiff={PARAMETER_RANGES.designCapacity.minDiff}
+                  curveData={distributionCurves.designCapacity}
+                  disabled
                 />
               </div>
             </div>
