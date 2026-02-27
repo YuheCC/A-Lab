@@ -92,6 +92,12 @@ const OptimizePage: React.FC = () => {
     volumetricEnergyDensity: PARAMETER_RANGES.volumetricEnergyDensity.default,
   });
 
+  // Capacity 动态范围：由 VED / width / length / thickness 联动计算
+  const [capacityBounds, setCapacityBounds] = useState<[number, number]>([
+    PARAMETER_RANGES.designCapacity.min,
+    PARAMETER_RANGES.designCapacity.max,
+  ]);
+
   // 错误状态
   const [dimensionError, setDimensionError] = useState<string>('');
 
@@ -132,25 +138,6 @@ const OptimizePage: React.FC = () => {
     ];
   };
 
-  const computeVEDFromCapacity = (
-    capRange: [number, number],
-    width: string,
-    length: string,
-    thickness: [number, number],
-  ): [number, number] => {
-    const w = parseFloat(width);
-    const l = parseFloat(length);
-    const [tMin, tMax] = thickness;
-    const [capMin, capMax] = capRange;
-    const { min: vedMin, max: vedMax } = PARAMETER_RANGES.volumetricEnergyDensity;
-    const rawMin = (capMin * 3.51 * 1_000_000) / (w * l * tMax);
-    const rawMax = (capMax * 3.51 * 1_000_000) / (w * l * tMin);
-    return [
-      Math.min(vedMax, Math.max(vedMin, rawMin)),
-      Math.min(vedMax, Math.max(vedMin, rawMax)),
-    ];
-  };
-
   // ============ 防抖值 - 用于优化实时验证性能 ============
   // Dimension 字段防抖（2个）
   const debouncedWidth = useDebounce(formData.width, 300);
@@ -181,6 +168,33 @@ const OptimizePage: React.FC = () => {
     debouncedLength,
     t,
   ]);
+
+  // 监听 VED / width / length / thickness 变化，动态计算 capacity 的 min/max 范围
+  useEffect(() => {
+    if (canComputeLinkedRange(formData.width, formData.length, formData.thickness)) {
+      const newBounds = computeCapacityFromVED(
+        formData.volumetricEnergyDensity,
+        formData.width,
+        formData.length,
+        formData.thickness,
+      );
+      setCapacityBounds(newBounds);
+      setFormData((prev) => ({
+        ...prev,
+        designCapacity: [newBounds[0], newBounds[1]],
+      }));
+    } else {
+      setCapacityBounds([
+        PARAMETER_RANGES.designCapacity.min,
+        PARAMETER_RANGES.designCapacity.max,
+      ]);
+      setFormData((prev) => ({
+        ...prev,
+        designCapacity: PARAMETER_RANGES.designCapacity.default,
+      }));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.width, formData.length, formData.thickness, formData.volumetricEnergyDensity]);
 
   // 推荐结果状态 - 分组数据
   const [recommendations, setRecommendations] = useState<GroupedRecommendations>({
@@ -252,23 +266,9 @@ const OptimizePage: React.FC = () => {
     }
   };
 
-  // 处理 VED 滑块变化：同步计算 capacity 范围
+  // 处理 VED 滑块变化：边界计算由 useEffect 统一处理
   const handleVEDChange = (vedRange: [number, number]) => {
-    if (canComputeLinkedRange(formData.width, formData.length, formData.thickness)) {
-      const newCapacity = computeCapacityFromVED(
-        vedRange,
-        formData.width,
-        formData.length,
-        formData.thickness,
-      );
-      setFormData((prev) => ({
-        ...prev,
-        volumetricEnergyDensity: vedRange,
-        designCapacity: newCapacity,
-      }));
-    } else {
-      setFormData((prev) => ({ ...prev, volumetricEnergyDensity: vedRange }));
-    }
+    setFormData((prev) => ({ ...prev, volumetricEnergyDensity: vedRange }));
   };
 
   // 处理计算
@@ -467,6 +467,10 @@ const OptimizePage: React.FC = () => {
       volumetricEnergyDensity: PARAMETER_RANGES.volumetricEnergyDensity.default,
     });
     setDimensionError('');
+    setCapacityBounds([
+      PARAMETER_RANGES.designCapacity.min,
+      PARAMETER_RANGES.designCapacity.max,
+    ]);
     setRecommendations({ valid: [], invalid: [] });
     setFullResults({ valid: [], invalid: [] });
     setHasCalculated(false);
@@ -703,13 +707,12 @@ const OptimizePage: React.FC = () => {
                 <TargetParameterCard
                   title={`${t('design.electrode.optimize.designCapacity')} (Ah)`}
                   value={formData.designCapacity}
-                  onChange={() => {}}
-                  min={PARAMETER_RANGES.designCapacity.min}
-                  max={PARAMETER_RANGES.designCapacity.max}
+                  onChange={(value) => setFormData((prev) => ({ ...prev, designCapacity: value }))}
+                  min={capacityBounds[0]}
+                  max={capacityBounds[1]}
                   step={PARAMETER_RANGES.designCapacity.step}
                   minDiff={PARAMETER_RANGES.designCapacity.minDiff}
                   curveData={distributionCurves.designCapacity}
-                  disabled
                 />
               </div>
             </div>
