@@ -403,20 +403,20 @@ export default {
         description: "(1 full example)"
       },
       enterprise1: {
-        text: "7 properties result in 3 days: ≤10/company/month",
-        description: "6 properties result in 1-2 weeks: contact SES"
+        text: "5 properties result in 3 days: ≤10/company/month",
+        description: "8 properties result in 1-2 weeks: contact SES"
       },
       enterprise2: {
-        text: "7 properties result in 3 days: ≤30/company/month",
-        description: "6 properties result in 1-2 weeks: contact SES"
+        text: "5 properties result in 3 days: ≤30/company/month",
+        description: "8 properties result in 1-2 weeks: contact SES"
       },
       enterprise3: {
-        text: "7 properties result in 3 days: ≤100/company/month",
-        description: "6 properties result in 1-2 weeks: contact SES"
+        text: "5 properties result in 3 days: ≤100/company/month",
+        description: "8 properties result in 1-2 weeks: contact SES"
       },
       joint: {
-        text: "7 properties result in 3 days: Unlimited",
-        description: "6 properties result in 1-2 weeks: contact SES"
+        text: "5 properties result in 3 days: Unlimited",
+        description: "8 properties result in 1-2 weeks: contact SES"
       }
     },
     designElectrolyte: {

@@ -403,20 +403,20 @@ export default {
         description: "（1つの完全な例）"
       },
       enterprise1: {
-        text: "7つの特性が3日で結果：≤10/会社/月",
-        description: "6つの特性が1-2週間で結果：SESに連絡"
+        text: "5つの特性が3日で結果：≤10/会社/月",
+        description: "8つの特性が1-2週間で結果：SESに連絡"
       },
       enterprise2: {
-        text: "7つの特性が3日で結果：≤30/会社/月",
-        description: "6つの特性が1-2週間で結果：SESに連絡"
+        text: "5つの特性が3日で結果：≤30/会社/月",
+        description: "8つの特性が1-2週間で結果：SESに連絡"
       },
       enterprise3: {
-        text: "7つの特性が3日で結果：≤100/会社/月",
-        description: "6つの特性が1-2週間で結果：SESに連絡"
+        text: "5つの特性が3日で結果：≤100/会社/月",
+        description: "8つの特性が1-2週間で結果：SESに連絡"
       },
       joint: {
-        text: "7つの特性が3日で結果：無制限",
-        description: "6つの特性が1-2週間で結果：SESに連絡"
+        text: "5つの特性が3日で結果：無制限",
+        description: "8つの特性が1-2週間で結果：SESに連絡"
       }
     },
     designElectrolyte: {
