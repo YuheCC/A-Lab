@@ -403,20 +403,20 @@ export default {
         description: "（1개 전체 예시）"
       },
       enterprise1: {
-        text: "7가지 속성을 3일 내에 결과 제공: ≤10/회사/월",
-        description: "6가지 속성을 1-2주 내에 결과 제공: SES 연락"
+        text: "5가지 속성을 3일 내에 결과 제공: ≤10/회사/월",
+        description: "8가지 속성을 1-2주 내에 결과 제공: SES 연락"
       },
       enterprise2: {
-        text: "7가지 속성을 3일 내에 결과 제공: ≤30/회사/월",
-        description: "6가지 속성을 1-2주 내에 결과 제공: SES 연락"
+        text: "5가지 속성을 3일 내에 결과 제공: ≤30/회사/월",
+        description: "8가지 속성을 1-2주 내에 결과 제공: SES 연락"
       },
       enterprise3: {
-        text: "7가지 속성을 3일 내에 결과 제공: ≤100/회사/월",
-        description: "6가지 속성을 1-2주 내에 결과 제공: SES 연락"
+        text: "5가지 속성을 3일 내에 결과 제공: ≤100/회사/월",
+        description: "8가지 속성을 1-2주 내에 결과 제공: SES 연락"
       },
       joint: {
-        text: "7가지 속성을 3일 내에 결과 제공: 무제한",
-        description: "6가지 속성을 1-2주 내에 결과 제공: SES 연락"
+        text: "5가지 속성을 3일 내에 결과 제공: 무제한",
+        description: "8가지 속성을 1-2주 내에 결과 제공: SES 연락"
       }
     },
     designElectrolyte: {

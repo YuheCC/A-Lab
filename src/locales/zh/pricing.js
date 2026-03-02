@@ -403,20 +403,20 @@ export default {
         description: "（1个完整示例）"
       },
       enterprise1: {
-        text: "7个性能指标3天内出结果：≤10次/公司/月",
-        description: "6个性能指标1-2周内出结果：联系SES"
+        text: "5个性能指标3天内出结果：≤10次/公司/月",
+        description: "8个性能指标1-2周内出结果：联系SES"
       },
       enterprise2: {
-        text: "7个性能指标3天内出结果：≤30次/公司/月",
-        description: "6个性能指标1-2周内出结果：联系SES"
+        text: "5个性能指标3天内出结果：≤30次/公司/月",
+        description: "8个性能指标1-2周内出结果：联系SES"
       },
       enterprise3: {
-        text: "7个性能指标3天内出结果：≤100次/公司/月",
-        description: "6个性能指标1-2周内出结果：联系SES"
+        text: "5个性能指标3天内出结果：≤100次/公司/月",
+        description: "8个性能指标1-2周内出结果：联系SES"
       },
       joint: {
-        text: "7个性能指标3天内出结果：无限制",
-        description: "6个性能指标1-2周内出结果：联系SES"
+        text: "5个性能指标3天内出结果：无限制",
+        description: "8个性能指标1-2周内出结果：联系SES"
       }
     },
     designElectrolyte: {
