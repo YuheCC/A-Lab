@@ -252,6 +252,26 @@
   gap: @spacing-xl;
 }
 
+// 计算错误提示
+.electrode-optimize-calculate-error {
+  margin-top: @spacing-lg;
+  padding: @spacing-md @spacing-lg;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: @radius-md;
+  color: #dc2626;
+  font-size: @font-size-base;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+
+  &::before {
+    content: '\26A0';
+    margin-right: @spacing-sm;
+    font-size: 16px;
+  }
+}
+
 // Calculate 按钮
 .electrode-optimize-calculate-btn-wrapper {
   display: flex;
