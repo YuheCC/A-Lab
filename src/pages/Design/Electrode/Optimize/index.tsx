@@ -100,6 +100,7 @@ const OptimizePage: React.FC = () => {
 
   // 错误状态
   const [dimensionError, setDimensionError] = useState<string>('');
+  const [calculateError, setCalculateError] = useState<string>('');
 
   // ============ VED-Capacity 公式联动 ============
   // capacity = Width * Length * thickness / 1_000_000 * VED / 3.51
@@ -132,9 +133,10 @@ const OptimizePage: React.FC = () => {
     const { min: capMin, max: capMax } = PARAMETER_RANGES.designCapacity;
     const rawMin = (w * l * tMin * vedMin) / (1_000_000 * 3.51);
     const rawMax = (w * l * tMax * vedMax) / (1_000_000 * 3.51);
+    const round2 = (v: number) => Math.round(v * 100) / 100;
     return [
-      Math.min(capMax, Math.max(capMin, rawMin)),
-      Math.min(capMax, Math.max(capMin, rawMax)),
+      round2(Math.min(capMax, Math.max(capMin, rawMin))),
+      round2(Math.min(capMax, Math.max(capMin, rawMax))),
     ];
   };
 
@@ -313,6 +315,7 @@ const OptimizePage: React.FC = () => {
     }
 
     setLoading(true);
+    setCalculateError('');
     try {
       const response = await getOptimizeRecommendations(formData);
       setRecommendations(response.data);
@@ -322,9 +325,10 @@ const OptimizePage: React.FC = () => {
       setIsFormModified(false); // 计算完成后，表单未修改
       setIsAdditionalExpanded(false); // 重置折叠状态
       // message.success(t('design.electrode.optimize.messages.calculateSuccess'));
-    } catch (error) {
+    } catch (error: any) {
       console.error('Calculate error:', error);
-      // message.error(t('design.electrode.optimize.messages.calculateError'));
+      const errorMsg = error?.message || error?.data?.message || t('design.electrode.optimize.messages.calculateError');
+      setCalculateError(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -467,6 +471,7 @@ const OptimizePage: React.FC = () => {
       volumetricEnergyDensity: PARAMETER_RANGES.volumetricEnergyDensity.default,
     });
     setDimensionError('');
+    setCalculateError('');
     setCapacityBounds([
       PARAMETER_RANGES.designCapacity.min,
       PARAMETER_RANGES.designCapacity.max,
@@ -716,6 +721,13 @@ const OptimizePage: React.FC = () => {
                 />
               </div>
             </div>
+
+            {/* 计算错误提示 */}
+            {calculateError && (
+              <div className="electrode-optimize-calculate-error">
+                {calculateError}
+              </div>
+            )}
 
             {/* Calculate 按钮 */}
             <div className="electrode-optimize-calculate-btn-wrapper">
