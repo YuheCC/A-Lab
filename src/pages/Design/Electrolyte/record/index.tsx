@@ -228,7 +228,7 @@ const RecordPage: React.FC = () => {
           apiData.temperature_25_CL_label
         ),
         ce: processPerformanceMetric(
-          apiData.temperature_25_CE_prob,
+          apiData.temperature_25_CE_prob ?? '0',
           apiData.temperature_25_CE_label
         ),
         ratePerformance: processPerformanceMetric(
@@ -242,7 +242,7 @@ const RecordPage: React.FC = () => {
           apiData.temperature_45_CL_label
         ),
         ce: processPerformanceMetric(
-          apiData.temperature_45_CE_prob,
+          apiData.temperature_45_CE_prob ?? '0',
           apiData.temperature_45_CE_label
         )
       }
