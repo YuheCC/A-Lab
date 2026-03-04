@@ -526,7 +526,7 @@ const OptimizePage: React.FC = () => {
                   </label>
                   <Select
                     value={formData.cellDesign}
-                    onChange={(value) => setFormData({ ...formData, cellDesign: value })}
+                    onChange={(value) => setFormData((prev) => ({ ...prev, cellDesign: value }))}
                     placeholder={t('design.electrode.optimize.selectCellDesign')}
                     className="electrode-optimize-select"
                   >
@@ -563,7 +563,7 @@ const OptimizePage: React.FC = () => {
                   </label>
                   <Select
                     value={formData.cathodeActiveMaterial}
-                    onChange={(value) => setFormData({ ...formData, cathodeActiveMaterial: value })}
+                    onChange={(value) => setFormData((prev) => ({ ...prev, cathodeActiveMaterial: value }))}
                     placeholder={t('design.electrode.optimize.selectMaterial')}
                     className="electrode-optimize-select"
                   >
@@ -608,7 +608,7 @@ const OptimizePage: React.FC = () => {
                   </label>
                   <Select
                     value={formData.anodeActiveMaterial}
-                    onChange={(value) => setFormData({ ...formData, anodeActiveMaterial: value })}
+                    onChange={(value) => setFormData((prev) => ({ ...prev, anodeActiveMaterial: value }))}
                     placeholder={t('design.electrode.optimize.selectMaterial')}
                     className="electrode-optimize-select"
                   >
@@ -640,7 +640,7 @@ const OptimizePage: React.FC = () => {
                   <input
                     type="number"
                     value={formData.width}
-                    onChange={(e) => setFormData({ ...formData, width: e.target.value })}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, width: e.target.value }))}
                     placeholder={t('design.electrode.optimize.enterWidth')}
                     className="electrode-optimize-input"
                   />
@@ -653,7 +653,7 @@ const OptimizePage: React.FC = () => {
                   <input
                     type="number"
                     value={formData.length}
-                    onChange={(e) => setFormData({ ...formData, length: e.target.value })}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, length: e.target.value }))}
                     placeholder={t('design.electrode.optimize.enterLength')}
                     className="electrode-optimize-input"
                   />
@@ -671,7 +671,7 @@ const OptimizePage: React.FC = () => {
                 <TargetParameterCard
                   title={`${t('design.electrode.optimize.jellyRollThickness')} (mm)`}
                   value={formData.thickness}
-                  onChange={(value) => setFormData({ ...formData, thickness: value })}
+                  onChange={(value) => setFormData((prev) => ({ ...prev, thickness: value }))}
                   min={PARAMETER_RANGES.thickness.min}
                   max={PARAMETER_RANGES.thickness.max}
                   step={PARAMETER_RANGES.thickness.step}
@@ -702,7 +702,7 @@ const OptimizePage: React.FC = () => {
                 <TargetParameterCard
                   title={`${t('design.electrode.optimize.specificEnergy')} (Wh/kg)`}
                   value={formData.specificEnergy}
-                  onChange={(value) => setFormData({ ...formData, specificEnergy: value })}
+                  onChange={(value) => setFormData((prev) => ({ ...prev, specificEnergy: value }))}
                   min={PARAMETER_RANGES.specificEnergy.min}
                   max={PARAMETER_RANGES.specificEnergy.max}
                   step={PARAMETER_RANGES.specificEnergy.step}
