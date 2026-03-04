@@ -91,7 +91,9 @@ const TargetParameterCard: React.FC<TargetParameterCardProps> = ({
   const [internalValue, setInternalValue] = useState<[number, number]>(value);
 
   useEffect(() => {
-    setInternalValue(value);
+    setInternalValue((prev) =>
+      prev[0] === value[0] && prev[1] === value[1] ? prev : value,
+    );
   }, [value]);
 
   // 优先使用预计算的 curveData，否则从原始 data 进行 KDE 计算
