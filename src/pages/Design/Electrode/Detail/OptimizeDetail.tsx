@@ -1,8 +1,8 @@
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useRef, useContext, useMemo } from 'react';
 import type { TFunction } from 'i18next';
 import { LeftOutlined } from '@ant-design/icons';
 import { Select, Table, Modal } from 'antd';
-import ParameterInput from '../Predict/components/ParameterInput';
+import TargetParameterCard from '../Optimize/components/TargetParameterCard';
 import type { OptimizeResultItemDTO } from '../model';
 import {
   CELL_DESIGN_OPTIONS,
@@ -12,6 +12,13 @@ import {
 import type { OptimizeGroupedResultDTO } from '@/services/electrode/types';
 import type { DeviatedFieldType } from '../Optimize/types';
 import { PARAMETER_RANGES } from '../Optimize/types';
+import {
+  RAW_CAPACITY,
+  RAW_THICKNESS,
+  RAW_VED,
+  RAW_GED,
+  mapCurveData,
+} from '../Optimize/constData';
 import Button from '@/components/Button';
 import { useAuthStore } from '@/models/useAuth';
 import { PricingContext } from '@/layouts/index';
@@ -120,6 +127,33 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
 }) => {
   const { userPermissions } = useAuthStore();
   const pricingContext = useContext(PricingContext);
+
+  // 将 CSV 原始数据映射到各参数的 [min, max] 区间（x 线性映射 + y 归一化）
+  const distributionCurves = useMemo(
+    () => ({
+      designCapacity: mapCurveData(
+        RAW_CAPACITY,
+        PARAMETER_RANGES.designCapacity.min,
+        PARAMETER_RANGES.designCapacity.max,
+      ),
+      specificEnergy: mapCurveData(
+        RAW_GED,
+        PARAMETER_RANGES.specificEnergy.min,
+        PARAMETER_RANGES.specificEnergy.max,
+      ),
+      thickness: mapCurveData(
+        RAW_THICKNESS,
+        PARAMETER_RANGES.thickness.min,
+        PARAMETER_RANGES.thickness.max,
+      ),
+      volumetricEnergyDensity: mapCurveData(
+        RAW_VED,
+        PARAMETER_RANGES.volumetricEnergyDensity.min,
+        PARAMETER_RANGES.volumetricEnergyDensity.max,
+      ),
+    }),
+    [],
+  );
 
   // Modal 状态
   const [modalVisible, setModalVisible] = useState(false);
@@ -446,6 +480,19 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                   />
                 </div>
               </div>
+
+              <div className="electrode-optimize-form-row">
+                <TargetParameterCard
+                  title={`${t('design.electrode.optimize.jellyRollThickness', 'Jelly Roll Thickness')} (mm)`}
+                  value={modelParams.jelly_roll_thickness}
+                  onChange={() => {}}
+                  min={PARAMETER_RANGES.thickness.min}
+                  max={PARAMETER_RANGES.thickness.max}
+                  step={PARAMETER_RANGES.thickness.step}
+                  curveData={distributionCurves.thickness}
+                  disabled
+                />
+              </div>
             </div>
 
             {/* Targets 分组 */}
@@ -454,47 +501,37 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                 {t('design.electrode.optimize.targets', 'Targets')}
               </h3>
 
-              {/* 参数滑块 - readonly 模式 */}
+              {/* 参数滑块 - disabled 模式 */}
               <div className="electrode-optimize-parameters">
-                <ParameterInput
-                  mode="range"
-                  label={`${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah)`}
-                  rangeValue={modelParams.design_capacity}
-                  onRangeChange={() => {}}
-                  min={PARAMETER_RANGES.designCapacity.min}
-                  max={PARAMETER_RANGES.designCapacity.max}
-                  step={PARAMETER_RANGES.designCapacity.step}
-                  readonly
-                />
-                <ParameterInput
-                  mode="range"
-                  label={`${t('design.electrode.optimize.specificEnergy', 'Specific E.D.')} (Wh/kg)`}
-                  rangeValue={modelParams.specific_ED}
-                  onRangeChange={() => {}}
-                  min={PARAMETER_RANGES.specificEnergy.min}
-                  max={PARAMETER_RANGES.specificEnergy.max}
-                  step={PARAMETER_RANGES.specificEnergy.step}
-                  readonly
-                />
-                <ParameterInput
-                  mode="range"
-                  label={`${t('design.electrode.optimize.jellyRollThickness', 'Jelly Roll Thickness')} (mm)`}
-                  rangeValue={modelParams.jelly_roll_thickness}
-                  onRangeChange={() => {}}
-                  min={PARAMETER_RANGES.thickness.min}
-                  max={PARAMETER_RANGES.thickness.max}
-                  step={PARAMETER_RANGES.thickness.step}
-                  readonly
-                />
-                <ParameterInput
-                  mode="range"
-                  label={`${t('design.electrode.optimize.volumetricEnergyDensity', 'Volumetric E.D.')} (Wh/L)`}
-                  rangeValue={modelParams.volumetric_ED}
-                  onRangeChange={() => {}}
+                <TargetParameterCard
+                  title={`${t('design.electrode.optimize.volumetricEnergyDensity', 'Volumetric E.D.')} (Wh/L)`}
+                  value={modelParams.volumetric_ED}
+                  onChange={() => {}}
                   min={PARAMETER_RANGES.volumetricEnergyDensity.min}
                   max={PARAMETER_RANGES.volumetricEnergyDensity.max}
                   step={PARAMETER_RANGES.volumetricEnergyDensity.step}
-                  readonly
+                  curveData={distributionCurves.volumetricEnergyDensity}
+                  disabled
+                />
+                <TargetParameterCard
+                  title={`${t('design.electrode.optimize.specificEnergy', 'Specific E.D.')} (Wh/kg)`}
+                  value={modelParams.specific_ED}
+                  onChange={() => {}}
+                  min={PARAMETER_RANGES.specificEnergy.min}
+                  max={PARAMETER_RANGES.specificEnergy.max}
+                  step={PARAMETER_RANGES.specificEnergy.step}
+                  curveData={distributionCurves.specificEnergy}
+                  disabled
+                />
+                <TargetParameterCard
+                  title={`${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah)`}
+                  value={modelParams.design_capacity}
+                  onChange={() => {}}
+                  min={PARAMETER_RANGES.designCapacity.min}
+                  max={PARAMETER_RANGES.designCapacity.max}
+                  step={PARAMETER_RANGES.designCapacity.step}
+                  curveData={distributionCurves.designCapacity}
+                  disabled
                 />
               </div>
             </div>
