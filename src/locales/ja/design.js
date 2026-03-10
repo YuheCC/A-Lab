@@ -437,6 +437,7 @@ export default {
             superP: "Carbon Black (wt.%)",
             swcnt: "CNT (wt.%)",
             rateCapability: "レート性能 (1C-5C)",
+            cRate: "レート",
             capacityRetention: "容量維持率",
             capacityRetentionAxis: "容量維持率 (%)",
             temperature: "温度",

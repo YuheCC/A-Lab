@@ -30,13 +30,13 @@ const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) =>
     grid: {
       left: '8%',
       right: '10%',
-      top: '15%',
-      bottom: '15%',
+      top: '10%',
+      bottom: '20%',
       containLabel: true,
     },
     legend: {
-      top: '2%',
-      right: '5%',
+      bottom: '2%',
+      left: 'center',
       data: [
         t('design.electrode.predict.capacityRetention', 'Capacity Retention'),
         t('design.electrode.predict.temperature', 'Temperature'),
@@ -49,7 +49,7 @@ const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) =>
     xAxis: {
       type: 'category',
       data: C_RATES,
-      name: 'C-Rate',
+      name: t('design.electrode.predict.cRate', 'Rate'),
       nameLocation: 'middle',
       nameGap: 30,
       nameTextStyle: {
@@ -72,21 +72,15 @@ const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) =>
         name: t('design.electrode.predict.capacityRetentionAxis', 'Capacity Retention (%)'),
         nameTextStyle: {
           fontSize: 11,
-          color: '#56B26A',
+          color: '#6b7280',
           padding: [0, 0, 0, 0],
         },
         position: 'left',
         axisLine: {
           show: true,
-          lineStyle: {
-            color: '#56B26A',
-          },
         },
         axisTick: {
           show: true,
-          lineStyle: {
-            color: '#56B26A',
-          },
         },
         axisLabel: {
           color: '#6b7280',
@@ -105,21 +99,15 @@ const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) =>
         name: t('design.electrode.predict.temperatureAxis', 'Temperature (°C)'),
         nameTextStyle: {
           fontSize: 11,
-          color: '#f59e0b',
+          color: '#6b7280',
           padding: [0, 0, 0, 0],
         },
         position: 'right',
         axisLine: {
           show: true,
-          lineStyle: {
-            color: '#f59e0b',
-          },
         },
         axisTick: {
           show: true,
-          lineStyle: {
-            color: '#f59e0b',
-          },
         },
         axisLabel: {
           color: '#6b7280',
@@ -149,19 +137,6 @@ const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) =>
           color: '#56B26A',
           width: 3,
         },
-        areaStyle: {
-          color: {
-            type: 'linear',
-            x: 0,
-            y: 0,
-            x2: 0,
-            y2: 1,
-            colorStops: [
-              { offset: 0, color: 'rgba(86, 178, 106, 0.2)' },
-              { offset: 1, color: 'rgba(86, 178, 106, 0.02)' },
-            ],
-          },
-        },
       },
       {
         name: t('design.electrode.predict.temperature', 'Temperature'),
@@ -172,12 +147,12 @@ const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) =>
         symbol: 'circle',
         symbolSize: 8,
         itemStyle: {
-          color: '#f59e0b',
+          color: '#3b82f6',
           borderWidth: 2,
           borderColor: '#fff',
         },
         lineStyle: {
-          color: '#f59e0b',
+          color: '#3b82f6',
           width: 3,
         },
       },
@@ -198,8 +173,8 @@ const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) =>
         return `
           <div style="padding: 4px 8px;">
             <div style="font-weight: 600; margin-bottom: 4px;">${cRate}</div>
-            ${capParam ? `<div style="color:#56B26A">Capacity Retention: <strong>${capParam.value}%</strong></div>` : ''}
-            ${tempParam ? `<div style="color:#f59e0b">Temperature: <strong>${tempParam.value}°C</strong></div>` : ''}
+            ${capParam ? `<div>${t('design.electrode.predict.capacityRetention', 'Capacity Retention')}: <strong>${capParam.value}%</strong></div>` : ''}
+            ${tempParam ? `<div>${t('design.electrode.predict.temperature', 'Temperature')}: <strong>${tempParam.value}°C</strong></div>` : ''}
           </div>
         `;
       },
