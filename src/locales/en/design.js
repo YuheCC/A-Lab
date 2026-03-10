@@ -421,7 +421,9 @@ export default {
             volumetricEDTooltip: "Energy density calculated based on the jelly roll volume.",
             calculateError: "Failed to calculate prediction",
             npRatio: "NP Ratio",
-            enterNpRatio: "Enter NP ratio",
+            enterNpRatio: "Enter NP ratio (1.05 - 1.2)",
+            anodeActiveMaterialGraphite: "Anode Active Material Graphite (%)",
+            enterGraphitePercent: "Enter graphite content (85 - 100)",
             activeMaterial1: "Active Material SiC (wt.%)",
             activeMaterial2: "Active Material Graphite (wt.%)",
             anodeArealLoading: "Areal Loading (mAh/cm²)",
@@ -435,6 +437,10 @@ export default {
             superP: "Carbon Black (wt.%)",
             swcnt: "CNT (wt.%)",
             rateCapability: "Rate Capability (1C-5C)",
+            capacityRetention: "Capacity Retention",
+            capacityRetentionAxis: "Capacity Retention (%)",
+            temperature: "Temperature",
+            temperatureAxis: "Temperature (°C)",
             electrolyteParameters: "Electrolyte Parameters",
             electrolyteContent: "Electrolyte Content (g/Ah)"
         },
@@ -518,7 +524,10 @@ export default {
             anodeConductiveSum: "The sum of Carbon Black + CNT must be greater than 0.005",
             fillAllDimensions: "Please fill in all dimension parameters",
             ratioSmallWidth: "For widths not exceeding 100, the aspect ratio must range from 0.2 to 1.",
-            ratioLargeWidth: "For widths between 100 and 1000, the aspect ratio must be maintained between 0.1 and 0.5."
+            ratioLargeWidth: "For widths between 100 and 1000, the aspect ratio must be maintained between 0.1 and 0.5.",
+            npRatioRequired: "NP Ratio is required",
+            npRatioRange: "NP Ratio must be between 1.05 and 1.2",
+            graphitePercentRange: "Graphite content must be an integer between 85 and 100"
         }
     }
 };

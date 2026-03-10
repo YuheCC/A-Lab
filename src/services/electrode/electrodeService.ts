@@ -64,6 +64,10 @@ function toElectrodeModelParamsDTO(
     width: params.width,
     length: params.length,
     layers: params.layers,
+
+    // 设计参数
+    ...(params.npRatio !== undefined && { np_ratio: params.npRatio }),
+    ...(params.siRatio !== undefined && { si_ratio: params.siRatio }),
   };
 }
 
@@ -100,6 +104,10 @@ function fromElectrodeModelParamsDTO(
     width: dto.width,
     length: dto.length,
     layers: dto.layers,
+
+    // 设计参数
+    npRatio: dto.npRatio ?? dto.np_ratio,
+    siRatio: dto.siRatio ?? dto.si_ratio,
   };
 }
 
@@ -117,6 +125,17 @@ function fromElectrodeModelResultDTO(
     specificED: dto.specificED ?? dto.specific_ED,
     jellyRollThickness: dto.jellyRollThickness ?? dto.jelly_roll_thickness,
     volumetricED: dto.volumetricED ?? dto.volumetric_ED,
+    // Rate Capability 字段（可选，新版本数据才有）
+    cap1C: dto.Cap_1C,
+    cap2C: dto.Cap_2C,
+    cap3C: dto.Cap_3C,
+    cap4C: dto.Cap_4C,
+    cap5C: dto.Cap_5C,
+    t1C: dto.T_1C,
+    t2C: dto.T_2C,
+    t3C: dto.T_3C,
+    t4C: dto.T_4C,
+    t5C: dto.T_5C,
   };
 }
 
@@ -174,9 +193,10 @@ export async function getElectrodeHistoryList(
     data: Array<{
       id: number;
       cell_design: string;
-      np_ratio?: string;
+      np_ratio?: string | number;
       cathode_active_material: string;
       anode_active_material: string;
+      si_ratio?: string | number;
       model_params: ElectrodeModelParamsDTO;
       model_result: ElectrodeModelResultDTO;
       created_at?: string;
@@ -186,17 +206,26 @@ export async function getElectrodeHistoryList(
 
   return {
     total: rawData.total,
-    data: rawData.data.map((item) => ({
-      id: item.id,
-      cell_design: item.cell_design,
-      np_ratio: item.np_ratio,
-      cathode_active_material: item.cathode_active_material,
-      anode_active_material: item.anode_active_material,
-      model_params: fromElectrodeModelParamsDTO(item.model_params),
-      model_result: fromElectrodeModelResultDTO(item.model_result),
-      created_at: item.created_at,
-      updated_at: item.updated_at,
-    })),
+    data: rawData.data.map((item) => {
+      const params = fromElectrodeModelParamsDTO(item.model_params);
+      // 兼容老数据：顶层 np_ratio/si_ratio 优先级低于 model_params 内的值
+      if (params.npRatio === undefined && item.np_ratio !== undefined) {
+        params.npRatio = typeof item.np_ratio === 'string' ? parseFloat(item.np_ratio) : item.np_ratio;
+      }
+      if (params.siRatio === undefined && item.si_ratio !== undefined) {
+        params.siRatio = typeof item.si_ratio === 'string' ? parseFloat(item.si_ratio) : item.si_ratio;
+      }
+      return {
+        id: item.id,
+        cell_design: item.cell_design,
+        cathode_active_material: item.cathode_active_material,
+        anode_active_material: item.anode_active_material,
+        model_params: params,
+        model_result: fromElectrodeModelResultDTO(item.model_result),
+        created_at: item.created_at,
+        updated_at: item.updated_at,
+      };
+    }),
   };
 }
 
@@ -272,9 +301,10 @@ export async function getElectrodeHistoryDetail(
   const rawData = response.data as {
     id: number;
     cell_design: string;
-    np_ratio?: string;
+    np_ratio?: string | number;
     cathode_active_material: string;
     anode_active_material: string;
+    si_ratio?: string | number;
     type?: ElectrodePageType;
     model_params: ElectrodeModelParamsDTO;
     model_result: ElectrodeModelResultDTO;
@@ -282,14 +312,22 @@ export async function getElectrodeHistoryDetail(
     updated_at?: string;
   };
 
+  const modelParams = fromElectrodeModelParamsDTO(rawData.model_params);
+  // 兼容老数据：顶层 np_ratio/si_ratio 优先级低于 model_params 内的值
+  if (modelParams.npRatio === undefined && rawData.np_ratio !== undefined) {
+    modelParams.npRatio = typeof rawData.np_ratio === 'string' ? parseFloat(rawData.np_ratio) : rawData.np_ratio;
+  }
+  if (modelParams.siRatio === undefined && rawData.si_ratio !== undefined) {
+    modelParams.siRatio = typeof rawData.si_ratio === 'string' ? parseFloat(rawData.si_ratio) : rawData.si_ratio;
+  }
+
   return {
     id: rawData.id,
     cell_design: rawData.cell_design,
-    np_ratio: rawData.np_ratio,
     cathode_active_material: rawData.cathode_active_material,
     anode_active_material: rawData.anode_active_material,
     type: ElectrodePageType.RESULT_PREDICTION,
-    model_params: fromElectrodeModelParamsDTO(rawData.model_params),
+    model_params: modelParams,
     model_result: fromElectrodeModelResultDTO(rawData.model_result),
     created_at: rawData.created_at,
     updated_at: rawData.updated_at,
@@ -361,14 +399,15 @@ export async function predictElectrodePerformance(
   const url = urlConfig.buildFullURL(endpoint);
 
   // 将前端业务模型转换为后端 DTO
-  const requestData = {
+  const requestData: Record<string, any> = {
     cell_design: params.cell_design,
-    np_ratio: params.np_ratio,
     cathode_active_material: params.cathode_active_material,
-    anode_active_material: params.anode_active_material,
     model_params: toElectrodeModelParamsDTO(params.model_params),
     type: params.type,
   };
+  if (params.anode_active_material !== undefined) {
+    requestData.anode_active_material = params.anode_active_material;
+  }
 
   const response = await request(url, {
     method: 'POST',

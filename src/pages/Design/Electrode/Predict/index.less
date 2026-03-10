@@ -153,7 +153,15 @@
   }
 }
 
-// 电极网格布局
+// 基础输入项 2x2 网格（Cell Type, NP Ratio, Cathode Material, Anode Material）
+.electrode-predict-basic-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+// 参数区域左右并排
 .electrode-predict-electrode-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -162,12 +170,8 @@
 }
 
 .electrode-predict-electrode-section {
-  .electrode-predict-label {
-    margin-bottom: 8px;
-  }
-
-  .electrode-predict-select {
-    margin-bottom: 24px;
+  .electrode-predict-subsection-title:first-child {
+    margin-top: 0;
   }
 }
 
@@ -212,7 +216,7 @@
 
 .electrode-predict-dimension-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
 }
 
@@ -268,6 +272,10 @@
 
 // 响应式设计
 @media (max-width: 1200px) {
+  .electrode-predict-basic-grid {
+    grid-template-columns: 1fr;
+  }
+
   .electrode-predict-electrode-grid {
     grid-template-columns: 1fr;
   }

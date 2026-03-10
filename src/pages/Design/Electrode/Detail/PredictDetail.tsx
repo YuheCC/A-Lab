@@ -30,6 +30,13 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
 }) => {
   const { cell_design, cathode_active_material, anode_active_material, model_params, model_result } = predictData;
 
+  // 判断是否为新版本数据（model_params 中存在 siRatio 字段）
+  const siRatio = model_params.siRatio;
+  const isNewVersion = siRatio !== undefined && siRatio !== null;
+
+  // 新版本：graphite% = 100 - siRatio
+  const graphitePercent = isNewVersion ? 100 - siRatio! : undefined;
+
   return (
     <div className="electrode-predict-container antd-readonly-style">
       {/* 页面标题和返回按钮 */}
@@ -184,20 +191,37 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
 
                 {/* 阳极区域 */}
                 <div className="electrode-predict-electrode-section">
-                  <label className="electrode-predict-label">
-                    {t('design.electrode.predict.anodeActiveMaterial', 'Anode Active Material')}
-                  </label>
-                  <Select
-                    disabled
-                    value={anode_active_material}
-                    className="electrode-predict-select"
-                  >
-                    {ANODE_ACTIVE_MATERIAL_OPTIONS.map((opt) => (
-                      <Option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </Option>
-                    ))}
-                  </Select>
+                  {/* 新版本：显示 Graphite % 输入；老版本：显示 Select */}
+                  {isNewVersion ? (
+                    <>
+                      <label className="electrode-predict-label">
+                        {t('design.electrode.predict.anodeActiveMaterialGraphite', 'Anode Active Material Graphite (%)')}
+                      </label>
+                      <Input
+                        disabled
+                        type="number"
+                        value={graphitePercent}
+                        className="electrode-predict-input"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <label className="electrode-predict-label">
+                        {t('design.electrode.predict.anodeActiveMaterial', 'Anode Active Material')}
+                      </label>
+                      <Select
+                        disabled
+                        value={anode_active_material}
+                        className="electrode-predict-select"
+                      >
+                        {ANODE_ACTIVE_MATERIAL_OPTIONS.map((opt) => (
+                          <Option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </Option>
+                        ))}
+                      </Select>
+                    </>
+                  )}
 
                   <h3 className="electrode-predict-subsection-title">
                     {t('design.electrode.predict.anodeParameters', 'Anode Parameters')}
@@ -315,16 +339,19 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       value={model_params.length}
                     />
                   </div>
-                  <div className="electrode-predict-dimension-item">
-                    <label className="electrode-predict-label">
-                      {t('design.electrode.predict.layers', 'Layers')}
-                    </label>
-                    <Input
-                      disabled
-                      type="number"
-                      value={model_params.layers}
-                    />
-                  </div>
+                  {/* 老数据含有 layers（> 0）时才展示 */}
+                  {model_params.layers > 0 && (
+                    <div className="electrode-predict-dimension-item">
+                      <label className="electrode-predict-label">
+                        {t('design.electrode.predict.layers', 'Layers')}
+                      </label>
+                      <Input
+                        disabled
+                        type="number"
+                        value={model_params.layers}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -364,8 +391,8 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                 />
               </div>
 
-              {/* Rate Capability 图表 */}
-              <RateCapabilityChart />
+              {/* Rate Capability 图表：传入 model_result，组件内部判断新旧版本 */}
+              <RateCapabilityChart results={model_result} />
             </div>
           </div>
         </div>

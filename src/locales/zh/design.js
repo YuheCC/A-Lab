@@ -421,7 +421,9 @@ export default {
             volumetricEDTooltip: "基于卷芯体积计算的能量密度。",
             calculateError: "计算预测失败",
             npRatio: "NP 比",
-            enterNpRatio: "请输入 NP 比",
+            enterNpRatio: "请输入 NP 比 (1.05 - 1.2)",
+            anodeActiveMaterialGraphite: "负极活性材料石墨含量 (%)",
+            enterGraphitePercent: "请输入石墨含量 (85 - 100)",
             activeMaterial1: "Active Material SiC (wt.%)",
             activeMaterial2: "Active Material Graphite (wt.%)",
             anodeArealLoading: "Areal Loading (mAh/cm²)",
@@ -435,6 +437,10 @@ export default {
             superP: "Carbon Black (wt.%)",
             swcnt: "CNT (wt.%)",
             rateCapability: "倍率性能 (1C-5C)",
+            capacityRetention: "容量保持率",
+            capacityRetentionAxis: "容量保持率 (%)",
+            temperature: "温度",
+            temperatureAxis: "温度 (°C)",
             electrolyteParameters: "电解液参数",
             electrolyteContent: "电解液含量 (g/Ah)"
         },
@@ -518,7 +524,10 @@ export default {
             anodeConductiveSum: "Carbon Black + CNT 的总和必须大于 0.005",
             fillAllDimensions: "请填写所有尺寸参数",
             ratioSmallWidth: "宽度不超过 100 时，长宽比必须在 0.2 到 1 之间。",
-            ratioLargeWidth: "宽度在 100 到 1000 之间时，长宽比必须保持在 0.1 到 0.5 之间。"
+            ratioLargeWidth: "宽度在 100 到 1000 之间时，长宽比必须保持在 0.1 到 0.5 之间。",
+            npRatioRequired: "NP 比为必填项",
+            npRatioRange: "NP 比必须在 1.05 到 1.2 之间",
+            graphitePercentRange: "石墨含量必须是 85 到 100 之间的整数"
         }
     }
 };
