@@ -19,11 +19,11 @@ const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) =>
     results.t1C !== undefined;
 
   const capData = hasRealData
-    ? [results!.cap1C, results!.cap2C, results!.cap3C, results!.cap4C, results!.cap5C]
+    ? [results!.cap1C, results!.cap2C, results!.cap3C, results!.cap4C, results!.cap5C].map((v) => Math.round(v))
     : [100, 85, 78, 68, 62];
 
   const tempData = hasRealData
-    ? [results!.t1C, results!.t2C, results!.t3C, results!.t4C, results!.t5C]
+    ? [results!.t1C, results!.t2C, results!.t3C, results!.t4C, results!.t5C].map((v) => Math.round(v))
     : [15, 14, 13, 14, 17];
 
   const option = {
@@ -82,6 +82,8 @@ const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) =>
         axisTick: {
           show: true,
         },
+        min: 0,
+        max: 100,
         axisLabel: {
           color: '#6b7280',
           fontSize: 11,
@@ -103,6 +105,8 @@ const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) =>
           padding: [0, 0, 0, 0],
         },
         position: 'right',
+        min: 20,
+        max: 110,
         axisLine: {
           show: true,
         },
@@ -125,7 +129,7 @@ const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) =>
         type: 'line',
         yAxisIndex: 0,
         data: capData,
-        smooth: true,
+        smooth: false,
         symbol: 'circle',
         symbolSize: 8,
         itemStyle: {
@@ -143,7 +147,7 @@ const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) =>
         type: 'line',
         yAxisIndex: 1,
         data: tempData,
-        smooth: true,
+        smooth: false,
         symbol: 'circle',
         symbolSize: 8,
         itemStyle: {
@@ -173,8 +177,8 @@ const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) =>
         return `
           <div style="padding: 4px 8px;">
             <div style="font-weight: 600; margin-bottom: 4px;">${cRate}</div>
-            ${capParam ? `<div>${t('design.electrode.predict.capacityRetention', 'Capacity Retention')}: <strong>${capParam.value}%</strong></div>` : ''}
-            ${tempParam ? `<div>${t('design.electrode.predict.temperature', 'Temperature')}: <strong>${tempParam.value}°C</strong></div>` : ''}
+            ${capParam ? `<div>${t('design.electrode.predict.capacityRetention', 'Capacity Retention')}: <strong>${Math.round(capParam.value)}%</strong></div>` : ''}
+            ${tempParam ? `<div>${t('design.electrode.predict.temperature', 'Temperature')}: <strong>${Math.round(tempParam.value)}°C</strong></div>` : ''}
           </div>
         `;
       },

@@ -368,7 +368,7 @@ const PredictPage: React.FC = () => {
       length: parseFloat(length),
       layers: 0,
       npRatio: parseFloat(npRatio),
-      siRatio: 100 - graphitePercent,
+      siRatio: graphitePercent,// 算法侧使用的是siratio命名，但是用的是石墨含量，暂时先hook，后期更改
     };
 
     const requestParams = electrodeModel.buildPredictParams(
