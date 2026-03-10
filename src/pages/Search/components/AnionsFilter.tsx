@@ -230,7 +230,7 @@ const AnionsFilter = forwardRef<AnionsFilterRef, AnionsFilterProps>(({ onDataFil
     };
 
     return (
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
             <h2>
                 {t('explorer.filtersTitle')}
                 {activeFilterCount > 0 && (
@@ -243,7 +243,7 @@ const AnionsFilter = forwardRef<AnionsFilterRef, AnionsFilterProps>(({ onDataFil
                     </button>
                 )}
             </h2>
-            <div className="sliders-container" style={{ flex: 1, overflowY: 'auto', overflowX: 'visible' }}>
+            <div className="sliders-container" style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', minHeight: 0 }}>
                 {Object.entries(filterRanges as Record<string, FilterRange>).map(([property, range]) => {
                     // Hide predicted properties sliders for users without proper permissions
                     if ((property === 'predicted_mp' || property === 'predicted_bp' || property === 'predicted_fp') &&
