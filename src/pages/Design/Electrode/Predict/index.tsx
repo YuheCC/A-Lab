@@ -587,7 +587,7 @@ const PredictPage: React.FC = () => {
 
               <div className="electrode-predict-form-item">
                 <label className="electrode-predict-label">
-                  {t('design.electrode.predict.anodeActiveMaterialGraphite', 'Anode Active Material Graphite (%)')}
+                  {t('design.electrode.predict.anodeActiveMaterialGraphite', 'Anode Active Material- Graphite Content (%)')}
                 </label>
                 <Input
                   type="number"
