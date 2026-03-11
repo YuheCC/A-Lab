@@ -330,16 +330,19 @@ function validateDimensionParameters(
   // 解析值（支持 string 和 number 类型）
   const widthRaw = params.width;
   const lengthRaw = params.length;
+  const layersRaw = params.layers;
 
   const width = typeof widthRaw === 'string' ? parseFloat(widthRaw) : widthRaw;
   const length = typeof lengthRaw === 'string' ? parseFloat(lengthRaw) : lengthRaw;
+  const layers = typeof layersRaw === 'string' ? parseInt(layersRaw, 10) : layersRaw;
 
   // 检查是否填写了所有尺寸参数（空值检查）
   // 使用 isEmptyNumber 避免 0 被误识别为空
   const widthEmpty = isEmptyNumber(widthRaw);
   const lengthEmpty = isEmptyNumber(lengthRaw);
+  const layersEmpty = isEmptyNumber(layersRaw);
 
-  if (!skipEmptyCheck && (widthEmpty || lengthEmpty)) {
+  if (!skipEmptyCheck && (widthEmpty || lengthEmpty || (params.hasOwnProperty('layers') && layersEmpty))) {
     return t
       ? t('design.electrode.validation.fillAllDimensions')
       : '请填写所有尺寸参数';
@@ -358,6 +361,14 @@ function validateDimensionParameters(
     const lengthError = checkParameterRange(length, dimensionParameterRanges.length, t);
     if (lengthError) {
       return lengthError;
+    }
+  }
+
+  // 检查 layers 范围（只检查非空值）
+  if (!layersEmpty && layers !== undefined) {
+    const layersError = checkParameterRange(layers, dimensionParameterRanges.layers, t);
+    if (layersError) {
+      return layersError;
     }
   }
 
