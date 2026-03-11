@@ -5,6 +5,24 @@ import { useAuthStore } from "@/models/useAuth";
 import { Autocomplete, TextField } from "@mui/material";
 import { useTranslation } from 'react-i18next';
 
+const parseFunctionalGroups = (value: unknown): string[] => {
+    if (Array.isArray(value)) {
+        return value.map(String).filter(Boolean);
+    }
+    if (typeof value === "string") {
+        try {
+            const parsed = JSON.parse(value);
+            if (Array.isArray(parsed)) {
+                return parsed.map(String).filter(Boolean);
+            }
+        } catch {
+            // fall through
+        }
+        return value.split(",").map(item => item.trim()).filter(Boolean);
+    }
+    return [];
+};
+
 // 复用Filter页面的类型和选项
 interface FilterRange {
     min: number;
@@ -72,7 +90,7 @@ const AnionsFilter = forwardRef<AnionsFilterRef, AnionsFilterProps>(({ onDataFil
 
     const [filteredGraphData, setFilteredGraphData] = useState<any[]>(data);
     const [tempFilterRanges, setTempFilterRanges] = useState<{ [key: string]: [number, number] }>({});
-    const [filteredFunctionalGroupOptions, setFilteredFunctionalGroupOptions] = useState<FunctionalGroupOption[]>(anionsFunctionGroupOptions);
+    const [filteredFunctionalGroupOptions, setFilteredFunctionalGroupOptions] = useState<FunctionalGroupOption[]>([]);
 
     // Filter state
     const [filterRanges, setFilterRanges] = useState<FilterRanges>({
@@ -150,16 +168,19 @@ const AnionsFilter = forwardRef<AnionsFilterRef, AnionsFilterProps>(({ onDataFil
 
     // Update functional group options
     useEffect(() => {
-        const newFunctionalGroupOptions = anionsFunctionGroupOptions.map(option => {
-            const matches = filteredGraphData.filter(node =>
-                node.properties?.functional_groups?.includes(option.label)
-            ).length;
-            return {
-                ...option,
-                count: matches
-            };
-        }).filter(option => option.count > 0);
-        setFilteredFunctionalGroupOptions(newFunctionalGroupOptions);
+        const counts = new Map<string, number>();
+        filteredGraphData.forEach(node => {
+            const groups = parseFunctionalGroups(node.properties?.functional_groups);
+            groups.forEach(group => {
+                counts.set(group, (counts.get(group) ?? 0) + 1);
+            });
+        });
+        const dynamicOptions: FunctionalGroupOption[] = Array.from(counts.entries()).map(([label, count]) => ({
+            label,
+            value: label,
+            count
+        }));
+        setFilteredFunctionalGroupOptions(dynamicOptions);
     }, [filteredGraphData]);
 
     // Apply filters
@@ -179,10 +200,8 @@ const AnionsFilter = forwardRef<AnionsFilterRef, AnionsFilterProps>(({ onDataFil
 
             // Check functional group filter
             if (selectedFunctionalGroup) {
-                if (!node.properties?.functional_groups ||
-                    !node.properties.functional_groups.includes(selectedFunctionalGroup)) {
-                    return false;
-                }
+                const groups = parseFunctionalGroups(node.properties?.functional_groups);
+                if (!groups.includes(selectedFunctionalGroup)) return false;
             }
 
             return true;

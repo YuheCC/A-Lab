@@ -7,6 +7,24 @@ import { Autocomplete, TextField } from "@mui/material";
 import { useTranslation } from 'react-i18next';
 import NodePopup from "@/components/NodePopup";
 
+const parseFunctionalGroups = (value: unknown): string[] => {
+    if (Array.isArray(value)) {
+        return value.map(String).filter(Boolean);
+    }
+    if (typeof value === "string") {
+        try {
+            const parsed = JSON.parse(value);
+            if (Array.isArray(parsed)) {
+                return parsed.map(String).filter(Boolean);
+            }
+        } catch {
+            // fall through
+        }
+        return value.split(",").map(item => item.trim()).filter(Boolean);
+    }
+    return [];
+};
+
 // 定义类型
 interface Node {
     id: string;
@@ -164,7 +182,7 @@ const OrganicFilters = () => {
     const [filteredGraphData, setFilteredGraphData] = useState<Node[]>(data);
     const [tempFilterRanges, setTempFilterRanges] = useState<{ [key: string]: [number, number] }>({});
 
-    const [filteredFunctionalGroupOptions, setFilteredFunctionalGroupOptions] = useState<FunctionalGroupOption[]>(functionGroupOptions);
+    const [filteredFunctionalGroupOptions, setFilteredFunctionalGroupOptions] = useState<FunctionalGroupOption[]>([]);
 
     // New filter implementation with range values
     const [filterRanges, setFilterRanges] = useState<FilterRanges>({
@@ -229,17 +247,19 @@ const OrganicFilters = () => {
     }, [data]);
 
     useEffect(() => {
-        // Update functional group options based on data
-        const newFunctionalGroupOptions = functionGroupOptions.map(option => {
-            const matches = filteredGraphData.filter(node => 
-                node.properties?.functional_groups?.includes(option.label)
-            ).length;
-            return {
-                ...option,
-                count: matches
-            };
-        }).filter(option => option.count > 0); // Only keep options with matches
-        setFilteredFunctionalGroupOptions(newFunctionalGroupOptions);
+        const counts = new Map<string, number>();
+        filteredGraphData.forEach(node => {
+            const groups = parseFunctionalGroups(node.properties?.functional_groups);
+            groups.forEach(group => {
+                counts.set(group, (counts.get(group) ?? 0) + 1);
+            });
+        });
+        const dynamicOptions: FunctionalGroupOption[] = Array.from(counts.entries()).map(([label, count]) => ({
+            label,
+            value: label,
+            count
+        }));
+        setFilteredFunctionalGroupOptions(dynamicOptions);
     }, [filteredGraphData])
 
     // Apply filters based on range slider values and functional group
@@ -258,10 +278,8 @@ const OrganicFilters = () => {
 
             // Check functional group filter
             if (selectedFunctionalGroup) {
-                if (!node.properties?.functional_groups ||
-                    !node.properties.functional_groups.includes(selectedFunctionalGroup)) {
-                    return false;
-                }
+                const groups = parseFunctionalGroups(node.properties?.functional_groups);
+                if (!groups.includes(selectedFunctionalGroup)) return false;
             }
 
             return true;

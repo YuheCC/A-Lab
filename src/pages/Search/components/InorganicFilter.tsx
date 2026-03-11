@@ -5,6 +5,24 @@ import { useAuthStore } from "@/models/useAuth";
 import { Autocomplete, TextField } from "@mui/material";
 import { useTranslation } from 'react-i18next';
 
+const parseFunctionalGroups = (value: unknown): string[] => {
+    if (Array.isArray(value)) {
+        return value.map(String).filter(Boolean);
+    }
+    if (typeof value === "string") {
+        try {
+            const parsed = JSON.parse(value);
+            if (Array.isArray(parsed)) {
+                return parsed.map(String).filter(Boolean);
+            }
+        } catch {
+            // fall through
+        }
+        return value.split(",").map(item => item.trim()).filter(Boolean);
+    }
+    return [];
+};
+
 // 复用Filter页面的类型和选项（无机版本）
 interface FilterRange {
     min: number;
@@ -68,7 +86,7 @@ const InorganicFilter = forwardRef<InorganicFilterRef, InorganicFilterProps>(({ 
 
     const [filteredGraphData, setFilteredGraphData] = useState<any[]>(data);
     const [tempFilterRanges, setTempFilterRanges] = useState<{ [key: string]: [number, number] }>({});
-    const [filteredFunctionalGroupOptions, setFilteredFunctionalGroupOptions] = useState<FunctionalGroupOption[]>(functionGroupOptions);
+    const [filteredFunctionalGroupOptions, setFilteredFunctionalGroupOptions] = useState<FunctionalGroupOption[]>([]);
 
     // Filter state
     const [filterRanges, setFilterRanges] = useState<FilterRanges>({
@@ -146,17 +164,19 @@ const InorganicFilter = forwardRef<InorganicFilterRef, InorganicFilterProps>(({ 
 
     // Update functional group options
     useEffect(() => {
-        const newFunctionalGroupOptions = functionGroupOptions.map(option => {
-            const matches = filteredGraphData.filter(node =>
-                node.properties?.functional_groups?.includes(option.label) ||
-                node.properties?.chemical_formula?.includes(option.value)
-            ).length;
-            return {
-                ...option,
-                count: matches
-            };
-        }).filter(option => option.count > 0);
-        setFilteredFunctionalGroupOptions(newFunctionalGroupOptions);
+        const counts = new Map<string, number>();
+        filteredGraphData.forEach(node => {
+            const groups = parseFunctionalGroups(node.properties?.functional_groups);
+            groups.forEach(group => {
+                counts.set(group, (counts.get(group) ?? 0) + 1);
+            });
+        });
+        const dynamicOptions: FunctionalGroupOption[] = Array.from(counts.entries()).map(([label, count]) => ({
+            label,
+            value: label,
+            count
+        }));
+        setFilteredFunctionalGroupOptions(dynamicOptions);
     }, [filteredGraphData]);
 
     // Apply filters
@@ -176,15 +196,8 @@ const InorganicFilter = forwardRef<InorganicFilterRef, InorganicFilterProps>(({ 
 
             // Check functional group filter
             if (selectedFunctionalGroup) {
-                if (!node.properties?.functional_groups && !node.properties?.chemical_formula) {
-                    return false;
-                }
-                const hasMatch =
-                    node.properties?.functional_groups?.includes(selectedFunctionalGroup) ||
-                    node.properties?.chemical_formula?.includes(selectedFunctionalGroup);
-                if (!hasMatch) {
-                    return false;
-                }
+                const groups = parseFunctionalGroups(node.properties?.functional_groups);
+                if (!groups.includes(selectedFunctionalGroup)) return false;
             }
 
             return true;
