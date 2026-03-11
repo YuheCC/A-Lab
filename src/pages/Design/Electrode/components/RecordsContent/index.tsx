@@ -319,7 +319,7 @@ const RecordsContent: React.FC = () => {
               <th>{t('design.electrode.records.recordId', 'Record ID')}</th>
               <th>{t('design.electrode.records.cellDesign', 'Cell Design')}</th>
               <th>{t('design.electrode.records.cathode', 'Cathode Active Material')}</th>
-              <th>{t('design.electrode.records.anode', 'Anode Active Material')}</th>
+              <th>{t('design.electrode.records.anode', 'Anode Active Material- Graphite Content (%)')}</th>
               <th>{t('design.electrode.records.createdTime', 'Created Time')}</th>
               <th>{t('design.electrode.records.actions', 'Actions')}</th>
             </tr>
@@ -339,7 +339,7 @@ const RecordsContent: React.FC = () => {
                   <td className="record-id">{formatRecordId(record)}</td>
                   <td>{record.cell_design}</td>
                   <td>{record.cathode_active_material}</td>
-                  <td>{record.anode_active_material}</td>
+                  <td>{record.model_params?.siRatio !== undefined ? `${record.model_params.siRatio}%` : '-'}</td>
                   <td className="created-date">
                     {formatUTCDateTime(record.created_at, { showSeconds: true }) || '-'}
                   </td>
