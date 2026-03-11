@@ -77,6 +77,12 @@ export interface ElectrodeModelParamsDTO {
   length: number;
   /** Layers */
   layers: number;
+
+  // ========== 设计参数 (Design Parameters) ==========
+  /** NP Ratio */
+  np_ratio?: number;
+  /** Si 含量比例（= 100 - graphite%） */
+  si_ratio?: number;
 }
 
 /**
@@ -92,6 +98,26 @@ export interface ElectrodeModelResultDTO {
   jelly_roll_thickness: number;
   /** Volumetric Energy Density (Wh/L) */
   volumetric_ED: number;
+  /** Capacity at 1C rate (%) */
+  Cap_1C?: number;
+  /** Capacity at 2C rate (%) */
+  Cap_2C?: number;
+  /** Capacity at 3C rate (%) */
+  Cap_3C?: number;
+  /** Capacity at 4C rate (%) */
+  Cap_4C?: number;
+  /** Capacity at 5C rate (%) */
+  Cap_5C?: number;
+  /** Temperature at 1C rate */
+  T_1C?: number;
+  /** Temperature at 2C rate */
+  T_2C?: number;
+  /** Temperature at 3C rate */
+  T_3C?: number;
+  /** Temperature at 4C rate */
+  T_4C?: number;
+  /** Temperature at 5C rate */
+  T_5C?: number;
 }
 
 // --------------------------------------------
@@ -146,6 +172,12 @@ export interface ElectrodeModelParams {
   length: number;
   /** Layers */
   layers: number;
+
+  // ========== 设计参数 (Design Parameters) ==========
+  /** NP Ratio */
+  npRatio?: number;
+  /** Si 含量比例（= 100 - graphite%） */
+  siRatio?: number;
 }
 
 /**
@@ -163,6 +195,26 @@ export interface ElectrodeModelResult {
   jellyRollThickness: number;
   /** Volumetric Energy Density (Wh/L) */
   volumetricED: number;
+  /** Capacity at 1C rate (%) */
+  cap1C?: number;
+  /** Capacity at 2C rate (%) */
+  cap2C?: number;
+  /** Capacity at 3C rate (%) */
+  cap3C?: number;
+  /** Capacity at 4C rate (%) */
+  cap4C?: number;
+  /** Capacity at 5C rate (%) */
+  cap5C?: number;
+  /** Temperature at 1C rate */
+  t1C?: number;
+  /** Temperature at 2C rate */
+  t2C?: number;
+  /** Temperature at 3C rate */
+  t3C?: number;
+  /** Temperature at 4C rate */
+  t4C?: number;
+  /** Temperature at 5C rate */
+  t5C?: number;
 }
 
 // ============================================
@@ -201,13 +253,11 @@ export interface ElectrodeHistoryItem {
   id: number;
   /** Cell Design */
   cell_design: string;
-  /** NP Ratio */
-  np_ratio?: string;
   /** 正极活性材料 */
   cathode_active_material: string;
-  /** 负极活性材料 */
+  /** 负极活性材料（老版本字段） */
   anode_active_material: string;
-  /** 模型参数（对象） */
+  /** 模型参数（对象，包含 npRatio / siRatio） */
   model_params: ElectrodeModelParams;
   /** 模型结果（对象） */
   model_result: ElectrodeModelResult;
@@ -280,13 +330,11 @@ export interface ElectrodeHistoryDeleteResponse {
 export interface ElectrodeModelPredictParams {
   /** Cell Design */
   cell_design: string;
-  /** NP Ratio */
-  np_ratio: string;
   /** 正极活性材料 */
   cathode_active_material: string;
-  /** 负极活性材料 */
-  anode_active_material: string;
-  /** 模型参数（对象） */
+  /** 负极活性材料（老版本兼容，Optimize 页面使用） */
+  anode_active_material?: string;
+  /** 模型参数（对象，包含 np_ratio / si_ratio） */
   model_params: ElectrodeModelParams;
   /** 页面类型：1=正向预测, 2=反向设计 */
   type: ElectrodePageType;

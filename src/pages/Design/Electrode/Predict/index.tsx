@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@umijs/max';
 import { LeftOutlined } from '@ant-design/icons';
-import { Select, Input, Tooltip } from 'antd';
-import { Info } from 'lucide-react';
+import { Select, Input } from 'antd';
 import Button from '@/components/Button';
 import ParameterInput from './components/ParameterInput';
 import ResultDisplay from './components/ResultDisplay';
@@ -21,8 +20,6 @@ import {
 import {
   CELL_DESIGN_OPTIONS,
   CATHODE_ACTIVE_MATERIAL_OPTIONS,
-  ANODE_ACTIVE_MATERIAL_OPTIONS,
-  getNpRatioByCellDesign,
   DEFAULT_VALUES,
 } from '../constants';
 import { useDebounce } from '@/hooks/useDebounce';
@@ -37,7 +34,9 @@ const PredictPage: React.FC = () => {
   // 表单状态
   const [cellDesign, setCellDesign] = useState(DEFAULT_VALUES.cellDesign);
   const [npRatio, setNpRatio] = useState(DEFAULT_VALUES.npRatio);
-  const [anodeActiveMaterial, setAnodeActiveMaterial] = useState(DEFAULT_VALUES.anodeActiveMaterial);
+  // graphitePercent: Anode Active Material Graphite (%)，范围 85-100 整数
+  // siRatio = 100 - graphitePercent，作为 si_ratio 字段发给后端
+  const [graphitePercent, setGraphitePercent] = useState(88);
   const [cathodeActiveMaterial, setCathodeActiveMaterial] = useState(DEFAULT_VALUES.cathodeActiveMaterial);
 
   // 阳极参数 - 重命名为描述性名称
@@ -65,7 +64,6 @@ const PredictPage: React.FC = () => {
   // 尺寸参数
   const [width, setWidth] = useState('');
   const [length, setLength] = useState('');
-  const [layers, setLayers] = useState('');
 
   // Loading 状态
   const [loading, setLoading] = useState(false);
@@ -78,6 +76,8 @@ const PredictPage: React.FC = () => {
   const [isFormModified, setIsFormModified] = useState(false);
 
   // 错误状态
+  const [npRatioError, setNpRatioError] = useState<string>('');
+  const [graphiteError, setGraphiteError] = useState<string>('');
   const [cathodeError, setCathodeError] = useState<string>('');
   const [anodeError, setAnodeError] = useState<string>('');
   const [dimensionError, setDimensionError] = useState<string>('');
@@ -101,16 +101,34 @@ const PredictPage: React.FC = () => {
   const debouncedAnodePressDensity = useDebounce(anodePressDensity, 300);
   // anodeSCBI、anodeGrSI、anodeArealLoading 是计算字段，不需要防抖
 
-  // Dimension 字段防抖（3个）
+  // Dimension 字段防抖
   const debouncedWidth = useDebounce(width, 300);
   const debouncedLength = useDebounce(length, 300);
-  const debouncedLayers = useDebounce(layers, 300);
 
-  // 根据 Cell Design 设置 NP Ratio 默认值
+  const debouncedNpRatio = useDebounce(npRatio, 300);
+  const debouncedGraphitePercent = useDebounce(graphitePercent, 300);
+
+  // 实时验证 NP Ratio（范围 1.05-1.2）
   useEffect(() => {
-    const newNpRatio = getNpRatioByCellDesign(cellDesign);
-    setNpRatio(newNpRatio);
-  }, [cellDesign]);
+    const val = parseFloat(debouncedNpRatio);
+    if (isNaN(val) || debouncedNpRatio === '') {
+      setNpRatioError(t('design.electrode.validation.npRatioRequired', 'NP Ratio is required'));
+    } else if (val < 1.05 || val > 1.2) {
+      setNpRatioError(t('design.electrode.validation.npRatioRange', 'NP Ratio must be between 1.05 and 1.2'));
+    } else {
+      setNpRatioError('');
+    }
+  }, [debouncedNpRatio, t]);
+
+  // 实时验证 Graphite Percent（范围 85-100 整数）
+  useEffect(() => {
+    const val = debouncedGraphitePercent;
+    if (!Number.isInteger(val) || val < 85 || val > 100) {
+      setGraphiteError(t('design.electrode.validation.graphitePercentRange', 'Graphite content must be an integer between 85 and 100'));
+    } else {
+      setGraphiteError('');
+    }
+  }, [debouncedGraphitePercent, t]);
 
   // 联动逻辑1: Cathode的Active material NCM-A = 100 - (KF-9700 + CN-01Y + Super C65)
   useEffect(() => {
@@ -119,16 +137,17 @@ const PredictPage: React.FC = () => {
   }, [cathodeKF9700, cathodeCN01Y, cathodeSuperC65]);
 
   // 联动逻辑2: Anode的Active material = 100 - (CMC + SBR + PAA + Super P + SWCNT)
-  // Active material-1 (SC-B-I) = 计算值 × 12%
-  // Active material-2 (Gr-S-I) = 计算值 × 88%
+  // Active material-1 (SC-B-I) = 计算值 × siRatio%（= 100 - graphitePercent）
+  // Active material-2 (Gr-S-I) = 计算值 × graphitePercent%
   useEffect(() => {
+    const siRatio = 100 - graphitePercent;
     const totalActiveMaterial = 100 - (anodeCMC + anodeSBR + anodePAA + anodeSuperP + anodeSWCNT);
-    const scbi = totalActiveMaterial * 0.12;
-    const grsi = totalActiveMaterial * 0.88;
+    const scbi = totalActiveMaterial * (siRatio / 100);
+    const grsi = totalActiveMaterial * (graphitePercent / 100);
     
     setAnodeSCBI(Number(scbi.toFixed(2)));
     setAnodeGrSI(Number(grsi.toFixed(2)));
-  }, [anodeCMC, anodeSBR, anodePAA, anodeSuperP, anodeSWCNT]);
+  }, [anodeCMC, anodeSBR, anodePAA, anodeSuperP, anodeSWCNT, graphitePercent]);
 
   // 联动逻辑3: Anode的Areal Loading = cathode_loading / 0.9142 * 1.07 * 0.878，保留两位小数
   useEffect(() => {
@@ -169,7 +188,6 @@ const PredictPage: React.FC = () => {
   useEffect(() => {
     // 构建 anode 参数对象
     const anodeParams = {
-      anodeActiveMaterial,
       anodeCMC: debouncedAnodeCMC,
       anodeSBR: debouncedAnodeSBR,
       anodePAA: debouncedAnodePAA,
@@ -184,7 +202,6 @@ const PredictPage: React.FC = () => {
     // 更新错误状态
     setAnodeError(error || '');
   }, [
-    anodeActiveMaterial,
     debouncedAnodeCMC,
     debouncedAnodeSBR,
     debouncedAnodePAA,
@@ -200,7 +217,6 @@ const PredictPage: React.FC = () => {
     const dimensionParams = {
       width: debouncedWidth,
       length: debouncedLength,
-      layers: debouncedLayers,
     };
 
     // 执行验证（实时验证跳过空值检查，只检查范围和业务规则）
@@ -211,7 +227,6 @@ const PredictPage: React.FC = () => {
   }, [
     debouncedWidth,
     debouncedLength,
-    debouncedLayers,
     t,
   ]);
 
@@ -231,7 +246,7 @@ const PredictPage: React.FC = () => {
     const currentFormData = {
       cellDesign,
       npRatio,
-      anodeActiveMaterial,
+      graphitePercent,
       cathodeActiveMaterial,
       anodeCMC,
       anodeSBR,
@@ -246,7 +261,6 @@ const PredictPage: React.FC = () => {
       cathodePressDensity,
       width,
       length,
-      layers,
     };
 
     // 比较当前表单数据与上次计算的数据
@@ -261,7 +275,7 @@ const PredictPage: React.FC = () => {
   }, [
     cellDesign,
     npRatio,
-    anodeActiveMaterial,
+    graphitePercent,
     cathodeActiveMaterial,
     anodeCMC,
     anodeSBR,
@@ -276,24 +290,29 @@ const PredictPage: React.FC = () => {
     cathodePressDensity,
     width,
     length,
-    layers,
     lastCalculatedFormData,
   ]);
 
   const handleCalculate = async () => {
-    // 首先检查实时验证的错误状态
-    // 如果存在任何错误，直接返回，不执行计算
-    if (cathodeError || anodeError || dimensionError) {
-      console.warn('[PredictPage] Validation failed:', {
-        cathodeError,
-        anodeError,
-        dimensionError,
-      });
-      return;
+    let hasError = false;
+
+    // NP Ratio 验证
+    const npVal = parseFloat(npRatio);
+    if (isNaN(npVal) || npRatio === '') {
+      setNpRatioError(t('design.electrode.validation.npRatioRequired', 'NP Ratio is required'));
+      hasError = true;
+    } else if (npVal < 1.05 || npVal > 1.2) {
+      setNpRatioError(t('design.electrode.validation.npRatioRange', 'NP Ratio must be between 1.05 and 1.2'));
+      hasError = true;
     }
 
-    // 二次验证（防御性编程，确保数据一致性）
-    // 这是为了防止状态异步更新导致的问题
+    // Graphite Percent 验证
+    if (isNaN(graphitePercent) || graphitePercent < 85 || graphitePercent > 100 || !Number.isInteger(graphitePercent)) {
+      setGraphiteError(t('design.electrode.validation.graphiteRange', 'Graphite content must be an integer between 85 and 100'));
+      hasError = true;
+    }
+
+    // 电极参数验证（包含空值检查和范围检查）
     const validationResult = validateElectrodeParameters({
       cathodeActiveMaterial,
       cathodeKF9700,
@@ -301,7 +320,6 @@ const PredictPage: React.FC = () => {
       cathodeSuperC65,
       cathodeArealLoading,
       cathodePressDensity,
-      anodeActiveMaterial,
       anodeCMC,
       anodeSBR,
       anodePAA,
@@ -310,10 +328,8 @@ const PredictPage: React.FC = () => {
       anodePressDensity,
       width,
       length,
-      layers,
     }, t);
 
-    // 如果二次验证失败，更新错误状态
     if (!validationResult.isValid) {
       if (validationResult.errors.cathode) {
         setCathodeError(validationResult.errors.cathode);
@@ -324,39 +340,41 @@ const PredictPage: React.FC = () => {
       if (validationResult.errors.dimension) {
         setDimensionError(validationResult.errors.dimension);
       }
-      console.error('[PredictPage] Double-check validation failed');
+      hasError = true;
+    }
+
+    if (hasError) {
       return;
     }
 
     // 构建 model params（打平的结构）
     const modelParams: electrodeModel.ElectrodeModelParams = {
-      anodeCMC,              // 重命名
-      anodeSBR,              // 重命名
-      anodePAA,              // 重命名
-      anodeSuperP,           // 重命名
-      anodeSWCNT,            // 重命名
-      anodePressDensity,     // 保持不变
-      anodeSCBI,             // 新增
-      anodeGrSI,             // 新增
-      anodeArealLoading,     // 新增
-      cathodeKF9700,         // 重命名
-      cathodeCN01Y,          // 重命名
-      cathodeSuperC65,       // 重命名
-      cathodeArealLoading,   // 保持不变
-      cathodePressDensity,   // 保持不变
-      cathodeNCMA,           // 新增
+      anodeCMC,
+      anodeSBR,
+      anodePAA,
+      anodeSuperP,
+      anodeSWCNT,
+      anodePressDensity,
+      anodeSCBI,
+      anodeGrSI,
+      anodeArealLoading,
+      cathodeKF9700,
+      cathodeCN01Y,
+      cathodeSuperC65,
+      cathodeArealLoading,
+      cathodePressDensity,
+      cathodeNCMA,
       width: parseFloat(width),
       length: parseFloat(length),
-      layers: parseInt(layers, 10),
+      layers: 0,
+      npRatio: parseFloat(npRatio),
+      siRatio: graphitePercent,// 算法侧使用的是siratio命名，但是用的是石墨含量，暂时先hook，后期更改
     };
 
-    // 构建 API 请求参数
     const requestParams = electrodeModel.buildPredictParams(
       {
         cellDesign,
-        npRatio,
         cathodeActiveMaterial,
-        anodeActiveMaterial,
         modelParams,
       },
       electrodeModel.PageType.RESULT_PREDICTION,
@@ -371,7 +389,7 @@ const PredictPage: React.FC = () => {
       setLastCalculatedFormData({
         cellDesign,
         npRatio,
-        anodeActiveMaterial,
+        graphitePercent,
         cathodeActiveMaterial,
         anodeCMC,
         anodeSBR,
@@ -386,7 +404,6 @@ const PredictPage: React.FC = () => {
         cathodePressDensity,
         width,
         length,
-        layers,
       });
       setIsFormModified(false); // 计算完成后，表单未修改
     } catch (error) {
@@ -406,7 +423,7 @@ const PredictPage: React.FC = () => {
     // 重置所有表单状态为默认值
     setCellDesign(DEFAULT_VALUES.cellDesign);
     setNpRatio(DEFAULT_VALUES.npRatio);
-    setAnodeActiveMaterial(DEFAULT_VALUES.anodeActiveMaterial);
+    setGraphitePercent(88);
     setCathodeActiveMaterial(DEFAULT_VALUES.cathodeActiveMaterial);
     
     // 重置阳极参数
@@ -456,12 +473,13 @@ const PredictPage: React.FC = () => {
     // 重置尺寸参数
     setWidth('');
     setLength('');
-    setLayers('');
     
     // 重置结果和错误状态
     setResults(null);
     setLastCalculatedFormData(null);
     setIsFormModified(false);
+    setNpRatioError('');
+    setGraphiteError('');
     setCathodeError('');
     setAnodeError('');
     setDimensionError('');
@@ -495,8 +513,8 @@ const PredictPage: React.FC = () => {
           </h2>
 
           <div className="electrode-predict-form-container">
-            {/* Cell Design 和 NP Ratio 并排 */}
-            <div className="electrode-predict-electrode-grid">
+            {/* 4 个基础输入项：2x2 网格 */}
+            <div className="electrode-predict-basic-grid">
               <div className="electrode-predict-form-item">
                 <label className="electrode-predict-label">
                   {t('design.electrode.predict.cellDesign', 'Cell Design')}
@@ -524,27 +542,29 @@ const PredictPage: React.FC = () => {
                   {t('design.electrode.predict.npRatio', 'NP Ratio')}
                 </label>
                 <Input
-                  disabled={true}
                   type="number"
                   value={npRatio}
                   onChange={(e) => setNpRatio(e.target.value)}
                   placeholder={t('design.electrode.predict.enterNpRatio', 'Enter NP ratio')}
                   step={0.01}
+                  min={1.05}
+                  max={1.2}
                   className="electrode-predict-input"
                 />
+                {npRatioError && (
+                  <div className="electrode-predict-error-message" style={{ marginTop: 4 }}>
+                    {npRatioError}
+                  </div>
+                )}
               </div>
-            </div>
 
-            {/* 阳极和阴极区域 */}
-            <div className="electrode-predict-electrode-grid">
-              {/* 阴极区域 */}
-              <div className="electrode-predict-electrode-section">
+              <div className="electrode-predict-form-item">
                 <label className="electrode-predict-label">
-                {t('design.electrode.predict.cathodeActiveMaterial', 'Cathode Active Material')}
-              </label>
-              <Select
-                value={cathodeActiveMaterial}
-                onChange={setCathodeActiveMaterial}
+                  {t('design.electrode.predict.cathodeActiveMaterial', 'Cathode Active Material')}
+                </label>
+                <Select
+                  value={cathodeActiveMaterial}
+                  onChange={setCathodeActiveMaterial}
                   placeholder={t('design.electrode.predict.selectMaterial', 'Select material')}
                   className="electrode-predict-select"
                 >
@@ -558,65 +578,93 @@ const PredictPage: React.FC = () => {
                     </Option>
                   ))}
                 </Select>
+              </div>
 
+              <div className="electrode-predict-form-item">
+                <label className="electrode-predict-label">
+                  {t('design.electrode.predict.anodeActiveMaterialGraphite', 'Anode Active Material Graphite (%)')}
+                </label>
+                <Input
+                  type="number"
+                  value={graphitePercent}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value, 10);
+                    if (!isNaN(val)) setGraphitePercent(val);
+                  }}
+                  placeholder={t('design.electrode.predict.enterGraphitePercent', 'Enter graphite content')}
+                  min={85}
+                  max={100}
+                  step={1}
+                  className="electrode-predict-input"
+                />
+                {graphiteError && (
+                  <div className="electrode-predict-error-message" style={{ marginTop: 4 }}>
+                    {graphiteError}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* 阴极和阳极参数并排 */}
+            <div className="electrode-predict-electrode-grid">
+              {/* 阴极区域 */}
+              <div className="electrode-predict-electrode-section">
                 <h3 className="electrode-predict-subsection-title">
                   {t('design.electrode.predict.cathodeParameters', 'Cathode Parameters')}
                 </h3>
 
                 <div className="electrode-predict-parameters-container">
-                <ParameterInput
-                  label={t('design.electrode.predict.kf9700', 'KF-9700 (wt.%)')}
-                  value={cathodeKF9700}
-                  onChange={setCathodeKF9700}
-                  min={cathodeRanges.cathodeKF9700?.min}
-                  max={cathodeRanges.cathodeKF9700?.max}
-                />
-                <ParameterInput
-                  label={t('design.electrode.predict.cn01y', 'CN-01Y (wt.%)')}
-                  value={cathodeCN01Y}
-                  onChange={setCathodeCN01Y}
-                  min={cathodeRanges.cathodeCN01Y?.min}
-                  max={cathodeRanges.cathodeCN01Y?.max}
-                />
-                <ParameterInput
-                  label={t('design.electrode.predict.superC65', 'Super C65 (wt.%)')}
-                  value={cathodeSuperC65}
-                  onChange={setCathodeSuperC65}
-                  min={cathodeRanges.cathodeSuperC65?.min}
-                  max={cathodeRanges.cathodeSuperC65?.max}
-                />
-                <ParameterInput
-                  label={t('design.electrode.predict.cathodeActiveMaterialLabel', 'Active Material NCM-A (%)')}
-                  value={cathodeNCMA}
-                  onChange={setCathodeNCMA}
-                  min={0}
-                  max={100}
-                  disabled={true}  // 置灰 - 计算字段
-                />
-                <ParameterInput
-                  label={t('design.electrode.predict.arealLoading', 'Areal Loading (mAh/cm²)')}
-                  value={cathodeArealLoading}
-                  onChange={setCathodeArealLoading}
-                  min={cathodeRanges.cathodeArealLoading?.min}
-                  max={cathodeRanges.cathodeArealLoading?.max}
-                />
-                <ParameterInput
-                  label={t('design.electrode.predict.pressDensity', 'Press Density (g/cc)')}
-                  value={cathodePressDensity}
-                  onChange={setCathodePressDensity}
-                  min={cathodeRanges.cathodePressDensity?.min}
-                  max={cathodeRanges.cathodePressDensity?.max}
-                />
+                  <ParameterInput
+                    label={t('design.electrode.predict.kf9700', 'KF-9700 (wt.%)')}
+                    value={cathodeKF9700}
+                    onChange={setCathodeKF9700}
+                    min={cathodeRanges.cathodeKF9700?.min}
+                    max={cathodeRanges.cathodeKF9700?.max}
+                  />
+                  <ParameterInput
+                    label={t('design.electrode.predict.cn01y', 'CN-01Y (wt.%)')}
+                    value={cathodeCN01Y}
+                    onChange={setCathodeCN01Y}
+                    min={cathodeRanges.cathodeCN01Y?.min}
+                    max={cathodeRanges.cathodeCN01Y?.max}
+                  />
+                  <ParameterInput
+                    label={t('design.electrode.predict.superC65', 'Super C65 (wt.%)')}
+                    value={cathodeSuperC65}
+                    onChange={setCathodeSuperC65}
+                    min={cathodeRanges.cathodeSuperC65?.min}
+                    max={cathodeRanges.cathodeSuperC65?.max}
+                  />
+                  <ParameterInput
+                    label={t('design.electrode.predict.cathodeActiveMaterialLabel', 'Active Material NCM-A (%)')}
+                    value={cathodeNCMA}
+                    onChange={setCathodeNCMA}
+                    min={0}
+                    max={100}
+                    disabled={true}
+                  />
+                  <ParameterInput
+                    label={t('design.electrode.predict.arealLoading', 'Areal Loading (mAh/cm²)')}
+                    value={cathodeArealLoading}
+                    onChange={setCathodeArealLoading}
+                    min={cathodeRanges.cathodeArealLoading?.min}
+                    max={cathodeRanges.cathodeArealLoading?.max}
+                  />
+                  <ParameterInput
+                    label={t('design.electrode.predict.pressDensity', 'Press Density (g/cc)')}
+                    value={cathodePressDensity}
+                    onChange={setCathodePressDensity}
+                    min={cathodeRanges.cathodePressDensity?.min}
+                    max={cathodeRanges.cathodePressDensity?.max}
+                  />
                 </div>
                 
-                {/* 阴极错误提示 */}
                 {cathodeError && (
                   <div className="electrode-predict-error-message">
                     {cathodeError}
                   </div>
                 )}
 
-                {/* 电解液参数模块 */}
                 <h3 className="electrode-predict-subsection-title">
                   {t('design.electrode.predict.electrolyteParameters', 'Electrolyte Parameters')}
                 </h3>
@@ -635,123 +683,79 @@ const PredictPage: React.FC = () => {
 
               {/* 阳极区域 */}
               <div className="electrode-predict-electrode-section">
-                <label className="electrode-predict-label">
-                  {t('design.electrode.predict.anodeActiveMaterial', 'Anode Active Material')}
-                  <Tooltip
-                    title={
-                      <div className="electrode-material-tooltip">
-                        <div className="electrode-material-tooltip__title">
-                          {t('design.electrode.materialDescription.title')}
-                        </div>
-                        <div className="electrode-material-tooltip__composition">
-                          <strong>{t('design.electrode.materialDescription.silicon')}</strong> 50.0% (wt%) <strong>{t('design.electrode.materialDescription.carbon')}</strong> 50.0% (wt%)
-                        </div>
-                        <div className="electrode-material-tooltip__content">
-                          {t('design.electrode.materialDescription.description')}
-                        </div>
-                      </div>
-                    }
-                    overlayClassName="common-tooltip-overlay"
-                  >
-                    <div className="tip-icon-container">
-                      <Info
-                        size={16}
-                        className="tip-icon"
-                      />
-                    </div>
-                  </Tooltip>
-                </label>
-                <Select
-                  value={anodeActiveMaterial}
-                  onChange={setAnodeActiveMaterial}
-                  placeholder={t('design.electrode.predict.selectMaterial', 'Select material')}
-                  className="electrode-predict-select"
-                >
-                  {ANODE_ACTIVE_MATERIAL_OPTIONS.map((option) => (
-                    <Option
-                      key={option.value}
-                      value={option.value}
-                      disabled={option.disabled}
-                    >
-                      {option.label}
-                    </Option>
-                  ))}
-                </Select>
-
                 <h3 className="electrode-predict-subsection-title">
                   {t('design.electrode.predict.anodeParameters', 'Anode Parameters')}
                 </h3>
 
                 <div className="electrode-predict-parameters-container">
-                <ParameterInput
-                  label={t('design.electrode.predict.cmc', 'CMC (wt.%)')}
-                  value={anodeCMC}
-                  onChange={setAnodeCMC}
-                  min={anodeRanges.anodeCMC?.min}
-                  max={anodeRanges.anodeCMC?.max}
-                />
-                <ParameterInput
-                  label={t('design.electrode.predict.sbr', 'SBR (wt.%)')}
-                  value={anodeSBR}
-                  onChange={setAnodeSBR}
-                  min={anodeRanges.anodeSBR?.min}
-                  max={anodeRanges.anodeSBR?.max}
-                />
-                <ParameterInput
-                  label={t('design.electrode.predict.paa', 'PAA (wt.%)')}
-                  value={anodePAA}
-                  onChange={setAnodePAA}
-                  min={anodeRanges.anodePAA?.min}
-                  max={anodeRanges.anodePAA?.max}
-                />
-                <ParameterInput
-                  label={t('design.electrode.predict.superP', 'Super P (wt.%)')}
-                  value={anodeSuperP}
-                  onChange={setAnodeSuperP}
-                  min={anodeRanges.anodeSuperP?.min}
-                  max={anodeRanges.anodeSuperP?.max}
-                />
-                <ParameterInput
-                  label={t('design.electrode.predict.swcnt', 'SWCNT (wt.%)')}
-                  value={anodeSWCNT}
-                  onChange={setAnodeSWCNT}
-                  min={anodeRanges.anodeSWCNT?.min}
-                  max={anodeRanges.anodeSWCNT?.max}
-                />
-                <ParameterInput
-                  label={t('design.electrode.predict.activeMaterial1', 'Active Material-1 SC-B-I (%)')}
-                  value={anodeSCBI}
-                  onChange={setAnodeSCBI}
-                  min={0}
-                  max={100}
-                  disabled={true}  // 置灰 - 计算字段
-                />
-                <ParameterInput
-                  label={t('design.electrode.predict.activeMaterial2', 'Active Material-2 Gr-S-I (%)')}
-                  value={anodeGrSI}
-                  onChange={setAnodeGrSI}
-                  min={0}
-                  max={100}
-                  disabled={true}  // 置灰 - 计算字段
-                />
-                <ParameterInput
-                  label={t('design.electrode.predict.anodeArealLoading', 'Areal Loading (mAh/cm²)')}
-                  value={anodeArealLoading}
-                  onChange={setAnodeArealLoading}
-                  min={anodeRanges.anodeArealLoading?.min}
-                  max={anodeRanges.anodeArealLoading?.max}
-                  disabled={true}  // 置灰 - 计算字段
-                />
-                <ParameterInput
-                  label={t('design.electrode.predict.pressDensity', 'Press Density (g/cc)')}
-                  value={anodePressDensity}
-                  onChange={setAnodePressDensity}
-                  min={anodeRanges.anodePressDensity?.min}
-                  max={anodeRanges.anodePressDensity?.max}
-                />
+                  <ParameterInput
+                    label={t('design.electrode.predict.cmc', 'CMC (wt.%)')}
+                    value={anodeCMC}
+                    onChange={setAnodeCMC}
+                    min={anodeRanges.anodeCMC?.min}
+                    max={anodeRanges.anodeCMC?.max}
+                  />
+                  <ParameterInput
+                    label={t('design.electrode.predict.sbr', 'SBR (wt.%)')}
+                    value={anodeSBR}
+                    onChange={setAnodeSBR}
+                    min={anodeRanges.anodeSBR?.min}
+                    max={anodeRanges.anodeSBR?.max}
+                  />
+                  <ParameterInput
+                    label={t('design.electrode.predict.paa', 'PAA (wt.%)')}
+                    value={anodePAA}
+                    onChange={setAnodePAA}
+                    min={anodeRanges.anodePAA?.min}
+                    max={anodeRanges.anodePAA?.max}
+                  />
+                  <ParameterInput
+                    label={t('design.electrode.predict.superP', 'Super P (wt.%)')}
+                    value={anodeSuperP}
+                    onChange={setAnodeSuperP}
+                    min={anodeRanges.anodeSuperP?.min}
+                    max={anodeRanges.anodeSuperP?.max}
+                  />
+                  <ParameterInput
+                    label={t('design.electrode.predict.swcnt', 'SWCNT (wt.%)')}
+                    value={anodeSWCNT}
+                    onChange={setAnodeSWCNT}
+                    min={anodeRanges.anodeSWCNT?.min}
+                    max={anodeRanges.anodeSWCNT?.max}
+                  />
+                  <ParameterInput
+                    label={t('design.electrode.predict.activeMaterial1', 'Active Material-1 SC-B-I (%)')}
+                    value={anodeSCBI}
+                    onChange={setAnodeSCBI}
+                    min={0}
+                    max={100}
+                    disabled={true}
+                  />
+                  <ParameterInput
+                    label={t('design.electrode.predict.activeMaterial2', 'Active Material-2 Gr-S-I (%)')}
+                    value={anodeGrSI}
+                    onChange={setAnodeGrSI}
+                    min={0}
+                    max={100}
+                    disabled={true}
+                  />
+                  <ParameterInput
+                    label={t('design.electrode.predict.anodeArealLoading', 'Areal Loading (mAh/cm²)')}
+                    value={anodeArealLoading}
+                    onChange={setAnodeArealLoading}
+                    min={anodeRanges.anodeArealLoading?.min}
+                    max={anodeRanges.anodeArealLoading?.max}
+                    disabled={true}
+                  />
+                  <ParameterInput
+                    label={t('design.electrode.predict.pressDensity', 'Press Density (g/cc)')}
+                    value={anodePressDensity}
+                    onChange={setAnodePressDensity}
+                    min={anodeRanges.anodePressDensity?.min}
+                    max={anodeRanges.anodePressDensity?.max}
+                  />
                 </div>
                 
-                {/* 阳极错误提示 */}
                 {anodeError && (
                   <div className="electrode-predict-error-message">
                     {anodeError}
@@ -792,19 +796,6 @@ const PredictPage: React.FC = () => {
                     max={dimensionParameterRanges.length.max}
                   />
                 </div>
-                <div className="electrode-predict-dimension-item">
-                  <label className="electrode-predict-label">
-                  {t('design.electrode.predict.layers', 'Layers')}
-                </label>
-                <Input
-                  type="number"
-                  value={layers}
-                  onChange={(e) => setLayers(e.target.value)}
-                    placeholder={t('design.electrode.predict.enterLayers', 'Enter layers')}
-                    min={dimensionParameterRanges.layers.min}
-                    max={dimensionParameterRanges.layers.max}
-                  />
-                </div>
               </div>
               
               {/* 尺寸错误提示 */}
@@ -822,7 +813,7 @@ const PredictPage: React.FC = () => {
                 size="large"
                 onClick={handleCalculate}
                 loading={loading}
-                disabled={loading || !!cathodeError || !!anodeError || !!dimensionError || (results !== null && !isFormModified)}
+                disabled={loading || (results !== null && !isFormModified)}
                 className="electrode-predict-calculate-btn"
               >
                 {t('design.electrode.predict.calculate', 'Calculate')}
@@ -865,7 +856,7 @@ const PredictPage: React.FC = () => {
               </div>
 
               {/* Rate Capability 图表 */}
-              <RateCapabilityChart />
+              <RateCapabilityChart results={results} />
             </div>
           </div>
         )}

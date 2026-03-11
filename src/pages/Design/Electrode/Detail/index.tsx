@@ -137,9 +137,9 @@ const DetailPage: React.FC = () => {
 
   // type=1: 此时 detailData 是 ElectrodeHistoryItem 类型
   const predictData = detailData as ElectrodeHistoryItem;
-  const { cell_design, np_ratio } = predictData;
-  // 优先使用 API 返回的 np_ratio，如果没有则根据 cell_design 计算（向后兼容）
-  const npRatio = np_ratio || getNpRatio(cell_design);
+  const { cell_design, model_params } = predictData;
+  // 优先使用 model_params 中的 npRatio，如果没有则根据 cell_design 计算（向后兼容）
+  const npRatio = model_params.npRatio !== undefined ? String(model_params.npRatio) : getNpRatio(cell_design);
 
   return (
     <PredictDetail

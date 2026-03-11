@@ -421,7 +421,9 @@ export default {
             volumetricEDTooltip: "ジェリーロール体積に基づいて計算されたエネルギー密度。",
             calculateError: "予測計算に失敗しました",
             npRatio: "NP比",
-            enterNpRatio: "NP比を入力",
+            enterNpRatio: "NP比を入力 (1.05 - 1.2)",
+            anodeActiveMaterialGraphite: "負極活物質グラファイト (%)",
+            enterGraphitePercent: "グラファイト含有量を入力 (85 - 100)",
             activeMaterial1: "Active Material SiC (wt.%)",
             activeMaterial2: "Active Material Graphite (wt.%)",
             anodeArealLoading: "Areal Loading (mAh/cm²)",
@@ -435,6 +437,11 @@ export default {
             superP: "Carbon Black (wt.%)",
             swcnt: "CNT (wt.%)",
             rateCapability: "レート性能 (1C-5C)",
+            cRate: "レート",
+            capacityRetention: "容量維持率",
+            capacityRetentionAxis: "容量維持率 (%)",
+            temperature: "温度",
+            temperatureAxis: "温度 (°C)",
             electrolyteParameters: "電解液パラメータ",
             electrolyteContent: "電解液含有量 (g/Ah)"
         },
@@ -518,7 +525,10 @@ export default {
             anodeConductiveSum: "Carbon Black + CNT の合計は 0.005 より大きくなければなりません",
             fillAllDimensions: "すべての寸法パラメータを入力してください",
             ratioSmallWidth: "幅が100を超えない場合、アスペクト比は0.2から1の範囲内である必要があります。",
-            ratioLargeWidth: "幅が100から1000の間の場合、アスペクト比は0.1から0.5の間に維持する必要があります。"
+            ratioLargeWidth: "幅が100から1000の間の場合、アスペクト比は0.1から0.5の間に維持する必要があります。",
+            npRatioRequired: "NP比は必須です",
+            npRatioRange: "NP比は1.05から1.2の間でなければなりません",
+            graphitePercentRange: "グラファイト含有量は85から100の整数でなければなりません"
         }
     }
 };

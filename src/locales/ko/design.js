@@ -421,7 +421,9 @@ export default {
             volumetricEDTooltip: "젤리롤 부피를 기준으로 계산된 에너지 밀도입니다.",
             calculateError: "예측 계산 실패",
             npRatio: "NP 비율",
-            enterNpRatio: "NP 비율 입력",
+            enterNpRatio: "NP 비율 입력 (1.05 - 1.2)",
+            anodeActiveMaterialGraphite: "음극 활물질 흑연 함량 (%)",
+            enterGraphitePercent: "흑연 함량 입력 (85 - 100)",
             activeMaterial1: "Active Material SiC (wt.%)",
             activeMaterial2: "Active Material Graphite (wt.%)",
             anodeArealLoading: "Areal Loading (mAh/cm²)",
@@ -435,6 +437,11 @@ export default {
             superP: "Carbon Black (wt.%)",
             swcnt: "CNT (wt.%)",
             rateCapability: "속도 성능 (1C-5C)",
+            cRate: "배율",
+            capacityRetention: "용량 유지율",
+            capacityRetentionAxis: "용량 유지율 (%)",
+            temperature: "온도",
+            temperatureAxis: "온도 (°C)",
             electrolyteParameters: "전해액 매개변수",
             electrolyteContent: "전해액 함량 (g/Ah)"
         },
@@ -518,7 +525,10 @@ export default {
             anodeConductiveSum: "Carbon Black + CNT의 합계는 0.005보다 커야 합니다",
             fillAllDimensions: "모든 치수 매개변수를 입력하세요",
             ratioSmallWidth: "폭이 100을 초과하지 않는 경우, 종횡비는 0.2에서 1 범위 내에 있어야 합니다.",
-            ratioLargeWidth: "폭이 100에서 1000 사이인 경우, 종횡비는 0.1에서 0.5 사이를 유지해야 합니다."
+            ratioLargeWidth: "폭이 100에서 1000 사이인 경우, 종횡비는 0.1에서 0.5 사이를 유지해야 합니다.",
+            npRatioRequired: "NP 비율은 필수입니다",
+            npRatioRange: "NP 비율은 1.05에서 1.2 사이여야 합니다",
+            graphitePercentRange: "흑연 함량은 85에서 100 사이의 정수여야 합니다"
         }
     }
 };

@@ -56,6 +56,17 @@ function formatModelResult(result: ElectrodeModelResult): ElectrodeModelResult {
     specificED: Number(result.specificED?.toFixed(2)),
     jellyRollThickness: Number(result.jellyRollThickness?.toFixed(2)),
     volumetricED: Number(result.volumetricED?.toFixed(2)),
+    // Rate Capability 字段（可选，保留2位小数）
+    cap1C: result.cap1C !== undefined ? Number(result.cap1C.toFixed(2)) : undefined,
+    cap2C: result.cap2C !== undefined ? Number(result.cap2C.toFixed(2)) : undefined,
+    cap3C: result.cap3C !== undefined ? Number(result.cap3C.toFixed(2)) : undefined,
+    cap4C: result.cap4C !== undefined ? Number(result.cap4C.toFixed(2)) : undefined,
+    cap5C: result.cap5C !== undefined ? Number(result.cap5C.toFixed(2)) : undefined,
+    t1C: result.t1C !== undefined ? Number(result.t1C.toFixed(2)) : undefined,
+    t2C: result.t2C !== undefined ? Number(result.t2C.toFixed(2)) : undefined,
+    t3C: result.t3C !== undefined ? Number(result.t3C.toFixed(2)) : undefined,
+    t4C: result.t4C !== undefined ? Number(result.t4C.toFixed(2)) : undefined,
+    t5C: result.t5C !== undefined ? Number(result.t5C.toFixed(2)) : undefined,
   };
 }
 
@@ -278,18 +289,16 @@ export async function predictElectrodePerformance(
 export function buildPredictParams(
   formData: {
     cellDesign: string;
-    npRatio: string;
     cathodeActiveMaterial: string;
-    anodeActiveMaterial: string;
+    anodeActiveMaterial?: string;
     modelParams: ElectrodeModelParams;
   },
   pageType: ElectrodePageType,
 ): ElectrodeModelPredictParams {
   return {
     cell_design: formData.cellDesign,
-    np_ratio: formData.npRatio,
     cathode_active_material: formData.cathodeActiveMaterial,
-    anode_active_material: formData.anodeActiveMaterial,
+    ...(formData.anodeActiveMaterial !== undefined && { anode_active_material: formData.anodeActiveMaterial }),
     model_params: formData.modelParams,
     type: pageType,
   };
