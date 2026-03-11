@@ -35,11 +35,21 @@ const fitToData = (data, containerDimensions, prevViewState = null, zoomOffset =
         };
     }
 
-    // Calculate bounds
-    const xValues = data.map(d => d.x * X_STRETCH).filter(x => x !== null && x !== undefined);
-    const yValues = data.map(d => d.y).filter(y => y !== null && y !== undefined);
+    // Calculate bounds in a single pass
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    let validCount = 0;
+    for (let i = 0; i < data.length; i++) {
+        const d = data[i];
+        if (d.x === null || d.x === undefined || d.y === null || d.y === undefined) continue;
+        const sx = d.x * X_STRETCH;
+        if (sx < minX) minX = sx;
+        if (sx > maxX) maxX = sx;
+        if (d.y < minY) minY = d.y;
+        if (d.y > maxY) maxY = d.y;
+        validCount++;
+    }
 
-    if (xValues.length === 0 || yValues.length === 0) {
+    if (validCount === 0) {
         return {
             longitude: 0,
             latitude: 0,
@@ -47,25 +57,6 @@ const fitToData = (data, containerDimensions, prevViewState = null, zoomOffset =
             pitch: 0,
             bearing: 0
         };
-    }
-
-    let minX = xValues[0];
-    let maxX = xValues[0];
-    let minY = yValues[0];
-    let maxY = yValues[0];
-    for (let i = 0; i < xValues.length; i++) {
-        if (xValues[i] < minX) {
-            minX = xValues[i];
-        }
-        if (xValues[i] > maxX) {
-            maxX = xValues[i];
-        }
-        if (yValues[i] < minY) {
-            minY = yValues[i];
-        }
-        if (yValues[i] > maxY) {
-            maxY = yValues[i];
-        }
     }
 
     // Calculate center
@@ -232,30 +223,22 @@ const calculateClampBounds = (data, padding = 10) => {
     if (!data || data.length === 0) {
         return defaultBounds
     }
-    const xValues = data.map(d => d.x * X_STRETCH).filter(x => x !== null && x !== undefined);
-    const yValues = data.map(d => d.y).filter(y => y !== null && y !== undefined);
-
-    if (xValues.length === 0 || yValues.length === 0) {
-        return defaultBounds
+    // Single-pass bounds calculation
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    let validCount = 0;
+    for (let i = 0; i < data.length; i++) {
+        const d = data[i];
+        if (d.x === null || d.x === undefined || d.y === null || d.y === undefined) continue;
+        const sx = d.x * X_STRETCH;
+        if (sx < minX) minX = sx;
+        if (sx > maxX) maxX = sx;
+        if (d.y < minY) minY = d.y;
+        if (d.y > maxY) maxY = d.y;
+        validCount++;
     }
 
-    let minX = xValues[0];
-    let maxX = xValues[0];
-    let minY = yValues[0];
-    let maxY = yValues[0];
-    for (let i = 0; i < xValues.length; i++) {
-        if (xValues[i] < minX) {
-            minX = xValues[i];
-        }
-        if (xValues[i] > maxX) {
-            maxX = xValues[i];
-        }
-        if (yValues[i] < minY) {
-            minY = yValues[i];
-        }
-        if (yValues[i] > maxY) {
-            maxY = yValues[i];
-        }
+    if (validCount === 0) {
+        return defaultBounds
     }
 
     return {

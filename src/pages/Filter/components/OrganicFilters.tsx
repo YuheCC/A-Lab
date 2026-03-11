@@ -1,29 +1,11 @@
 import Slider from "@/components/Slider";
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useState, useMemo, useRef, useDeferredValue } from "react";
 import { usePlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
 import { Autocomplete, TextField } from "@mui/material";
 import { useTranslation } from 'react-i18next';
 import NodePopup from "@/components/NodePopup";
-
-const parseFunctionalGroups = (value: unknown): string[] => {
-    if (Array.isArray(value)) {
-        return value.map(String).filter(Boolean);
-    }
-    if (typeof value === "string") {
-        try {
-            const parsed = JSON.parse(value);
-            if (Array.isArray(parsed)) {
-                return parsed.map(String).filter(Boolean);
-            }
-        } catch {
-            // fall through
-        }
-        return value.split(",").map(item => item.trim()).filter(Boolean);
-    }
-    return [];
-};
 
 // 定义类型
 interface Node {
@@ -169,7 +151,7 @@ const OrganicFilters = () => {
     const nodePopupRef = useRef<NodePopupRef>(null);
 
     const { userPermissions, isAuthenticated } = useAuthStore();
-    const { data, loading, error, fetchData, fetchInitialData } = usePlotDataStore();
+    const { data, loading, error, propertyRanges, fetchData, fetchInitialData } = usePlotDataStore();
 
     // 组件挂载时获取数据
     useEffect(() => {
@@ -179,21 +161,8 @@ const OrganicFilters = () => {
         }
     }, [data.length, fetchData, fetchInitialData]);
 
-    const [filteredGraphData, setFilteredGraphData] = useState<Node[]>(data);
     const [tempFilterRanges, setTempFilterRanges] = useState<{ [key: string]: [number, number] }>({});
-
-    const [filteredFunctionalGroupOptions, setFilteredFunctionalGroupOptions] = useState<FunctionalGroupOption[]>([]);
-
-    // New filter implementation with range values
-    const [filterRanges, setFilterRanges] = useState<FilterRanges>({
-        molwt: { min: 0, max: 1000, range: [0, 1000], active: false },
-        homo_eV: { min: -10, max: 0, range: [-10, 0], active: false },
-        lumo_eV: { min: -5, max: 5, range: [-5, 5], active: false },
-        esp_max_eV: { min: -2, max: 2, range: [-2, 2], active: false },
-        esp_min_eV: { min: -2, max: 0, range: [-2, 0], active: false },
-        predicted_mp: { min: 0, max: 300, range: [0, 300], active: false },
-        predicted_bp: { min: 0, max: 300, range: [0, 300], active: false }
-    });
+    const [filterRanges, setFilterRanges] = useState<FilterRanges>({});
 
     // Count how many filters are active
     const activeFilterCount = Object.values(filterRanges as Record<string, FilterRange>).filter(range => range.active).length;
@@ -206,86 +175,69 @@ const OrganicFilters = () => {
     const getFilterLabel = (property: string): string => {
         return t(`explorer.filterLabels.${property}`, filterLabels[property]);
     };
-    
-    // Clean up any stale filter entries when component mounts
-    useEffect(() => {
-        setFilterRanges(prev => {
-            const cleanedRanges: FilterRanges = {};
-            // Only keep entries that are in filterLabels
-            for (const [key, range] of Object.entries(prev)) {
-                if (filterLabels[key as keyof typeof filterLabels]) {
-                    cleanedRanges[key] = range;
-                }
-            }
-            return cleanedRanges;
-        });
-    }, []); // Run only on mount
 
+    // Initialize filterRanges from store precomputed propertyRanges
     useEffect(() => {
-        setFilterRanges(oldFilterRanges => {
-            const updatedRanges: FilterRanges = {};
-            // Only include properties that are in filterLabels
-            for (const key in filterLabels) {
-                if(key === 'chemical_formula' || key === 'functional_groups') continue;
-                const values = data
-                    .map(node => (node.properties as any)[key])
-                    .filter(v => v !== undefined && v !== null);
-                if (values.length > 0) {
-                    // Use reduce to avoid stack overflow with large arrays
-                    const min = values.reduce((a, b) => Math.min(a, b));
-                    const max = values.reduce((a, b) => Math.max(a, b));
-                    updatedRanges[key] = {
-                        min: min,
-                        max: max,
-                        range: [min, max], // Initialize range to full data range (filter effectively off)
-                        active: false
-                    };
-                }
+        if (!propertyRanges || Object.keys(propertyRanges).length === 0) return;
+        const updatedRanges: FilterRanges = {};
+        for (const key in filterLabels) {
+            if (key === 'chemical_formula' || key === 'functional_groups') continue;
+            if (propertyRanges[key]) {
+                updatedRanges[key] = {
+                    min: propertyRanges[key].min,
+                    max: propertyRanges[key].max,
+                    range: [propertyRanges[key].min, propertyRanges[key].max],
+                    active: false
+                };
             }
-            return updatedRanges;
-        });
-    }, [data]);
+        }
+        setFilterRanges(updatedRanges);
+    }, [propertyRanges]);
 
-    useEffect(() => {
+    const deferredFilterRanges = useDeferredValue(filterRanges);
+    const deferredSelectedFunctionalGroup = useDeferredValue(selectedFunctionalGroup);
+
+    // Single-pass: filter data + compute functional group options
+    const { filteredGraphData, filteredFunctionalGroupOptions } = useMemo(() => {
+        if (data.length === 0) return { filteredGraphData: [], filteredFunctionalGroupOptions: [] };
+
+        const filtered: Node[] = [];
         const counts = new Map<string, number>();
-        filteredGraphData.forEach(node => {
-            const groups = parseFunctionalGroups(node.properties?.functional_groups);
-            groups.forEach(group => {
-                counts.set(group, (counts.get(group) ?? 0) + 1);
-            });
-        });
-        const dynamicOptions: FunctionalGroupOption[] = Array.from(counts.entries()).map(([label, count]) => ({
-            label,
-            value: label,
-            count
-        }));
-        setFilteredFunctionalGroupOptions(dynamicOptions);
-    }, [filteredGraphData])
 
-    // Apply filters based on range slider values and functional group
-    useEffect(() => {
-        if (data.length === 0) return;
-        const filtered = data.filter(node => {
-            // Check range filters
-            for (const [property, range] of Object.entries(filterRanges)) {
+        for (let i = 0; i < data.length; i++) {
+            const node = data[i];
+            let pass = true;
+
+            for (const [property, range] of Object.entries(deferredFilterRanges)) {
                 if (!range.active) continue;
-                const nodeValue = (node.properties as any)[property];
-                if (nodeValue !== undefined && nodeValue !== null &&
-                    (nodeValue < range.range[0] || nodeValue > range.range[1])) {
-                    return false;
+                const v = (node.properties as any)[property];
+                if (v !== undefined && v !== null && (v < range.range[0] || v > range.range[1])) {
+                    pass = false;
+                    break;
                 }
             }
 
-            // Check functional group filter
-            if (selectedFunctionalGroup) {
-                const groups = parseFunctionalGroups(node.properties?.functional_groups);
-                if (!groups.includes(selectedFunctionalGroup)) return false;
+            if (pass && deferredSelectedFunctionalGroup) {
+                if (!node.properties._parsedFunctionalGroups.includes(deferredSelectedFunctionalGroup)) {
+                    pass = false;
+                }
             }
 
-            return true;
-        });
-        setFilteredGraphData(filtered);
-    }, [data, filterRanges, selectedFunctionalGroup]);
+            if (pass) {
+                filtered.push(node);
+                node.properties._parsedFunctionalGroups.forEach(g =>
+                    counts.set(g, (counts.get(g) ?? 0) + 1)
+                );
+            }
+        }
+
+        return {
+            filteredGraphData: filtered,
+            filteredFunctionalGroupOptions: Array.from(counts.entries()).map(([label, count]) => ({
+                label, value: label, count
+            }))
+        };
+    }, [data, deferredFilterRanges, deferredSelectedFunctionalGroup]);
 
     // Handle filter slider change
     const handleFilterChange = (property: string, newValue: [number, number], isCommitted: boolean) => {
@@ -331,20 +283,11 @@ const OrganicFilters = () => {
     const resetAllFilters = () => {
         setFilterRanges(prev => {
             const newRanges: FilterRanges = {};
-            // Only reset filters that are in filterLabels
             for (const [key, range] of Object.entries(prev)) {
-                if (filterLabels[key as keyof typeof filterLabels]) {
-                    newRanges[key] = {
-                        ...range,
-                        range: [range.min, range.max],
-                        active: false
-                    };
-                }
+                newRanges[key] = { ...range, range: [range.min, range.max], active: false };
             }
             return newRanges;
         });
-
-        // Clear all temporary filter values
         setTempFilterRanges({});
     };
 
