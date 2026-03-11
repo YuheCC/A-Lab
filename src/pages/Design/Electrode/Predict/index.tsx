@@ -64,6 +64,7 @@ const PredictPage: React.FC = () => {
   // 尺寸参数
   const [width, setWidth] = useState('');
   const [length, setLength] = useState('');
+  const [layers, setLayers] = useState('');
 
   // Loading 状态
   const [loading, setLoading] = useState(false);
@@ -104,6 +105,7 @@ const PredictPage: React.FC = () => {
   // Dimension 字段防抖
   const debouncedWidth = useDebounce(width, 300);
   const debouncedLength = useDebounce(length, 300);
+  const debouncedLayers = useDebounce(layers, 300);
 
   const debouncedNpRatio = useDebounce(npRatio, 300);
   const debouncedGraphitePercent = useDebounce(graphitePercent, 300);
@@ -213,20 +215,18 @@ const PredictPage: React.FC = () => {
 
   // 实时验证 Dimension 参数
   useEffect(() => {
-    // 构建 dimension 参数对象
     const dimensionParams = {
       width: debouncedWidth,
       length: debouncedLength,
+      layers: debouncedLayers,
     };
 
-    // 执行验证（实时验证跳过空值检查，只检查范围和业务规则）
     const error = validateDimensionParameters(dimensionParams, t, { skipEmptyCheck: true });
-
-    // 更新错误状态
     setDimensionError(error || '');
   }, [
     debouncedWidth,
     debouncedLength,
+    debouncedLayers,
     t,
   ]);
 
@@ -261,6 +261,7 @@ const PredictPage: React.FC = () => {
       cathodePressDensity,
       width,
       length,
+      layers,
     };
 
     // 比较当前表单数据与上次计算的数据
@@ -290,6 +291,7 @@ const PredictPage: React.FC = () => {
     cathodePressDensity,
     width,
     length,
+    layers,
     lastCalculatedFormData,
   ]);
 
@@ -328,6 +330,7 @@ const PredictPage: React.FC = () => {
       anodePressDensity,
       width,
       length,
+      layers,
     }, t);
 
     if (!validationResult.isValid) {
@@ -366,7 +369,7 @@ const PredictPage: React.FC = () => {
       cathodeNCMA,
       width: parseFloat(width),
       length: parseFloat(length),
-      layers: 0,
+      layers: parseInt(layers, 10) || 0,
       npRatio: parseFloat(npRatio),
       siRatio: graphitePercent,// 算法侧使用的是siratio命名，但是用的是石墨含量，暂时先hook，后期更改
     };
@@ -404,6 +407,7 @@ const PredictPage: React.FC = () => {
         cathodePressDensity,
         width,
         length,
+        layers,
       });
       setIsFormModified(false); // 计算完成后，表单未修改
     } catch (error) {
@@ -473,6 +477,7 @@ const PredictPage: React.FC = () => {
     // 重置尺寸参数
     setWidth('');
     setLength('');
+    setLayers('');
     
     // 重置结果和错误状态
     setResults(null);
@@ -794,6 +799,19 @@ const PredictPage: React.FC = () => {
                     placeholder={t('design.electrode.predict.enterLength', 'Enter length')}
                     min={dimensionParameterRanges.length.min}
                     max={dimensionParameterRanges.length.max}
+                  />
+                </div>
+                <div className="electrode-predict-dimension-item">
+                  <label className="electrode-predict-label">
+                    {t('design.electrode.predict.layers', 'Layers')}
+                  </label>
+                  <Input
+                    type="number"
+                    value={layers}
+                    onChange={(e) => setLayers(e.target.value)}
+                    placeholder={t('design.electrode.predict.enterLayers', 'Enter layers')}
+                    min={dimensionParameterRanges.layers.min}
+                    max={dimensionParameterRanges.layers.max}
                   />
                 </div>
               </div>
