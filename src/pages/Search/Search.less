@@ -22,15 +22,13 @@
     z-index: 10000 !important;
 }
 
-/* 确保过滤器包装器允许浮层显示 */
+/* 确保过滤器包装器定位正确 */
 .filter-wrapper {
-    overflow: visible !important;
     position: relative;
 }
 
-/* 确保滑块容器不截断浮层 */
+/* 确保滑块容器定位正确 */
 .sliders-container .filter-wrapper {
-    overflow: visible !important;
     z-index: 1;
 }
 
@@ -212,25 +210,9 @@
     flex-direction: column;
 }
 
-/* 当在filter模式时，确保浮层不被截断 */
-.search-interface-section:has(.sliders-container) {
-    overflow: visible !important;
-}
-
-/* 为了兼容不支持:has的浏览器，添加特定类 */
+/* filter模式时，外层面板不产生独立滚动，由内部 sliders-container 负责滚动 */
 .search-interface-section.filter-mode {
-    overflow: visible !important;
-}
-
-/* 确保filter模式下的sliders容器不截断浮层 */
-.search-interface-section.filter-mode .sliders-container {
-    overflow: visible !important;
-}
-
-/* 确保filter模式下的filter包装器不截断浮层 */
-.search-interface-section.filter-mode .filter-wrapper {
-    overflow: visible !important;
-    position: relative;
+    overflow: hidden;
 }
 
 /* 确保MUI Autocomplete的popper在filter模式下正确显示 */

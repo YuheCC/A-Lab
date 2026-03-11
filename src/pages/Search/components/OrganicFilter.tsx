@@ -1,5 +1,5 @@
 import Slider from "@/components/Slider";
-import { useEffect, useState, useMemo, useRef, forwardRef, useImperativeHandle } from "react";
+import { useEffect, useState, useMemo, useRef, forwardRef, useImperativeHandle, useDeferredValue } from "react";
 import { usePlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
 import { Autocomplete, TextField } from "@mui/material";
@@ -66,22 +66,10 @@ export const functionGroupOptions: FunctionalGroupOption[] = [
 const OrganicFilter = forwardRef<OrganicFilterRef, OrganicFilterProps>(({ onDataFiltered }, ref) => {
     const { t } = useTranslation();
     const { userPermissions, isAuthenticated } = useAuthStore();
-    const { data } = usePlotDataStore();
+    const { data, propertyRanges } = usePlotDataStore();
 
-    const [filteredGraphData, setFilteredGraphData] = useState<any[]>(data);
     const [tempFilterRanges, setTempFilterRanges] = useState<{ [key: string]: [number, number] }>({});
-    const [filteredFunctionalGroupOptions, setFilteredFunctionalGroupOptions] = useState<FunctionalGroupOption[]>(functionGroupOptions);
-
-    // Filter state
-    const [filterRanges, setFilterRanges] = useState<FilterRanges>({
-        molwt: { min: 0, max: 1000, range: [0, 1000], active: false },
-        homo_eV: { min: -10, max: 0, range: [-10, 0], active: false },
-        lumo_eV: { min: -5, max: 5, range: [-5, 5], active: false },
-        esp_max_eV: { min: -2, max: 2, range: [-2, 2], active: false },
-        esp_min_eV: { min: -2, max: 0, range: [-2, 0], active: false },
-        predicted_mp: { min: 0, max: 300, range: [0, 300], active: false },
-        predicted_bp: { min: 0, max: 300, range: [0, 300], active: false }
-    });
+    const [filterRanges, setFilterRanges] = useState<FilterRanges>({});
 
     const [selectedFunctionalGroup, setSelectedFunctionalGroup] = useState<string>('');
     const [functionGroupValue, setFunctionalGroupValue] = useState<FunctionalGroupOption | null>(null);
@@ -99,13 +87,7 @@ const OrganicFilter = forwardRef<OrganicFilterRef, OrganicFilterProps>(({ onData
         setFilterRanges(prev => {
             const newRanges: FilterRanges = {};
             for (const [key, range] of Object.entries(prev)) {
-                if (filterLabels[key as keyof typeof filterLabels]) {
-                    newRanges[key] = {
-                        ...range,
-                        range: [range.min, range.max],
-                        active: false
-                    };
-                }
+                newRanges[key] = { ...range, range: [range.min, range.max], active: false };
             }
             return newRanges;
         });
@@ -120,75 +102,73 @@ const OrganicFilter = forwardRef<OrganicFilterRef, OrganicFilterProps>(({ onData
         getFilteredData: () => filteredGraphData
     }));
 
-    // Initialize filter ranges based on data
+    // Initialize filterRanges from store precomputed propertyRanges
     useEffect(() => {
-        if (data.length === 0) return;
-
-        setFilterRanges(oldFilterRanges => {
-            const updatedRanges: FilterRanges = {};
-            for (const key in filterLabels) {
-                if (key === 'chemical_formula' || key === 'functional_groups') continue;
-                const values = data
-                    .map(node => (node.properties as any)[key])
-                    .filter(v => v !== undefined && v !== null);
-                if (values.length > 0) {
-                    const min = values.reduce((a, b) => Math.min(a, b));
-                    const max = values.reduce((a, b) => Math.max(a, b));
-                    updatedRanges[key] = {
-                        min: min,
-                        max: max,
-                        range: [min, max],
-                        active: false
-                    };
-                }
+        if (!propertyRanges || Object.keys(propertyRanges).length === 0) return;
+        const updatedRanges: FilterRanges = {};
+        for (const key in filterLabels) {
+            if (key === 'chemical_formula' || key === 'functional_groups') continue;
+            if (propertyRanges[key]) {
+                updatedRanges[key] = {
+                    min: propertyRanges[key].min,
+                    max: propertyRanges[key].max,
+                    range: [propertyRanges[key].min, propertyRanges[key].max],
+                    active: false
+                };
             }
-            return updatedRanges;
-        });
-    }, [data]);
+        }
+        setFilterRanges(updatedRanges);
+    }, [propertyRanges]);
 
-    // Update functional group options
-    useEffect(() => {
-        const newFunctionalGroupOptions = functionGroupOptions.map(option => {
-            const matches = filteredGraphData.filter(node =>
-                node.properties?.functional_groups?.includes(option.label)
-            ).length;
-            return {
-                ...option,
-                count: matches
-            };
-        }).filter(option => option.count > 0);
-        setFilteredFunctionalGroupOptions(newFunctionalGroupOptions);
-    }, [filteredGraphData]);
+    const deferredFilterRanges = useDeferredValue(filterRanges);
+    const deferredSelectedFunctionalGroup = useDeferredValue(selectedFunctionalGroup);
 
-    // Apply filters
-    useEffect(() => {
-        if (data.length === 0) return;
+    // Single-pass: filter data + compute functional group options
+    const { filteredGraphData, filteredFunctionalGroupOptions } = useMemo(() => {
+        if (data.length === 0) return { filteredGraphData: [], filteredFunctionalGroupOptions: [] };
 
-        const filtered = data.filter(node => {
-            // Check range filters
-            for (const [property, range] of Object.entries(filterRanges)) {
+        const filtered: any[] = [];
+        const counts = new Map<string, number>();
+
+        for (let i = 0; i < data.length; i++) {
+            const node = data[i];
+            let pass = true;
+
+            for (const [property, range] of Object.entries(deferredFilterRanges)) {
                 if (!range.active) continue;
-                const nodeValue = (node.properties as any)[property];
-                if (nodeValue !== undefined && nodeValue !== null &&
-                    (nodeValue < range.range[0] || nodeValue > range.range[1])) {
-                    return false;
+                const v = (node.properties as any)[property];
+                if (v !== undefined && v !== null && (v < range.range[0] || v > range.range[1])) {
+                    pass = false;
+                    break;
                 }
             }
 
-            // Check functional group filter
-            if (selectedFunctionalGroup) {
-                if (!node.properties?.functional_groups ||
-                    !node.properties.functional_groups.includes(selectedFunctionalGroup)) {
-                    return false;
+            if (pass && deferredSelectedFunctionalGroup) {
+                if (!node.properties._parsedFunctionalGroups.includes(deferredSelectedFunctionalGroup)) {
+                    pass = false;
                 }
             }
 
-            return true;
-        });
+            if (pass) {
+                filtered.push(node);
+                node.properties._parsedFunctionalGroups.forEach((g: string) =>
+                    counts.set(g, (counts.get(g) ?? 0) + 1)
+                );
+            }
+        }
 
-        setFilteredGraphData(filtered);
-        onDataFiltered(filtered);
-    }, [data, filterRanges, selectedFunctionalGroup, onDataFiltered]);
+        return {
+            filteredGraphData: filtered,
+            filteredFunctionalGroupOptions: Array.from(counts.entries()).map(([label, count]) => ({
+                label, value: label, count
+            }))
+        };
+    }, [data, deferredFilterRanges, deferredSelectedFunctionalGroup]);
+
+    // Notify parent when filtered data changes
+    useEffect(() => {
+        onDataFiltered(filteredGraphData);
+    }, [filteredGraphData, onDataFiltered]);
 
     // Handle filter change
     const handleFilterChange = (property: string, newValue: [number, number], isCommitted: boolean) => {
@@ -228,7 +208,7 @@ const OrganicFilter = forwardRef<OrganicFilterRef, OrganicFilterProps>(({ onData
     };
 
     return (
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
             <h2>
                 {t('explorer.filtersTitle')}
                 {activeFilterCount > 0 && (
@@ -241,7 +221,7 @@ const OrganicFilter = forwardRef<OrganicFilterRef, OrganicFilterProps>(({ onData
                     </button>
                 )}
             </h2>
-            <div className="sliders-container" style={{ flex: 1, overflowY: 'auto', overflowX: 'visible' }}>
+            <div className="sliders-container" style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', minHeight: 0 }}>
                 {Object.entries(filterRanges as Record<string, FilterRange>).map(([property, range]) => {
                     // Hide predicted properties sliders for users without proper permissions
                     if ((property === 'predicted_mp' || property === 'predicted_bp' || property === 'predicted_fp') &&

@@ -4,6 +4,24 @@ import { buildAutoFetchURL } from "@/services/config/autoFetch";
 
 const MAX_NODES = 210000;
 
+export const parseFunctionalGroups = (value: unknown): string[] => {
+    if (Array.isArray(value)) {
+        return value.map(String).filter(Boolean);
+    }
+    if (typeof value === "string") {
+        try {
+            const parsed = JSON.parse(value);
+            if (Array.isArray(parsed)) {
+                return parsed.map(String).filter(Boolean);
+            }
+        } catch {
+            // fall through
+        }
+        return value.split(",").map(item => item.trim()).filter(Boolean);
+    }
+    return [];
+};
+
 let initialData = false;
 let isFetching = false; // 添加标志防止重复获取
 let fetchDataCompleted = false; // 添加标志跟踪fetchData是否已完成
@@ -25,6 +43,7 @@ interface BasePlotDataProperties {
     commercial_link?: string;
     fluoride_bde_ev?: number;
     CLUSTER: string | null;
+    _parsedFunctionalGroups: string[];
 }
 
 interface InorganicPlotDataProperties extends BasePlotDataProperties {}
@@ -32,6 +51,8 @@ interface InorganicPlotDataProperties extends BasePlotDataProperties {}
 interface AnionsPlotDataProperties extends BasePlotDataProperties {
     vdw_volume_angstroms3?: number;
 }
+
+export type PropertyRanges = Record<string, { min: number; max: number }>;
 
 interface PlotDataNode<P extends BasePlotDataProperties = BasePlotDataProperties> {
     id: string;
@@ -53,6 +74,7 @@ interface PlotDataStore {
     loading: boolean;
     error: string | null;
     data: OrganicPlotDataNode[];
+    propertyRanges: PropertyRanges;
     fetchData: () => Promise<OrganicPlotDataNode[] | undefined>;
     fetchInitialData: () => Promise<OrganicPlotDataNode[] | undefined>;
 }
@@ -61,6 +83,7 @@ interface InorganicPlotDataStore {
     loading: boolean;
     error: string | null;
     data: InorganicPlotDataNode[];
+    propertyRanges: PropertyRanges;
     fetchData: () => Promise<InorganicPlotDataNode[] | undefined>;
 }
 
@@ -68,9 +91,39 @@ interface AnionsPlotDataStore {
     loading: boolean;
     error: string | null;
     data: AnionsPlotDataNode[];
+    propertyRanges: PropertyRanges;
     fetchData: () => Promise<AnionsPlotDataNode[] | undefined>;
     fetchInitialData: () => Promise<AnionsPlotDataNode[] | undefined>;
 }
+
+const ORGANIC_NUMERIC_KEYS = ['molwt', 'homo_eV', 'lumo_eV', 'esp_max_eV', 'esp_min_eV',
+    'predicted_mp', 'predicted_bp', 'predicted_fp', 'combustion_enthalpy', 'commercial_score'];
+
+const ANIONS_NUMERIC_KEYS = [...ORGANIC_NUMERIC_KEYS, 'vdw_volume_angstroms3', 'fluoride_bde_ev'];
+
+const computePropertyRanges = (nodes: PlotDataNode<any>[], keys: string[]): PropertyRanges => {
+    const mins: Record<string, number> = {};
+    const maxs: Record<string, number> = {};
+
+    for (let i = 0; i < nodes.length; i++) {
+        const props = nodes[i].properties as any;
+        for (const key of keys) {
+            const v = props[key];
+            if (v !== undefined && v !== null) {
+                if (mins[key] === undefined || v < mins[key]) mins[key] = v;
+                if (maxs[key] === undefined || v > maxs[key]) maxs[key] = v;
+            }
+        }
+    }
+
+    const ranges: PropertyRanges = {};
+    for (const key of keys) {
+        if (mins[key] !== undefined) {
+            ranges[key] = { min: mins[key], max: maxs[key] };
+        }
+    }
+    return ranges;
+};
 
 const handleCluster = (cluster: any) => {
     if(cluster === null || cluster === undefined || cluster === ''){
@@ -112,7 +165,8 @@ const createOrganicNode = (row: any, index: number): OrganicPlotDataNode => {
             commercial_score: row.COMMERCIAL_SCORE,
             commercial_link: row.COMMERCIAL_LINK,
             fluoride_bde_ev: row.FLUORIDE_BDE_EV,
-            CLUSTER: handleCluster(row.CLUSTER)
+            CLUSTER: handleCluster(row.CLUSTER),
+            _parsedFunctionalGroups: parseFunctionalGroups(row.FUNCTIONAL_GROUPS)
         },
         rawData: row
     };
@@ -143,7 +197,8 @@ const createInorganicNode = (row: any, index: number): InorganicPlotDataNode => 
             combustion_enthalpy: row.COMBUSTION_ENTHALPY_EV,
             commercial_score: row.COMMERCIAL_SCORE,
             commercial_link: row.COMMERCIAL_LINK,
-            CLUSTER: handleCluster(row.CLUSTER)
+            CLUSTER: handleCluster(row.CLUSTER),
+            _parsedFunctionalGroups: parseFunctionalGroups(row.FUNCTIONAL_GROUPS)
         },
         rawData: row
     };
@@ -176,7 +231,8 @@ const createAnionsNode = (row: any, index: number): AnionsPlotDataNode => {
             commercial_link: row.COMMERCIAL_LINK,
             vdw_volume_angstroms3: row.VDW_VOLUME_ANGSTROMS3,
             fluoride_bde_ev: row.FLUORIDE_BDE_EV,
-            CLUSTER: handleCluster(row.CLUSTER)
+            CLUSTER: handleCluster(row.CLUSTER),
+            _parsedFunctionalGroups: parseFunctionalGroups(row.FUNCTIONAL_GROUPS)
         },
         rawData: row
     };
@@ -192,6 +248,7 @@ export const usePlotDataStore = create<PlotDataStore>((set) => ({
     loading: false,
     error: null,
     data: [],
+    propertyRanges: {},
 
     fetchData: async () => {
         // 如果正在获取数据，则跳过
@@ -222,6 +279,7 @@ export const usePlotDataStore = create<PlotDataStore>((set) => ({
 
             set({
                 data: nodes,
+                propertyRanges: computePropertyRanges(nodes, ORGANIC_NUMERIC_KEYS),
                 loading: false,
                 error: null
             })
@@ -270,6 +328,7 @@ export const usePlotDataStore = create<PlotDataStore>((set) => ({
 
             set({
                 data: nodes,
+                propertyRanges: computePropertyRanges(nodes, ORGANIC_NUMERIC_KEYS),
                 loading: false,
                 error: null
             })
@@ -297,6 +356,7 @@ export const useInorganicPlotDataStore = create<InorganicPlotDataStore>((set) =>
     loading: false,
     error: null,
     data: [],
+    propertyRanges: {},
 
     fetchData: async () => {
         try {
@@ -320,6 +380,7 @@ export const useInorganicPlotDataStore = create<InorganicPlotDataStore>((set) =>
 
             set({
                 data: nodes,
+                propertyRanges: computePropertyRanges(nodes, ORGANIC_NUMERIC_KEYS),
                 loading: false,
                 error: null
             })
@@ -349,6 +410,7 @@ export const useAnionsPlotDataStore = create<AnionsPlotDataStore>((set) => ({
     loading: false,
     error: null,
     data: [],
+    propertyRanges: {},
 
     fetchData: async () => {
         // 如果正在获取数据或已经完成，则跳过
@@ -379,6 +441,7 @@ export const useAnionsPlotDataStore = create<AnionsPlotDataStore>((set) => ({
 
             set({
                 data: nodes,
+                propertyRanges: computePropertyRanges(nodes, ANIONS_NUMERIC_KEYS),
                 loading: false,
                 error: null
             })
@@ -427,6 +490,7 @@ export const useAnionsPlotDataStore = create<AnionsPlotDataStore>((set) => ({
 
             set({
                 data: nodes,
+                propertyRanges: computePropertyRanges(nodes, ANIONS_NUMERIC_KEYS),
                 loading: false,
                 error: null
             })
