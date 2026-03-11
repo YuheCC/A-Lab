@@ -43,7 +43,7 @@ const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) =>
       ],
       textStyle: {
         fontSize: 12,
-        color: '#6b7280',
+        color: '#374151',
       },
     },
     xAxis: {
@@ -54,15 +54,15 @@ const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) =>
       nameGap: 30,
       nameTextStyle: {
         fontSize: 12,
-        color: '#6b7280',
+        color: '#374151',
       },
       axisLine: {
         lineStyle: {
-          color: '#e5e7eb',
+          color: '#d1d5db',
         },
       },
       axisLabel: {
-        color: '#6b7280',
+        color: '#374151',
         fontSize: 12,
       },
     },
@@ -72,26 +72,32 @@ const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) =>
         name: t('design.electrode.predict.capacityRetentionAxis', 'Capacity Retention (%)'),
         nameTextStyle: {
           fontSize: 11,
-          color: '#6b7280',
+          color: '#374151',
           padding: [0, 0, 0, 0],
         },
         position: 'left',
         axisLine: {
           show: true,
+          lineStyle: {
+            color: '#d1d5db',
+          },
         },
         axisTick: {
           show: true,
+          lineStyle: {
+            color: '#d1d5db',
+          },
         },
         min: 0,
         max: 100,
         axisLabel: {
-          color: '#6b7280',
-          fontSize: 11,
-          formatter: '{value}%',
+          color: '#374151',
+          fontSize: 12,
+          formatter: '{value}',
         },
         splitLine: {
           lineStyle: {
-            color: '#f3f4f6',
+            color: '#e5e7eb',
             type: 'solid',
           },
         },
@@ -101,7 +107,7 @@ const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) =>
         name: t('design.electrode.predict.temperatureAxis', 'Temperature (°C)'),
         nameTextStyle: {
           fontSize: 11,
-          color: '#6b7280',
+          color: '#374151',
           padding: [0, 0, 0, 0],
         },
         position: 'right',
@@ -109,14 +115,20 @@ const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) =>
         max: 110,
         axisLine: {
           show: true,
+          lineStyle: {
+            color: '#d1d5db',
+          },
         },
         axisTick: {
           show: true,
+          lineStyle: {
+            color: '#d1d5db',
+          },
         },
         axisLabel: {
-          color: '#6b7280',
-          fontSize: 11,
-          formatter: '{value}°C',
+          color: '#374151',
+          fontSize: 12,
+          formatter: '{value}',
         },
         splitLine: {
           show: false,
@@ -197,6 +209,7 @@ const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) =>
           style={{ height: '300px', width: '100%' }}
           notMerge={true}
           lazyUpdate={true}
+          opts={{ renderer: 'canvas', devicePixelRatio: window.devicePixelRatio || 2 }}
         />
         {/* 无真实数据时显示 Coming Soon 遮罩（兼容老数据） */}
         {!hasRealData && (
