@@ -35,7 +35,8 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
   const isNewVersion = siRatio !== undefined && siRatio !== null;
 
   // 新版本：graphite% = 100 - siRatio
-  const graphitePercent = isNewVersion ? 100 - siRatio! : undefined;
+  // 暂时先使用siRatio作为graphite%，后期再使用graphite%
+  const graphitePercent = isNewVersion ? siRatio! : undefined;
 
   return (
     <div className="electrode-predict-container antd-readonly-style">
