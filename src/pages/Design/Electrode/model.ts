@@ -260,10 +260,6 @@ export async function deleteElectrodeHistory(
 export async function predictElectrodePerformance(
   params: ElectrodeModelPredictParams,
 ): Promise<ElectrodeModelPredictResponse> {
-  if (!isUserLoggedIn()) {
-    throw new Error('Please login first');
-  }
-
   // 真实 API 调用
   const response = await electrodeService.predictElectrodePerformance(params);
 
