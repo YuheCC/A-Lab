@@ -274,3 +274,65 @@
     gap: 8px;
   }
 }
+
+// ─── Formula A/B 展示区域 ───
+.chemistry-formulas-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid @color-gray-200;
+}
+
+.chemistry-formula-block {
+  border: 1px solid @color-gray-200;
+  border-radius: @radius-lg;
+  padding: 12px 16px;
+}
+
+.chemistry-formula-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.chemistry-formula-bar {
+  display: inline-block;
+  width: 3px;
+  height: 14px;
+  background: @color-accent;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.chemistry-formula-title {
+  font-size: @font-size-base;
+  font-weight: @font-weight-semibold;
+  color: @color-gray-800;
+}
+
+.chemistry-formula-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chemistry-formula-item {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto;
+  gap: 4px 8px;
+  align-items: center;
+  font-size: @font-size-sm;
+
+  .label {
+    color: @color-gray-600;
+    white-space: nowrap;
+  }
+
+  .value {
+    color: @color-gray-800;
+    font-weight: @font-weight-medium;
+  }
+}

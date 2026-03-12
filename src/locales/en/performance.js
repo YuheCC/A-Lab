@@ -31,7 +31,18 @@ export default {
       modelName: "Model Name",
       modelId: "Model ID",
       baseModel: "Base Model"
-    }
+    },
+    sectionTitle: "1. Model Selection"
+  },
+  formulas: {
+    sectionTitle: "2. Additive Formulations Configuration",
+    formulaA: "Formula A",
+    formulaB: "Formula B",
+    additive1Label: "Additive 1",
+    additive2Label: "Additive 2",
+    additive3Label: "Additive 3",
+    newAdditiveSmiles: "New Additive SMILES",
+    weightPercentageLabel: "Weight Percentage (wt%)"
   },
 
   // Additive input
@@ -100,6 +111,7 @@ export default {
   // Results
   results: {
     title: "Cell Performance Prediction",
+    improvementHint: "Improvement of Formula B compared with Formula A",
     negativeTitle: "Negative",
     positiveTitle: "Positive",
     negativeTip: "After adding the specified additive, the cell will perform equally or worse than the cell with the benchmark electrolyte.",

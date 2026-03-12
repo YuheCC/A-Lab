@@ -252,6 +252,14 @@ const RecordPage: React.FC = () => {
   const processedResults = getProcessedResults();
   const isMock = detailData?.isMock;
 
+  const modelParams = useMemo(() => {
+    try {
+      return detailData?.model_params ? JSON.parse(detailData.model_params) : null;
+    } catch {
+      return null;
+    }
+  }, [detailData]);
+
   if (loading) {
     return (
       <div className="design-record-container">
@@ -325,6 +333,55 @@ const RecordPage: React.FC = () => {
                   <span className="value">{formatWeightPercentage(baseModelId, modelType)}</span>
                 </div>
               </div>
+
+              {modelParams && (
+                <div className="chemistry-formulas-grid">
+                  {/* Formula A */}
+                  <div className="chemistry-formula-block">
+                    <div className="chemistry-formula-header">
+                      <span className="chemistry-formula-bar" />
+                      <span className="chemistry-formula-title">{t('performance.formulas.formulaA', 'Formula A')}</span>
+                    </div>
+                    <div className="chemistry-formula-items">
+                      {[
+                        { label: t('performance.formulas.additive1Label', 'Additive 1'), name: modelParams.formulation_a?.additive_3_name, wt: modelParams.formulation_a?.additive_3_wt },
+                        { label: t('performance.formulas.additive2Label', 'Additive 2'), name: modelParams.formulation_a?.additive_4_name, wt: modelParams.formulation_a?.additive_4_wt },
+                        { label: t('performance.formulas.additive3Label', 'Additive 3'), name: modelParams.formulation_a?.additive_5_name, wt: modelParams.formulation_a?.additive_5_wt },
+                        { label: t('performance.formulas.newAdditiveSmiles', 'New Additive SMILES'), name: modelParams.formulation_a?.additive_6_smiles, wt: modelParams.formulation_a?.additive_6_wt },
+                      ].map((item, idx) => (
+                        <div className="chemistry-formula-item" key={idx}>
+                          <span className="label">{item.label}:</span>
+                          <span className="value">{item.name || '-'}</span>
+                          <span className="label">{t('performance.formulas.weightPercentageLabel', 'wt%')}:</span>
+                          <span className="value">{item.wt ?? '-'}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Formula B */}
+                  <div className="chemistry-formula-block">
+                    <div className="chemistry-formula-header">
+                      <span className="chemistry-formula-bar" />
+                      <span className="chemistry-formula-title">{t('performance.formulas.formulaB', 'Formula B')}</span>
+                    </div>
+                    <div className="chemistry-formula-items">
+                      {[
+                        { label: t('performance.formulas.additive1Label', 'Additive 1'), name: modelParams.formulation_b?.additive_3_name, wt: modelParams.formulation_b?.additive_3_wt },
+                        { label: t('performance.formulas.additive2Label', 'Additive 2'), name: modelParams.formulation_b?.additive_4_name, wt: modelParams.formulation_b?.additive_4_wt },
+                        { label: t('performance.formulas.additive3Label', 'Additive 3'), name: modelParams.formulation_b?.additive_5_name, wt: modelParams.formulation_b?.additive_5_wt },
+                        { label: t('performance.formulas.newAdditiveSmiles', 'New Additive SMILES'), name: modelParams.formulation_b?.additive_6_smiles, wt: modelParams.formulation_b?.additive_6_wt },
+                      ].map((item, idx) => (
+                        <div className="chemistry-formula-item" key={idx}>
+                          <span className="label">{item.label}:</span>
+                          <span className="value">{item.name || '-'}</span>
+                          <span className="label">{t('performance.formulas.weightPercentageLabel', 'wt%')}:</span>
+                          <span className="value">{item.wt ?? '-'}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

@@ -20,6 +20,7 @@ export interface PerformanceHistoryItem {
     battery_system_id: number;
     smiles: string;
     model_id?: number;  // 当前记录使用的模型 ID
+    model_params?: string | null;
     temperature_25_CE_prob?: string | null;
     temperature_25_CE_prop?: string | null;
     temperature_25_CE_label?: string | null;
@@ -53,6 +54,7 @@ export interface PerformanceHistoryDetailResponse {
     battery_system_id: number;
     smiles: string;
     model_id?: number;  // 当前记录使用的模型 ID
+    model_params?: string | null;
     temperature_25_CE_prob?: string | null;
     temperature_25_CE_prop?: string | null;
     temperature_25_CE_label?: string | null;
@@ -112,6 +114,7 @@ export interface PerformancePredictionRequest {
     smiles: string;
     battery_system_id: number;
     model_id?: string;
+    model_params?: string;  // JSON.stringify({ formulation_a, formulation_b })
 }
 
 export interface PerformancePredictionResponse {

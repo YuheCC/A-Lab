@@ -31,7 +31,18 @@ export default {
       modelName: "모델 이름",
       modelId: "모델 ID",
       baseModel: "기본 모델"
-    }
+    },
+    sectionTitle: "1. 모델 선택"
+  },
+  formulas: {
+    sectionTitle: "2. 첨가제 배합 구성",
+    formulaA: "포뮬라 A",
+    formulaB: "포뮬라 B",
+    additive1Label: "첨가제 1",
+    additive2Label: "첨가제 2",
+    additive3Label: "첨가제 3",
+    newAdditiveSmiles: "새 첨가제 SMILES",
+    weightPercentageLabel: "중량 백분율 (wt%)"
   },
 
   // Additive input
@@ -100,6 +111,7 @@ export default {
   // Results
   results: {
     title: "셀 성능 예측",
+    improvementHint: "Formula B의 Formula A 대비 개선 사항",
     titleTip: "부정적(Negative)은 지정된 첨가제를 추가한 후 셀의 성능이 벤치마크 전해질을 사용한 셀과 동등하거나 더 나쁘다는 것을 의미합니다.\n긍정적(Positive)은 지정된 첨가제를 추가한 후 셀의 성능이 벤치마크 전해질을 사용한 셀보다 더 좋다는 것을 의미합니다.",
     negativeTitle: "부정적 (Negative)",
     positiveTitle: "긍정적 (Positive)",

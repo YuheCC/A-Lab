@@ -31,7 +31,18 @@ export default {
       modelName: "模型名称",
       modelId: "模型ID",
       baseModel: "基础模型"
-    }
+    },
+    sectionTitle: "1. 模型选择"
+  },
+  formulas: {
+    sectionTitle: "2. 添加剂配方配置",
+    formulaA: "配方 A",
+    formulaB: "配方 B",
+    additive1Label: "添加剂 1",
+    additive2Label: "添加剂 2",
+    additive3Label: "添加剂 3",
+    newAdditiveSmiles: "新添加剂 SMILES",
+    weightPercentageLabel: "重量百分比 (wt%)"
   },
 
   // Additive input
@@ -100,6 +111,7 @@ export default {
   // Results
   results: {
     title: "电池性能预测",
+    improvementHint: "Formula B 相较于 Formula A 的改进",
     titleTip: "负面（Negative）表示添加指定添加剂后，电池性能等于或差于使用基准电解液的电池。\n正面（Positive）表示添加指定添加剂后，电池性能优于使用基准电解液的电池。",
     negativeTitle: "负面 (Negative)",
     positiveTitle: "正面 (Positive)",
