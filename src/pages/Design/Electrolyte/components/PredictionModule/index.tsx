@@ -807,9 +807,10 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     }
 
     // 比较当前表单数据与上次计算的数据
+    // 注意：与 performCalculation 中保持一致，null 权重用 ?? 0 处理，否则序列化结果不同导致误判
     const currentModelParams = JSON.stringify({
-      formulation_a: { additive_3_name: faAdd3Name, additive_3_wt: faAdd3Wt, additive_4_name: faAdd4Name, additive_4_wt: faAdd4Wt, additive_5_name: faAdd5Name, additive_5_wt: faAdd5Wt, additive_6_smiles: additive.trim(), additive_6_wt: faAdd6Wt },
-      formulation_b: { additive_3_name: fbAdd3Name, additive_3_wt: fbAdd3Wt, additive_4_name: fbAdd4Name, additive_4_wt: fbAdd4Wt, additive_5_name: fbAdd5Name, additive_5_wt: fbAdd5Wt, additive_6_smiles: fbAdd6Smiles, additive_6_wt: fbAdd6Wt },
+      formulation_a: { additive_3_name: faAdd3Name, additive_3_wt: faAdd3Wt ?? 0, additive_4_name: faAdd4Name, additive_4_wt: faAdd4Wt ?? 0, additive_5_name: faAdd5Name, additive_5_wt: faAdd5Wt ?? 0, additive_6_smiles: additive.trim(), additive_6_wt: faAdd6Wt ?? 0 },
+      formulation_b: { additive_3_name: fbAdd3Name, additive_3_wt: fbAdd3Wt ?? 0, additive_4_name: fbAdd4Name, additive_4_wt: fbAdd4Wt ?? 0, additive_5_name: fbAdd5Name, additive_5_wt: fbAdd5Wt ?? 0, additive_6_smiles: fbAdd6Smiles, additive_6_wt: fbAdd6Wt ?? 0 },
     });
     const isFormModified = 
       selectedSystem !== lastCalculatedFormData.selectedSystem ||
