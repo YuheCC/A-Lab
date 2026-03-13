@@ -43,7 +43,7 @@ interface DesignPageProps {}
 const DesignPage: React.FC<DesignPageProps> = () => {
   const navigate = useAuthNavigate();
   const { t, i18n } = useTranslation();
-  const { hasPermissionNew } = useAuthStore();
+  const { hasPermissionNew, userName } = useAuthStore();
   
   // 检查是否有 train 权限
   const canTrain = hasPermissionNew('cell_performance:train');
@@ -615,9 +615,9 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                       <thead>
                         <tr>
                           <th>{t('design.list.columns.recordId', 'Record ID')}</th>
-                          <th>{t('design.list.columns.smiles', 'SMILES')}</th>
                           <th>{t('design.list.columns.modelName', 'Model Name')}</th>
                           <th>{t('design.list.columns.totalPositive', 'Total Positive')}</th>
+                          <th>{t('design.list.columns.creator', 'Creator')}</th>
                           <th>{t('design.list.columns.created', 'Created')}</th>
                           <th>{t('design.list.columns.actions', 'Actions')}</th>
                         </tr>
@@ -638,9 +638,9 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                               <td className="record-id">
                                 {record.rawData?.isMock ? 'example' : `DS-${String(record.id).padStart(3, '0')}`}
                               </td>
-                              <td className="smiles-cell">{record.smiles}</td>
                               <td>{record.modelName || '-'}</td>
                               <td>{totalPositive > 0 ? `${actualPositive}/${totalPositive}` : '-'}</td>
+                              <td>{record.rawData?.isMock ? '-' : (userName || '-')}</td>
                               <td className="created-date">{record.date || '-'}</td>
                               <td className="actions-cell">
                                 <button
