@@ -125,18 +125,19 @@
 
 .pm-additive-input {
   width: 100%;
-  padding: 12px;
+  height: 32px;
+  padding: 0 8px;
   border: 1px solid @color-gray-300;
-  border-radius: 6px;
-  font-size: 14px;
+  border-radius: @radius-md;
+  font-size: @font-size-sm;
   color: @color-gray-700;
   box-sizing: border-box;
 }
 
 .pm-additive-input:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: @color-accent;
+  box-shadow: 0 0 0 3px rgba(86, 178, 106, 0.1);
 }
 
 .pm-additive-input::placeholder {
@@ -629,16 +630,27 @@
 .pm-molecule-content {
   font-size: 14px;
   display: flex;
-  gap: 20px;
+  gap: 16px;
+  align-items: flex-start;
 }
 
 .pm-molecule-structure {
   flex-shrink: 0;
+  width: 100px;
+  height: 100px;
+
+  canvas,
+  img,
+  svg,
+  > div {
+    width: 100px !important;
+    height: 100px !important;
+  }
 }
 
 .pm-structure-placeholder {
-  width: 150px;
-  height: 150px;
+  width: 100px;
+  height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -668,40 +680,45 @@
 
 .pm-molecule-properties {
   flex: 1;
+  min-width: 0;
 }
 
+// 自适应网格：宽度充足时两列，不够时自动降为一列
 .pm-properties-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 6px 16px;
 }
 
+// 去掉旧的 pm-property-row 包裹层（JSX 已改为平铺）
 .pm-property-row {
-  display: flex;
-  gap: 32px;
+  display: contents;
 }
 
 .pm-properties-grid .pm-property-item {
-  flex: 1;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  min-height: 20px;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .pm-properties-grid .pm-property-item label {
-  font-size: 12px;
+  font-size: 11px;
   color: @color-gray-500;
   font-weight: 500;
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
 .pm-properties-grid .pm-property-item span {
-  font-size: 14px;
+  font-size: 13px;
   color: @color-gray-800;
   font-weight: 500;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .pm-smiles-error-content p {
@@ -924,4 +941,218 @@
   border: 1px solid @color-gray-200;
   border-radius: 8px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+// ───────── 子分区卡片 ─────────
+.pm-subsection-card {
+  border: 1px solid @color-gray-200;
+  border-radius: @radius-lg;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  background: #ffffff;
+}
+
+.pm-subsection-title {
+  font-size: @font-size-md;
+  font-weight: @font-weight-semibold;
+  color: @color-gray-800;
+  margin: 0 0 16px 0;
+}
+
+// ───────── Formula A/B 双列布局 ─────────
+.pm-formula-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.pm-formula-column {
+  border: 1px solid @color-gray-200;
+  border-radius: @radius-lg;
+  padding: 16px;
+  min-width: 0;
+  width: 100%;
+
+  &--a {
+    .pm-formula-column-bar {
+      background: #0CAF71;
+    }
+  }
+
+  &--b {
+    .pm-formula-column-bar {
+      background: #3B82F6;
+    }
+  }
+}
+
+.pm-formula-column-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.pm-formula-column-bar {
+  display: inline-block;
+  width: 3px;
+  height: 16px;
+  background: @color-accent;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.pm-formula-column-title {
+  font-size: @font-size-base;
+  font-weight: @font-weight-semibold;
+  color: @color-gray-800;
+  margin: 0;
+}
+
+// ───────── 添加剂行 ─────────
+.pm-additive-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.pm-additive-select-group {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.pm-additive-smiles-group {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.pm-additive-label {
+  font-size: @font-size-sm;
+  font-weight: @font-weight-medium;
+  color: @color-gray-700;
+  display: block;
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+
+// antd Select 覆盖：与其他输入框高度对齐
+.pm-additive-select {
+  &.ant-select {
+    .ant-select-selector {
+      height: 32px !important;
+      padding: 0 8px !important;
+      border-radius: @radius-md !important;
+      font-size: @font-size-sm !important;
+
+      .ant-select-selection-item,
+      .ant-select-selection-placeholder {
+        line-height: 30px !important;
+      }
+    }
+  }
+}
+
+// ───────── SMILES 行：分子面板撑满整列 ─────────
+// pm-additive-smiles-group 是 flex:1，宽度 = 列内容宽 - 180px(weight) - 12px(gap)
+// calc(100% + 192px) 恰好等于整列内容宽度
+.pm-smiles-row {
+  .pm-additive-smiles-group {
+    .pm-molecule-loading,
+    .pm-molecule-information,
+    .pm-smiles-error-display {
+      width: calc(100% + 192px);
+      margin-top: 12px;
+    }
+  }
+}
+
+// ───────── Weight 输入组 ─────────
+.pm-weight-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex-shrink: 0;
+  width: 180px;
+}
+
+.pm-weight-input {
+  width: 100%;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid @color-gray-300;
+  border-radius: @radius-md;
+  font-size: @font-size-sm;
+  color: @color-gray-700;
+
+  &:focus {
+    outline: none;
+    border-color: @color-accent;
+    box-shadow: 0 0 0 3px rgba(86, 178, 106, 0.1);
+  }
+}
+
+// ───────── Weight InputNumber (antd) 覆盖 ─────────
+.pm-weight-input-number {
+  &.ant-input-number {
+    width: 100%;
+    height: 32px;
+    min-height: 32px;
+    max-height: 32px;
+    line-height: 30px;
+    box-sizing: border-box;
+    border-radius: @radius-md;
+    border-color: @color-gray-300;
+    font-size: @font-size-sm;
+
+    .ant-input-number-input-wrap {
+      height: 30px;
+      display: flex;
+      align-items: center;
+    }
+
+    .ant-input-number-input {
+      height: 30px;
+      line-height: 30px;
+      padding: 0 30px 0 8px; // 右侧留出加减按钮（约22px）的空间
+      color: @color-gray-700;
+      box-sizing: border-box;
+    }
+
+    // 恢复默认 hover 显示行为，不强制常驻
+    .ant-input-number-handler-wrap {
+      height: 100%;
+    }
+
+    &:hover {
+      border-color: @color-accent;
+    }
+
+    &.ant-input-number-focused,
+    &:focus-within {
+      border-color: @color-accent;
+      box-shadow: 0 0 0 3px rgba(86, 178, 106, 0.1);
+    }
+  }
+}
+
+// ───────── Improvement Hint Banner ─────────
+.pm-improvement-hint {
+  border-left: 3px solid @color-accent;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background: transparent;
+
+  &__text {
+    color: @color-accent;
+    font-size: @font-size-md;
+    font-weight: @font-weight-semibold;
+    margin: 0;
+  }
 }

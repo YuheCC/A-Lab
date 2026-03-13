@@ -3,11 +3,11 @@ export default {
     list: {
         columns: {
             recordId: 'Record ID',
-            smiles: 'SMILES',
             modelName: 'モデル名',
             totalPositive: 'Total Positive',
             temp25: '25°C Positive',
             temp45: '45°C Positive',
+            creator: '作成者',
             created: '作成日時',
             actions: 'アクション'
         }   

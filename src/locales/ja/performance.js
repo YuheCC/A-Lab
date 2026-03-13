@@ -31,7 +31,18 @@ export default {
       modelName: "モデル名",
       modelId: "モデルID",
       baseModel: "ベースモデル"
-    }
+    },
+    sectionTitle: "1. モデル選択"
+  },
+  formulas: {
+    sectionTitle: "2. 添加剤フォーミュラ設定",
+    formulaA: "フォーミュラ A",
+    formulaB: "フォーミュラ B",
+    additive1Label: "添加剤 1",
+    additive2Label: "添加剤 2",
+    additive3Label: "添加剤 3",
+    newAdditiveSmiles: "新規添加剤 SMILES",
+    weightPercentageLabel: "重量パーセント (wt%)"
   },
 
   // Additive input
@@ -100,6 +111,7 @@ export default {
   // Results
   results: {
     title: "セル性能予測",
+    improvementHint: "フォーミュラ B のフォーミュラ A に対する改善",
     titleTip: "ネガティブは、指定された添加剤を添加した後、セルの性能がベンチマーク電解液を使用したセルと同等またはそれ以下になることを意味します。\nポジティブは、指定された添加剤を添加した後、セルの性能がベンチマーク電解液を使用したセルより優れることを意味します。",
     negativeTitle: "ネガティブ (Negative)",
     positiveTitle: "ポジティブ (Positive)",

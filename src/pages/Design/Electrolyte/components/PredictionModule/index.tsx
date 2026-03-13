@@ -1,26 +1,25 @@
-import React, { useState, useEffect, useCallback, useMemo, useContext } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useContext, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Tooltip } from 'antd';
+import { Tooltip, Select, InputNumber } from 'antd';
 import { Info, ArrowUp, ArrowDown } from 'lucide-react';
 import Button from '@/components/Button';
-import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
 import { getBatterySystemList, predictPerformance, requestLLMAnalysisStream, type PerformancePredictionResponse, type LLMAnalysisStreamRequest } from '@/services/prediction/performance';
 import { useAuthStore } from '@/models/useAuth';
 import streamSSE from '@/components/StreamSSE';
-import MolViewer2D from '@/components/NodePopup/MolViewer2D.js';
 import './index.less';
 import './PerformanceTooltip.less';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 import CustomSelect from '../CustomSelect';
 import ModelSelect from '@/components/ModelSelect';
 import { upcomingModels, type PerformanceMetricType, type ModelOption } from './mockModelData';
+import { ADDITIVE_NAME_OPTIONS } from './additiveOptions';
+import SmilesInputWithPreview, { type SmilesInputHandle } from './SmilesInputWithPreview';
 import { PricingContext } from '@/layouts/index';
-import { isColumnVisibleForUser } from '@/constants/columnAccess';
 import { getModelList } from '../../model';
 import type { ModelListItem } from '@/services/model/training';
 import { parseModelResult } from '@/utils/modelResultParser';
 import { getWeightPercentage } from '../../utils/weightPercentage';
-import ElectrolytePerformanceBadge from '../ElectrolytePerformanceBadge';
+import CellPerformanceResults, { type CellPerformanceData } from '../CellPerformanceResults';
 
 interface SystemSpec {
   cathode: string;
@@ -71,17 +70,30 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     return ['admin', 'enterprise', 'enterprise1', 'enterprise2', 'enterprise3', 'joint'].includes(userPermissions || '');
   }, [userPermissions]);
 
-  const canShowColumn = useCallback(
-    (columnId?: string | null) => isColumnVisibleForUser(columnId, userPermissions),
-    [userPermissions]
-  );
-  
-  // 新增状态：分子详情相关
-  const [moleculeDetails, setMoleculeDetails] = useState<MoleculeDetails | null>(null);
-  const [isMoleculeLoading, setIsMoleculeLoading] = useState(false);
-  const [lastQueriedSmiles, setLastQueriedSmiles] = useState<string | null>(null);
-  const [isInvalidSmiles, setIsInvalidSmiles] = useState(false);
-  
+  // Formula A 添加剂配置
+  const [faAdd3Name, setFaAdd3Name] = useState('');
+  const [faAdd3Wt, setFaAdd3Wt] = useState<number | null>(null);
+  const [faAdd4Name, setFaAdd4Name] = useState('');
+  const [faAdd4Wt, setFaAdd4Wt] = useState<number | null>(null);
+  const [faAdd5Name, setFaAdd5Name] = useState('');
+  const [faAdd5Wt, setFaAdd5Wt] = useState<number | null>(null);
+  const [faAdd6Wt, setFaAdd6Wt] = useState<number | null>(null);
+  // faAdd6Smiles 复用现有 additive state
+
+  // Formula B 添加剂配置
+  const [fbAdd3Name, setFbAdd3Name] = useState('');
+  const [fbAdd3Wt, setFbAdd3Wt] = useState<number | null>(null);
+  const [fbAdd4Name, setFbAdd4Name] = useState('');
+  const [fbAdd4Wt, setFbAdd4Wt] = useState<number | null>(null);
+  const [fbAdd5Name, setFbAdd5Name] = useState('');
+  const [fbAdd5Wt, setFbAdd5Wt] = useState<number | null>(null);
+  const [fbAdd6Smiles, setFbAdd6Smiles] = useState('');
+  const [fbAdd6Wt, setFbAdd6Wt] = useState<number | null>(null);
+
+  // SMILES 输入组件的 ref（用于触发验证）
+  const faRef = useRef<SmilesInputHandle>(null);
+  const fbRef = useRef<SmilesInputHandle>(null);
+
   // 新增状态：电池系统相关
   const [batterySystemOptions, setBatterySystemOptions] = useState<BatterySystem[]>([]);
   const [isBatterySystemLoading, setIsBatterySystemLoading] = useState(true);
@@ -101,6 +113,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     selectedSystem: string;
     selectedModel: string;
     additive: string;
+    modelParams: string;
   } | null>(null);
   
   // 新增状态：LLM分析相关
@@ -140,56 +153,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   };
 
   const currentSpec = getCurrentSpec();
-
-  // 性能指标配置映射
-  const metricConfig: Record<PerformanceMetricType, {
-    label25Key: string;
-    label45Key: string;
-    dataKey: 'cycleLife' | 'ce' | 'ratePerformance';
-  }> = {
-    'cl': {
-      label25Key: 'performance.results.performance.cycleLife25',
-      label45Key: 'performance.results.performance.cycleLife45',
-      dataKey: 'cycleLife'
-    },
-    'ce': {
-      label25Key: 'performance.results.performance.ce25',
-      label45Key: 'performance.results.performance.ce45',
-      dataKey: 'ce'
-    },
-    'rate': {
-      label25Key: 'performance.results.performance.ratePerformance25',
-      label45Key: '',
-      dataKey: 'ratePerformance'
-    }
-  };
-
-  // 根据模型配置和温度限制，获取可显示的性能指标
-  const getAvailableMetrics = useCallback(
-    (temperature: '25c' | '45c'): PerformanceMetricType[] => {
-      if (!selectedModel) return [];
-
-      const model = modelOptions.find(m => m.id === selectedModel);
-      if (!model || !model.supportedMetrics || model.supportedMetrics.length === 0) {
-        return [];
-      }
-
-      let availableMetrics = [...model.supportedMetrics];
-
-      // 45°C 温度限制：移除 rate（API 不支持）
-      if (temperature === '45c') {
-        availableMetrics = availableMetrics.filter(m => m !== 'rate');
-      }
-
-      return availableMetrics;
-    },
-    [selectedModel, modelOptions]
-  );
-
-  // 判断是否需要显示 45°C 区块
-  const shouldShow45C = useCallback((): boolean => {
-    return getAvailableMetrics('45c').length > 0;
-  }, [getAvailableMetrics]);
 
   // 计算等待时间的useEffect
   useEffect(() => {
@@ -320,66 +283,9 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   }, []);
 
 
-  // 处理 SMILES 输入框失焦事件 (简化版，只清理状态)
-  const handleSmilesBlur = () => {
-    const trimmedAdditive = additive.trim();
-    
-    // 如果输入为空，清除所有状态
-    if (!trimmedAdditive) {
-      setMoleculeDetails(null);
-      setIsInvalidSmiles(false);
-      setLastQueriedSmiles(null);
-    }
-  };
-
-  // 验证SMILES分子式的函数
-  const validateSmiles = async (smilesInput: string): Promise<{isValid: boolean, details: MoleculeDetails | null}> => {
-    // 如果与上次查询相同，直接返回缓存结果
-    if (smilesInput === lastQueriedSmiles) {
-      return { 
-        isValid: !isInvalidSmiles, 
-        details: moleculeDetails 
-      };
-    }
-
-    setIsMoleculeLoading(true);
-    setMoleculeDetails(null);
-    setIsInvalidSmiles(false);
-
-    try {
-      const details = await moleculeService.getMoleculeDetails(smilesInput, userPermissions || undefined);
-      
-      // 检查是否是实际的分子数据还是mock数据
-      if (details && details.properties.smiles && 
-          details.properties.smiles === 'F[P-](F)(F)(F)(F)F.[Li+]') {
-        // 这是默认的mock数据，表示没有找到，但仍然是有效的
-        setMoleculeDetails(null);
-      } else {
-        // 有效的分子数据
-        setMoleculeDetails(details);
-      }
-      
-      // 记录已查询的分子式
-      setLastQueriedSmiles(smilesInput);
-      return { isValid: true, details: details };
-      
-    } catch (error) {
-      console.error('获取分子详情失败:', error);
-      
-      // 检查是否为无效的 SMILES 错误
-      if (error instanceof Error && error.message === 'Invalid SMILES string') {
-        setIsInvalidSmiles(true);
-        setLastQueriedSmiles(smilesInput);
-        return { isValid: false, details: null };
-      } else {
-        // 其他错误（如未找到分子）仍然被认为是有效的SMILES
-        setLastQueriedSmiles(smilesInput);
-        return { isValid: true, details: null };
-      }
-    } finally {
-      setIsMoleculeLoading(false);
-    }
-  };
+  // Weight Percentage 范围钳制（0 ≤ value ≤ 1，保留两位小数）
+  const clampWeight = (val: number | null): number | null =>
+    val === null ? null : Math.min(1, Math.max(0, parseFloat(val.toFixed(2))));
 
   // 执行实际的计算逻辑（在验证通过后调用）
   const performCalculation = async () => {
@@ -396,11 +302,35 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     setAnalysisStartTime(null);
     setAnalysisElapsed(0);
 
+    const modelParams = JSON.stringify({
+      formulation_a: {
+        additive_3_name: faAdd3Name,
+        additive_3_wt: faAdd3Wt ?? 0,
+        additive_4_name: faAdd4Name,
+        additive_4_wt: faAdd4Wt ?? 0,
+        additive_5_name: faAdd5Name,
+        additive_5_wt: faAdd5Wt ?? 0,
+        additive_6_smiles: additive.trim(),
+        additive_6_wt: faAdd6Wt ?? 0,
+      },
+      formulation_b: {
+        additive_3_name: fbAdd3Name,
+        additive_3_wt: fbAdd3Wt ?? 0,
+        additive_4_name: fbAdd4Name,
+        additive_4_wt: fbAdd4Wt ?? 0,
+        additive_5_name: fbAdd5Name,
+        additive_5_wt: fbAdd5Wt ?? 0,
+        additive_6_smiles: fbAdd6Smiles,
+        additive_6_wt: fbAdd6Wt ?? 0,
+      },
+    });
+
     try {
       const response = await predictPerformance({
         smiles: additive.trim(),
         battery_system_id: selectedBatterySystem ? parseInt(selectedBatterySystem.id) : undefined,
-        model_id: selectedModel || undefined
+        model_id: selectedModel || undefined,
+        model_params: modelParams,
       });
 
       const status = response?.status ?? response?.data?.status;
@@ -431,6 +361,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
           selectedSystem,
           selectedModel,
           additive,
+          modelParams,
         });
       } else {
         throw new Error('No data received from prediction API');
@@ -458,22 +389,17 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       return;
     }
 
-    if (!additive.trim()) {
-      alert(t('performance.additive.placeholder'));
+    // 并行验证 Formula A / B 的 SMILES（非空时才验证）
+    const [faResult, fbResult] = await Promise.all([
+      additive.trim() ? faRef.current?.validate() : Promise.resolve({ isValid: true }),
+      fbAdd6Smiles.trim() ? fbRef.current?.validate() : Promise.resolve({ isValid: true }),
+    ]);
+
+    if (faResult?.isValid === false || fbResult?.isValid === false) {
       return;
     }
 
-    const trimmedAdditive = additive.trim();
-
-    // 执行前置分子验证
-    const validationResult = await validateSmiles(trimmedAdditive);
-
-    if (!validationResult.isValid) {
-      // 分子式无效，已经显示错误卡片，不允许继续计算
-      return;
-    }
-
-    // 分子式有效，可以进入计算流程
+    // 两个 SMILES 均有效，进入计算流程
     await performCalculation();
   };
 
@@ -867,10 +793,15 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     }
 
     // 比较当前表单数据与上次计算的数据
+    const currentModelParams = JSON.stringify({
+      formulation_a: { additive_3_name: faAdd3Name, additive_3_wt: faAdd3Wt, additive_4_name: faAdd4Name, additive_4_wt: faAdd4Wt, additive_5_name: faAdd5Name, additive_5_wt: faAdd5Wt, additive_6_smiles: additive.trim(), additive_6_wt: faAdd6Wt },
+      formulation_b: { additive_3_name: fbAdd3Name, additive_3_wt: fbAdd3Wt, additive_4_name: fbAdd4Name, additive_4_wt: fbAdd4Wt, additive_5_name: fbAdd5Name, additive_5_wt: fbAdd5Wt, additive_6_smiles: fbAdd6Smiles, additive_6_wt: fbAdd6Wt },
+    });
     const isFormModified = 
       selectedSystem !== lastCalculatedFormData.selectedSystem ||
       selectedModel !== lastCalculatedFormData.selectedModel ||
-      additive !== lastCalculatedFormData.additive;
+      additive !== lastCalculatedFormData.additive ||
+      currentModelParams !== lastCalculatedFormData.modelParams;
 
     // 如果表单被修改，重置结果显示
     if (isFormModified) {
@@ -906,336 +837,338 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
         <h2>{t('performance.batterySystemSelection.title')}</h2>
         
         <div className="pm-module-content-card">
-          <div className="pm-form-group pm-model-selection">
-            <label>
-              {t('performance.modelSelection.label', '预测模型选择')}
-              <span className="required-star">*</span>
-            </label>
-            <ModelSelect
-              mode="single"
-              value={selectedModel}
-              onChange={(value) => {
-                setSelectedModel(value as string);
-                // 从全局 map 中获取完整的模型数据
-                const modelDataMap = (window as any).__modelDataMap as Map<string, ModelListItem>;
-                if (modelDataMap && value) {
-                  const modelData = modelDataMap.get(value as string);
-                  setSelectedModelData(modelData || null);
-                }
-                // 选择模型后显示电池规格
-                if (value) {
-                  setShowSpecs(true);
-                }
-              }}
-              options={modelOptions}
-              loading={isModelLoading}
-              groupBy="category"
-              groupByLabel={{
-                'base': t('performance.modelSelection.baseModel', 'Base Model'),
-                'finetuned': t('performance.modelSelection.finetunedModels', 'Fine-tuned Models'),
-                'mu': t('performance.modelSelection.muModels', 'Mu Models')
-              }}
-              columns={[
-                { key: 'name', title: t('performance.modelSelection.columns.modelName', 'Model Name'), width: '45%' },
-                {
-                  key: 'id',
-                  title: t('performance.modelSelection.columns.modelId', 'Model ID'),
-                  width: '15%',
-                  render: (value: any) => `DM-${String(value).padStart(6, '0')}`
-                },
-                { key: 'baseModel', title: t('performance.modelSelection.columns.baseModel', 'Base Model'), width: '40%' }
-              ]}
-              searchable
-              pageSize={20}
-              placeholder={t('performance.modelSelection.placeholder', '请选择预测模型')}
-              className="pm-model-select"
-              fieldNames={{ label: 'name', value: 'id' }}
-            />
+
+          {/* 1. Model Selection 子分区 */}
+          <div className="pm-subsection-card">
+            <h3 className="pm-subsection-title">{t('performance.modelSelection.sectionTitle', '1. Model Selection')}</h3>
+            <div className="pm-form-group pm-model-selection">
+              <label>
+                {t('performance.modelSelection.label', '预测模型选择')}
+                <span className="required-star">*</span>
+              </label>
+              <ModelSelect
+                mode="single"
+                value={selectedModel}
+                onChange={(value) => {
+                  setSelectedModel(value as string);
+                  const modelDataMap = (window as any).__modelDataMap as Map<string, ModelListItem>;
+                  if (modelDataMap && value) {
+                    const modelData = modelDataMap.get(value as string);
+                    setSelectedModelData(modelData || null);
+                  }
+                  if (value) {
+                    setShowSpecs(true);
+                  }
+                }}
+                options={modelOptions}
+                loading={isModelLoading}
+                groupBy="category"
+                groupByLabel={{
+                  'base': t('performance.modelSelection.baseModel', 'Base Model'),
+                  'finetuned': t('performance.modelSelection.finetunedModels', 'Fine-tuned Models'),
+                  'mu': t('performance.modelSelection.muModels', 'Mu Models')
+                }}
+                columns={[
+                  { key: 'name', title: t('performance.modelSelection.columns.modelName', 'Model Name'), width: '45%' },
+                  {
+                    key: 'id',
+                    title: t('performance.modelSelection.columns.modelId', 'Model ID'),
+                    width: '15%',
+                    render: (value: any) => `DM-${String(value).padStart(6, '0')}`
+                  },
+                  { key: 'baseModel', title: t('performance.modelSelection.columns.baseModel', 'Base Model'), width: '40%' }
+                ]}
+                searchable
+                pageSize={20}
+                placeholder={t('performance.modelSelection.placeholder', '请选择预测模型')}
+                className="pm-model-select"
+                fieldNames={{ label: 'name', value: 'id' }}
+              />
+            </div>
+
+            {selectedModel && showSpecs && currentSpec && (currentSpec.cathode || currentSpec.anode || currentSpec.electrolyte || currentSpec.cellDesign) && (
+              <div className="pm-system-specs">
+                <div className="pm-specs-header">
+                  <span>{t('performance.batterySystemSelection.systemSpecs.title')}</span>
+                  <button className="pm-close-specs" onClick={() => setShowSpecs(false)}>×</button>
+                </div>
+                <div className="pm-specs-grid">
+                  {currentSpec.cathode && (
+                    <div className="pm-spec-item">
+                      <label>{t('performance.batterySystemSelection.systemSpecs.cathode')}</label>
+                      <span>{currentSpec.cathode}</span>
+                    </div>
+                  )}
+                  {currentSpec.anode && (
+                    <div className="pm-spec-item">
+                      <label>{t('performance.batterySystemSelection.systemSpecs.anode')}</label>
+                      <span>{currentSpec.anode}</span>
+                    </div>
+                  )}
+                  {currentSpec.electrolyte && (
+                    <div className="pm-spec-item">
+                      <label>{t('performance.batterySystemSelection.systemSpecs.benchmarkElectrolyte')}</label>
+                      <span>{currentSpec.electrolyte}</span>
+                    </div>
+                  )}
+                  {currentSpec.cellDesign && (
+                    <div className="pm-spec-item">
+                      <label>{t('performance.batterySystemSelection.systemSpecs.cellDesign')}</label>
+                      <span>{currentSpec.cellDesign}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
-          {selectedModel && showSpecs && currentSpec && (currentSpec.cathode || currentSpec.anode || currentSpec.electrolyte || currentSpec.cellDesign) && (
-            <div className="pm-system-specs">
-              <div className="pm-specs-header">
-                <span>{t('performance.batterySystemSelection.systemSpecs.title')}</span>
-                <button
-                  className="pm-close-specs"
-                  onClick={() => setShowSpecs(false)}
-                >
-                  ×
-                </button>
-              </div>
+          {/* 2. Additive Formulations Configuration 子分区 */}
+          <div className="pm-subsection-card">
+            <h3 className="pm-subsection-title">{t('performance.formulas.sectionTitle', '2. Additive Formulations Configuration')}</h3>
+            <div className="pm-formula-columns">
 
-              <div className="pm-specs-grid">
-                {currentSpec.cathode && (
-                  <div className="pm-spec-item">
-                    <label>{t('performance.batterySystemSelection.systemSpecs.cathode')}</label>
-                    <span>{currentSpec.cathode}</span>
+              {/* Formula A */}
+              <div className="pm-formula-column pm-formula-column--a">
+                <div className="pm-formula-column-header">
+                  <span className="pm-formula-column-bar" />
+                  <h4 className="pm-formula-column-title">{t('performance.formulas.formulaA', 'Formula A')}</h4>
+                </div>
+
+                {/* Additive 1 */}
+                <div className="pm-additive-row">
+                  <div className="pm-additive-select-group">
+                    <label className="pm-additive-label">{t('performance.formulas.additive1Label', 'Additive 1')}</label>
+                    <Select
+                      value={faAdd3Name || undefined}
+                      onChange={(value) => setFaAdd3Name(value ?? '')}
+                      options={ADDITIVE_NAME_OPTIONS.filter(o => o.value).map(o => ({ label: o.label, value: o.value }))}
+                      allowClear
+                      className="pm-additive-select"
+                      style={{ width: '100%' }}
+                    />
                   </div>
-                )}
-
-                {currentSpec.anode && (
-                  <div className="pm-spec-item">
-                    <label>{t('performance.batterySystemSelection.systemSpecs.anode')}</label>
-                    <span>{currentSpec.anode}</span>
+                  <div className="pm-weight-group">
+                    <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
+                    <InputNumber
+                      value={faAdd3Wt}
+                      min={0}
+                      max={1}
+                      step={0.01}
+                      onChange={(val) => setFaAdd3Wt(clampWeight(val))}
+                      className="pm-weight-input-number"
+                      style={{ width: '100%' }}
+                    />
                   </div>
-                )}
+                </div>
 
-                {currentSpec.electrolyte && (
-                  <div className="pm-spec-item">
-                    <label>{t('performance.batterySystemSelection.systemSpecs.benchmarkElectrolyte')}</label>
-                    <span>{currentSpec.electrolyte}</span>
+                {/* Additive 2 */}
+                <div className="pm-additive-row">
+                  <div className="pm-additive-select-group">
+                    <label className="pm-additive-label">{t('performance.formulas.additive2Label', 'Additive 2')}</label>
+                    <Select
+                      value={faAdd4Name || undefined}
+                      onChange={(value) => setFaAdd4Name(value ?? '')}
+                      options={ADDITIVE_NAME_OPTIONS.filter(o => o.value).map(o => ({ label: o.label, value: o.value }))}
+                      allowClear
+                      className="pm-additive-select"
+                      style={{ width: '100%' }}
+                    />
                   </div>
-                )}
-
-                {currentSpec.cellDesign && (
-                  <div className="pm-spec-item">
-                    <label>{t('performance.batterySystemSelection.systemSpecs.cellDesign')}</label>
-                    <span>{currentSpec.cellDesign}</span>
+                  <div className="pm-weight-group">
+                    <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
+                    <InputNumber
+                      value={faAdd4Wt}
+                      min={0}
+                      max={1}
+                      step={0.01}
+                      onChange={(val) => setFaAdd4Wt(clampWeight(val))}
+                      className="pm-weight-input-number"
+                      style={{ width: '100%' }}
+                    />
                   </div>
-                )}
-              </div>
-            </div>
-          )}
+                </div>
 
-          <div className="pm-form-group">
-            <div className="pm-dual-input-row">
-              <div className="pm-dual-input-item">
-                <label>
-                  {t('performance.additive.label')} <span className="pm-required">{t('performance.additive.required')}</span>
-                </label>
-                <input
-                  type="text"
-                  value={additive}
-                  onChange={(e) => {
-                    const newValue = e.target.value;
-                    setAdditive(newValue);
+                {/* Additive 3 */}
+                <div className="pm-additive-row">
+                  <div className="pm-additive-select-group">
+                    <label className="pm-additive-label">{t('performance.formulas.additive3Label', 'Additive 3')}</label>
+                    <Select
+                      value={faAdd5Name || undefined}
+                      onChange={(value) => setFaAdd5Name(value ?? '')}
+                      options={ADDITIVE_NAME_OPTIONS.filter(o => o.value).map(o => ({ label: o.label, value: o.value }))}
+                      allowClear
+                      className="pm-additive-select"
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                  <div className="pm-weight-group">
+                    <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
+                    <InputNumber
+                      value={faAdd5Wt}
+                      min={0}
+                      max={1}
+                      step={0.01}
+                      onChange={(val) => setFaAdd5Wt(clampWeight(val))}
+                      className="pm-weight-input-number"
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                </div>
 
-                    // 如果用户清除了输入或者输入与上次查询的不同，清除分子信息
-                    const trimmedValue = newValue.trim();
-                    if (!trimmedValue || (lastQueriedSmiles && trimmedValue !== lastQueriedSmiles)) {
-                      setMoleculeDetails(null);
-                      setIsInvalidSmiles(false);
-                      if (!trimmedValue) {
-                        setLastQueriedSmiles(null);
+                {/* New Additive SMILES (Formula A) */}
+                <div className="pm-additive-row pm-smiles-row">
+                  <div className="pm-additive-smiles-group">
+                    <SmilesInputWithPreview
+                      ref={faRef}
+                      value={additive}
+                      onChange={setAdditive}
+                      label={
+                        <>
+                          {t('performance.formulas.newAdditiveSmiles', 'New Additive SMILES')}
+                          {' '}
+                          <span className="pm-required">{t('performance.additive.required')}</span>
+                        </>
                       }
-                    }
-
-                    // 分子式输入变化时，重置计算结果和LLM分析状态
-                    if (predictionResults && trimmedValue !== lastQueriedSmiles) {
-                      setShowResults(false);
-                      setPredictionResults(null);
-                      setHasAnalysisResult(false);
-                      setAnalysisContent('');
-                      setIsAnalyzing(false);
-                    }
-                  }}
-                  onBlur={handleSmilesBlur}
-                  placeholder={t('performance.additive.placeholder')}
-                  className="pm-additive-input"
-                />
+                      placeholder={t('performance.additive.placeholder')}
+                      onResultsInvalidate={() => {
+                        setShowResults(false);
+                        setPredictionResults(null);
+                        setHasAnalysisResult(false);
+                        setAnalysisContent('');
+                        setIsAnalyzing(false);
+                      }}
+                    />
+                  </div>
+                  <div className="pm-weight-group">
+                    <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
+                    <InputNumber
+                      value={faAdd6Wt}
+                      min={0}
+                      max={1}
+                      step={0.01}
+                      onChange={(val) => setFaAdd6Wt(clampWeight(val))}
+                      className="pm-weight-input-number"
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div className="pm-dual-input-item">
-                <label>
-                  {t('performance.weightPercentage.label')}
-                  <Tooltip title={t('performance.weightPercentage.tooltip')} placement="top">
-                    <span className="pm-info-icon">
-                      ⓘ
-                    </span>
-                  </Tooltip>
-                </label>
-                <input
-                  type="text"
-                  value={getWeightPercentage(selectedModelData?.base_model_id, selectedModelData?.model_type)}
-                  disabled
-                  className="pm-weight-percentage-input"
-                />
+              {/* Formula B */}
+              <div className="pm-formula-column pm-formula-column--b">
+                <div className="pm-formula-column-header">
+                  <span className="pm-formula-column-bar" />
+                  <h4 className="pm-formula-column-title">{t('performance.formulas.formulaB', 'Formula B')}</h4>
+                </div>
+
+                {/* Additive 1 */}
+                <div className="pm-additive-row">
+                  <div className="pm-additive-select-group">
+                    <label className="pm-additive-label">{t('performance.formulas.additive1Label', 'Additive 1')}</label>
+                    <Select
+                      value={fbAdd3Name || undefined}
+                      onChange={(value) => setFbAdd3Name(value ?? '')}
+                      options={ADDITIVE_NAME_OPTIONS.filter(o => o.value).map(o => ({ label: o.label, value: o.value }))}
+                      allowClear
+                      className="pm-additive-select"
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                  <div className="pm-weight-group">
+                    <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
+                    <InputNumber
+                      value={fbAdd3Wt}
+                      min={0}
+                      max={1}
+                      step={0.01}
+                      onChange={(val) => setFbAdd3Wt(clampWeight(val))}
+                      className="pm-weight-input-number"
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                </div>
+
+                {/* Additive 2 */}
+                <div className="pm-additive-row">
+                  <div className="pm-additive-select-group">
+                    <label className="pm-additive-label">{t('performance.formulas.additive2Label', 'Additive 2')}</label>
+                    <Select
+                      value={fbAdd4Name || undefined}
+                      onChange={(value) => setFbAdd4Name(value ?? '')}
+                      options={ADDITIVE_NAME_OPTIONS.filter(o => o.value).map(o => ({ label: o.label, value: o.value }))}
+                      allowClear
+                      className="pm-additive-select"
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                  <div className="pm-weight-group">
+                    <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
+                    <InputNumber
+                      value={fbAdd4Wt}
+                      min={0}
+                      max={1}
+                      step={0.01}
+                      onChange={(val) => setFbAdd4Wt(clampWeight(val))}
+                      className="pm-weight-input-number"
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                </div>
+
+                {/* Additive 3 */}
+                <div className="pm-additive-row">
+                  <div className="pm-additive-select-group">
+                    <label className="pm-additive-label">{t('performance.formulas.additive3Label', 'Additive 3')}</label>
+                    <Select
+                      value={fbAdd5Name || undefined}
+                      onChange={(value) => setFbAdd5Name(value ?? '')}
+                      options={ADDITIVE_NAME_OPTIONS.filter(o => o.value).map(o => ({ label: o.label, value: o.value }))}
+                      allowClear
+                      className="pm-additive-select"
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                  <div className="pm-weight-group">
+                    <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
+                    <InputNumber
+                      value={fbAdd5Wt}
+                      min={0}
+                      max={1}
+                      step={0.01}
+                      onChange={(val) => setFbAdd5Wt(clampWeight(val))}
+                      className="pm-weight-input-number"
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                </div>
+
+                {/* New Additive SMILES (Formula B) */}
+                <div className="pm-additive-row pm-smiles-row">
+                  <div className="pm-additive-smiles-group">
+                    <SmilesInputWithPreview
+                      ref={fbRef}
+                      value={fbAdd6Smiles}
+                      onChange={setFbAdd6Smiles}
+                      label={t('performance.formulas.newAdditiveSmiles', 'New Additive SMILES')}
+                      placeholder={t('performance.additive.placeholder')}
+                    />
+                  </div>
+                  <div className="pm-weight-group">
+                    <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
+                    <InputNumber
+                      value={fbAdd6Wt}
+                      min={0}
+                      max={1}
+                      step={0.01}
+                      onChange={(val) => setFbAdd6Wt(clampWeight(val))}
+                      className="pm-weight-input-number"
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                </div>
               </div>
+
             </div>
-          </div>
-
-          {/* 分子详情显示区域 */}
-          <div className="pm-molecule-details-section" style={{ marginBottom: '20px' }}>
-            {isMoleculeLoading && (
-              <div className="pm-molecule-loading">
-                <p>{t('performance.moleculeInfo.loading')}</p>
-              </div>
-            )}
-
-            {moleculeDetails && (
-              <div className="pm-molecule-information">
-                <div className="pm-molecule-header">
-                  <h3>{t('performance.moleculeInfo.title')}</h3>
-                  <button 
-                    className="pm-molecule-close-btn"
-                    onClick={() => setMoleculeDetails(null)}
-                  >
-                    ×
-                  </button>
-                </div>
-                
-                <div className="pm-molecule-content">
-                  <div className="pm-molecule-structure">
-                    {moleculeDetails.properties.smiles ? (
-                      <MolViewer2D
-                        smile={moleculeDetails.properties.smiles}
-                        cation={moleculeDetails.properties.cation}
-                        theme="light"
-                        className=""
-                        style={{}}
-                      />
-                    ) : (
-                      <div className="pm-structure-placeholder">
-                        <div className="pm-structure-circle">
-                          <span>{t('performance.moleculeInfo.structurePlaceholder.line1')}</span>
-                          <span>{t('performance.moleculeInfo.structurePlaceholder.line2')}</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="pm-molecule-properties">
-                    <div className="pm-properties-grid">
-                      {(() => {
-                        // 定义所有属性配置
-                        const allProperties = [
-                          {
-                            label: t('performance.moleculeInfo.properties.smiles'),
-                            value: moleculeDetails.properties.smiles || '-',
-                            show: true
-                          },
-                          {
-                            label: t('performance.moleculeInfo.properties.espMin'),
-                            value: typeof moleculeDetails.properties.espMin === 'number' 
-                              ? moleculeDetails.properties.espMin.toFixed(2) + ' eV' 
-                              : moleculeDetails.properties.espMin || '-',
-                            show: true
-                          },
-                          {
-                            label: t('performance.moleculeInfo.properties.molecularWeight'),
-                            value: typeof moleculeDetails.properties.molecularWeight === 'number' 
-                              ? moleculeDetails.properties.molecularWeight.toFixed(2) 
-                              : moleculeDetails.properties.molecularWeight || '-',
-                            show: true
-                          },
-                          {
-                            label: t('performance.moleculeInfo.properties.predictedMp'),
-                            value: moleculeDetails.properties.meltingPoint || '-',
-                            show: canShowColumn('predicted_mp_celsius')
-                          },
-                          {
-                            label: t('performance.moleculeInfo.properties.umapX'),
-                            value: moleculeDetails.properties.umapX !== undefined 
-                              ? moleculeDetails.properties.umapX.toFixed(4) 
-                              : '-',
-                            show: true
-                          },
-                          {
-                            label: t('performance.moleculeInfo.properties.predictedBp'),
-                            value: moleculeDetails.properties.boilingPoint || '-',
-                            show: canShowColumn('predicted_bp_celsius')
-                          },
-                          {
-                            label: t('performance.moleculeInfo.properties.umapY'),
-                            value: moleculeDetails.properties.umapY !== undefined 
-                              ? moleculeDetails.properties.umapY.toFixed(4) 
-                              : '-',
-                            show: true
-                          },
-                          {
-                            label: t('performance.moleculeInfo.properties.predictedFp'),
-                            value: moleculeDetails.properties.flashPoint || '-',
-                            show: canShowColumn('predicted_fp_celsius')
-                          },
-                          {
-                            label: t('performance.moleculeInfo.properties.homo'),
-                            value: typeof moleculeDetails.properties.homo === 'number' 
-                              ? moleculeDetails.properties.homo.toFixed(4) + ' eV' 
-                              : moleculeDetails.properties.homo || '-',
-                            show: true
-                          },
-                          {
-                            label: t('performance.moleculeInfo.properties.combustionEnthalpy'),
-                            value: moleculeDetails.properties.combustionEnthalpy || '-',
-                            show: canShowColumn('combustion_enthalpy_ev')
-                          },
-                          {
-                            label: t('performance.moleculeInfo.properties.lumo'),
-                            value: typeof moleculeDetails.properties.lumo === 'number' 
-                              ? moleculeDetails.properties.lumo.toFixed(4) + ' eV' 
-                              : moleculeDetails.properties.lumo || '-',
-                            show: true
-                          },
-                          {
-                            label: t('performance.moleculeInfo.properties.commercialViability'),
-                            value: moleculeDetails.properties.commercialViability || '-',
-                            show: true
-                          },
-                          {
-                            label: t('performance.moleculeInfo.properties.espMax'),
-                            value: typeof moleculeDetails.properties.espMax === 'number' 
-                              ? moleculeDetails.properties.espMax.toFixed(3) + ' eV' 
-                              : moleculeDetails.properties.espMax || '-',
-                            show: true
-                          },
-                          {
-                            label: t('performance.moleculeInfo.properties.functionalGroups'),
-                            value: moleculeDetails.properties.functionalGroups ? (() => {
-                              try {
-                                const groups = JSON.parse(moleculeDetails.properties.functionalGroups);
-                                return Array.isArray(groups) ? groups.join(', ') : moleculeDetails.properties.functionalGroups;
-                              } catch {
-                                return moleculeDetails.properties.functionalGroups;
-                              }
-                            })() : '-',
-                            show: true
-                          }
-                        ];
-
-                        // 过滤出需要显示的属性
-                        const visibleProperties = allProperties.filter(prop => prop.show);
-
-                        // 按两列布局分组
-                        const rows = [];
-                        for (let i = 0; i < visibleProperties.length; i += 2) {
-                          rows.push(visibleProperties.slice(i, i + 2));
-                        }
-
-                        return rows.map((row, rowIndex) => (
-                          <div className="pm-property-row" key={rowIndex}>
-                            {row.map((prop, propIndex) => (
-                              <div className="pm-property-item" key={propIndex}>
-                                <label>{prop.label}</label>
-                                <span>{prop.value}</span>
-                              </div>
-                            ))}
-                          </div>
-                        ));
-                      })()}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {isInvalidSmiles && (
-              <div className="pm-smiles-error-display">
-                <div className="pm-error-header">
-                  <h3>{t('performance.invalidSmiles.title')}</h3>
-                </div>
-                
-                <div className="pm-smiles-error-content">
-                  <p>{t('performance.invalidSmiles.description')}</p>
-                  <p>{t('performance.invalidSmiles.suggestion')}</p>
-                  <div className="pm-example-molecules">
-                    <div className="pm-molecule-examples">
-                      <span className="pm-example-molecule">[Li+].[O-]P(=O)(F)F</span>
-                      <span className="pm-example-molecule">O=C1OC(F)CO1</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
 
           <div className="pm-calculate-btn-wrapper">
@@ -1244,7 +1177,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
               size="mlarge"
               loading={isCalculating}
               onClick={handleCalculate}
-              disabled={isCalculating || showResults || isInvalidSmiles}
+              disabled={isCalculating || showResults}
               className="pm-calculate-btn"
             >
               {t('performance.calculate.button')}
@@ -1335,6 +1268,13 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
               </Tooltip>
             </div>
             
+            {/* 提示模块 */}
+            <div className="pm-improvement-hint">
+              <p className="pm-improvement-hint__text">
+                {t('performance.results.improvementHint', 'Improvement of Formula B compared with Formula A')}
+              </p>
+            </div>
+
             {/* 免责声明提示 */}
             <div 
               style={{ marginTop: '20px', fontSize: '14px', lineHeight: '1.6', color: '#4a5568' }}
@@ -1342,88 +1282,15 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
             />
             
             <div className="pm-results-card">
-              {(() => {
-                // 计算总指标数
-                const metrics25c = getAvailableMetrics('25c');
-                const metrics45c = getAvailableMetrics('45c');
-                const totalMetrics = metrics25c.length + metrics45c.length;
-
-                // 根据总指标数决定容器布局类名
-                const containerClass = totalMetrics === 2 ? 'pm-results-container--horizontal' : 'pm-results-container';
-
-                return (
-                  <div className={containerClass}>
-                    {/* 25°C Performance 区块 */}
-                <div className="pm-temperature-section">
-                  <h3 className="pm-temperature-title">{t('performance.results.temperatureTabs.temp25')}</h3>
-                  {(() => {
-                    const metrics25c = getAvailableMetrics('25c');
-                    const layoutClass = metrics25c.length === 1 ? 'pm-performance-results--single' :
-                                       metrics25c.length === 2 ? 'pm-performance-results--double' :
-                                       'pm-performance-results--triple';
-
-                    return (
-                      <div className={`pm-performance-results ${layoutClass}`}>
-                        {metrics25c.length > 0 && (() => {
-                          const firstMetric = metrics25c[0];
-                          const config = metricConfig[firstMetric];
-                          return (
-                            <div className="pm-result-item" key={firstMetric}>
-                              <div className="pm-result-label">{t(config.label25Key)}</div>
-                              <ElectrolytePerformanceBadge metric={resultsData['25c'][config.dataKey]} metricType={config.dataKey} />
-                            </div>
-                          );
-                        })()}
-
-                        {metrics25c.length > 1 && (
-                          <div className={`pm-results-group ${!isHighTier ? 'pm-with-overlay' : ''}`}
-                               data-overlay-text={t('performance.results.upgradeToViewMetrics')}>
-                            {metrics25c.slice(1).map((metric) => {
-                              const config = metricConfig[metric];
-                              return (
-                                <div className="pm-result-item" key={metric}>
-                                  <div className="pm-result-label">{t(config.label25Key)}</div>
-                                  <ElectrolytePerformanceBadge metric={resultsData['25c'][config.dataKey]} metricType={config.dataKey} />
-                                </div>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })()}
-                </div>
-
-                {/* 45°C Performance 区块（条件渲染） */}
-                {shouldShow45C() && (
-                  <div className={`pm-temperature-section ${!isHighTier ? 'pm-with-overlay' : ''}`}
-                       data-overlay-text={t('performance.results.upgradeToViewMetrics')}>
-                    <h3 className="pm-temperature-title">{t('performance.results.temperatureTabs.temp45')}</h3>
-                    {(() => {
-                      const metrics45c = getAvailableMetrics('45c');
-                      const layoutClass = metrics45c.length === 1 ? 'pm-performance-results--single' :
-                                         metrics45c.length === 2 ? 'pm-performance-results--double' :
-                                         'pm-performance-results--triple';
-
-                      return (
-                        <div className={`pm-performance-results ${layoutClass}`}>
-                          {metrics45c.map((metric) => {
-                            const config = metricConfig[metric];
-                            return (
-                              <div className="pm-result-item" key={metric}>
-                                <div className="pm-result-label">{t(config.label45Key)}</div>
-                                <ElectrolytePerformanceBadge metric={resultsData['45c'][config.dataKey]} metricType={config.dataKey} />
-                              </div>
-                            );
-                          })}
-                        </div>
-                      );
-                    })()}
-                  </div>
-                )}
-                  </div>
-                );
-              })()}
+              <CellPerformanceResults
+                data={{
+                  temp25: resultsData['25c'] as CellPerformanceData['temp25'],
+                  temp45: resultsData['45c'] as CellPerformanceData['temp45'],
+                }}
+                modelType={selectedModelData?.model_type}
+                isHighTier={isHighTier}
+                noCard
+              />
 
               <div className="pm-llm-button-section">
                 <Button

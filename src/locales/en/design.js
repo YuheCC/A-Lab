@@ -3,11 +3,11 @@ export default {
     list: {
         columns: {
             recordId: 'Record ID',
-            smiles: 'SMILES',
             modelName: 'Model Name',
             totalPositive: 'Total Positive',
             temp25: '25°C Positive',
             temp45: '45°C Positive',
+            creator: 'Creator',
             created: 'Created Time',
             actions: 'Actions'
         }

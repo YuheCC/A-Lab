@@ -3,20 +3,12 @@ import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { getHistoryDetail, getModelList } from '../model';
 import { useAuthStore } from '@/models/useAuth';
-import ElectrolytePerformanceBadge from '../components/ElectrolytePerformanceBadge';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 import type { ModelListItem } from '@/services/model/training';
 import { parseModelResult } from '@/utils/modelResultParser';
 import { formatWeightPercentage } from '../utils/weightPercentage';
+import CellPerformanceResults, { type ProcessedMetric, type CellPerformanceData } from '../components/CellPerformanceResults';
 import './index.less';
-
-interface ProcessedMetric {
-  status: 'Positive' | 'Negative' | 'Neutral' | 'Restricted';
-  confidence: number | null;
-  rawProb: number | null;
-  rawLabel: number | null;
-  isRestricted: boolean;
-}
 
 const RecordPage: React.FC = () => {
   const navigate = useNavigate();
@@ -166,50 +158,6 @@ const RecordPage: React.FC = () => {
     };
   };
 
-  // 根据 model_type 获取支持的指标类型
-  const getSupportedMetrics = (): ('cl' | 'ce' | 'rate')[] => {
-    // 未定义时，默认显示所有指标
-    if (modelType === undefined) {
-      return ['cl', 'ce', 'rate'];
-    }
-
-    // 根据 model_type 映射
-    switch (modelType) {
-      case 1:
-        return ['rate'];  // 仅倍率性能
-      case 2:
-        return ['ce'];    // 仅库伦效率
-      case 3:
-        return ['cl'];    // 仅循环寿命
-      default:
-        return ['cl', 'ce', 'rate'];
-    }
-  };
-
-  // 判断指定指标是否应该显示
-  const shouldShowMetric = (metric: 'cl' | 'ce' | 'rate', temperature: '25' | '45'): boolean => {
-    const supportedMetrics = getSupportedMetrics();
-
-    // 检查指标是否在支持列表中
-    if (!supportedMetrics.includes(metric)) {
-      return false;
-    }
-
-    // 45°C 时过滤掉 rate（与 PredictionModule 保持一致）
-    if (temperature === '45' && metric === 'rate') {
-      return false;
-    }
-
-    return true;
-  };
-
-  // 判断是否显示 45°C 区域
-  const shouldShow45CSection = (): boolean => {
-    const supportedMetrics = getSupportedMetrics();
-    // 45°C 只显示 cl 和 ce，所以检查是否有这两个指标
-    return supportedMetrics.includes('cl') || supportedMetrics.includes('ce');
-  };
-
   const getProcessedResults = () => {
     if (!detailData) return null;
 
@@ -251,6 +199,14 @@ const RecordPage: React.FC = () => {
 
   const processedResults = getProcessedResults();
   const isMock = detailData?.isMock;
+
+  const modelParams = useMemo(() => {
+    try {
+      return detailData?.model_params ? JSON.parse(detailData.model_params) : null;
+    } catch {
+      return null;
+    }
+  }, [detailData]);
 
   if (loading) {
     return (
@@ -325,77 +281,60 @@ const RecordPage: React.FC = () => {
                   <span className="value">{formatWeightPercentage(baseModelId, modelType)}</span>
                 </div>
               </div>
+
+              {modelParams && (
+                <div className="chemistry-formulas-grid">
+                  {([
+                    {
+                      titleKey: 'performance.formulas.formulaA',
+                      titleFallback: 'Formula A',
+                      formulation: modelParams.formulation_a,
+                      variant: 'a' as const,
+                    },
+                    {
+                      titleKey: 'performance.formulas.formulaB',
+                      titleFallback: 'Formula B',
+                      formulation: modelParams.formulation_b,
+                      variant: 'b' as const,
+                    },
+                  ]).map(({ titleKey, titleFallback, formulation, variant }) => (
+                    <div className={`chemistry-formula-block chemistry-formula-block--${variant}`} key={titleKey}>
+                      <div className="chemistry-formula-header">
+                        <span className="chemistry-formula-bar" />
+                        <span className="chemistry-formula-title">{t(titleKey, titleFallback)}</span>
+                      </div>
+                      <div className="chemistry-formula-items">
+                        {[
+                          { label: t('performance.formulas.additive1Label', 'Additive 1'), name: formulation?.additive_3_name, wt: formulation?.additive_3_wt },
+                          { label: t('performance.formulas.additive2Label', 'Additive 2'), name: formulation?.additive_4_name, wt: formulation?.additive_4_wt },
+                          { label: t('performance.formulas.additive3Label', 'Additive 3'), name: formulation?.additive_5_name, wt: formulation?.additive_5_wt },
+                          { label: t('performance.formulas.newAdditiveSmiles', 'New Additive SMILES'), name: formulation?.additive_6_smiles, wt: formulation?.additive_6_wt },
+                        ].map((item, idx) => (
+                          <div className="chemistry-formula-item" key={idx}>
+                            <span className="cfi-label">{item.label}</span>
+                            <span className="cfi-name">{item.name || '-'}</span>
+                            <span className={`cfi-wt${item.wt == null ? ' cfi-wt--empty' : ''}`}>
+                              {item.wt != null ? `${item.wt} wt%` : '- wt%'}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
           {processedResults && (
             <div className="design-results-section">
               <h4 className="design-section-title">{t('performance.results.title')}</h4>
-
-              {(isHighTier || isMock) ? (
-                <div className="design-results-card">
-                  {/* 25°C Section - 根据 supportedMetrics 条件渲染 */}
-                  <div className="temperature-section">
-                    <h5>{t('performance.results.temperatureTabs.temp25')}</h5>
-                    <div className="performance-results">
-                      {shouldShowMetric('cl', '25') && (
-                        <div className="result-item">
-                          <div className="result-label">{t('performance.results.performance.cycleLife25')}</div>
-                          <ElectrolytePerformanceBadge metric={processedResults.temp25.cycleLife} metricType="cycleLife" />
-                        </div>
-                      )}
-                      {shouldShowMetric('ce', '25') && (
-                        <div className="result-item">
-                          <div className="result-label">{t('performance.results.performance.ce25')}</div>
-                          <ElectrolytePerformanceBadge metric={processedResults.temp25.ce} metricType="ce" />
-                        </div>
-                      )}
-                      {shouldShowMetric('rate', '25') && (
-                        <div className="result-item">
-                          <div className="result-label">{t('performance.results.performance.ratePerformance25')}</div>
-                          <ElectrolytePerformanceBadge metric={processedResults.temp25.ratePerformance} metricType="ratePerformance" />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* 45°C Section - 仅在有支持的指标时显示 */}
-                  {shouldShow45CSection() && (
-                    <div className="temperature-section">
-                      <h5>{t('performance.results.temperatureTabs.temp45')}</h5>
-                      <div className="performance-results">
-                        {shouldShowMetric('cl', '45') && (
-                          <div className="result-item">
-                            <div className="result-label">{t('performance.results.performance.cycleLife45')}</div>
-                            <ElectrolytePerformanceBadge metric={processedResults.temp45.cycleLife} metricType="cycleLife" />
-                          </div>
-                        )}
-                        {shouldShowMetric('ce', '45') && (
-                          <div className="result-item">
-                            <div className="result-label">{t('performance.results.performance.ce45')}</div>
-                            <ElectrolytePerformanceBadge metric={processedResults.temp45.ce} metricType="ce" />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="design-results-card">
-                  <div className="temperature-section">
-                    <h5>{t('performance.results.temperatureTabs.temp25')}</h5>
-                    <div className="limited-preview">
-                      <div className="result-item">
-                        <div className="result-label">{t('performance.results.performance.cycleLife25')}</div>
-                        <ElectrolytePerformanceBadge metric={processedResults.temp25.cycleLife} metricType="cycleLife" />
-                      </div>
-                      <div className="upgrade-prompt">
-                        {t('performance.results.upgradeToViewMetrics')}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
+              <CellPerformanceResults
+                data={processedResults as CellPerformanceData}
+                modelType={modelType}
+                isHighTier={isHighTier}
+                isMock={isMock}
+              />
             </div>
           )}
 
