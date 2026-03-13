@@ -6,21 +6,21 @@ export const PREDICTION_ENDPOINTS: EndpointConfig<Record<string, string>> = {
     historyList: '/api/cellLife/history/list',
     historyDetail: '/api/cellLife/history/detail',
     historyDelete: '/api/cellLife/history/delete',
-    fileGet: '/api/file/get',
+    fileGet: '/api/user/files/get',
   },
   us: {
     modelPredict: '/api/cellLife/model_predict',
     historyList: '/api/cellLife/history/list',
     historyDetail: '/api/cellLife/history/detail',
     historyDelete: '/api/cellLife/history/delete',
-    fileGet: '/api/file/get',
+    fileGet: '/api/user/files/get',
   },
   box: {
     modelPredict: '/api/cellLife/model_predict',
     historyList: '/api/cellLife/history/list',
     historyDetail: '/api/cellLife/history/detail',
     historyDelete: '/api/cellLife/history/delete',
-    fileGet: '/api/file/get',
+    fileGet: '/api/user/files/get',
   },
 };
 
