@@ -865,6 +865,26 @@
   font-size: 14px;
 }
 
+.pm-form-validation-error {
+  margin-bottom: 8px;
+  color: #ff4d4f;
+  font-size: 13px;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+
+  &::before {
+    content: '⚠';
+    margin-right: 6px;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
 .pm-llm-analysis-header {
   display: flex;
   justify-content: space-between;
