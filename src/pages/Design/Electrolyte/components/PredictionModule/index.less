@@ -1120,14 +1120,14 @@
     .ant-input-number-input {
       height: 30px;
       line-height: 30px;
-      padding: 0 8px;
+      padding: 0 30px 0 8px; // 右侧留出加减按钮（约22px）的空间
       color: @color-gray-700;
       box-sizing: border-box;
     }
 
-    // 隐藏步进箭头，避免影响布局
+    // 恢复默认 hover 显示行为，不强制常驻
     .ant-input-number-handler-wrap {
-      display: none;
+      height: 100%;
     }
 
     &:hover {
