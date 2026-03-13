@@ -19,7 +19,7 @@ import { getModelList } from '../../model';
 import type { ModelListItem } from '@/services/model/training';
 import { parseModelResult } from '@/utils/modelResultParser';
 import { getWeightPercentage } from '../../utils/weightPercentage';
-import ElectrolytePerformanceBadge from '../ElectrolytePerformanceBadge';
+import CellPerformanceResults, { type CellPerformanceData } from '../CellPerformanceResults';
 
 interface SystemSpec {
   cathode: string;
@@ -153,56 +153,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   };
 
   const currentSpec = getCurrentSpec();
-
-  // 性能指标配置映射
-  const metricConfig: Record<PerformanceMetricType, {
-    label25Key: string;
-    label45Key: string;
-    dataKey: 'cycleLife' | 'ce' | 'ratePerformance';
-  }> = {
-    'cl': {
-      label25Key: 'performance.results.performance.cycleLife25',
-      label45Key: 'performance.results.performance.cycleLife45',
-      dataKey: 'cycleLife'
-    },
-    'ce': {
-      label25Key: 'performance.results.performance.ce25',
-      label45Key: 'performance.results.performance.ce45',
-      dataKey: 'ce'
-    },
-    'rate': {
-      label25Key: 'performance.results.performance.ratePerformance25',
-      label45Key: '',
-      dataKey: 'ratePerformance'
-    }
-  };
-
-  // 根据模型配置和温度限制，获取可显示的性能指标
-  const getAvailableMetrics = useCallback(
-    (temperature: '25c' | '45c'): PerformanceMetricType[] => {
-      if (!selectedModel) return [];
-
-      const model = modelOptions.find(m => m.id === selectedModel);
-      if (!model || !model.supportedMetrics || model.supportedMetrics.length === 0) {
-        return [];
-      }
-
-      let availableMetrics = [...model.supportedMetrics];
-
-      // 45°C 温度限制：移除 rate（API 不支持）
-      if (temperature === '45c') {
-        availableMetrics = availableMetrics.filter(m => m !== 'rate');
-      }
-
-      return availableMetrics;
-    },
-    [selectedModel, modelOptions]
-  );
-
-  // 判断是否需要显示 45°C 区块
-  const shouldShow45C = useCallback((): boolean => {
-    return getAvailableMetrics('45c').length > 0;
-  }, [getAvailableMetrics]);
 
   // 计算等待时间的useEffect
   useEffect(() => {
@@ -978,7 +928,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
             <div className="pm-formula-columns">
 
               {/* Formula A */}
-              <div className="pm-formula-column">
+              <div className="pm-formula-column pm-formula-column--a">
                 <div className="pm-formula-column-header">
                   <span className="pm-formula-column-bar" />
                   <h4 className="pm-formula-column-title">{t('performance.formulas.formulaA', 'Formula A')}</h4>
@@ -1105,7 +1055,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
               </div>
 
               {/* Formula B */}
-              <div className="pm-formula-column">
+              <div className="pm-formula-column pm-formula-column--b">
                 <div className="pm-formula-column-header">
                   <span className="pm-formula-column-bar" />
                   <h4 className="pm-formula-column-title">{t('performance.formulas.formulaB', 'Formula B')}</h4>
@@ -1332,88 +1282,15 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
             />
             
             <div className="pm-results-card">
-              {(() => {
-                // 计算总指标数
-                const metrics25c = getAvailableMetrics('25c');
-                const metrics45c = getAvailableMetrics('45c');
-                const totalMetrics = metrics25c.length + metrics45c.length;
-
-                // 根据总指标数决定容器布局类名
-                const containerClass = totalMetrics === 2 ? 'pm-results-container--horizontal' : 'pm-results-container';
-
-                return (
-                  <div className={containerClass}>
-                    {/* 25°C Performance 区块 */}
-                <div className="pm-temperature-section">
-                  <h3 className="pm-temperature-title">{t('performance.results.temperatureTabs.temp25')}</h3>
-                  {(() => {
-                    const metrics25c = getAvailableMetrics('25c');
-                    const layoutClass = metrics25c.length === 1 ? 'pm-performance-results--single' :
-                                       metrics25c.length === 2 ? 'pm-performance-results--double' :
-                                       'pm-performance-results--triple';
-
-                    return (
-                      <div className={`pm-performance-results ${layoutClass}`}>
-                        {metrics25c.length > 0 && (() => {
-                          const firstMetric = metrics25c[0];
-                          const config = metricConfig[firstMetric];
-                          return (
-                            <div className="pm-result-item" key={firstMetric}>
-                              <div className="pm-result-label">{t(config.label25Key)}</div>
-                              <ElectrolytePerformanceBadge metric={resultsData['25c'][config.dataKey]} metricType={config.dataKey} />
-                            </div>
-                          );
-                        })()}
-
-                        {metrics25c.length > 1 && (
-                          <div className={`pm-results-group ${!isHighTier ? 'pm-with-overlay' : ''}`}
-                               data-overlay-text={t('performance.results.upgradeToViewMetrics')}>
-                            {metrics25c.slice(1).map((metric) => {
-                              const config = metricConfig[metric];
-                              return (
-                                <div className="pm-result-item" key={metric}>
-                                  <div className="pm-result-label">{t(config.label25Key)}</div>
-                                  <ElectrolytePerformanceBadge metric={resultsData['25c'][config.dataKey]} metricType={config.dataKey} />
-                                </div>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })()}
-                </div>
-
-                {/* 45°C Performance 区块（条件渲染） */}
-                {shouldShow45C() && (
-                  <div className={`pm-temperature-section ${!isHighTier ? 'pm-with-overlay' : ''}`}
-                       data-overlay-text={t('performance.results.upgradeToViewMetrics')}>
-                    <h3 className="pm-temperature-title">{t('performance.results.temperatureTabs.temp45')}</h3>
-                    {(() => {
-                      const metrics45c = getAvailableMetrics('45c');
-                      const layoutClass = metrics45c.length === 1 ? 'pm-performance-results--single' :
-                                         metrics45c.length === 2 ? 'pm-performance-results--double' :
-                                         'pm-performance-results--triple';
-
-                      return (
-                        <div className={`pm-performance-results ${layoutClass}`}>
-                          {metrics45c.map((metric) => {
-                            const config = metricConfig[metric];
-                            return (
-                              <div className="pm-result-item" key={metric}>
-                                <div className="pm-result-label">{t(config.label45Key)}</div>
-                                <ElectrolytePerformanceBadge metric={resultsData['45c'][config.dataKey]} metricType={config.dataKey} />
-                              </div>
-                            );
-                          })}
-                        </div>
-                      );
-                    })()}
-                  </div>
-                )}
-                  </div>
-                );
-              })()}
+              <CellPerformanceResults
+                data={{
+                  temp25: resultsData['25c'] as CellPerformanceData['temp25'],
+                  temp45: resultsData['45c'] as CellPerformanceData['temp45'],
+                }}
+                modelType={selectedModelData?.model_type}
+                isHighTier={isHighTier}
+                noCard
+              />
 
               <div className="pm-llm-button-section">
                 <Button
