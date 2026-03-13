@@ -145,6 +145,8 @@ const DesignPage: React.FC<DesignPageProps> = () => {
   const getTotalPositiveCount = (modelType?: number): number => {
     if (modelType === undefined || modelType === null) return 0;
     switch (modelType) {
+      case 101:
+        return 5;
       case 100:
         return 5;
       case 1:
@@ -154,7 +156,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
       case 3:
         return 2;
       default:
-        return 0;
+        return 5;
     }
   };
 
@@ -631,6 +633,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                           </tr>
                         ) : (
                           historyData.map((record) => {
+                            console.log(record)
                             const totalPositive = getTotalPositiveCount(record.modelType);
                             const actualPositive = record.temp25Count + record.temp45Count;
                             return (
