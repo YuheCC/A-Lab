@@ -106,6 +106,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   // 新增状态：计算相关
   const [isCalculating, setIsCalculating] = useState(false);
   const [calculationError, setCalculationError] = useState<string | null>(null);
+  const [formValidationError, setFormValidationError] = useState<string | null>(null);
   const [predictionResults, setPredictionResults] = useState<PerformancePredictionResponse | null>(null);
   
   // 新增状态：记录上次计算的表单数据
@@ -385,9 +386,23 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const handleCalculate = async () => {
     // 校验模型是否选择
     if (!selectedModel) {
-      alert(t('performance.modelSelection.placeholder', '请选择预测模型'));
+      setFormValidationError(t('performance.validation.selectModel', 'Please select a prediction model'));
       return;
     }
+
+    // 校验 Formula A 和 B 都至少填写一组参数
+    const hasFormulaA = !!(faAdd3Name || faAdd4Name || faAdd5Name || additive.trim());
+    const hasFormulaB = !!(fbAdd3Name || fbAdd4Name || fbAdd5Name || fbAdd6Smiles.trim());
+
+    if (!hasFormulaA || !hasFormulaB) {
+      setFormValidationError(
+        t('performance.validation.atLeastOneAdditive', 'Both Formula A and Formula B must have at least one additive filled in')
+      );
+      return;
+    }
+
+    // 清除校验错误
+    setFormValidationError(null);
 
     // 并行验证 Formula A / B 的 SMILES（非空时才验证）
     const [faResult, fbResult] = await Promise.all([
@@ -414,7 +429,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   // LLM分析处理函数
   const handleLLMAnalysis = async () => {
     if (!predictionResults) {
-      alert(t('performance.ui.predictionFirst'));
       return;
     }
 
@@ -793,9 +807,10 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     }
 
     // 比较当前表单数据与上次计算的数据
+    // 注意：与 performCalculation 中保持一致，null 权重用 ?? 0 处理，否则序列化结果不同导致误判
     const currentModelParams = JSON.stringify({
-      formulation_a: { additive_3_name: faAdd3Name, additive_3_wt: faAdd3Wt, additive_4_name: faAdd4Name, additive_4_wt: faAdd4Wt, additive_5_name: faAdd5Name, additive_5_wt: faAdd5Wt, additive_6_smiles: additive.trim(), additive_6_wt: faAdd6Wt },
-      formulation_b: { additive_3_name: fbAdd3Name, additive_3_wt: fbAdd3Wt, additive_4_name: fbAdd4Name, additive_4_wt: fbAdd4Wt, additive_5_name: fbAdd5Name, additive_5_wt: fbAdd5Wt, additive_6_smiles: fbAdd6Smiles, additive_6_wt: fbAdd6Wt },
+      formulation_a: { additive_3_name: faAdd3Name, additive_3_wt: faAdd3Wt ?? 0, additive_4_name: faAdd4Name, additive_4_wt: faAdd4Wt ?? 0, additive_5_name: faAdd5Name, additive_5_wt: faAdd5Wt ?? 0, additive_6_smiles: additive.trim(), additive_6_wt: faAdd6Wt ?? 0 },
+      formulation_b: { additive_3_name: fbAdd3Name, additive_3_wt: fbAdd3Wt ?? 0, additive_4_name: fbAdd4Name, additive_4_wt: fbAdd4Wt ?? 0, additive_5_name: fbAdd5Name, additive_5_wt: fbAdd5Wt ?? 0, additive_6_smiles: fbAdd6Smiles, additive_6_wt: fbAdd6Wt ?? 0 },
     });
     const isFormModified = 
       selectedSystem !== lastCalculatedFormData.selectedSystem ||
@@ -813,6 +828,16 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     }
   }, [selectedSystem, selectedModel, additive, lastCalculatedFormData, predictionResults]);
 
+  // 任意校验相关字段变化时，清除表单校验错误提示
+  useEffect(() => {
+    if (formValidationError) {
+      setFormValidationError(null);
+    }
+  }, [
+    selectedModel,
+    faAdd3Name, faAdd4Name, faAdd5Name, additive,
+    fbAdd3Name, fbAdd4Name, fbAdd5Name, fbAdd6Smiles,
+  ]);
 
   const comingSoonText = useMemo(() => {
     return {
@@ -1022,13 +1047,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                       ref={faRef}
                       value={additive}
                       onChange={setAdditive}
-                      label={
-                        <>
-                          {t('performance.formulas.newAdditiveSmiles', 'New Additive SMILES')}
-                          {' '}
-                          <span className="pm-required">{t('performance.additive.required')}</span>
-                        </>
-                      }
+                      label={t('performance.formulas.newAdditiveSmiles', 'New Additive SMILES')}
                       placeholder={t('performance.additive.placeholder')}
                       onResultsInvalidate={() => {
                         setShowResults(false);
@@ -1171,6 +1190,11 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
             </div>
           </div>
 
+          {formValidationError && (
+            <div className="pm-form-validation-error">
+              <p>{formValidationError}</p>
+            </div>
+          )}
           <div className="pm-calculate-btn-wrapper">
             <Button
               variant="primary"
