@@ -404,13 +404,25 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     // 清除校验错误
     setFormValidationError(null);
 
-    // 并行验证 Formula A / B 的 SMILES（非空时才验证）
+    // 检查 SMILES 验证结果是否合法
+    // blur 时已触发验证并缓存结果，这里优先使用同步缓存状态，避免重复请求
+    // 若用户未触发 blur（如直接点击 Calculate），则 fallback 到异步验证
+    const checkSmiles = async (
+      smiles: string,
+      ref: React.RefObject<SmilesInputHandle>,
+    ): Promise<{ isValid: boolean }> => {
+      if (!smiles.trim()) return { isValid: true };
+      const state = ref.current?.getValidationState();
+      if (state?.hasBeenValidated) return { isValid: state.isValid };
+      return ref.current?.validate() ?? { isValid: true };
+    };
+
     const [faResult, fbResult] = await Promise.all([
-      additive.trim() ? faRef.current?.validate() : Promise.resolve({ isValid: true }),
-      fbAdd6Smiles.trim() ? fbRef.current?.validate() : Promise.resolve({ isValid: true }),
+      checkSmiles(additive, faRef),
+      checkSmiles(fbAdd6Smiles, fbRef),
     ]);
 
-    if (faResult?.isValid === false || fbResult?.isValid === false) {
+    if (!faResult.isValid || !fbResult.isValid) {
       return;
     }
 

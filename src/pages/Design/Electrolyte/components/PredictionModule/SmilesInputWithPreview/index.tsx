@@ -13,6 +13,8 @@ import MolViewer2D from '@/components/NodePopup/MolViewer2D.js';
 export interface SmilesInputHandle {
   /** 触发验证，返回是否合法；SMILES 为空时跳过并返回 valid */
   validate: () => Promise<{ isValid: boolean }>;
+  /** 同步获取当前验证状态；未验证时返回 null */
+  getValidationState: () => { isValid: boolean; hasBeenValidated: boolean };
 }
 
 interface SmilesInputWithPreviewProps {
@@ -87,13 +89,22 @@ const SmilesInputWithPreview = forwardRef<SmilesInputHandle, SmilesInputWithPrev
         if (!trimmed) return { isValid: true };
         return validateSmiles(trimmed);
       },
+      getValidationState: () => {
+        const trimmed = value.trim();
+        if (!trimmed) return { isValid: true, hasBeenValidated: true };
+        const hasBeenValidated = lastQueriedSmiles === trimmed;
+        return { isValid: !isInvalidSmiles, hasBeenValidated };
+      },
     }));
 
     const handleBlur = () => {
-      if (!value.trim()) {
+      const trimmed = value.trim();
+      if (!trimmed) {
         setMoleculeDetails(null);
         setIsInvalidSmiles(false);
         setLastQueriedSmiles(null);
+      } else {
+        validateSmiles(trimmed);
       }
     };
 
