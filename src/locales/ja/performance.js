@@ -286,6 +286,13 @@ export default {
     }
   },
 
+  // Form validation messages
+  validation: {
+    selectModel: "予測モデルを選択してください",
+    atLeastOneAdditive: "フォーミュラ A とフォーミュラ B の両方に、少なくとも1つの添加剤を入力してください",
+    invalidSmiles: "{{formulas}} に入力された SMILES が無効です。修正してから計算してください。",
+  },
+
   // Battery system fallback
   batterySystemFallback: "バッテリーシステム",
 

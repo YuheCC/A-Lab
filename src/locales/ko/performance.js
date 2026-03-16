@@ -286,6 +286,13 @@ export default {
     }
   },
 
+  // Form validation messages
+  validation: {
+    selectModel: "예측 모델을 선택해 주세요",
+    atLeastOneAdditive: "Formula A와 Formula B 모두 최소 하나의 첨가제를 입력해야 합니다",
+    invalidSmiles: "{{formulas}}에 입력된 SMILES가 유효하지 않습니다. 수정 후 계산하세요.",
+  },
+
   // Battery system fallback
   batterySystemFallback: "배터리 시스템",
 

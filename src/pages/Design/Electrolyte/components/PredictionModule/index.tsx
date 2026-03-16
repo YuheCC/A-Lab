@@ -386,7 +386,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const handleCalculate = async () => {
     // 校验模型是否选择
     if (!selectedModel) {
-      setFormValidationError(t('performance.validation.selectModel', 'Please select a prediction model'));
+      setFormValidationError(t('performance.validation.selectModel'));
       return;
     }
 
@@ -396,7 +396,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
     if (!hasFormulaA || !hasFormulaB) {
       setFormValidationError(
-        t('performance.validation.atLeastOneAdditive', 'Both Formula A and Formula B must have at least one additive filled in')
+        t('performance.validation.atLeastOneAdditive')
       );
       return;
     }
@@ -423,6 +423,12 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     ]);
 
     if (!faResult.isValid || !fbResult.isValid) {
+      const which: string[] = [];
+      if (!faResult.isValid) which.push('Formula A');
+      if (!fbResult.isValid) which.push('Formula B');
+      setFormValidationError(
+        t('performance.validation.invalidSmiles', { formulas: which.join(' & ') }),
+      );
       return;
     }
 

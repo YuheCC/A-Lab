@@ -286,6 +286,13 @@ export default {
     }
   },
 
+  // Form validation messages
+  validation: {
+    selectModel: "请选择预测模型",
+    atLeastOneAdditive: "Formula A 和 Formula B 都必须至少填写一项添加剂",
+    invalidSmiles: "{{formulas}} 中输入的 SMILES 无效，请修正后再进行计算。",
+  },
+
   // Battery system fallback
   batterySystemFallback: "电池系统",
 
