@@ -275,7 +275,7 @@ export const usePlotDataStore = create<PlotDataStore>((set) => ({
                 .filter((row: any) => row && row.UMAP_0 !== undefined && row.UMAP_1 !== undefined)
                 .slice(0, MAX_NODES)
                 .map((row: any, index: number) => createOrganicNode(row, index));
-console.log(nodes)
+
             set({
                 data: nodes,
                 propertyRanges: computePropertyRanges(nodes, ORGANIC_NUMERIC_KEYS),
@@ -437,7 +437,7 @@ export const useAnionsPlotDataStore = create<AnionsPlotDataStore>((set) => ({
                 .filter((row: any) => row && row.UMAP_0 !== undefined && row.UMAP_1 !== undefined)
                 .slice(0, MAX_NODES)
                 .map((row: any, index: number) => createAnionsNode(row, index));
-console.log(nodes)
+
             set({
                 data: nodes,
                 propertyRanges: computePropertyRanges(nodes, ANIONS_NUMERIC_KEYS),
