@@ -1337,7 +1337,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
               <div className="pm-llm-button-section">
                 <Button
                   variant="primary"
-                  size="large"
+                  size="mlarge"
                   loading={isAnalyzing}
                   onClick={handleLLMAnalysis}
                   disabled={isAnalyzing || !predictionResults || hasAnalysisResult || !isHighTier}
