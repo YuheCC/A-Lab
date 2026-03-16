@@ -1403,6 +1403,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
             </div>
           </div>
         )}
+
+        <div style={{height: "48px"}}></div>
       </div>
     </div>
   );
