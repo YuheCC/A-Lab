@@ -10,7 +10,7 @@ export const parseFunctionalGroups = (value: unknown): string[] => {
     }
     if (typeof value === "string") {
         try {
-            const parsed = JSON.parse(value);
+            const parsed = JSON.parse(value.replace(/'/g, '"'));
             if (Array.isArray(parsed)) {
                 return parsed.map(String).filter(Boolean);
             }
