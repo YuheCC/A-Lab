@@ -286,6 +286,13 @@ export default {
     }
   },
 
+  // Form validation messages
+  validation: {
+    selectModel: "Please select a prediction model",
+    atLeastOneAdditive: "Both Formula A and Formula B must have at least one additive filled in",
+    invalidSmiles: "The SMILES entered for {{formulas}} is invalid. Please correct it before calculating.",
+  },
+
   // Battery system fallback
   batterySystemFallback: "Battery System",
 
