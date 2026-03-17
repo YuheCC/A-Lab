@@ -20,7 +20,6 @@ import {
   type ElectrodeModelParams,
   type ElectrodeModelResult,
   type OptimizeHistoryItem,
-  type OptimizeResultItemDTO,
   type UniversalHistoryDetailResponse,
 } from '@/services/electrode/types';
 
@@ -135,40 +134,6 @@ export async function getElectrodeHistoryList(
 }
 
 /**
- * 格式化 Optimize 结果数组，将所有数字字段保留2位小数
- * Format Optimize result array to keep 2 decimal places for all number fields
- *
- * @param results - 原始 Optimize 结果数组
- * @returns 格式化后的结果数组
- */
-function formatOptimizeResults(results: OptimizeResultItemDTO[]): OptimizeResultItemDTO[] {
-  return results.map((item) => ({
-    // 阴极参数
-    cathode_binder_wt: Number(item.cathode_binder_wt?.toFixed(2)),
-    cathode_cnt_wt: Number(item.cathode_cnt_wt?.toFixed(2)),
-    cathode_conductive_carbon_wt: Number(item.cathode_conductive_carbon_wt?.toFixed(2)),
-    cathode_areal_loading: Number(item.cathode_areal_loading?.toFixed(2)),
-    cathode_press_density: Number(item.cathode_press_density?.toFixed(2)),
-    // 阳极参数
-    anode_binder1_wt: Number(item.anode_binder1_wt?.toFixed(2)),
-    anode_binder2_wt: Number(item.anode_binder2_wt?.toFixed(2)),
-    anode_binder3_wt: Number(item.anode_binder3_wt?.toFixed(2)),
-    anode_conductive_carbon_wt: Number(item.anode_conductive_carbon_wt?.toFixed(2)),
-    anode_cnt_wt: Number(item.anode_cnt_wt?.toFixed(2)),
-    anode_press_density: Number(item.anode_press_density?.toFixed(2)),
-    // 尺寸参数
-    width: item.width,
-    length: item.length,
-    layers: item.layers,
-    // 结果参数
-    design_capacity: Number(item.design_capacity?.toFixed(2)),
-    specific_ED: Number(item.specific_ED?.toFixed(2)),
-    jelly_roll_thickness: Number(item.jelly_roll_thickness?.toFixed(2)),
-    volumetric_ED: Number(item.volumetric_ED?.toFixed(2)),
-  }));
-}
-
-/**
  * 获取电极性能历史记录详情
  * Get Electrode Performance History Detail
  *
@@ -207,14 +172,8 @@ export async function getElectrodeHistoryDetail(
 
   // 根据 type 处理不同的数据结构
   if (isOptimizeHistoryItem(response)) {
-    // type=2: 反向设计 - model_result 是数组，格式化每个结果项
-    return {
-      ...response,
-      model_result: {
-        valid: formatOptimizeResults(response.model_result.valid),
-        invalid: formatOptimizeResults(response.model_result.invalid),
-      },
-    };
+    // type=2: 反向设计 - model_result 是统计数据，直接返回
+    return response;
   }
 
   // type=1: 正向预测 - model_result 是单个对象
@@ -318,7 +277,6 @@ export type {
   ElectrodeModelParams,
   ElectrodeModelResult,
   OptimizeHistoryItem,
-  OptimizeResultItemDTO,
   UniversalHistoryDetailResponse,
 };
 

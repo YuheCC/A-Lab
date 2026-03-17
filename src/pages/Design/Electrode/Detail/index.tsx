@@ -101,6 +101,7 @@ const DetailPage: React.FC = () => {
     return (
       <OptimizeDetailContent
         t={t}
+        historyId={detailData.id}
         cellDesign={cell_design}
         npRatio={npRatio}
         cathodeActiveMaterial={cathode_active_material}

@@ -469,10 +469,28 @@ export interface OptimizeGroupedResultDTO {
 }
 
 /**
+ * 反向设计模型结果统计 - 后端 DTO
+ * Optimize Model Result Stats - Backend DTO
+ *
+ * detail 接口返回的 model_result 字段，为生成统计信息
+ * 实际推荐结果通过 getBackwardResultList 单独获取
+ */
+export interface OptimizeModelResultStatsDTO {
+  /** 总共生成的候选数量 */
+  total_generated: number;
+  /** 经过范围过滤后的数量 */
+  after_range_filter: number;
+  /** 经过验证后的数量 */
+  after_validation: number;
+  /** 最终返回的推荐数量 */
+  count: number;
+}
+
+/**
  * Optimize API 响应 - 后端 DTO
  * Optimize API Response - Backend DTO
  *
- * 反向设计 API 返回的完整响应结构
+ * 反向设计 API 返回的完整响应结构（仅含 id，实际结果通过 getBackwardResultList 获取）
  */
 export interface ElectrodeOptimizeResponseDTO {
   /** 记录 ID */
@@ -489,8 +507,8 @@ export interface ElectrodeOptimizeResponseDTO {
   type: number;
   /** 模型参数 */
   model_params: OptimizeModelParamsDTO;
-  /** 模型结果 - 分组结构（valid/invalid） */
-  model_result: OptimizeGroupedResultDTO;
+  /** 模型结果统计（非推荐列表） */
+  model_result: OptimizeModelResultStatsDTO;
   /** 创建时间 */
   created_at?: string;
   /** 更新时间 */
@@ -502,8 +520,6 @@ export interface ElectrodeOptimizeResponseDTO {
 /**
  * Optimize 历史记录项 - type=2 反向设计
  * Optimize History Item - type=2 Inverse Design
- *
- * 与 ElectrodeHistoryItem 类似，但 model_result 是分组结构
  */
 export interface OptimizeHistoryItem {
   /** 记录 ID */
@@ -518,10 +534,10 @@ export interface OptimizeHistoryItem {
   anode_active_material: string;
   /** 页面类型：2=反向设计 */
   type: ElectrodePageType;
-  /** 模型参数（区间模式） */
+  /** 模型参数（新格式：cathode_width/length、jrt/ved/sed/dc min/max） */
   model_params: OptimizeModelParamsDTO;
-  /** 模型结果 - 分组结构（valid/invalid） */
-  model_result: OptimizeGroupedResultDTO;
+  /** 模型结果统计（非推荐列表，推荐列表通过 getBackwardResultList 获取） */
+  model_result: OptimizeModelResultStatsDTO;
   /** 创建时间 */
   created_at?: string;
   /** 更新时间 */
