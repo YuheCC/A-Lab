@@ -356,27 +356,32 @@ export interface ElectrodeModelPredictResponse {
 // ============================================
 
 /**
- * Optimize 模型参数（区间模式） - 后端 DTO
- * Optimize Model Parameters (Range Mode) - Backend DTO
+ * Optimize 模型参数（min/max 平铺模式） - 后端 DTO
+ * Optimize Model Parameters (Min/Max Flat Mode) - Backend DTO
  *
- * 用于反向设计（type=2）时的输入参数，
- * 部分参数使用区间 [min, max] 格式
+ * 用于反向设计（type=2）时的输入参数
  */
 export interface OptimizeModelParamsDTO {
-  /** Width (mm) */
-  width: number;
-  /** Length (mm) */
-  length: number;
-  /** Layers */
-  layers: number;
-  /** Design Capacity (Ah) - 区间 [min, max] */
-  design_capacity: [number, number];
-  /** Specific Energy Density (Wh/kg) - 区间 [min, max] */
-  specific_ED: [number, number];
-  /** Jelly Roll Thickness (mm) - 区间 [min, max] */
-  jelly_roll_thickness: [number, number];
-  /** Volumetric Energy Density (Wh/L) - 区间 [min, max] */
-  volumetric_ED: [number, number];
+  /** Cathode Width (mm) */
+  cathode_width: number;
+  /** Cathode Length (mm) */
+  cathode_length: number;
+  /** Jelly Roll Thickness min (mm) */
+  jrt_min: number;
+  /** Jelly Roll Thickness max (mm) */
+  jrt_max: number;
+  /** Volumetric Energy Density min (Wh/L) */
+  ved_min: number;
+  /** Volumetric Energy Density max (Wh/L) */
+  ved_max: number;
+  /** Design Capacity min (Ah) - 选填 */
+  dc_min?: number;
+  /** Design Capacity max (Ah) - 选填 */
+  dc_max?: number;
+  /** Specific Energy Density min (Wh/kg) - 选填 */
+  sed_min?: number;
+  /** Specific Energy Density max (Wh/kg) - 选填 */
+  sed_max?: number;
 }
 
 /**
@@ -524,6 +529,96 @@ export interface OptimizeHistoryItem {
   /** 用户 ID */
   user_id?: number;
 }
+
+// ============================================
+// 反向设计结果列表类型（新接口）
+// ============================================
+
+/**
+ * 反向设计结果列表请求参数
+ * Backward Result List Request Parameters
+ */
+export interface BackwardResultListParams {
+  /** 历史记录 ID */
+  history_id: number;
+}
+
+/**
+ * 反向设计结果列表单条记录 - 后端 DTO
+ * Backward Result List Item - Backend DTO
+ *
+ * 接口返回平铺数组，每条包含完整的电极参数、结果参数及倍率性能数据
+ */
+export interface BackwardResultItemDTO {
+  /** 记录 ID */
+  id: number;
+  /** 条目序号（1-based） */
+  item_id: number;
+
+  // ========== 结果参数 (Result Parameters) ==========
+  /** Design Capacity (Ah) */
+  design_capacity: number;
+  /** Specific Energy Density (Wh/kg) */
+  specific_ED: number;
+  /** Jelly Roll Thickness (mm) */
+  jelly_roll_thickness: number;
+  /** Volumetric Energy Density (Wh/L) */
+  volumetric_ED: number;
+
+  // ========== 倍率性能 (Rate Capability) ==========
+  Cap_1C?: number;
+  Cap_2C?: number;
+  Cap_3C?: number;
+  Cap_4C?: number;
+  Cap_5C?: number;
+  T_1C?: number;
+  T_2C?: number;
+  T_3C?: number;
+  T_4C?: number;
+  T_5C?: number;
+
+  // ========== 阴极参数 (Cathode Parameters) ==========
+  /** KF-9700 / PVDF (wt.%) */
+  cathode_binder_wt: number;
+  /** CN-01Y / CNT (wt.%) */
+  cathode_cnt_wt: number;
+  /** Super C65 / Carbon black (wt.%) */
+  cathode_conductive_carbon_wt: number;
+  /** Areal Loading (mAh/cm²) */
+  cathode_areal_loading: number;
+  /** Press Density (g/cc) */
+  cathode_press_density: number;
+
+  // ========== 阳极参数 (Anode Parameters) ==========
+  /** CMC (wt.%) */
+  anode_binder1_wt: number;
+  /** SBR (wt.%) */
+  anode_binder2_wt: number;
+  /** PAA (wt.%) */
+  anode_binder3_wt: number;
+  /** Super P / Carbon black (wt.%) */
+  anode_conductive_carbon_wt: number;
+  /** SWCNT / CNT (wt.%) */
+  anode_cnt_wt: number;
+  /** Press Density (g/cc) */
+  anode_press_density: number;
+
+  // ========== 其他参数 ==========
+  /** Layers */
+  layers: number;
+  /** NP Ratio */
+  np_ratio: number;
+  /** Si Ratio (%) */
+  si_ratio: number;
+}
+
+/**
+ * 反向设计结果列表响应 - 后端 DTO
+ * Backward Result List Response - Backend DTO
+ *
+ * 接口返回平铺数组，valid/invalid 分组由前端根据目标范围计算
+ */
+export type BackwardResultListResponseDTO = BackwardResultItemDTO[];
 
 /**
  * 通用历史记录详情响应（联合类型）

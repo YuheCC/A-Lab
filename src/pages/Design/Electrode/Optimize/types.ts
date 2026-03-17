@@ -1,5 +1,5 @@
 // TypeScript 类型定义 - Optimize 页面
-import type { OptimizeResultItemDTO } from '@/services/electrode/types';
+import type { BackwardResultItemDTO } from '@/services/electrode/types';
 
 // 设计目标表单数据
 export interface DesignTargetsFormData {
@@ -81,8 +81,8 @@ export interface GroupedRecommendations {
 
 // 分组后的完整 API 数据
 export interface GroupedFullResults {
-  valid: OptimizeResultItemDTO[];
-  invalid: OptimizeResultItemDTO[];
+  valid: BackwardResultItemDTO[];
+  invalid: BackwardResultItemDTO[];
 }
 
 // 设计详情数据

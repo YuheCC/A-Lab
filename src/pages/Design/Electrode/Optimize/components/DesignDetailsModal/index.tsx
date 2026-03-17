@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
-import type { OptimizeResultItemDTO } from '@/services/electrode/types';
+import type { BackwardResultItemDTO } from '@/services/electrode/types';
 import {
   CELL_DESIGN_OPTIONS,
   CATHODE_ACTIVE_MATERIAL_OPTIONS,
@@ -11,12 +11,16 @@ import './index.less';
 
 interface DesignDetailsModalProps {
   visible: boolean;
-  data: OptimizeResultItemDTO | null;
+  data: BackwardResultItemDTO | null;
   rank: number;
   cellDesign: string;
   npRatio: string;
   cathodeActiveMaterial: string;
   anodeActiveMaterial: string;
+  /** Cathode Width (mm)，来自表单，接口结果中不含此字段 */
+  width: string;
+  /** Cathode Length (mm)，来自表单，接口结果中不含此字段 */
+  length: string;
   loading: boolean;
   onClose: () => void;
 }
@@ -102,6 +106,8 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
   npRatio,
   cathodeActiveMaterial,
   anodeActiveMaterial,
+  width,
+  length,
   loading,
   onClose,
 }) => {
@@ -169,8 +175,8 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
                 label="Anode Material"
                 value={getAnodeMaterialLabel(anodeActiveMaterial)}
               />
-              <DesignInfoItem label="Width (mm)" value={data.width} />
-              <DesignInfoItem label="Length (mm)" value={data.length} />
+              <DesignInfoItem label="Width (mm)" value={Number(width)} />
+              <DesignInfoItem label="Length (mm)" value={Number(length)} />
               <DesignInfoItem label="Layers" value={data.layers} />
             </div>
           </div>

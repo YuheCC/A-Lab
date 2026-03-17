@@ -13,7 +13,7 @@ import { Select, Table, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import Button from '@/components/Button';
 import { useMessage } from '@/components/MessageProvider';
-import type { OptimizeResultItemDTO } from '@/services/electrode/types';
+import type { BackwardResultItemDTO } from '@/services/electrode/types';
 import TargetParameterCard from './components/TargetParameterCard';
 import DesignDetailsModal from './components/DesignDetailsModal';
 import { getOptimizeRecommendations } from './model';
@@ -32,6 +32,7 @@ import {
   getNpRatioByCellDesign,
   DEFAULT_VALUES,
 } from '../constants';
+import { getGedBoundsFromVed } from './constData/vedGedLookup';
 import {
   validateDimensionParameters,
   dimensionParameterRanges,
@@ -96,6 +97,12 @@ const OptimizePage: React.FC = () => {
   const [capacityBounds, setCapacityBounds] = useState<[number, number]>([
     PARAMETER_RANGES.designCapacity.min,
     PARAMETER_RANGES.designCapacity.max,
+  ]);
+
+  // GED（specificEnergy）动态范围：由 VED 区间通过查找表联动计算
+  const [specificEnergyBounds, setSpecificEnergyBounds] = useState<[number, number]>([
+    PARAMETER_RANGES.specificEnergy.min,
+    PARAMETER_RANGES.specificEnergy.max,
   ]);
 
   // 错误状态
@@ -198,6 +205,20 @@ const OptimizePage: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.width, formData.length, formData.thickness, formData.volumetricEnergyDensity]);
 
+  // 监听 VED 变化，通过查找表动态计算 GED（specificEnergy）的 min/max 范围并重置为默认全范围
+  useEffect(() => {
+    const newBounds = getGedBoundsFromVed(formData.volumetricEnergyDensity);
+    setSpecificEnergyBounds(newBounds);
+    setFormData((prev) => ({
+      ...prev,
+      specificEnergy: [newBounds[0], newBounds[1]],
+    }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.volumetricEnergyDensity]);
+
+  // 第二行 target 的 radio 选择状态
+  const [activeSecondaryTarget, setActiveSecondaryTarget] = useState<'specificEnergy' | 'designCapacity'>('specificEnergy');
+
   // 推荐结果状态 - 分组数据
   const [recommendations, setRecommendations] = useState<GroupedRecommendations>({
     valid: [],
@@ -216,7 +237,7 @@ const OptimizePage: React.FC = () => {
 
   // Modal 状态
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedDesign, setSelectedDesign] = useState<OptimizeResultItemDTO | null>(null);
+  const [selectedDesign, setSelectedDesign] = useState<BackwardResultItemDTO | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [modalLoading, setModalLoading] = useState(false);
 
@@ -317,7 +338,7 @@ const OptimizePage: React.FC = () => {
     setLoading(true);
     setCalculateError('');
     try {
-      const response = await getOptimizeRecommendations(formData);
+      const response = await getOptimizeRecommendations(formData, activeSecondaryTarget);
       setRecommendations(response.data);
       setFullResults(response.fullResults);
       setHasCalculated(true);
@@ -476,6 +497,10 @@ const OptimizePage: React.FC = () => {
       PARAMETER_RANGES.designCapacity.min,
       PARAMETER_RANGES.designCapacity.max,
     ]);
+    setSpecificEnergyBounds([
+      PARAMETER_RANGES.specificEnergy.min,
+      PARAMETER_RANGES.specificEnergy.max,
+    ]);
     setRecommendations({ valid: [], invalid: [] });
     setFullResults({ valid: [], invalid: [] });
     setHasCalculated(false);
@@ -483,6 +508,7 @@ const OptimizePage: React.FC = () => {
     setIsFormModified(false);
     setIsAdditionalExpanded(false);
     setModalVisible(false);
+    setActiveSecondaryTarget('specificEnergy');
   };
 
   return (
@@ -689,36 +715,84 @@ const OptimizePage: React.FC = () => {
 
               {/* 参数滑块 */}
               <div className="electrode-optimize-parameters">
-                <TargetParameterCard
-                  title={`${t('design.electrode.optimize.volumetricEnergyDensity')} (Wh/L)`}
-                  value={formData.volumetricEnergyDensity}
-                  onChange={handleVEDChange}
-                  min={PARAMETER_RANGES.volumetricEnergyDensity.min}
-                  max={PARAMETER_RANGES.volumetricEnergyDensity.max}
-                  step={PARAMETER_RANGES.volumetricEnergyDensity.step}
-                  minDiff={PARAMETER_RANGES.volumetricEnergyDensity.minDiff}
-                  curveData={distributionCurves.volumetricEnergyDensity}
-                />
-                <TargetParameterCard
-                  title={`${t('design.electrode.optimize.specificEnergy')} (Wh/kg)`}
-                  value={formData.specificEnergy}
-                  onChange={(value) => setFormData((prev) => ({ ...prev, specificEnergy: value }))}
-                  min={PARAMETER_RANGES.specificEnergy.min}
-                  max={PARAMETER_RANGES.specificEnergy.max}
-                  step={PARAMETER_RANGES.specificEnergy.step}
-                  minDiff={PARAMETER_RANGES.specificEnergy.minDiff}
-                  curveData={distributionCurves.specificEnergy}
-                />
-                <TargetParameterCard
-                  title={`${t('design.electrode.optimize.designCapacity')} (Ah)`}
-                  value={formData.designCapacity}
-                  onChange={(value) => setFormData((prev) => ({ ...prev, designCapacity: value }))}
-                  min={capacityBounds[0]}
-                  max={capacityBounds[1]}
-                  step={PARAMETER_RANGES.designCapacity.step}
-                  minDiff={PARAMETER_RANGES.designCapacity.minDiff}
-                  curveData={distributionCurves.designCapacity}
-                />
+                {/* Row 1: VED 独占整行 */}
+                <div className="electrode-optimize-parameters__ved-row">
+                  <TargetParameterCard
+                    title={`${t('design.electrode.optimize.volumetricEnergyDensity')} (Wh/L)`}
+                    value={formData.volumetricEnergyDensity}
+                    onChange={handleVEDChange}
+                    min={PARAMETER_RANGES.volumetricEnergyDensity.min}
+                    max={PARAMETER_RANGES.volumetricEnergyDensity.max}
+                    step={PARAMETER_RANGES.volumetricEnergyDensity.step}
+                    minDiff={PARAMETER_RANGES.volumetricEnergyDensity.minDiff}
+                    curveData={distributionCurves.volumetricEnergyDensity}
+                  />
+                </div>
+
+                {/* Row 2: GED 和 Design Capacity - radio 单选 */}
+                <div className="electrode-optimize-parameters__secondary-row">
+                  {/* GED */}
+                  <div
+                    className={`electrode-optimize-target-selector${activeSecondaryTarget === 'specificEnergy' ? ' electrode-optimize-target-selector--active' : ''}`}
+                  >
+                    <div
+                      className="electrode-optimize-target-selector__radio-trigger"
+                      onClick={() => setActiveSecondaryTarget('specificEnergy')}
+                    >
+                      <span className="electrode-optimize-target-selector__radio">
+                        <span className="electrode-optimize-target-selector__radio-dot" />
+                      </span>
+                    </div>
+                    <TargetParameterCard
+                      title={`${t('design.electrode.optimize.specificEnergy')} (Wh/kg)`}
+                      value={formData.specificEnergy}
+                      onChange={(value) => setFormData((prev) => ({ ...prev, specificEnergy: value }))}
+                      min={specificEnergyBounds[0]}
+                      max={specificEnergyBounds[1]}
+                      step={PARAMETER_RANGES.specificEnergy.step}
+                      minDiff={PARAMETER_RANGES.specificEnergy.minDiff}
+                      curveData={distributionCurves.specificEnergy}
+                      disabled={activeSecondaryTarget !== 'specificEnergy'}
+                    />
+                    {activeSecondaryTarget !== 'specificEnergy' && (
+                      <div
+                        className="electrode-optimize-target-selector__overlay"
+                        onClick={() => setActiveSecondaryTarget('specificEnergy')}
+                      />
+                    )}
+                  </div>
+
+                  {/* Design Capacity */}
+                  <div
+                    className={`electrode-optimize-target-selector${activeSecondaryTarget === 'designCapacity' ? ' electrode-optimize-target-selector--active' : ''}`}
+                  >
+                    <div
+                      className="electrode-optimize-target-selector__radio-trigger"
+                      onClick={() => setActiveSecondaryTarget('designCapacity')}
+                    >
+                      <span className="electrode-optimize-target-selector__radio">
+                        <span className="electrode-optimize-target-selector__radio-dot" />
+                      </span>
+                    </div>
+                    <TargetParameterCard
+                      title={`${t('design.electrode.optimize.designCapacity')} (Ah)`}
+                      value={formData.designCapacity}
+                      onChange={(value) => setFormData((prev) => ({ ...prev, designCapacity: value }))}
+                      min={capacityBounds[0]}
+                      max={capacityBounds[1]}
+                      step={PARAMETER_RANGES.designCapacity.step}
+                      minDiff={PARAMETER_RANGES.designCapacity.minDiff}
+                      curveData={distributionCurves.designCapacity}
+                      disabled={activeSecondaryTarget !== 'designCapacity'}
+                    />
+                    {activeSecondaryTarget !== 'designCapacity' && (
+                      <div
+                        className="electrode-optimize-target-selector__overlay"
+                        onClick={() => setActiveSecondaryTarget('designCapacity')}
+                      />
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -836,6 +910,8 @@ const OptimizePage: React.FC = () => {
         npRatio={formData.npRatio}
         cathodeActiveMaterial={formData.cathodeActiveMaterial}
         anodeActiveMaterial={formData.anodeActiveMaterial}
+        width={formData.width}
+        length={formData.length}
         loading={modalLoading}
         onClose={() => setModalVisible(false)}
       />
