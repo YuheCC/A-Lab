@@ -22,7 +22,6 @@ import {
   type ElectrodeOptimizeParams,
   type ElectrodeOptimizeResponseDTO,
   type OptimizeHistoryItem,
-  type OptimizeModelParamsDTO,
   type UniversalHistoryDetailResponse,
   type BackwardResultListParams,
   type BackwardResultListResponseDTO,
@@ -267,20 +266,8 @@ export async function getElectrodeHistoryDetail(
 
   // 根据 type 处理不同的数据结构
   if (response?.data?.type === ElectrodePageType.INVERSE_DESIGN) {
-    // type=2: 反向设计 - model_result 是数组
-    const rawData = response.data as {
-      id: number;
-      cell_design: string;
-      np_ratio?: string;
-      cathode_active_material: string;
-      anode_active_material: string;
-      type: ElectrodePageType;
-      model_params: OptimizeModelParamsDTO;
-      model_result: OptimizeResultItemDTO[];
-      created_at?: string;
-      updated_at?: string;
-      user_id?: number;
-    };
+    // type=2: 反向设计 - model_result 是统计数据，推荐结果通过 getBackwardResultList 单独获取
+    const rawData = response.data as OptimizeHistoryItem;
 
     return {
       id: rawData.id,

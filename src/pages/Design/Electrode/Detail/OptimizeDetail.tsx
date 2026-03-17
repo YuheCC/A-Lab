@@ -1,15 +1,19 @@
-import React, { useState, useRef, useContext, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useContext, useMemo } from 'react';
 import type { TFunction } from 'i18next';
 import { LeftOutlined } from '@ant-design/icons';
-import { Select, Table, Modal } from 'antd';
+import { Select, Table, Modal, Spin } from 'antd';
 import TargetParameterCard from '../Optimize/components/TargetParameterCard';
-import type { OptimizeResultItemDTO } from '../model';
 import {
   CELL_DESIGN_OPTIONS,
   CATHODE_ACTIVE_MATERIAL_OPTIONS,
   ANODE_ACTIVE_MATERIAL_OPTIONS,
 } from '../constants';
-import type { OptimizeGroupedResultDTO } from '@/services/electrode/types';
+import type {
+  OptimizeModelParamsDTO,
+  OptimizeModelResultStatsDTO,
+  BackwardResultItemDTO,
+} from '@/services/electrode/types';
+import { getBackwardResultList } from '@/services/electrode/electrodeService';
 import type { DeviatedFieldType } from '../Optimize/types';
 import { PARAMETER_RANGES } from '../Optimize/types';
 import {
@@ -32,19 +36,13 @@ const { Option } = Select;
 
 interface OptimizeDetailContentProps {
   t: TFunction;
+  historyId: number;
   cellDesign: string;
   npRatio: string;
   cathodeActiveMaterial: string;
   anodeActiveMaterial: string;
-  modelParams: {
-    width: number;
-    length: number;
-    design_capacity: [number, number];
-    specific_ED: [number, number];
-    jelly_roll_thickness: [number, number];
-    volumetric_ED: [number, number];
-  };
-  modelResult: OptimizeGroupedResultDTO;
+  modelParams: OptimizeModelParamsDTO;
+  modelResult: OptimizeModelResultStatsDTO;
   onGoBack: () => void;
 }
 
@@ -91,25 +89,16 @@ const DesignInfoItem: React.FC<DesignInfoItemProps> = ({ label, value }) => (
   </div>
 );
 
-/**
- * 根据 value 获取 Cell Design 的 label
- */
 const getCellDesignLabel = (value: string): string => {
   const option = CELL_DESIGN_OPTIONS.find((opt) => opt.value === value);
   return option?.label || value;
 };
 
-/**
- * 根据 value 获取 Cathode Material 的 label
- */
 const getCathodeMaterialLabel = (value: string): string => {
   const option = CATHODE_ACTIVE_MATERIAL_OPTIONS.find((opt) => opt.value === value);
   return option?.label || value;
 };
 
-/**
- * 根据 value 获取 Anode Material 的 label
- */
 const getAnodeMaterialLabel = (value: string): string => {
   const option = ANODE_ACTIVE_MATERIAL_OPTIONS.find((opt) => opt.value === value);
   return option?.label || value;
@@ -117,6 +106,7 @@ const getAnodeMaterialLabel = (value: string): string => {
 
 const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
   t,
+  historyId,
   cellDesign,
   npRatio,
   cathodeActiveMaterial,
@@ -128,7 +118,6 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
   const { userPermissions } = useAuthStore();
   const pricingContext = useContext(PricingContext);
 
-  // 将 CSV 原始数据映射到各参数的 [min, max] 区间（x 线性映射 + y 归一化）
   const distributionCurves = useMemo(
     () => ({
       designCapacity: mapCurveData(
@@ -155,9 +144,14 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
     [],
   );
 
+  // 推荐结果状态（通过 getBackwardResultList 加载）
+  const [validItems, setValidItems] = useState<BackwardResultItemDTO[]>([]);
+  const [invalidItems, setInvalidItems] = useState<(BackwardResultItemDTO & { deviatedFields: DeviatedFieldType[] })[]>([]);
+  const [resultsLoading, setResultsLoading] = useState(true);
+
   // Modal 状态
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedResult, setSelectedResult] = useState<OptimizeResultItemDTO | null>(null);
+  const [selectedResult, setSelectedResult] = useState<BackwardResultItemDTO | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isAdditionalExpanded, setIsAdditionalExpanded] = useState(false);
   const [isCollapsing, setIsCollapsing] = useState(false);
@@ -165,102 +159,107 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
 
   /**
    * 检查单条结果是否有偏差（超出目标范围）
+   * 始终检查 jrt 和 ved；根据 model_params 中有无 sed/dc 字段决定检查哪个次要目标
    */
-  const checkDeviations = (
-    item: OptimizeResultItemDTO,
-  ): DeviatedFieldType[] => {
+  const checkDeviations = (item: BackwardResultItemDTO): DeviatedFieldType[] => {
     const deviatedFields: DeviatedFieldType[] = [];
 
-    // 检查 Design Capacity
     if (
-      item.design_capacity < modelParams.design_capacity[0] ||
-      item.design_capacity > modelParams.design_capacity[1]
-    ) {
-      deviatedFields.push('designCapacity');
-    }
-
-    // 检查 Specific Energy (Gravimetric Energy Density)
-    if (
-      item.specific_ED < modelParams.specific_ED[0] ||
-      item.specific_ED > modelParams.specific_ED[1]
-    ) {
-      deviatedFields.push('specificEnergy');
-    }
-
-    // 检查 Jelly Roll Thickness
-    if (
-      item.jelly_roll_thickness < modelParams.jelly_roll_thickness[0] ||
-      item.jelly_roll_thickness > modelParams.jelly_roll_thickness[1]
+      item.jelly_roll_thickness < modelParams.jrt_min ||
+      item.jelly_roll_thickness > modelParams.jrt_max
     ) {
       deviatedFields.push('thickness');
     }
 
-    // 检查 Volumetric Energy Density
     if (
-      item.volumetric_ED < modelParams.volumetric_ED[0] ||
-      item.volumetric_ED > modelParams.volumetric_ED[1]
+      item.volumetric_ED < modelParams.ved_min ||
+      item.volumetric_ED > modelParams.ved_max
     ) {
       deviatedFields.push('volumetricEnergyDensity');
+    }
+
+    if (modelParams.sed_min !== undefined && modelParams.sed_max !== undefined) {
+      if (item.specific_ED < modelParams.sed_min || item.specific_ED > modelParams.sed_max) {
+        deviatedFields.push('specificEnergy');
+      }
+    }
+
+    if (modelParams.dc_min !== undefined && modelParams.dc_max !== undefined) {
+      if (item.design_capacity < modelParams.dc_min || item.design_capacity > modelParams.dc_max) {
+        deviatedFields.push('designCapacity');
+      }
     }
 
     return deviatedFields;
   };
 
-  // 为 invalid 数据添加偏差字段
-  const invalidDataWithDeviations = modelResult.invalid.map((item, index) => ({
-    ...item,
-    deviatedFields: checkDeviations(item),
-  }));
+  // 加载推荐结果列表
+  useEffect(() => {
+    const loadResults = async () => {
+      setResultsLoading(true);
+      try {
+        const flatItems = await getBackwardResultList({ history_id: historyId });
 
-  // 处理额外推荐的展开/折叠
+        const valid: BackwardResultItemDTO[] = [];
+        const invalid: (BackwardResultItemDTO & { deviatedFields: DeviatedFieldType[] })[] = [];
+
+        flatItems.forEach((item) => {
+          const deviations = checkDeviations(item);
+          if (deviations.length === 0) {
+            valid.push(item);
+          } else {
+            invalid.push({ ...item, deviatedFields: deviations });
+          }
+        });
+
+        setValidItems(valid);
+        setInvalidItems(invalid);
+      } catch (error) {
+        console.error('[OptimizeDetail] Failed to load backward results:', error);
+      } finally {
+        setResultsLoading(false);
+      }
+    };
+
+    loadResults();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [historyId]);
+
   const handleToggleAdditional = () => {
     if (isAdditionalExpanded) {
-      // 开始折叠动画
       setIsCollapsing(true);
       setTimeout(() => {
         setIsAdditionalExpanded(false);
         setIsCollapsing(false);
-      }, 300); // 动画持续时间匹配 CSS
+      }, 300);
     } else {
-      // 直接展开
       setIsAdditionalExpanded(true);
-      // 延迟滚动到可视区域（等待 DOM 更新）
       setTimeout(() => {
         if (additionalSectionRef.current) {
-          additionalSectionRef.current.scrollIntoView({
-            behavior: 'smooth',
-            block: 'nearest'
-          });
+          additionalSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
       }, 100);
     }
   };
 
-  // 处理查看详情
-  const handleViewDetails = (record: OptimizeResultItemDTO, index: number, isInvalid: boolean = false) => {
-    // 权限判断：非 enterprise 以上权限，显示会员升级框
-    if (!['admin', 'enterprise','enterprise1', 'enterprise2', 'enterprise3', 'joint'].includes(userPermissions || '')) {
+  const handleViewDetails = (record: BackwardResultItemDTO, index: number, isInvalid = false) => {
+    if (!['admin', 'enterprise', 'enterprise1', 'enterprise2', 'enterprise3', 'joint'].includes(userPermissions || '')) {
       pricingContext?.setShowUpgradeModal?.(true);
       return;
     }
-
     setSelectedResult(record);
-    // 如果是 invalid 数据，索引需要加上 valid 数据的长度
-    const actualIndex = isInvalid ? modelResult.valid.length + index : index;
+    const actualIndex = isInvalid ? validItems.length + index : index;
     setSelectedIndex(actualIndex);
     setModalVisible(true);
   };
 
-  // 检查字段是否偏差
-  const isFieldDeviated = (field: DeviatedFieldType, deviatedFields?: DeviatedFieldType[]) => {
-    return deviatedFields?.includes(field);
-  };
+  const isFieldDeviated = (field: DeviatedFieldType, deviatedFields?: DeviatedFieldType[]) =>
+    deviatedFields?.includes(field);
 
   // 主表格列配置（valid 数据）
   const columns = [
     {
       title: t('design.electrode.optimize.no', 'No.'),
-      dataIndex: 'rank',
       width: 80,
       align: 'center' as const,
       render: (_: any, __: any, index: number) => index + 1,
@@ -292,7 +291,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
     {
       title: t('design.electrode.optimize.actions', 'Actions'),
       width: 100,
-      render: (_: any, record: OptimizeResultItemDTO, index: number) => (
+      render: (_: any, record: BackwardResultItemDTO, index: number) => (
         <a className="electrode-optimize-details-link" onClick={() => handleViewDetails(record, index)}>
           {t('design.electrode.optimize.details', 'Details')}
         </a>
@@ -304,10 +303,9 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
   const invalidColumns = [
     {
       title: t('design.electrode.optimize.no', 'No.'),
-      dataIndex: 'rank',
       width: 80,
       align: 'center' as const,
-      render: (_: any, __: any, index: number) => modelResult.valid.length + index + 1,
+      render: (_: any, __: any, index: number) => validItems.length + index + 1,
     },
     {
       title: `${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah)`,
@@ -353,10 +351,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
       title: t('design.electrode.optimize.actions', 'Actions'),
       width: 100,
       render: (_: any, record: any, index: number) => (
-        <a
-          className="electrode-optimize-details-link"
-          onClick={() => handleViewDetails(record, index, true)}
-        >
+        <a className="electrode-optimize-details-link" onClick={() => handleViewDetails(record, index, true)}>
           {t('design.electrode.optimize.details', 'Details')}
         </a>
       ),
@@ -385,27 +380,21 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
           </h2>
 
           <div className="electrode-optimize-form-container">
-            {/* Cell Information 分组 */}
+            {/* Cell Information */}
             <div className="electrode-optimize-subsection">
               <h3 className="electrode-optimize-subsection-title">
                 {t('design.electrode.optimize.cellInformation', 'Cell Information')}
               </h3>
 
-              {/* Cell Type 和 NP Ratio - 两列布局 */}
               <div className="electrode-optimize-form-row">
                 <div className="electrode-optimize-form-item">
                   <label className="electrode-optimize-label">
                     {t('design.electrode.optimize.cellType', 'Cell Type')}
                   </label>
-                  <Select
-                    value={cellDesign}
-                    disabled
-                    className="electrode-optimize-select"
-                  >
+                  <Select value={cellDesign} disabled className="electrode-optimize-select">
                     <Option value={cellDesign}>{getCellDesignLabel(cellDesign)}</Option>
                   </Select>
                 </div>
-
                 <div className="electrode-optimize-form-item">
                   <label className="electrode-optimize-label">
                     {t('design.electrode.optimize.npRatio', 'NP Ratio')}
@@ -419,37 +408,27 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                 </div>
               </div>
 
-              {/* Cathode Active Material 和 Anode Active Material - 两列布局 */}
               <div className="electrode-optimize-form-row">
                 <div className="electrode-optimize-form-item">
                   <label className="electrode-optimize-label">
                     {t('design.electrode.optimize.cathodeActiveMaterial', 'Cathode Active Material')}
                   </label>
-                  <Select
-                    value={cathodeActiveMaterial}
-                    disabled
-                    className="electrode-optimize-select"
-                  >
+                  <Select value={cathodeActiveMaterial} disabled className="electrode-optimize-select">
                     <Option value={cathodeActiveMaterial}>{getCathodeMaterialLabel(cathodeActiveMaterial)}</Option>
                   </Select>
                 </div>
-
                 <div className="electrode-optimize-form-item">
                   <label className="electrode-optimize-label">
                     {t('design.electrode.optimize.anodeActiveMaterial', 'Anode Active Material')}
                   </label>
-                  <Select
-                    value={anodeActiveMaterial}
-                    disabled
-                    className="electrode-optimize-select"
-                  >
+                  <Select value={anodeActiveMaterial} disabled className="electrode-optimize-select">
                     <Option value={anodeActiveMaterial}>{getAnodeMaterialLabel(anodeActiveMaterial)}</Option>
                   </Select>
                 </div>
               </div>
             </div>
 
-            {/* Cathode Dimension 分组 */}
+            {/* Cathode Dimension */}
             <div className="electrode-optimize-subsection">
               <h3 className="electrode-optimize-subsection-title">
                 {t('design.electrode.optimize.cathodeDimension', 'Cathode Dimension')}
@@ -462,19 +441,18 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                   </label>
                   <input
                     type="number"
-                    value={modelParams.width}
+                    value={modelParams.cathode_width}
                     disabled
                     className="electrode-optimize-input electrode-optimize-input--disabled"
                   />
                 </div>
-
                 <div className="electrode-optimize-form-item">
                   <label className="electrode-optimize-label">
                     {t('design.electrode.optimize.length', 'Length (mm)')}
                   </label>
                   <input
                     type="number"
-                    value={modelParams.length}
+                    value={modelParams.cathode_length}
                     disabled
                     className="electrode-optimize-input electrode-optimize-input--disabled"
                   />
@@ -484,7 +462,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
               <div className="electrode-optimize-form-row">
                 <TargetParameterCard
                   title={`${t('design.electrode.optimize.jellyRollThickness', 'Jelly Roll Thickness')} (mm)`}
-                  value={modelParams.jelly_roll_thickness}
+                  value={[modelParams.jrt_min, modelParams.jrt_max]}
                   onChange={() => {}}
                   min={PARAMETER_RANGES.thickness.min}
                   max={PARAMETER_RANGES.thickness.max}
@@ -495,17 +473,17 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
               </div>
             </div>
 
-            {/* Targets 分组 */}
+            {/* Targets */}
             <div className="electrode-optimize-subsection">
               <h3 className="electrode-optimize-subsection-title">
                 {t('design.electrode.optimize.targets', 'Targets')}
               </h3>
 
-              {/* 参数滑块 - disabled 模式 */}
-              <div className="electrode-optimize-parameters">
+              {/* VED 与次要目标（sed 或 dc）并排显示在同一行 */}
+              <div className="electrode-optimize-parameters__secondary-row">
                 <TargetParameterCard
                   title={`${t('design.electrode.optimize.volumetricEnergyDensity', 'Volumetric E.D.')} (Wh/L)`}
-                  value={modelParams.volumetric_ED}
+                  value={[modelParams.ved_min, modelParams.ved_max]}
                   onChange={() => {}}
                   min={PARAMETER_RANGES.volumetricEnergyDensity.min}
                   max={PARAMETER_RANGES.volumetricEnergyDensity.max}
@@ -513,30 +491,35 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                   curveData={distributionCurves.volumetricEnergyDensity}
                   disabled
                 />
-                <TargetParameterCard
-                  title={`${t('design.electrode.optimize.specificEnergy', 'Specific E.D.')} (Wh/kg)`}
-                  value={modelParams.specific_ED}
-                  onChange={() => {}}
-                  min={PARAMETER_RANGES.specificEnergy.min}
-                  max={PARAMETER_RANGES.specificEnergy.max}
-                  step={PARAMETER_RANGES.specificEnergy.step}
-                  curveData={distributionCurves.specificEnergy}
-                  disabled
-                />
-                <TargetParameterCard
-                  title={`${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah)`}
-                  value={modelParams.design_capacity}
-                  onChange={() => {}}
-                  min={PARAMETER_RANGES.designCapacity.min}
-                  max={PARAMETER_RANGES.designCapacity.max}
-                  step={PARAMETER_RANGES.designCapacity.step}
-                  curveData={distributionCurves.designCapacity}
-                  disabled
-                />
+
+                {/* 根据 model_params 中实际存在的字段决定显示 sed 还是 dc */}
+                {modelParams.sed_min !== undefined && modelParams.sed_max !== undefined && (
+                  <TargetParameterCard
+                    title={`${t('design.electrode.optimize.specificEnergy', 'Specific E.D.')} (Wh/kg)`}
+                    value={[modelParams.sed_min, modelParams.sed_max]}
+                    onChange={() => {}}
+                    min={PARAMETER_RANGES.specificEnergy.min}
+                    max={PARAMETER_RANGES.specificEnergy.max}
+                    step={PARAMETER_RANGES.specificEnergy.step}
+                    curveData={distributionCurves.specificEnergy}
+                    disabled
+                  />
+                )}
+
+                {modelParams.dc_min !== undefined && modelParams.dc_max !== undefined && (
+                  <TargetParameterCard
+                    title={`${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah)`}
+                    value={[modelParams.dc_min, modelParams.dc_max]}
+                    onChange={() => {}}
+                    min={PARAMETER_RANGES.designCapacity.min}
+                    max={PARAMETER_RANGES.designCapacity.max}
+                    step={PARAMETER_RANGES.designCapacity.step}
+                    curveData={distributionCurves.designCapacity}
+                    disabled
+                  />
+                )}
               </div>
             </div>
-
-            {/* 无 Calculate 按钮 */}
           </div>
         </div>
 
@@ -546,7 +529,11 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
             {t('design.electrode.optimize.designRecommendations', 'Design Recommendations')}
           </h2>
 
-          {modelResult.valid.length === 0 ? (
+          {resultsLoading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
+              <Spin size="large" />
+            </div>
+          ) : validItems.length === 0 ? (
             <div className="electrode-optimize-empty-state">
               <div className="electrode-optimize-empty-icon">
                 <div className="electrode-optimize-empty-icon-circle">
@@ -564,30 +551,28 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                 {t('design.electrode.optimize.emptyState.title', 'No Matching Designs Found')}
               </h3>
               <p className="electrode-optimize-empty-description">
-                {t('design.electrode.optimize.emptyState.description', 'We couldn\'t find any designs that match your current criteria. Try adjusting your target values or check out other recommendations below.')}
+                {invalidItems.length > 0
+                  ? t('design.electrode.optimize.emptyState.descriptionWithRecommendation')
+                  : t('design.electrode.optimize.emptyState.description')}
               </p>
             </div>
           ) : (
             <Table
               columns={columns}
-              dataSource={modelResult.valid}
-              rowKey={(_, index) => `valid-result-${index}`}
+              dataSource={validItems}
+              rowKey={(record) => `valid-${record.id}-${record.item_id}`}
               pagination={false}
               className="electrode-optimize-table"
             />
           )}
 
           {/* Additional Recommendations 折叠提示 */}
-          {modelResult.invalid.length > 0 && (
+          {!resultsLoading && invalidItems.length > 0 && (
             <div className="electrode-optimize-additional-banner">
               <span className="electrode-optimize-additional-banner-text">
                 {t('design.electrode.optimize.additionalPrompt', 'Additional recommendations with slight deviations from target values are available.')}
               </span>
-              <Button
-                variant="primary"
-                size="small"
-                onClick={handleToggleAdditional}
-              >
+              <Button variant="primary" size="small" onClick={handleToggleAdditional}>
                 {isAdditionalExpanded
                   ? t('design.electrode.optimize.collapse', 'Collapse')
                   : t('design.electrode.optimize.expand', 'Expand')}
@@ -595,8 +580,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
             </div>
           )}
 
-          {/* Additional Recommendations 表格（可折叠） */}
-          {(isAdditionalExpanded || isCollapsing) && modelResult.invalid.length > 0 && (
+          {(isAdditionalExpanded || isCollapsing) && invalidItems.length > 0 && (
             <div
               ref={additionalSectionRef}
               className={`electrode-optimize-additional-section ${isCollapsing ? 'collapsing' : ''}`}
@@ -606,8 +590,8 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
               </h3>
               <Table
                 columns={invalidColumns}
-                dataSource={invalidDataWithDeviations}
-                rowKey={(_, index) => `invalid-result-${index}`}
+                dataSource={invalidItems}
+                rowKey={(record) => `invalid-${record.id}-${record.item_id}`}
                 pagination={false}
                 className="electrode-optimize-table electrode-optimize-table-additional"
               />
@@ -633,26 +617,10 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
             <div className="designdetail-section">
               <h3 className="designdetail-section-title">Performance Prediction</h3>
               <div className="designdetail-performance-grid">
-                <PerformanceCard
-                  label="Design Capacity"
-                  value={selectedResult.design_capacity}
-                  unit="mAh"
-                />
-                <PerformanceCard
-                  label="Specific E.D."
-                  value={selectedResult.specific_ED}
-                  unit="Wh/kg"
-                />
-                <PerformanceCard
-                  label="Jelly Roll Thickness"
-                  value={selectedResult.jelly_roll_thickness}
-                  unit="mm"
-                />
-                <PerformanceCard
-                  label="Volumetric E.D."
-                  value={selectedResult.volumetric_ED}
-                  unit="Wh/L"
-                />
+                <PerformanceCard label="Design Capacity" value={selectedResult.design_capacity} unit="Ah" />
+                <PerformanceCard label="Specific E.D." value={selectedResult.specific_ED} unit="Wh/kg" />
+                <PerformanceCard label="Jelly Roll Thickness" value={selectedResult.jelly_roll_thickness} unit="mm" />
+                <PerformanceCard label="Volumetric E.D." value={selectedResult.volumetric_ED} unit="Wh/L" />
               </div>
             </div>
 
@@ -662,27 +630,18 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
               <div className="designdetail-design-grid">
                 <DesignInfoItem label="Cell Type" value={getCellDesignLabel(cellDesign)} />
                 <DesignInfoItem label="NP Ratio" value={npRatio} />
-                <DesignInfoItem
-                  label="Cathode Material"
-                  value={getCathodeMaterialLabel(cathodeActiveMaterial)}
-                />
-                <DesignInfoItem
-                  label="Anode Material"
-                  value={getAnodeMaterialLabel(anodeActiveMaterial)}
-                />
-                <DesignInfoItem label="Width (mm)" value={selectedResult.width} />
-                <DesignInfoItem label="Length (mm)" value={selectedResult.length} />
-                <DesignInfoItem label="Layers" value={selectedResult.layers.toFixed(0)} />
+                <DesignInfoItem label="Cathode Material" value={getCathodeMaterialLabel(cathodeActiveMaterial)} />
+                <DesignInfoItem label="Anode Material" value={getAnodeMaterialLabel(anodeActiveMaterial)} />
+                <DesignInfoItem label="Width (mm)" value={modelParams.cathode_width} />
+                <DesignInfoItem label="Length (mm)" value={modelParams.cathode_length} />
+                <DesignInfoItem label="Layers" value={selectedResult.layers} />
               </div>
             </div>
 
             {/* Cathode & Anode */}
             <div className="designdetail-electrodes-grid">
-              {/* Cathode */}
               <div className="designdetail-electrode-section">
-                <h3 className="designdetail-electrode-title designdetail-cathode-title">
-                  Cathode
-                </h3>
+                <h3 className="designdetail-electrode-title designdetail-cathode-title">Cathode</h3>
                 <div className="designdetail-parameters">
                   <ParameterItem label="PVDF (wt.%)" value={selectedResult.cathode_binder_wt} />
                   <ParameterItem label="CNT (wt.%)" value={selectedResult.cathode_cnt_wt} />
@@ -692,11 +651,8 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                 </div>
               </div>
 
-              {/* Anode */}
               <div className="designdetail-electrode-section">
-                <h3 className="designdetail-electrode-title designdetail-anode-title">
-                  Anode
-                </h3>
+                <h3 className="designdetail-electrode-title designdetail-anode-title">Anode</h3>
                 <div className="designdetail-parameters">
                   <ParameterItem label="CMC (wt.%)" value={selectedResult.anode_binder1_wt} />
                   <ParameterItem label="SBR (wt.%)" value={selectedResult.anode_binder2_wt} />
