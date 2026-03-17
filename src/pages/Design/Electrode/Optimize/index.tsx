@@ -32,6 +32,7 @@ import {
   getNpRatioByCellDesign,
   DEFAULT_VALUES,
 } from '../constants';
+import { getGedBoundsFromVed } from './constData/vedGedLookup';
 import {
   validateDimensionParameters,
   dimensionParameterRanges,
@@ -96,6 +97,12 @@ const OptimizePage: React.FC = () => {
   const [capacityBounds, setCapacityBounds] = useState<[number, number]>([
     PARAMETER_RANGES.designCapacity.min,
     PARAMETER_RANGES.designCapacity.max,
+  ]);
+
+  // GED（specificEnergy）动态范围：由 VED 区间通过查找表联动计算
+  const [specificEnergyBounds, setSpecificEnergyBounds] = useState<[number, number]>([
+    PARAMETER_RANGES.specificEnergy.min,
+    PARAMETER_RANGES.specificEnergy.max,
   ]);
 
   // 错误状态
@@ -197,6 +204,17 @@ const OptimizePage: React.FC = () => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.width, formData.length, formData.thickness, formData.volumetricEnergyDensity]);
+
+  // 监听 VED 变化，通过查找表动态计算 GED（specificEnergy）的 min/max 范围并重置为默认全范围
+  useEffect(() => {
+    const newBounds = getGedBoundsFromVed(formData.volumetricEnergyDensity);
+    setSpecificEnergyBounds(newBounds);
+    setFormData((prev) => ({
+      ...prev,
+      specificEnergy: [newBounds[0], newBounds[1]],
+    }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.volumetricEnergyDensity]);
 
   // 推荐结果状态 - 分组数据
   const [recommendations, setRecommendations] = useState<GroupedRecommendations>({
@@ -476,6 +494,10 @@ const OptimizePage: React.FC = () => {
       PARAMETER_RANGES.designCapacity.min,
       PARAMETER_RANGES.designCapacity.max,
     ]);
+    setSpecificEnergyBounds([
+      PARAMETER_RANGES.specificEnergy.min,
+      PARAMETER_RANGES.specificEnergy.max,
+    ]);
     setRecommendations({ valid: [], invalid: [] });
     setFullResults({ valid: [], invalid: [] });
     setHasCalculated(false);
@@ -703,8 +725,8 @@ const OptimizePage: React.FC = () => {
                   title={`${t('design.electrode.optimize.specificEnergy')} (Wh/kg)`}
                   value={formData.specificEnergy}
                   onChange={(value) => setFormData((prev) => ({ ...prev, specificEnergy: value }))}
-                  min={PARAMETER_RANGES.specificEnergy.min}
-                  max={PARAMETER_RANGES.specificEnergy.max}
+                  min={specificEnergyBounds[0]}
+                  max={specificEnergyBounds[1]}
                   step={PARAMETER_RANGES.specificEnergy.step}
                   minDiff={PARAMETER_RANGES.specificEnergy.minDiff}
                   curveData={distributionCurves.specificEnergy}
