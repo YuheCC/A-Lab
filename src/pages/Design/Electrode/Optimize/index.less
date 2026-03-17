@@ -248,9 +248,117 @@
 // 参数区域
 .electrode-optimize-parameters {
   margin-top: @spacing-2xl;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: @spacing-xl;
+
+  // VED 占半宽（与下方两列等宽）
+  &__ved-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: @spacing-xl;
+
+    // VED 卡片只占左侧一列
+    > * {
+      grid-column: 1;
+    }
+  }
+
+  // 第二行：GED 和 Design Capacity 并排
+  &__secondary-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: @spacing-xl;
+  }
+}
+
+// Target radio 选择器
+.electrode-optimize-target-selector {
+  position: relative;
+  border: 2px solid @color-gray-200;
+  border-radius: @radius-lg;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+
+  // 激活状态
+  &--active {
+    border-color: @color-accent;
+    box-shadow: 0 0 0 3px rgba(86, 178, 106, 0.08);
+
+    .electrode-optimize-target-selector__radio {
+      border-color: @color-accent;
+    }
+
+    .electrode-optimize-target-selector__radio-dot {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  // 非激活 hover 时给予引导感
+  &:not(.electrode-optimize-target-selector--active):hover {
+    border-color: @color-gray-300;
+
+    .electrode-optimize-target-selector__radio {
+      border-color: @color-gray-400;
+    }
+  }
+
+  // Radio 触发区域
+  &__radio-trigger {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // Radio 外圆
+  &__radio {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid @color-gray-300;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: border-color 0.2s ease;
+  }
+
+  // Radio 内圆点
+  &__radio-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: @color-accent;
+    opacity: 0;
+    transform: scale(0);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  // 非激活遮罩：拦截点击、产生 cursor pointer 效果（无视觉蒙层）
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    border-radius: calc(@radius-lg - 2px);
+    z-index: 1;
+    cursor: pointer;
+  }
+
+  // 内部 TargetParameterCard 去掉自身边框（由 selector 统一管理）
+  .target-parameter-card {
+    border: none;
+    border-radius: calc(@radius-lg - 2px);
+    // 为左上角 radio 按钮留出空间
+    padding-top: 36px;
+  }
 }
 
 // 计算错误提示
@@ -349,7 +457,10 @@
 
   // 参数区域响应式：小屏单列
   .electrode-optimize-parameters {
-    grid-template-columns: 1fr;
+    &__ved-row,
+    &__secondary-row {
+      grid-template-columns: 1fr;
+    }
   }
 
   .electrode-optimize-table {

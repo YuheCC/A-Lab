@@ -1,8 +1,8 @@
 // Model 层 - Optimize 页面数据逻辑
-import { optimizeElectrodeDesign } from '@/services/electrode/electrodeService';
+import { optimizeElectrodeDesign, getBackwardResultList } from '@/services/electrode/electrodeService';
 import {
   ElectrodePageType,
-  type OptimizeResultItemDTO,
+  type BackwardResultItemDTO,
 } from '@/services/electrode/types';
 import { generateMockDetail } from './example';
 import type {
@@ -17,12 +17,11 @@ import type {
 
 /**
  * 将 API 结果转换为前端 DesignRecommendation 格式
- * @param item API 返回的单条结果
+ * @param item 接口返回的单条结果（BackwardResultItemDTO）
  * @param index 索引（用于生成 rank 和 id）
- * @returns 前端推荐结果格式
  */
 const transformToRecommendation = (
-  item: OptimizeResultItemDTO,
+  item: BackwardResultItemDTO,
   index: number,
 ): DesignRecommendation => ({
   rank: index + 1,
@@ -35,33 +34,20 @@ const transformToRecommendation = (
 
 /**
  * 检查单条结果是否有偏差（超出目标范围）
- * @param item API 返回的单条结果
+ * 只检查必填目标（jrt / ved）及当前激活的次要目标（sed 或 dc）
+ * @param item 接口返回的单条结果
  * @param formData 表单数据（包含目标范围）
+ * @param activeSecondaryTarget 激活的次要目标
  * @returns 偏差字段数组
  */
 const checkDeviations = (
-  item: OptimizeResultItemDTO,
+  item: BackwardResultItemDTO,
   formData: DesignTargetsFormData,
+  activeSecondaryTarget: 'specificEnergy' | 'designCapacity',
 ): DeviatedFieldType[] => {
   const deviatedFields: DeviatedFieldType[] = [];
 
-  // 检查 Design Capacity
-  if (
-    item.design_capacity < formData.designCapacity[0] ||
-    item.design_capacity > formData.designCapacity[1]
-  ) {
-    deviatedFields.push('designCapacity');
-  }
-
-  // 检查 Specific Energy (Gravimetric Energy Density)
-  if (
-    item.specific_ED < formData.specificEnergy[0] ||
-    item.specific_ED > formData.specificEnergy[1]
-  ) {
-    deviatedFields.push('specificEnergy');
-  }
-
-  // 检查 Jelly Roll Thickness
+  // 检查 Jelly Roll Thickness（必填目标，始终校验）
   if (
     item.jelly_roll_thickness < formData.thickness[0] ||
     item.jelly_roll_thickness > formData.thickness[1]
@@ -69,7 +55,7 @@ const checkDeviations = (
     deviatedFields.push('thickness');
   }
 
-  // 检查 Volumetric Energy Density
+  // 检查 Volumetric Energy Density（必填目标，始终校验）
   if (
     item.volumetric_ED < formData.volumetricEnergyDensity[0] ||
     item.volumetric_ED > formData.volumetricEnergyDensity[1]
@@ -77,50 +63,89 @@ const checkDeviations = (
     deviatedFields.push('volumetricEnergyDensity');
   }
 
+  // 根据激活的次要目标，选择校验 Design Capacity 或 Specific Energy
+  if (activeSecondaryTarget === 'designCapacity') {
+    if (
+      item.design_capacity < formData.designCapacity[0] ||
+      item.design_capacity > formData.designCapacity[1]
+    ) {
+      deviatedFields.push('designCapacity');
+    }
+  } else {
+    if (
+      item.specific_ED < formData.specificEnergy[0] ||
+      item.specific_ED > formData.specificEnergy[1]
+    ) {
+      deviatedFields.push('specificEnergy');
+    }
+  }
+
   return deviatedFields;
 };
 
 /**
  * 获取优化推荐列表
- * 后端直接返回 valid/invalid 分组结构，仅对 invalid 数据计算偏差字段
+ * 两步调用：
+ *   1. 调用 optimizeElectrodeDesign 提交参数，获取 history_id
+ *   2. 调用 getBackwardResultList 通过 history_id 获取推荐结果列表
  * @param formData 表单数据
+ * @param activeSecondaryTarget 当前激活的次要目标参数（specificEnergy 或 designCapacity），决定发送 sed 或 dc 参数
  * @returns 分组后的推荐结果和完整数据
  */
 export const getOptimizeRecommendations = async (
   formData: DesignTargetsFormData,
+  activeSecondaryTarget: 'specificEnergy' | 'designCapacity',
 ): Promise<{ data: GroupedRecommendations; fullResults: GroupedFullResults }> => {
-  // 调用真实 API - 后端直接返回 { valid: [], invalid: [] } 结构
-  const apiResult = await optimizeElectrodeDesign({
+  // 构建 model_params，dc 和 sed 四个字段为选填，根据激活的次要目标决定发送哪组
+  const modelParams: Parameters<typeof optimizeElectrodeDesign>[0]['model_params'] = {
+    cathode_width: Number(formData.width),
+    cathode_length: Number(formData.length),
+    jrt_min: formData.thickness[0],
+    jrt_max: formData.thickness[1],
+    ved_min: formData.volumetricEnergyDensity[0],
+    ved_max: formData.volumetricEnergyDensity[1],
+    ...(activeSecondaryTarget === 'designCapacity'
+      ? { dc_min: formData.designCapacity[0], dc_max: formData.designCapacity[1] }
+      : { sed_min: formData.specificEnergy[0], sed_max: formData.specificEnergy[1] }),
+  };
+
+  // 第一步：提交优化参数，获取 history_id
+  const { id: historyId } = await optimizeElectrodeDesign({
     cell_design: formData.cellDesign,
     np_ratio: formData.npRatio,
     cathode_active_material: formData.cathodeActiveMaterial,
     anode_active_material: formData.anodeActiveMaterial,
     type: ElectrodePageType.INVERSE_DESIGN, // type=2
-    model_params: {
-      width: Number(formData.width),
-      length: Number(formData.length),
-      design_capacity: formData.designCapacity,
-      specific_ED: formData.specificEnergy,
-      jelly_roll_thickness: formData.thickness,
-      volumetric_ED: formData.volumetricEnergyDensity,
-    },
+    model_params: modelParams,
   });
 
-  // 转换 valid 数据 - 直接转换，无需计算偏差
-  const validData: DesignRecommendation[] = apiResult.valid.map(
+  // 第二步：通过 history_id 获取推荐结果列表（平铺数组）
+  const flatItems = await getBackwardResultList({ history_id: historyId });
+
+  // 客户端分组：根据目标范围将平铺数组拆分为 valid / invalid
+  const validItems: BackwardResultItemDTO[] = [];
+  const invalidItems: BackwardResultItemDTO[] = [];
+
+  flatItems.forEach((item) => {
+    const deviations = checkDeviations(item, formData, activeSecondaryTarget);
+    if (deviations.length === 0) {
+      validItems.push(item);
+    } else {
+      invalidItems.push(item);
+    }
+  });
+
+  // 转换 valid 数据
+  const validData: DesignRecommendation[] = validItems.map(
     (item, index) => transformToRecommendation(item, index),
   );
 
-  // 转换 invalid 数据 - 需要计算偏差字段
-  const invalidData: DesignRecommendationWithDeviation[] = apiResult.invalid.map(
-    (item, index) => {
-      const recommendation = transformToRecommendation(item, index);
-      const deviatedFields = checkDeviations(item, formData);
-      return {
-        ...recommendation,
-        deviatedFields,
-      };
-    },
+  // 转换 invalid 数据 - 附带偏差字段信息
+  const invalidData: DesignRecommendationWithDeviation[] = invalidItems.map(
+    (item, index) => ({
+      ...transformToRecommendation(item, index),
+      deviatedFields: checkDeviations(item, formData, activeSecondaryTarget),
+    }),
   );
 
   return {
@@ -129,8 +154,8 @@ export const getOptimizeRecommendations = async (
       invalid: invalidData,
     },
     fullResults: {
-      valid: apiResult.valid,
-      invalid: apiResult.invalid,
+      valid: validItems,
+      invalid: invalidItems,
     },
   };
 };

@@ -28,6 +28,8 @@ export const ELECTRODE_ENDPOINTS: EndpointConfig<Record<string, string>> = {
     modelPredict: '/api/electrodePerformance/model_predict',
     /** 反向设计优化（type=2）- 复用 model_predict 端点 */
     optimize: '/api/electrodePerformance/model_predict',
+    /** 反向设计结果列表（通过 history_id 获取） */
+    backwardResultList: '/api/electrodePerformance/backwardResult/list',
   },
 
   /**

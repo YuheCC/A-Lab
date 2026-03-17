@@ -20,12 +20,12 @@ import {
   type ElectrodeModelResult,
   type ElectrodeModelResultDTO,
   type ElectrodeOptimizeParams,
-  type OptimizeResultItemDTO,
-  type OptimizeGroupedResultDTO,
   type ElectrodeOptimizeResponseDTO,
   type OptimizeHistoryItem,
   type OptimizeModelParamsDTO,
   type UniversalHistoryDetailResponse,
+  type BackwardResultListParams,
+  type BackwardResultListResponseDTO,
 } from './types';
 
 // ============================================
@@ -433,33 +433,34 @@ export async function predictElectrodePerformance(
  * 电极反向设计优化（Inverse Design）
  * Electrode Inverse Design Optimization
  *
- * @param params - 优化参数（使用区间模式的 model_params）
- * @returns 优化结果（分组结构：valid/invalid）
+ * @param params - 优化参数（使用 min/max 平铺模式的 model_params）
+ * @returns 历史记录 ID，用于后续通过 getBackwardResultList 获取推荐结果
  *
  * @example
  * ```typescript
- * const results = await optimizeElectrodeDesign({
+ * const { id } = await optimizeElectrodeDesign({
  *   cell_design: 'Balanced',
  *   np_ratio: '1.07',
  *   cathode_active_material: 'LFP',
  *   anode_active_material: 'Gr',
  *   type: ElectrodePageType.INVERSE_DESIGN,  // type=2
  *   model_params: {
- *     width: 156,
- *     length: 30,
- *     layers: 17,
- *     design_capacity: [5, 7],
- *     specific_ED: [250, 300],
- *     jelly_roll_thickness: [4, 7],
- *     volumetric_ED: [935, 970],
+ *     cathode_width: 156,
+ *     cathode_length: 30,
+ *     jrt_min: 4,
+ *     jrt_max: 7,
+ *     ved_min: 935,
+ *     ved_max: 970,
+ *     sed_min: 250,
+ *     sed_max: 300,
  *   },
  * });
- * // results 是 { valid: [], invalid: [] } 结构
+ * // 使用返回的 id 调用 getBackwardResultList({ history_id: id })
  * ```
  */
 export async function optimizeElectrodeDesign(
   params: ElectrodeOptimizeParams,
-): Promise<OptimizeGroupedResultDTO> {
+): Promise<{ id: number }> {
   const env = urlConfig.getEnvironment();
   const endpoint = getElectrodeEndpoint(env, 'optimize');
   const url = urlConfig.buildFullURL(endpoint);
@@ -472,7 +473,37 @@ export async function optimizeElectrodeDesign(
     },
   });
 
-  // 从响应的 model_result 字段获取分组结果
   const rawData = response.data as ElectrodeOptimizeResponseDTO;
-  return rawData.model_result;
+  return { id: rawData.id };
+}
+
+/**
+ * 获取反向设计推荐结果列表
+ * Get Backward Design Result List
+ *
+ * @param params - 查询参数（需要 history_id）
+ * @returns 推荐结果列表（valid/invalid 分组）
+ *
+ * TODO: 接口响应格式待后端确认后更新 BackwardResultListResponseDTO 类型定义
+ *
+ * @example
+ * ```typescript
+ * const results = await getBackwardResultList({ history_id: 123 });
+ * // results.valid / results.invalid 为推荐结果数组
+ * ```
+ */
+export async function getBackwardResultList(
+  params: BackwardResultListParams,
+): Promise<BackwardResultListResponseDTO> {
+  const env = urlConfig.getEnvironment();
+  const endpoint = getElectrodeEndpoint(env, 'backwardResultList');
+  const url = urlConfig.buildFullURL(endpoint);
+
+  const response = await request(url, {
+    method: 'GET',
+    params,
+  });
+
+  // 接口返回平铺数组
+  return response.data as BackwardResultListResponseDTO;
 }
