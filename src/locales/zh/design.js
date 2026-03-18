@@ -281,7 +281,8 @@ export default {
         backToList: "返回列表",
         back: "返回",
         newDesign: "新建设计",
-        newPrediction: "新增预测"
+        newPrediction: "新增预测",
+        download: "Download"
     },
     // Tabs
     tabs: {

@@ -281,7 +281,8 @@ export default {
         backToList: "Back to List",
         back: "Back",
         newDesign: "New Design",
-        newPrediction: "New Prediction"
+        newPrediction: "New Prediction",
+        download: "Download"
     },
     // Tabs
     tabs: {

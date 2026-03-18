@@ -281,7 +281,8 @@ export default {
         backToList: "リストに戻る",
         back: "戻る",
         newDesign: "新規設計",
-        newPrediction: "新規予測"
+        newPrediction: "新規予測",
+        download: "Download"
     },
     // Tabs
     tabs: {

@@ -16,10 +16,10 @@ import { useMessage } from '@/components/MessageProvider';
 import type { BackwardResultItemDTO } from '@/services/electrode/types';
 import TargetParameterCard from './components/TargetParameterCard';
 import DesignDetailsModal from './components/DesignDetailsModal';
-import RecommendationTrendChart, {
-  RecommendationTrendDatum,
-} from './components/RecommendationTrendChart';
+import RecommendationTrendChart from './components/RecommendationTrendChart';
 import { getOptimizeRecommendations } from './model';
+import { mapBackwardResultsToTrendData } from './recommendationData';
+import { downloadRecommendationData } from './recommendationExport';
 import {
   DesignTargetsFormData,
   DesignRecommendation,
@@ -480,28 +480,18 @@ const OptimizePage: React.FC = () => {
     },
   ];
 
-  const trendChartData = useMemo<RecommendationTrendDatum[]>(
-    () =>
-      fullResults.valid.map((item, index) => ({
-        no: index + 1,
-        designCapacity: item.design_capacity,
-        specificEnergy: item.specific_ED,
-        thickness: item.jelly_roll_thickness,
-        volumetricEnergyDensity: item.volumetric_ED,
-        cathodeBinderWt: item.cathode_binder_wt,
-        cathodeCntWt: item.cathode_cnt_wt,
-        cathodeConductiveCarbonWt: item.cathode_conductive_carbon_wt,
-        cathodeArealLoading: item.cathode_areal_loading,
-        cathodePressDensity: item.cathode_press_density,
-        anodeBinder1Wt: item.anode_binder1_wt,
-        anodeBinder2Wt: item.anode_binder2_wt,
-        anodeBinder3Wt: item.anode_binder3_wt,
-        anodeConductiveCarbonWt: item.anode_conductive_carbon_wt,
-        anodeCntWt: item.anode_cnt_wt,
-        anodePressDensity: item.anode_press_density,
-      })),
+  const trendChartData = useMemo(
+    () => mapBackwardResultsToTrendData(fullResults.valid),
     [fullResults.valid],
   );
+
+  const handleDownloadRecommendations = () => {
+    downloadRecommendationData({
+      type: 'csv',
+      data: trendChartData,
+      t,
+    });
+  };
 
   const handleNewDesign = () => {
     // 重置所有状态为默认值
@@ -851,6 +841,14 @@ const OptimizePage: React.FC = () => {
             <h2 className="electrode-optimize-section-title">
               {t('design.electrode.optimize.designRecommendations')}
             </h2>
+
+            {recommendations.valid.length > 0 && (
+              <div className="electrode-optimize-table-toolbar">
+                <Button variant="secondary" size="small" onClick={handleDownloadRecommendations}>
+                  {t('design.actions.download', 'Download')}
+                </Button>
+              </div>
+            )}
 
             {recommendations.valid.length === 0 ? (
               <div className="electrode-optimize-empty-state">

@@ -281,7 +281,8 @@ export default {
         backToList: "목록으로 돌아가기",
         back: "뒤로",
         newDesign: "새 설계",
-        newPrediction: "새 예측"
+        newPrediction: "새 예측",
+        download: "Download"
     },
     // Tabs
     tabs: {

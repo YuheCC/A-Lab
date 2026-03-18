@@ -3,9 +3,9 @@ import type { TFunction } from 'i18next';
 import { LeftOutlined } from '@ant-design/icons';
 import { Select, Table, Modal, Spin } from 'antd';
 import TargetParameterCard from '../Optimize/components/TargetParameterCard';
-import RecommendationTrendChart, {
-  RecommendationTrendDatum,
-} from '../Optimize/components/RecommendationTrendChart';
+import RecommendationTrendChart from '../Optimize/components/RecommendationTrendChart';
+import { mapBackwardResultsToTrendData } from '../Optimize/recommendationData';
+import { downloadRecommendationData } from '../Optimize/recommendationExport';
 import {
   CELL_DESIGN_OPTIONS,
   CATHODE_ACTIVE_MATERIAL_OPTIONS,
@@ -361,28 +361,18 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
     },
   ];
 
-  const trendChartData = useMemo<RecommendationTrendDatum[]>(
-    () =>
-      validItems.map((item, index) => ({
-        no: index + 1,
-        designCapacity: item.design_capacity,
-        specificEnergy: item.specific_ED,
-        thickness: item.jelly_roll_thickness,
-        volumetricEnergyDensity: item.volumetric_ED,
-        cathodeBinderWt: item.cathode_binder_wt,
-        cathodeCntWt: item.cathode_cnt_wt,
-        cathodeConductiveCarbonWt: item.cathode_conductive_carbon_wt,
-        cathodeArealLoading: item.cathode_areal_loading,
-        cathodePressDensity: item.cathode_press_density,
-        anodeBinder1Wt: item.anode_binder1_wt,
-        anodeBinder2Wt: item.anode_binder2_wt,
-        anodeBinder3Wt: item.anode_binder3_wt,
-        anodeConductiveCarbonWt: item.anode_conductive_carbon_wt,
-        anodeCntWt: item.anode_cnt_wt,
-        anodePressDensity: item.anode_press_density,
-      })),
+  const trendChartData = useMemo(
+    () => mapBackwardResultsToTrendData(validItems),
     [validItems],
   );
+
+  const handleDownloadRecommendations = () => {
+    downloadRecommendationData({
+      type: 'csv',
+      data: trendChartData,
+      t,
+    });
+  };
 
   return (
     <div className="electrode-optimize-container antd-readonly-style">
@@ -554,6 +544,14 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
           <h2 className="electrode-optimize-section-title">
             {t('design.electrode.optimize.designRecommendations', 'Design Recommendations')}
           </h2>
+
+          {!resultsLoading && validItems.length > 0 && (
+            <div className="electrode-optimize-table-toolbar">
+              <Button variant="secondary" size="small" onClick={handleDownloadRecommendations}>
+                {t('design.actions.download', 'Download')}
+              </Button>
+            </div>
+          )}
 
           {resultsLoading ? (
             <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
