@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, useContext, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Tooltip, Select, InputNumber } from 'antd';
+import { Tooltip, Select, InputNumber, Input } from 'antd';
 import { Info, ArrowUp, ArrowDown } from 'lucide-react';
 import Button from '@/components/Button';
 import { getBatterySystemList, predictPerformance, requestLLMAnalysisStream, type PerformancePredictionResponse, type LLMAnalysisStreamRequest } from '@/services/prediction/performance';
@@ -12,7 +12,7 @@ import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 import CustomSelect from '../CustomSelect';
 import ModelSelect from '@/components/ModelSelect';
 import { upcomingModels, type PerformanceMetricType, type ModelOption } from './mockModelData';
-import { ADDITIVE_NAME_OPTIONS } from './additiveOptions';
+import { ADDITIVE_NAME_OPTIONS, ADDITIVE_NAME_OPTIONS_101 } from './additiveOptions';
 import SmilesInputWithPreview, { type SmilesInputHandle } from './SmilesInputWithPreview';
 import { PricingContext } from '@/layouts/index';
 import { getModelList } from '../../model';
@@ -874,6 +874,48 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     }));
   }, [batterySystemOptions?.length, comingSoonText]);
 
+  const modelType = selectedModelData?.model_type;
+
+  const renderAdditiveNameField = (
+    value: string,
+    onChange: (val: string) => void,
+    className: string,
+  ) => {
+    if (modelType === 100) {
+      return (
+        <Select
+          value={value || undefined}
+          onChange={(val) => onChange(val ?? '')}
+          options={ADDITIVE_NAME_OPTIONS.map(o => ({ label: o.label, value: o.value }))}
+          allowClear
+          className={className}
+          style={{ width: '100%' }}
+        />
+      );
+    }
+    if (modelType === 101) {
+      return (
+        <Select
+          value={value || undefined}
+          onChange={(val) => onChange(val ?? '')}
+          options={ADDITIVE_NAME_OPTIONS_101.map(o => ({ label: o.label, value: o.value }))}
+          allowClear
+          className={className}
+          style={{ width: '100%' }}
+        />
+      );
+    }
+    return (
+      <Input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className={className}
+        style={{ width: '100%' }}
+        allowClear
+      />
+    );
+  };
+
   return (
     <div className="pm-prediction-module">
       <div className="pm-module-section">
@@ -902,6 +944,16 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                   if (value) {
                     setShowSpecs(true);
                   }
+                  // 切换模型时清空 Formula A/B 的所有添加剂数据
+                  setFaAdd3Name(''); setFaAdd3Wt(null);
+                  setFaAdd4Name(''); setFaAdd4Wt(null);
+                  setFaAdd5Name(''); setFaAdd5Wt(null);
+                  setFaAdd6Wt(null);
+                  setAdditive('');
+                  setFbAdd3Name(''); setFbAdd3Wt(null);
+                  setFbAdd4Name(''); setFbAdd4Wt(null);
+                  setFbAdd5Name(''); setFbAdd5Wt(null);
+                  setFbAdd6Smiles(''); setFbAdd6Wt(null);
                 }}
                 options={modelOptions}
                 loading={isModelLoading}
@@ -981,14 +1033,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 <div className="pm-additive-row">
                   <div className="pm-additive-select-group">
                     <label className="pm-additive-label">{t('performance.formulas.additive1Label', 'Additive 1')}</label>
-                    <Select
-                      value={faAdd3Name || undefined}
-                      onChange={(value) => setFaAdd3Name(value ?? '')}
-                      options={ADDITIVE_NAME_OPTIONS.filter(o => o.value).map(o => ({ label: o.label, value: o.value }))}
-                      allowClear
-                      className="pm-additive-select"
-                      style={{ width: '100%' }}
-                    />
+                    {renderAdditiveNameField(faAdd3Name, setFaAdd3Name, 'pm-additive-select')}
                   </div>
                   <div className="pm-weight-group">
                     <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
@@ -1008,14 +1053,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 <div className="pm-additive-row">
                   <div className="pm-additive-select-group">
                     <label className="pm-additive-label">{t('performance.formulas.additive2Label', 'Additive 2')}</label>
-                    <Select
-                      value={faAdd4Name || undefined}
-                      onChange={(value) => setFaAdd4Name(value ?? '')}
-                      options={ADDITIVE_NAME_OPTIONS.filter(o => o.value).map(o => ({ label: o.label, value: o.value }))}
-                      allowClear
-                      className="pm-additive-select"
-                      style={{ width: '100%' }}
-                    />
+                    {renderAdditiveNameField(faAdd4Name, setFaAdd4Name, 'pm-additive-select')}
                   </div>
                   <div className="pm-weight-group">
                     <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
@@ -1035,14 +1073,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 <div className="pm-additive-row">
                   <div className="pm-additive-select-group">
                     <label className="pm-additive-label">{t('performance.formulas.additive3Label', 'Additive 3')}</label>
-                    <Select
-                      value={faAdd5Name || undefined}
-                      onChange={(value) => setFaAdd5Name(value ?? '')}
-                      options={ADDITIVE_NAME_OPTIONS.filter(o => o.value).map(o => ({ label: o.label, value: o.value }))}
-                      allowClear
-                      className="pm-additive-select"
-                      style={{ width: '100%' }}
-                    />
+                    {renderAdditiveNameField(faAdd5Name, setFaAdd5Name, 'pm-additive-select')}
                   </div>
                   <div className="pm-weight-group">
                     <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
@@ -1102,14 +1133,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 <div className="pm-additive-row">
                   <div className="pm-additive-select-group">
                     <label className="pm-additive-label">{t('performance.formulas.additive1Label', 'Additive 1')}</label>
-                    <Select
-                      value={fbAdd3Name || undefined}
-                      onChange={(value) => setFbAdd3Name(value ?? '')}
-                      options={ADDITIVE_NAME_OPTIONS.filter(o => o.value).map(o => ({ label: o.label, value: o.value }))}
-                      allowClear
-                      className="pm-additive-select"
-                      style={{ width: '100%' }}
-                    />
+                    {renderAdditiveNameField(fbAdd3Name, setFbAdd3Name, 'pm-additive-select')}
                   </div>
                   <div className="pm-weight-group">
                     <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
@@ -1129,14 +1153,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 <div className="pm-additive-row">
                   <div className="pm-additive-select-group">
                     <label className="pm-additive-label">{t('performance.formulas.additive2Label', 'Additive 2')}</label>
-                    <Select
-                      value={fbAdd4Name || undefined}
-                      onChange={(value) => setFbAdd4Name(value ?? '')}
-                      options={ADDITIVE_NAME_OPTIONS.filter(o => o.value).map(o => ({ label: o.label, value: o.value }))}
-                      allowClear
-                      className="pm-additive-select"
-                      style={{ width: '100%' }}
-                    />
+                    {renderAdditiveNameField(fbAdd4Name, setFbAdd4Name, 'pm-additive-select')}
                   </div>
                   <div className="pm-weight-group">
                     <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
@@ -1156,14 +1173,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 <div className="pm-additive-row">
                   <div className="pm-additive-select-group">
                     <label className="pm-additive-label">{t('performance.formulas.additive3Label', 'Additive 3')}</label>
-                    <Select
-                      value={fbAdd5Name || undefined}
-                      onChange={(value) => setFbAdd5Name(value ?? '')}
-                      options={ADDITIVE_NAME_OPTIONS.filter(o => o.value).map(o => ({ label: o.label, value: o.value }))}
-                      allowClear
-                      className="pm-additive-select"
-                      style={{ width: '100%' }}
-                    />
+                    {renderAdditiveNameField(fbAdd5Name, setFbAdd5Name, 'pm-additive-select')}
                   </div>
                   <div className="pm-weight-group">
                     <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>

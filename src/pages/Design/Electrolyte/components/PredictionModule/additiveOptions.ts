@@ -4,12 +4,18 @@ export interface AdditiveOption {
 }
 
 /**
- * Additive 1/2/3 下拉选项（对应 model_params 中的 additive_3/4/5_name）
- * 空字符串值表示"不添加"
- * 如需新增/删除选项，仅修改此处
+ * model_type=100 对应的 Additive 下拉选项
  */
 export const ADDITIVE_NAME_OPTIONS: AdditiveOption[] = [
-  { value: '', label: '-' },
+  { value: 'FEC', label: 'FEC' },
+  { value: 'PS', label: 'PS' },
+  { value: 'BTS', label: 'BTS' },
+];
+
+/**
+ * model_type=101 对应的 Additive 下拉选项
+ */
+export const ADDITIVE_NAME_OPTIONS_101: AdditiveOption[] = [
   { value: 'VC', label: 'VC' },
   { value: 'DTD', label: 'DTD' },
   { value: 'BTS', label: 'BTS' },
