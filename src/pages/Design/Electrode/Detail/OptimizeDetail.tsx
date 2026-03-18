@@ -3,6 +3,9 @@ import type { TFunction } from 'i18next';
 import { LeftOutlined } from '@ant-design/icons';
 import { Select, Table, Modal, Spin } from 'antd';
 import TargetParameterCard from '../Optimize/components/TargetParameterCard';
+import RecommendationTrendChart, {
+  RecommendationTrendDatum,
+} from '../Optimize/components/RecommendationTrendChart';
 import {
   CELL_DESIGN_OPTIONS,
   CATHODE_ACTIVE_MATERIAL_OPTIONS,
@@ -358,6 +361,18 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
     },
   ];
 
+  const trendChartData = useMemo<RecommendationTrendDatum[]>(
+    () =>
+      validItems.map((item, index) => ({
+        no: index + 1,
+        designCapacity: item.design_capacity,
+        specificEnergy: item.specific_ED,
+        thickness: item.jelly_roll_thickness,
+        volumetricEnergyDensity: item.volumetric_ED,
+      })),
+    [validItems],
+  );
+
   return (
     <div className="electrode-optimize-container antd-readonly-style">
       {/* 页面标题和返回按钮 */}
@@ -564,6 +579,10 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
               pagination={false}
               className="electrode-optimize-table"
             />
+          )}
+
+          {!resultsLoading && validItems.length > 0 && (
+            <RecommendationTrendChart data={trendChartData} />
           )}
 
           {/* Additional Recommendations 折叠提示 */}

@@ -276,7 +276,7 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
       },
       grid: {
         left: 68,
-        right: isDualAxis ? 68 : 28,
+        right: isDualAxis ? 88 : 28,
         top: 52,
         bottom: 50,
       },
