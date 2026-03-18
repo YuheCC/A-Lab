@@ -1,0 +1,82 @@
+@import '@/styles/variables.less';
+
+.recommendation-trend-chart {
+  margin-top: @spacing-xl;
+  padding: @spacing-xl;
+  border-radius: @radius-lg;
+  background: #ffffff;
+
+  &__title {
+    margin: 0 0 @spacing-lg 0;
+    color: @color-gray-800;
+    font-size: @font-size-lg;
+    font-weight: @font-weight-semibold;
+  }
+
+  &__controls {
+    display: flex;
+    flex-direction: column;
+    gap: @spacing-lg;
+    margin-bottom: @spacing-lg;
+  }
+
+  &__control-row {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: @spacing-sm;
+  }
+
+  &__control-label {
+    color: @color-gray-700;
+    font-size: @font-size-base;
+    font-weight: @font-weight-medium;
+    min-width: 56px;
+    line-height: 28px;
+  }
+
+  &__checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: @spacing-md @spacing-lg;
+
+    .ant-checkbox-wrapper {
+      color: @color-gray-700;
+      font-size: @font-size-base;
+      line-height: 28px;
+    }
+  }
+
+  &__empty {
+    min-height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed @color-gray-300;
+    border-radius: @radius-md;
+    color: @color-gray-500;
+    font-size: @font-size-base;
+    background: @color-gray-50;
+  }
+
+  &__chart {
+    border: 1px solid @color-gray-200;
+    border-radius: @radius-md;
+    padding: @spacing-md;
+    background: #ffffff;
+  }
+}
+
+@media (max-width: 768px) {
+  .recommendation-trend-chart {
+    &__control-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    &__control-label {
+      min-width: unset;
+      line-height: 1.6;
+    }
+  }
+}
