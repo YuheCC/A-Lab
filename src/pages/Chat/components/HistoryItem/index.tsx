@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Menu, MenuItem, IconButton } from '@mui/material';
+import { Menu, MenuItem, IconButton, Tooltip } from '@mui/material';
 import { useNavigate } from 'umi';
 
 interface HistoryItemProps {
@@ -23,6 +23,26 @@ interface HistoryItemProps {
   onDelete?: (chatId: number) => void;
 }
 
+const historyTitleTooltipPopperSx = {
+  '& .MuiTooltip-tooltip': {
+    backgroundColor: 'white',
+    color: '#374151',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+    borderRadius: '8px',
+    padding: '8px 12px',
+    fontFamily: 'inherit',
+    fontSize: '12px',
+    fontWeight: 400,
+    lineHeight: 1.3,
+    letterSpacing: 'normal',
+    maxWidth: 360,
+    border: 'none',
+  },
+  '& .MuiTooltip-arrow': {
+    color: 'white',
+  },
+};
+
 const HistoryItem: FC<HistoryItemProps> = ({
   chatId,
   title,
@@ -39,6 +59,8 @@ const HistoryItem: FC<HistoryItemProps> = ({
   const [isRenaming, setIsRenaming] = useState(false);
   const [tempTitle, setTempTitle] = useState(title);
   const inputRef = useRef<HTMLInputElement>(null);
+  const titleRef = useRef<HTMLSpanElement>(null);
+  const [isTitleOverflowing, setIsTitleOverflowing] = useState(false);
 
   const isMenuOpen = Boolean(anchorEl);
 
@@ -49,6 +71,21 @@ const HistoryItem: FC<HistoryItemProps> = ({
       inputRef.current.select();
     }
   }, [isRenaming]);
+
+  useEffect(() => {
+    const updateTitleOverflow = () => {
+      const titleElement = titleRef.current;
+      if (!titleElement) return;
+      setIsTitleOverflowing(titleElement.scrollWidth > titleElement.clientWidth);
+    };
+
+    updateTitleOverflow();
+    window.addEventListener('resize', updateTitleOverflow);
+
+    return () => {
+      window.removeEventListener('resize', updateTitleOverflow);
+    };
+  }, [title, isRenaming]);
 
   const handleChatClick = (e: React.MouseEvent) => {
     // 防止事件冒泡到li元素
@@ -126,13 +163,26 @@ const HistoryItem: FC<HistoryItemProps> = ({
           className="chat-rename-input"
         />
       ) : (
-        <span
-          className={`recent-chat ${isActive ? 'active' : ''}`}
-          aria-current={isActive ? 'page' : undefined}
-          data-chat-id={chatId}
+        <Tooltip
+          title={isTitleOverflowing ? title : ''}
+          placement="right"
+          arrow
+          PopperProps={{
+            sx: historyTitleTooltipPopperSx,
+          }}
+          disableHoverListener={!isTitleOverflowing}
+          disableFocusListener={!isTitleOverflowing}
+          disableTouchListener={!isTitleOverflowing}
         >
-          {title}
-        </span>
+          <span
+            ref={titleRef}
+            className={`recent-chat ${isActive ? 'active' : ''}`}
+            aria-current={isActive ? 'page' : undefined}
+            data-chat-id={chatId}
+          >
+            {title}
+          </span>
+        </Tooltip>
       )}
       
       <IconButton
