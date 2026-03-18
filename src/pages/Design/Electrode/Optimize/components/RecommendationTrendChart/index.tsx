@@ -5,8 +5,25 @@ import { useTranslation } from 'react-i18next';
 import EchartsReact from '@/components/EchartsReact';
 import './index.less';
 
-export type TrendChartXAxisKey = 'no' | 'designCapacity';
-export type TrendChartYAxisKey = 'specificEnergy' | 'thickness' | 'volumetricEnergyDensity';
+export type TrendChartFieldKey =
+  | 'no'
+  | 'designCapacity'
+  | 'specificEnergy'
+  | 'thickness'
+  | 'volumetricEnergyDensity'
+  | 'cathodeBinderWt'
+  | 'cathodeCntWt'
+  | 'cathodeConductiveCarbonWt'
+  | 'cathodeArealLoading'
+  | 'cathodePressDensity'
+  | 'anodeBinder1Wt'
+  | 'anodeBinder2Wt'
+  | 'anodeBinder3Wt'
+  | 'anodeConductiveCarbonWt'
+  | 'anodeCntWt'
+  | 'anodePressDensity';
+export type TrendChartXAxisKey = TrendChartFieldKey;
+export type TrendChartYAxisKey = TrendChartFieldKey;
 
 export interface RecommendationTrendDatum {
   no: number;
@@ -14,49 +31,97 @@ export interface RecommendationTrendDatum {
   specificEnergy: number;
   thickness: number;
   volumetricEnergyDensity: number;
+  cathodeBinderWt: number;
+  cathodeCntWt: number;
+  cathodeConductiveCarbonWt: number;
+  cathodeArealLoading: number;
+  cathodePressDensity: number;
+  anodeBinder1Wt: number;
+  anodeBinder2Wt: number;
+  anodeBinder3Wt: number;
+  anodeConductiveCarbonWt: number;
+  anodeCntWt: number;
+  anodePressDensity: number;
 }
 
 interface RecommendationTrendChartProps {
   data: RecommendationTrendDatum[];
   title?: string;
-  defaultXAxis?: TrendChartXAxisKey;
-  defaultYAxes?: TrendChartYAxisKey[];
+  defaultXAxis?: TrendChartFieldKey;
+  defaultYAxes?: TrendChartFieldKey[];
   className?: string;
 }
 
-const MAX_Y_AXES = 2;
-const DEFAULT_X_AXIS: TrendChartXAxisKey = 'designCapacity';
-const DEFAULT_Y_AXES: TrendChartYAxisKey[] = ['specificEnergy'];
+// 轴可选个数配置：当前都为 1，后续放开只需改这里
+const X_AXIS_SELECTION_LIMIT = 1;
+const Y_AXIS_SELECTION_LIMIT = 1;
+const DEFAULT_X_AXIS: TrendChartFieldKey = 'designCapacity';
+const DEFAULT_Y_AXIS: TrendChartFieldKey = 'specificEnergy';
 
-const Y_AXIS_KEYS: TrendChartYAxisKey[] = [
+const AXIS_FIELD_KEYS: TrendChartFieldKey[] = [
+  'no',
+  'designCapacity',
   'specificEnergy',
   'thickness',
   'volumetricEnergyDensity',
+  'cathodeBinderWt',
+  'cathodeCntWt',
+  'cathodeConductiveCarbonWt',
+  'cathodeArealLoading',
+  'cathodePressDensity',
+  'anodeBinder1Wt',
+  'anodeBinder2Wt',
+  'anodeBinder3Wt',
+  'anodeConductiveCarbonWt',
+  'anodeCntWt',
+  'anodePressDensity',
 ];
 
-const Y_AXIS_META: Record<TrendChartYAxisKey, { unit: string; color: string }> = {
+const FIELD_META: Record<TrendChartFieldKey, { unit: string; color: string }> = {
+  no: { unit: '', color: '#6b7280' },
+  designCapacity: { unit: 'Ah', color: '#8b5cf6' },
   specificEnergy: { unit: 'Wh/kg', color: '#56B26A' },
   thickness: { unit: 'mm', color: '#3b82f6' },
   volumetricEnergyDensity: { unit: 'Wh/L', color: '#f59e0b' },
+  cathodeBinderWt: { unit: 'wt.%', color: '#10b981' },
+  cathodeCntWt: { unit: 'wt.%', color: '#14b8a6' },
+  cathodeConductiveCarbonWt: { unit: 'wt.%', color: '#06b6d4' },
+  cathodeArealLoading: { unit: 'mAh/cm²', color: '#0ea5e9' },
+  cathodePressDensity: { unit: 'g/cc', color: '#0284c7' },
+  anodeBinder1Wt: { unit: 'wt.%', color: '#84cc16' },
+  anodeBinder2Wt: { unit: 'wt.%', color: '#65a30d' },
+  anodeBinder3Wt: { unit: 'wt.%', color: '#a3e635' },
+  anodeConductiveCarbonWt: { unit: 'wt.%', color: '#f97316' },
+  anodeCntWt: { unit: 'wt.%', color: '#ea580c' },
+  anodePressDensity: { unit: 'g/cc', color: '#fb7185' },
 };
 
-const isValidXAxis = (value?: TrendChartXAxisKey): value is TrendChartXAxisKey =>
-  value === 'no' || value === 'designCapacity';
+const isValidField = (value?: string): value is TrendChartFieldKey =>
+  !!value && AXIS_FIELD_KEYS.includes(value as TrendChartFieldKey);
 
-const isValidYAxis = (value: string): value is TrendChartYAxisKey =>
-  Y_AXIS_KEYS.includes(value as TrendChartYAxisKey);
+const getFirstAvailableField = (
+  excluded: TrendChartFieldKey[],
+  preferred: TrendChartFieldKey,
+): TrendChartFieldKey => {
+  if (!excluded.includes(preferred)) {
+    return preferred;
+  }
+  return AXIS_FIELD_KEYS.find((field) => !excluded.includes(field)) || preferred;
+};
 
-const sanitizeDefaultYAxes = (defaultYAxes?: TrendChartYAxisKey[]): TrendChartYAxisKey[] => {
-  if (!defaultYAxes || defaultYAxes.length === 0) {
-    return DEFAULT_Y_AXES;
+const sanitizeDefaultYAxes = (
+  defaultYAxes: TrendChartFieldKey[] | undefined,
+  selectedXAxis: TrendChartFieldKey,
+): TrendChartFieldKey[] => {
+  const deduplicated = Array.from(new Set(defaultYAxes || [])).filter(
+    (key): key is TrendChartFieldKey => isValidField(key) && key !== selectedXAxis,
+  );
+
+  if (deduplicated.length > 0) {
+    return deduplicated.slice(0, Y_AXIS_SELECTION_LIMIT);
   }
 
-  const deduplicated = Array.from(new Set(defaultYAxes)).filter((key) => isValidYAxis(key));
-  if (deduplicated.length === 0) {
-    return DEFAULT_Y_AXES;
-  }
-
-  return deduplicated.slice(0, MAX_Y_AXES);
+  return [getFirstAvailableField([selectedXAxis], DEFAULT_Y_AXIS)];
 };
 
 const formatNumber = (value: number): string => value.toFixed(2);
@@ -65,16 +130,15 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
   data,
   title,
   defaultXAxis = DEFAULT_X_AXIS,
-  defaultYAxes = DEFAULT_Y_AXES,
+  defaultYAxes = [DEFAULT_Y_AXIS],
   className = '',
 }) => {
   const { t } = useTranslation();
 
-  const [selectedXAxis, setSelectedXAxis] = useState<TrendChartXAxisKey>(
-    isValidXAxis(defaultXAxis) ? defaultXAxis : DEFAULT_X_AXIS,
-  );
-  const [selectedYAxes, setSelectedYAxes] = useState<TrendChartYAxisKey[]>(
-    sanitizeDefaultYAxes(defaultYAxes),
+  const initialXAxis = isValidField(defaultXAxis) ? defaultXAxis : DEFAULT_X_AXIS;
+  const [selectedXAxis, setSelectedXAxis] = useState<TrendChartFieldKey>(initialXAxis);
+  const [selectedYAxes, setSelectedYAxes] = useState<TrendChartFieldKey[]>(
+    sanitizeDefaultYAxes(defaultYAxes, initialXAxis),
   );
 
   const normalizedData = useMemo(
@@ -85,88 +149,145 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
           Number.isFinite(item.designCapacity) &&
           Number.isFinite(item.specificEnergy) &&
           Number.isFinite(item.thickness) &&
-          Number.isFinite(item.volumetricEnergyDensity),
+          Number.isFinite(item.volumetricEnergyDensity) &&
+          Number.isFinite(item.cathodeBinderWt) &&
+          Number.isFinite(item.cathodeCntWt) &&
+          Number.isFinite(item.cathodeConductiveCarbonWt) &&
+          Number.isFinite(item.cathodeArealLoading) &&
+          Number.isFinite(item.cathodePressDensity) &&
+          Number.isFinite(item.anodeBinder1Wt) &&
+          Number.isFinite(item.anodeBinder2Wt) &&
+          Number.isFinite(item.anodeBinder3Wt) &&
+          Number.isFinite(item.anodeConductiveCarbonWt) &&
+          Number.isFinite(item.anodeCntWt) &&
+          Number.isFinite(item.anodePressDensity),
       ),
     [data],
   );
 
-  const xAxisOptions = useMemo(
-    () => [
-      {
-        value: 'no' as const,
-        label: t('design.electrode.optimize.no', 'No.'),
-      },
-      {
-        value: 'designCapacity' as const,
-        label: `${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah)`,
-      },
-    ],
-    [t],
-  );
-
-  const yAxisOptions = useMemo(
-    () =>
-      Y_AXIS_KEYS.map((key) => {
-        if (key === 'specificEnergy') {
-          return {
-            value: key,
-            label: `${t('design.electrode.optimize.specificEnergy', 'Gravimetric Energy Density')} (Wh/kg)`,
-          };
-        }
-        if (key === 'thickness') {
-          return {
-            value: key,
-            label: `${t('design.electrode.optimize.jellyRollThickness', 'Jelly Roll Thickness')} (mm)`,
-          };
-        }
-        return {
-          value: key,
-          label: `${t('design.electrode.optimize.volumetricEnergyDensity', 'Volumetric Energy Density')} (Wh/L)`,
-        };
-      }),
-    [t],
-  );
-
-  const getYAxisLabel = (key: TrendChartYAxisKey): string => {
+  const getFieldLabel = (key: TrendChartFieldKey): string => {
+    if (key === 'no') {
+      return t('design.electrode.optimize.no', 'No.');
+    }
+    if (key === 'designCapacity') {
+      return `${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah)`;
+    }
     if (key === 'specificEnergy') {
       return `${t('design.electrode.optimize.specificEnergy', 'Gravimetric Energy Density')} (Wh/kg)`;
     }
     if (key === 'thickness') {
       return `${t('design.electrode.optimize.jellyRollThickness', 'Jelly Roll Thickness')} (mm)`;
     }
-    return `${t('design.electrode.optimize.volumetricEnergyDensity', 'Volumetric Energy Density')} (Wh/L)`;
+    if (key === 'volumetricEnergyDensity') {
+      return `${t('design.electrode.optimize.volumetricEnergyDensity', 'Volumetric Energy Density')} (Wh/L)`;
+    }
+    if (key === 'cathodeBinderWt') {
+      return 'PVDF (wt.%)';
+    }
+    if (key === 'cathodeCntWt') {
+      return 'Cathode CNT (wt.%)';
+    }
+    if (key === 'cathodeConductiveCarbonWt') {
+      return 'Cathode Carbon black (wt.%)';
+    }
+    if (key === 'cathodeArealLoading') {
+      return 'Cathode Areal Loading (mAh/cm²)';
+    }
+    if (key === 'cathodePressDensity') {
+      return 'Cathode Press Density (g/cc)';
+    }
+    if (key === 'anodeBinder1Wt') {
+      return 'CMC (wt.%)';
+    }
+    if (key === 'anodeBinder2Wt') {
+      return 'SBR (wt.%)';
+    }
+    if (key === 'anodeBinder3Wt') {
+      return 'PAA (wt.%)';
+    }
+    if (key === 'anodeConductiveCarbonWt') {
+      return 'Anode Carbon black (wt.%)';
+    }
+    if (key === 'anodeCntWt') {
+      return 'Anode CNT (wt.%)';
+    }
+    return 'Anode Press Density (g/cc)';
   };
 
-  const handleYAxesChange = (nextValues: TrendChartYAxisKey[]) => {
-    if (nextValues.length === 0) {
-      setSelectedYAxes(DEFAULT_Y_AXES);
+  const xAxisOptions = useMemo(
+    () => AXIS_FIELD_KEYS.map((key) => ({ value: key, label: getFieldLabel(key) })),
+    [t],
+  );
+
+  const yAxisOptions = useMemo(
+    () => AXIS_FIELD_KEYS.map((key) => ({ value: key, label: getFieldLabel(key) })),
+    [t],
+  );
+
+  const handleXAxisCheckboxChange = (value: TrendChartFieldKey, checked: boolean) => {
+    if (X_AXIS_SELECTION_LIMIT <= 0) {
       return;
     }
 
-    setSelectedYAxes(nextValues.slice(0, MAX_Y_AXES));
+    if (checked) {
+      if (selectedYAxes.includes(value)) {
+        return;
+      }
+      setSelectedXAxis(value);
+      return;
+    }
+
+    const fallback = getFirstAvailableField(selectedYAxes, DEFAULT_X_AXIS);
+    setSelectedXAxis(fallback);
   };
 
-  const handleXAxisCheckboxChange = (value: TrendChartXAxisKey) => {
-    setSelectedXAxis(value);
+  const handleYAxisCheckboxChange = (value: TrendChartFieldKey, checked: boolean) => {
+    if (checked) {
+      if (value === selectedXAxis) {
+        return;
+      }
+      if (selectedYAxes.includes(value)) {
+        return;
+      }
+      if (selectedYAxes.length >= Y_AXIS_SELECTION_LIMIT) {
+        // 常用交互：达到上限时，勾选新项直接替换旧项
+        if (Y_AXIS_SELECTION_LIMIT === 1) {
+          setSelectedYAxes([value]);
+          return;
+        }
+        setSelectedYAxes([...selectedYAxes.slice(1), value]);
+        return;
+      }
+      setSelectedYAxes([...selectedYAxes, value].slice(0, Y_AXIS_SELECTION_LIMIT));
+      return;
+    }
+
+    if (!selectedYAxes.includes(value)) {
+      return;
+    }
+
+    // 保持至少 1 个 Y 轴
+    if (selectedYAxes.length === 1) {
+      return;
+    }
+
+    const nextValues = selectedYAxes.filter((item) => item !== value);
+    setSelectedYAxes(nextValues);
   };
 
-  const handleYAxisCheckboxChange = (value: TrendChartYAxisKey, checked: boolean) => {
-    const nextValues = checked
-      ? [...selectedYAxes, value]
-      : selectedYAxes.filter((item) => item !== value);
-    handleYAxesChange(nextValues);
-  };
+  const isXAxisOptionDisabled = (value: TrendChartFieldKey): boolean =>
+    X_AXIS_SELECTION_LIMIT <= 0 || (selectedYAxes.includes(value) && selectedXAxis !== value);
+
+  const isYAxisOptionDisabled = (value: TrendChartFieldKey): boolean =>
+    value === selectedXAxis && !selectedYAxes.includes(value);
 
   const buildChartOption = (): EChartsOption => {
-    const xAxisName =
-      selectedXAxis === 'no'
-        ? t('design.electrode.optimize.no', 'No.')
-        : `${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah)`;
-    const activeYAxes = selectedYAxes.slice(0, MAX_Y_AXES);
+    const xAxisName = getFieldLabel(selectedXAxis);
+    const activeYAxes = selectedYAxes.slice(0, Y_AXIS_SELECTION_LIMIT);
     const isDualAxis = activeYAxes.length === 2;
 
     const yAxisConfig = activeYAxes.map((key, index) => {
-      const label = getYAxisLabel(key);
+      const label = getFieldLabel(key);
       return {
         type: 'value' as const,
         name: label,
@@ -208,33 +329,28 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
     });
 
     const series = activeYAxes.map((key, index) => ({
-      name: getYAxisLabel(key),
-      type: 'line' as const,
-      smooth: false,
+      name: getFieldLabel(key),
+      type: 'scatter' as const,
       symbol: 'circle' as const,
       showSymbol: true,
       symbolSize: 8,
       yAxisIndex: index,
       data:
         selectedXAxis === 'no'
-          ? normalizedData.map((item) => item[key])
-          : normalizedData.map((item) => [item.designCapacity, item[key]]),
-      lineStyle: {
-        width: 2,
-        color: Y_AXIS_META[key].color,
-      },
+          ? normalizedData.map((item) => [String(item.no), item[key]])
+          : normalizedData.map((item) => [item[selectedXAxis], item[key]]),
       itemStyle: {
-        color: Y_AXIS_META[key].color,
+        color: FIELD_META[key].color,
         borderWidth: 2,
         borderColor: '#fff',
       },
     }));
 
     return {
-      color: activeYAxes.map((key) => Y_AXIS_META[key].color),
+      color: activeYAxes.map((key) => FIELD_META[key].color),
       legend: {
         top: 0,
-        data: activeYAxes.map((key) => getYAxisLabel(key)),
+        data: activeYAxes.map((key) => getFieldLabel(key)),
         textStyle: {
           fontSize: 12,
           color: '#374151',
@@ -257,17 +373,15 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
           const firstParam = params[0];
           const xValue =
             selectedXAxis === 'no'
-              ? `${t('design.electrode.optimize.no', 'No.')}: ${firstParam.axisValue}`
-              : `${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah): ${formatNumber(
-                  Number(firstParam.axisValue),
-                )}`;
+              ? `${getFieldLabel(selectedXAxis)}: ${firstParam.axisValue}`
+              : `${getFieldLabel(selectedXAxis)}: ${formatNumber(Number(firstParam.axisValue))}`;
 
           const lines = [xValue];
           params.forEach((param: any) => {
             const yValueRaw = Array.isArray(param.value) ? param.value[1] : param.value;
             const yValue = formatNumber(Number(yValueRaw));
             const yKey = activeYAxes[param.seriesIndex];
-            const unit = yKey ? Y_AXIS_META[yKey].unit : '';
+            const unit = yKey ? FIELD_META[yKey].unit : '';
             lines.push(`${param.marker}${param.seriesName}: ${yValue} ${unit}`);
           });
 
@@ -305,6 +419,7 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
             }
           : {
               type: 'value',
+              scale: true,
               name: xAxisName,
               nameLocation: 'middle',
               nameGap: 32,
@@ -345,7 +460,8 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
               <Checkbox
                 key={option.value}
                 checked={selectedXAxis === option.value}
-                onChange={() => handleXAxisCheckboxChange(option.value)}
+                disabled={isXAxisOptionDisabled(option.value)}
+                onChange={(event) => handleXAxisCheckboxChange(option.value, event.target.checked)}
               >
                 {option.label}
               </Checkbox>
@@ -362,10 +478,7 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
               <Checkbox
                 key={option.value}
                 checked={selectedYAxes.includes(option.value)}
-                disabled={
-                  selectedYAxes.length >= MAX_Y_AXES &&
-                  !selectedYAxes.includes(option.value)
-                }
+                disabled={isYAxisOptionDisabled(option.value)}
                 onChange={(event) =>
                   handleYAxisCheckboxChange(option.value, event.target.checked)
                 }

@@ -482,14 +482,25 @@ const OptimizePage: React.FC = () => {
 
   const trendChartData = useMemo<RecommendationTrendDatum[]>(
     () =>
-      recommendations.valid.map((item) => ({
-        no: item.rank,
-        designCapacity: item.designCapacity,
-        specificEnergy: item.specificEnergy,
-        thickness: item.thickness,
-        volumetricEnergyDensity: item.volumetricEnergyDensity,
+      fullResults.valid.map((item, index) => ({
+        no: index + 1,
+        designCapacity: item.design_capacity,
+        specificEnergy: item.specific_ED,
+        thickness: item.jelly_roll_thickness,
+        volumetricEnergyDensity: item.volumetric_ED,
+        cathodeBinderWt: item.cathode_binder_wt,
+        cathodeCntWt: item.cathode_cnt_wt,
+        cathodeConductiveCarbonWt: item.cathode_conductive_carbon_wt,
+        cathodeArealLoading: item.cathode_areal_loading,
+        cathodePressDensity: item.cathode_press_density,
+        anodeBinder1Wt: item.anode_binder1_wt,
+        anodeBinder2Wt: item.anode_binder2_wt,
+        anodeBinder3Wt: item.anode_binder3_wt,
+        anodeConductiveCarbonWt: item.anode_conductive_carbon_wt,
+        anodeCntWt: item.anode_cnt_wt,
+        anodePressDensity: item.anode_press_density,
       })),
-    [recommendations.valid],
+    [fullResults.valid],
   );
 
   const handleNewDesign = () => {
