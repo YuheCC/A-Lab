@@ -141,6 +141,30 @@ const Header = () => {
         );
     };
 
+    // 渲染有子菜单的主菜单项（不可点击，仅作为下拉触发项）
+    const renderParentNavItem = (text: string, isActive: boolean, isDisabled: boolean = false) => {
+        if (isDisabled) {
+            return (
+                <span
+                    className={`nav-item ${isActive ? 'active' : ''} disabled`}
+                    onClick={handleRestrictedClick}
+                    style={{ display: 'inline-block' }}
+                >
+                    {text}
+                </span>
+            );
+        }
+
+        return (
+            <span
+                className={`nav-item ${isActive ? 'active' : ''}`}
+                style={{ display: 'inline-block', cursor: 'pointer' }}
+            >
+                {text}
+            </span>
+        );
+    };
+
     return (
             <header className="main-header">
             <div className="logo-container">
@@ -163,7 +187,7 @@ const Header = () => {
                     onMouseLeave={handleNavDropdownMouseLeave}
                     ref={navDropdownRef}
                 >
-                    {renderNavLink('/design', t('navigation.header.design'), pathname.startsWith('/design'), isCommonUser)}
+                    {renderParentNavItem(t('navigation.header.design'), pathname.startsWith('/design'), isCommonUser)}
                     <div
                         className="nav-dropdown"
                         onMouseEnter={handleNavDropdownMouseEnter}
