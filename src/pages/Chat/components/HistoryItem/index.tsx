@@ -23,6 +23,26 @@ interface HistoryItemProps {
   onDelete?: (chatId: number) => void;
 }
 
+const historyTitleTooltipPopperSx = {
+  '& .MuiTooltip-tooltip': {
+    backgroundColor: 'white',
+    color: '#374151',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+    borderRadius: '8px',
+    padding: '8px 12px',
+    fontFamily: 'inherit',
+    fontSize: '12px',
+    fontWeight: 400,
+    lineHeight: 1.3,
+    letterSpacing: 'normal',
+    maxWidth: 360,
+    border: 'none',
+  },
+  '& .MuiTooltip-arrow': {
+    color: 'white',
+  },
+};
+
 const HistoryItem: FC<HistoryItemProps> = ({
   chatId,
   title,
@@ -41,14 +61,6 @@ const HistoryItem: FC<HistoryItemProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const titleRef = useRef<HTMLSpanElement>(null);
   const [isTitleOverflowing, setIsTitleOverflowing] = useState(false);
-  const [tooltipTypography, setTooltipTypography] = useState({
-    color: 'black',
-    fontFamily: 'inherit',
-    fontSize: '12px',
-    fontWeight: '400',
-    lineHeight: '1.3',
-    letterSpacing: 'normal',
-  });
 
   const isMenuOpen = Boolean(anchorEl);
 
@@ -65,15 +77,6 @@ const HistoryItem: FC<HistoryItemProps> = ({
       const titleElement = titleRef.current;
       if (!titleElement) return;
       setIsTitleOverflowing(titleElement.scrollWidth > titleElement.clientWidth);
-      const computedStyle = window.getComputedStyle(titleElement);
-      setTooltipTypography({
-        color: computedStyle.color || 'black',
-        fontFamily: computedStyle.fontFamily || 'inherit',
-        fontSize: computedStyle.fontSize || '12px',
-        fontWeight: computedStyle.fontWeight || '400',
-        lineHeight: computedStyle.lineHeight || '1.3',
-        letterSpacing: computedStyle.letterSpacing || 'normal',
-      });
     };
 
     updateTitleOverflow();
@@ -82,7 +85,7 @@ const HistoryItem: FC<HistoryItemProps> = ({
     return () => {
       window.removeEventListener('resize', updateTitleOverflow);
     };
-  }, [title, isRenaming, isActive]);
+  }, [title, isRenaming]);
 
   const handleChatClick = (e: React.MouseEvent) => {
     // 防止事件冒泡到li元素
@@ -165,25 +168,7 @@ const HistoryItem: FC<HistoryItemProps> = ({
           placement="right"
           arrow
           PopperProps={{
-            sx: {
-              '& .MuiTooltip-tooltip': {
-                backgroundColor: 'white',
-                color: tooltipTypography.color,
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                borderRadius: '8px',
-                padding: '8px 12px',
-                fontFamily: tooltipTypography.fontFamily,
-                fontSize: tooltipTypography.fontSize,
-                fontWeight: tooltipTypography.fontWeight,
-                lineHeight: tooltipTypography.lineHeight,
-                letterSpacing: tooltipTypography.letterSpacing,
-                maxWidth: 360,
-                border: 'none',
-              },
-              '& .MuiTooltip-arrow': {
-                color: 'white',
-              },
-            },
+            sx: historyTitleTooltipPopperSx,
           }}
           disableHoverListener={!isTitleOverflowing}
           disableFocusListener={!isTitleOverflowing}
