@@ -3,6 +3,9 @@ import type { TFunction } from 'i18next';
 import { LeftOutlined } from '@ant-design/icons';
 import { Select, Table, Modal, Spin } from 'antd';
 import TargetParameterCard from '../Optimize/components/TargetParameterCard';
+import RecommendationTrendChart from '../Optimize/components/RecommendationTrendChart';
+import { mapBackwardResultsToTrendData } from '../Optimize/recommendationData';
+import { downloadRecommendationData } from '../Optimize/recommendationExport';
 import {
   CELL_DESIGN_OPTIONS,
   CATHODE_ACTIVE_MATERIAL_OPTIONS,
@@ -358,6 +361,19 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
     },
   ];
 
+  const trendChartData = useMemo(
+    () => mapBackwardResultsToTrendData(validItems),
+    [validItems],
+  );
+
+  const handleDownloadRecommendations = () => {
+    downloadRecommendationData({
+      type: 'csv',
+      data: trendChartData,
+      t,
+    });
+  };
+
   return (
     <div className="electrode-optimize-container antd-readonly-style">
       {/* 页面标题和返回按钮 */}
@@ -529,6 +545,14 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
             {t('design.electrode.optimize.designRecommendations', 'Design Recommendations')}
           </h2>
 
+          {!resultsLoading && validItems.length > 0 && (
+            <div className="electrode-optimize-table-toolbar">
+              <Button variant="secondary" size="small" onClick={handleDownloadRecommendations}>
+                {t('design.actions.download', 'Download')}
+              </Button>
+            </div>
+          )}
+
           {resultsLoading ? (
             <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
               <Spin size="large" />
@@ -564,6 +588,10 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
               pagination={false}
               className="electrode-optimize-table"
             />
+          )}
+
+          {!resultsLoading && validItems.length > 0 && (
+            <RecommendationTrendChart data={trendChartData} />
           )}
 
           {/* Additional Recommendations 折叠提示 */}

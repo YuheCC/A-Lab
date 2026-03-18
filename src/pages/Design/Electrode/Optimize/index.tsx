@@ -16,7 +16,10 @@ import { useMessage } from '@/components/MessageProvider';
 import type { BackwardResultItemDTO } from '@/services/electrode/types';
 import TargetParameterCard from './components/TargetParameterCard';
 import DesignDetailsModal from './components/DesignDetailsModal';
+import RecommendationTrendChart from './components/RecommendationTrendChart';
 import { getOptimizeRecommendations } from './model';
+import { mapBackwardResultsToTrendData } from './recommendationData';
+import { downloadRecommendationData } from './recommendationExport';
 import {
   DesignTargetsFormData,
   DesignRecommendation,
@@ -477,6 +480,19 @@ const OptimizePage: React.FC = () => {
     },
   ];
 
+  const trendChartData = useMemo(
+    () => mapBackwardResultsToTrendData(fullResults.valid),
+    [fullResults.valid],
+  );
+
+  const handleDownloadRecommendations = () => {
+    downloadRecommendationData({
+      type: 'csv',
+      data: trendChartData,
+      t,
+    });
+  };
+
   const handleNewDesign = () => {
     // 重置所有状态为默认值
     setFormData({
@@ -826,6 +842,14 @@ const OptimizePage: React.FC = () => {
               {t('design.electrode.optimize.designRecommendations')}
             </h2>
 
+            {recommendations.valid.length > 0 && (
+              <div className="electrode-optimize-table-toolbar">
+                <Button variant="secondary" size="small" onClick={handleDownloadRecommendations}>
+                  {t('design.actions.download', 'Download')}
+                </Button>
+              </div>
+            )}
+
             {recommendations.valid.length === 0 ? (
               <div className="electrode-optimize-empty-state">
                 <div className="electrode-optimize-empty-icon">
@@ -857,6 +881,10 @@ const OptimizePage: React.FC = () => {
                 pagination={false}
                 className="electrode-optimize-table"
               />
+            )}
+
+            {recommendations.valid.length > 0 && (
+              <RecommendationTrendChart data={trendChartData} />
             )}
 
             {/* 额外推荐折叠提示栏 - 仅在有 invalid 数据时显示 */}

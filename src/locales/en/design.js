@@ -281,7 +281,8 @@ export default {
         backToList: "Back to List",
         back: "Back",
         newDesign: "New Design",
-        newPrediction: "New Prediction"
+        newPrediction: "New Prediction",
+        download: "Download"
     },
     // Tabs
     tabs: {
@@ -470,6 +471,11 @@ export default {
             volumetricEnergyDensity: "Volumetric Energy Density",
             calculate: "Calculate",
             designRecommendations: "Design Recommendations",
+            trendChartTitle: "Recommendation Trend Chart",
+            xAxisLabel: "X-Axis",
+            yAxisLabel: "Y-Axis",
+            yAxisMaxTwo: "Y-axis supports up to 2 selections",
+            trendChartEmpty: "No data available for trend chart",
             no: "No.",
             actions: "Actions",
             details: "Details",
