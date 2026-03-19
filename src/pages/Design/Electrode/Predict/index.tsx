@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@umijs/max';
 import { LeftOutlined } from '@ant-design/icons';
-import { Select, InputNumber, Input } from 'antd';
+import { Select, Input } from 'antd';
 import Button from '@/components/Button';
 import ParameterInput from './components/ParameterInput';
 import ResultDisplay from './components/ResultDisplay';
@@ -540,28 +540,18 @@ const PredictPage: React.FC = () => {
                 <label className="electrode-predict-label">
                   {t('design.electrode.predict.anodeActiveMaterialGraphite', 'Weight Percentage (%) of Graphite in the Anode Active Material (Graphite + SiC)')}
                 </label>
-                <InputNumber
+                <Input
+                  type="number"
                   value={graphitePercent}
-                  onChange={(val) => {
-                    if (val !== null) setGraphitePercent(val);
+                  onChange={(e) => {
+                    const val = parseFloat(parseFloat(e.target.value || '0').toFixed(1));
+                    if (!isNaN(val)) setGraphitePercent(val);
                   }}
                   placeholder={t('design.electrode.predict.enterGraphitePercent', 'Enter graphite content')}
+                  step={0.1}
                   min={85}
                   max={100}
-                  step={0.1}
-                  formatter={(value) => {
-                    if (value === undefined || value === '') return '';
-                    const num = parseFloat(String(value));
-                    if (isNaN(num)) return '';
-                    // 最多保留一位小数，整数时不补零
-                    return String(parseFloat(num.toFixed(1)));
-                  }}
-                  parser={(value) => {
-                    const num = parseFloat(value || '');
-                    return isNaN(num) ? 0 : parseFloat(num.toFixed(1));
-                  }}
                   className="electrode-predict-input"
-                  style={{ width: '100%' }}
                 />
                 {graphiteError && (
                   <div className="electrode-predict-error-message" style={{ marginTop: 4 }}>
