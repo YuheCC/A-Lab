@@ -8,8 +8,8 @@ export default defineConfig({
   define: {
     // Environment configuration
     'ENVIRONMENT': 'staging',
-    'BASE_URL': "https://api-sh.ses.ai",
-    'WS_BASE_URL': "https://api-sh.ses.ai",
+    'BASE_URL': 'https://dev-sh.ses.ai',
+    'WS_BASE_URL': 'https://dev-sh.ses.ai',
 
     // Feature flags
     'ShowFindFriendsAdvancedOptions': true,
