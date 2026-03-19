@@ -127,6 +127,46 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const [analysisStartTime, setAnalysisStartTime] = useState<Date | null>(null);
   const [analysisElapsed, setAnalysisElapsed] = useState<number>(0);
 
+  const currentModelParams = useMemo(() => JSON.stringify({
+    formulation_a: {
+      additive_3_name: faAdd3Name,
+      additive_3_wt: faAdd3Wt ?? 0,
+      additive_4_name: faAdd4Name,
+      additive_4_wt: faAdd4Wt ?? 0,
+      additive_5_name: faAdd5Name,
+      additive_5_wt: faAdd5Wt ?? 0,
+      additive_6_smiles: additive.trim(),
+      additive_6_wt: faAdd6Wt ?? 0,
+    },
+    formulation_b: {
+      additive_3_name: fbAdd3Name,
+      additive_3_wt: fbAdd3Wt ?? 0,
+      additive_4_name: fbAdd4Name,
+      additive_4_wt: fbAdd4Wt ?? 0,
+      additive_5_name: fbAdd5Name,
+      additive_5_wt: fbAdd5Wt ?? 0,
+      additive_6_smiles: fbAdd6Smiles,
+      additive_6_wt: fbAdd6Wt ?? 0,
+    },
+  }), [
+    faAdd3Name,
+    faAdd3Wt,
+    faAdd4Name,
+    faAdd4Wt,
+    faAdd5Name,
+    faAdd5Wt,
+    additive,
+    faAdd6Wt,
+    fbAdd3Name,
+    fbAdd3Wt,
+    fbAdd4Name,
+    fbAdd4Wt,
+    fbAdd5Name,
+    fbAdd5Wt,
+    fbAdd6Smiles,
+    fbAdd6Wt,
+  ]);
+
   // 从选中模型的 train_params 中获取规格信息
   const getCurrentSpec = (): SystemSpec | null => {
     // 只使用选中模型的 train_params
@@ -303,35 +343,12 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     setAnalysisStartTime(null);
     setAnalysisElapsed(0);
 
-    const modelParams = JSON.stringify({
-      formulation_a: {
-        additive_3_name: faAdd3Name,
-        additive_3_wt: faAdd3Wt ?? 0,
-        additive_4_name: faAdd4Name,
-        additive_4_wt: faAdd4Wt ?? 0,
-        additive_5_name: faAdd5Name,
-        additive_5_wt: faAdd5Wt ?? 0,
-        additive_6_smiles: additive.trim(),
-        additive_6_wt: faAdd6Wt ?? 0,
-      },
-      formulation_b: {
-        additive_3_name: fbAdd3Name,
-        additive_3_wt: fbAdd3Wt ?? 0,
-        additive_4_name: fbAdd4Name,
-        additive_4_wt: fbAdd4Wt ?? 0,
-        additive_5_name: fbAdd5Name,
-        additive_5_wt: fbAdd5Wt ?? 0,
-        additive_6_smiles: fbAdd6Smiles,
-        additive_6_wt: fbAdd6Wt ?? 0,
-      },
-    });
-
     try {
       const response = await predictPerformance({
         smiles: additive.trim(),
         battery_system_id: selectedBatterySystem ? parseInt(selectedBatterySystem.id) : undefined,
         model_id: selectedModel || undefined,
-        model_params: modelParams,
+        model_params: currentModelParams,
       });
 
       const status = response?.status ?? response?.data?.status;
@@ -362,7 +379,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
           selectedSystem,
           selectedModel,
           additive,
-          modelParams,
+          modelParams: currentModelParams,
         });
       } else {
         throw new Error('No data received from prediction API');
@@ -826,10 +843,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
     // 比较当前表单数据与上次计算的数据
     // 注意：与 performCalculation 中保持一致，null 权重用 ?? 0 处理，否则序列化结果不同导致误判
-    const currentModelParams = JSON.stringify({
-      formulation_a: { additive_3_name: faAdd3Name, additive_3_wt: faAdd3Wt ?? 0, additive_4_name: faAdd4Name, additive_4_wt: faAdd4Wt ?? 0, additive_5_name: faAdd5Name, additive_5_wt: faAdd5Wt ?? 0, additive_6_smiles: additive.trim(), additive_6_wt: faAdd6Wt ?? 0 },
-      formulation_b: { additive_3_name: fbAdd3Name, additive_3_wt: fbAdd3Wt ?? 0, additive_4_name: fbAdd4Name, additive_4_wt: fbAdd4Wt ?? 0, additive_5_name: fbAdd5Name, additive_5_wt: fbAdd5Wt ?? 0, additive_6_smiles: fbAdd6Smiles, additive_6_wt: fbAdd6Wt ?? 0 },
-    });
     const isFormModified = 
       selectedSystem !== lastCalculatedFormData.selectedSystem ||
       selectedModel !== lastCalculatedFormData.selectedModel ||
@@ -844,7 +857,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       setAnalysisContent('');
       setIsAnalyzing(false);
     }
-  }, [selectedSystem, selectedModel, additive, lastCalculatedFormData, predictionResults]);
+  }, [selectedSystem, selectedModel, additive, currentModelParams, lastCalculatedFormData, predictionResults]);
 
   // 任意校验相关字段变化时，清除表单校验错误提示
   useEffect(() => {
