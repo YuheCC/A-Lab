@@ -18,7 +18,6 @@ import {
   dimensionParameterRanges,
 } from '../validation';
 import {
-  CELL_DESIGN_OPTIONS,
   CATHODE_ACTIVE_MATERIAL_OPTIONS,
   DEFAULT_VALUES,
 } from '../constants';
@@ -32,7 +31,6 @@ const PredictPage: React.FC = () => {
   const navigate = useNavigate();
 
   // 表单状态
-  const [cellDesign, setCellDesign] = useState(DEFAULT_VALUES.cellDesign);
   const [npRatio, setNpRatio] = useState(DEFAULT_VALUES.npRatio);
   // graphitePercent: Anode Active Material Graphite (%)，范围 85-100 整数
   // siRatio = 100 - graphitePercent，作为 si_ratio 字段发给后端
@@ -244,7 +242,6 @@ const PredictPage: React.FC = () => {
 
     // 构建当前表单数据对象
     const currentFormData = {
-      cellDesign,
       npRatio,
       graphitePercent,
       cathodeActiveMaterial,
@@ -274,7 +271,6 @@ const PredictPage: React.FC = () => {
     
     setIsFormModified(isModified);
   }, [
-    cellDesign,
     npRatio,
     graphitePercent,
     cathodeActiveMaterial,
@@ -376,7 +372,7 @@ const PredictPage: React.FC = () => {
 
     const requestParams = electrodeModel.buildPredictParams(
       {
-        cellDesign,
+        cellDesign: DEFAULT_VALUES.cellDesign,
         cathodeActiveMaterial,
         modelParams,
       },
@@ -390,7 +386,6 @@ const PredictPage: React.FC = () => {
 
       // 保存本次计算的表单数据
       setLastCalculatedFormData({
-        cellDesign,
         npRatio,
         graphitePercent,
         cathodeActiveMaterial,
@@ -425,7 +420,6 @@ const PredictPage: React.FC = () => {
 
   const handleNewPrediction = () => {
     // 重置所有表单状态为默认值
-    setCellDesign(DEFAULT_VALUES.cellDesign);
     setNpRatio(DEFAULT_VALUES.npRatio);
     setGraphitePercent(88);
     setCathodeActiveMaterial(DEFAULT_VALUES.cathodeActiveMaterial);
@@ -496,30 +490,8 @@ const PredictPage: React.FC = () => {
           </h2>
 
           <div className="electrode-predict-form-container">
-            {/* 4 个基础输入项：2x2 网格 */}
+            {/* 3 个基础输入项 */}
             <div className="electrode-predict-basic-grid">
-              <div className="electrode-predict-form-item">
-                <label className="electrode-predict-label">
-                  {t('design.electrode.predict.cellDesign', 'Cell Design')}
-                </label>
-                <Select
-                  value={cellDesign}
-                  onChange={setCellDesign}
-                  placeholder={t('design.electrode.predict.selectCellDesign', 'Select cell design')}
-                  className="electrode-predict-select"
-                >
-                  {CELL_DESIGN_OPTIONS.map((option) => (
-                    <Option
-                      key={option.value}
-                      value={option.value}
-                      disabled={option.disabled}
-                    >
-                      {option.label}
-                    </Option>
-                  ))}
-                </Select>
-              </div>
-
               <div className="electrode-predict-form-item">
                 <label className="electrode-predict-label">
                   {t('design.electrode.predict.npRatio', 'NP Ratio')}
@@ -540,7 +512,8 @@ const PredictPage: React.FC = () => {
                   </div>
                 )}
               </div>
-
+            </div>
+            <div className="electrode-predict-basic-grid">
               <div className="electrode-predict-form-item">
                 <label className="electrode-predict-label">
                   {t('design.electrode.predict.cathodeActiveMaterial', 'Cathode Active Material')}
@@ -565,7 +538,7 @@ const PredictPage: React.FC = () => {
 
               <div className="electrode-predict-form-item">
                 <label className="electrode-predict-label">
-                  {t('design.electrode.predict.anodeActiveMaterialGraphite', 'Anode Active Material- Graphite Content (%)')}
+                  {t('design.electrode.predict.anodeActiveMaterialGraphite', 'Weight Percentage (%) of Graphite in the Anode Active Material (Graphite + SiC)')}
                 </label>
                 <Input
                   type="number"

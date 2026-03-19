@@ -196,7 +196,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                   {isNewVersion ? (
                     <>
                       <label className="electrode-predict-label">
-                        {t('design.electrode.predict.anodeActiveMaterialGraphite', 'Anode Active Material Graphite (%)')}
+                        {t('design.electrode.predict.anodeActiveMaterialGraphite', 'Weight Percentage (%) of Graphite in the Anode Active Material (Graphite + SiC)')}
                       </label>
                       <Input
                         disabled

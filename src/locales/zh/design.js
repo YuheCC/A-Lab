@@ -423,7 +423,7 @@ export default {
             calculateError: "计算预测失败",
             npRatio: "NP 比",
             enterNpRatio: "请输入 NP 比 (1.05 - 1.2)",
-            anodeActiveMaterialGraphite: "负极活性材料- 石墨含量 (%)",
+            anodeActiveMaterialGraphite: "负极活性材料（石墨 + SiC）中石墨的质量百分比 (%)",
             enterGraphitePercent: "请输入石墨含量 (85 - 100)",
             activeMaterial1: "Active Material SiC (wt.%)",
             activeMaterial2: "Active Material Graphite (wt.%)",

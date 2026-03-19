@@ -423,7 +423,7 @@ export default {
             calculateError: "예측 계산 실패",
             npRatio: "NP 비율",
             enterNpRatio: "NP 비율 입력 (1.05 - 1.2)",
-            anodeActiveMaterialGraphite: "음극 활물질- 흑연 함량 (%)",
+            anodeActiveMaterialGraphite: "음극 활물질(흑연 + SiC)에서 흑연의 중량 백분율 (%)",
             enterGraphitePercent: "흑연 함량 입력 (85 - 100)",
             activeMaterial1: "Active Material SiC (wt.%)",
             activeMaterial2: "Active Material Graphite (wt.%)",

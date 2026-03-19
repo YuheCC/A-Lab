@@ -423,7 +423,7 @@ export default {
             calculateError: "Failed to calculate prediction",
             npRatio: "NP Ratio",
             enterNpRatio: "Enter NP ratio (1.05 - 1.2)",
-            anodeActiveMaterialGraphite: "Anode Active Material- Graphite Content (%)",
+            anodeActiveMaterialGraphite: "Weight Percentage (%) of Graphite in the Anode Active Material (Graphite + SiC)",
             enterGraphitePercent: "Enter graphite content (85 - 100)",
             activeMaterial1: "Active Material SiC (wt.%)",
             activeMaterial2: "Active Material Graphite (wt.%)",

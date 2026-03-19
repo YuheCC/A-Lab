@@ -423,7 +423,7 @@ export default {
             calculateError: "予測計算に失敗しました",
             npRatio: "NP比",
             enterNpRatio: "NP比を入力 (1.05 - 1.2)",
-            anodeActiveMaterialGraphite: "負極活物質- グラファイト含有量 (%)",
+            anodeActiveMaterialGraphite: "負極活物質（グラファイト + SiC）中のグラファイトの質量百分率 (%)",
             enterGraphitePercent: "グラファイト含有量を入力 (85 - 100)",
             activeMaterial1: "Active Material SiC (wt.%)",
             activeMaterial2: "Active Material Graphite (wt.%)",
