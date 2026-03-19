@@ -118,7 +118,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
 
                   <div className="electrode-predict-parameters-container">
                     <ParameterInput
-                      label={t('design.electrode.predict.kf9700', 'KF-9700 (wt.%)')}
+                      label={t('design.electrode.predict.kf9700', 'Polyvinylidene Fluoride (PVDF) (wt.%)')}
                       value={model_params.cathodeKF9700}
                       onChange={() => {}}
                       min={0}
@@ -127,7 +127,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       readonly={true}
                     />
                     <ParameterInput
-                      label={t('design.electrode.predict.cn01y', 'CN-01Y (wt.%)')}
+                      label={t('design.electrode.predict.cn01y', 'Carbon Nano Tube (CNT) (wt.%)')}
                       value={model_params.cathodeCN01Y}
                       onChange={() => {}}
                       min={0}
@@ -230,7 +230,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
 
                   <div className="electrode-predict-parameters-container">
                     <ParameterInput
-                      label={t('design.electrode.predict.cmc', 'CMC (wt.%)')}
+                      label={t('design.electrode.predict.cmc', 'Carboxymethyl Cellulose (CMC) (wt.%)')}
                       value={model_params.anodeCMC}
                       onChange={() => {}}
                       min={0}
@@ -239,7 +239,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       readonly={true}
                     />
                     <ParameterInput
-                      label={t('design.electrode.predict.sbr', 'SBR (wt.%)')}
+                      label={t('design.electrode.predict.sbr', 'Styrene-Butadiene Rubber (SBR) (wt.%)')}
                       value={model_params.anodeSBR}
                       onChange={() => {}}
                       min={0}
@@ -248,7 +248,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       readonly={true}
                     />
                     <ParameterInput
-                      label={t('design.electrode.predict.paa', 'PAA (wt.%)')}
+                      label={t('design.electrode.predict.paa', 'Poly(acrylic acid) (PAA) (wt.%)')}
                       value={model_params.anodePAA}
                       onChange={() => {}}
                       min={0}
@@ -266,7 +266,7 @@ const PredictDetail: React.FC<PredictDetailProps> = ({
                       readonly={true}
                     />
                     <ParameterInput
-                      label={t('design.electrode.predict.swcnt', 'SWCNT (wt.%)')}
+                      label={t('design.electrode.predict.swcnt', 'Carbon Nano Tube (CNT) (wt.%)')}
                       value={model_params.anodeSWCNT}
                       onChange={() => {}}
                       min={0}

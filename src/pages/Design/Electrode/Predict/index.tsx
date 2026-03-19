@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@umijs/max';
 import { LeftOutlined } from '@ant-design/icons';
-import { Select, Input } from 'antd';
+import { Select, InputNumber, Input } from 'antd';
 import Button from '@/components/Button';
 import ParameterInput from './components/ParameterInput';
 import ResultDisplay from './components/ResultDisplay';
@@ -32,7 +32,7 @@ const PredictPage: React.FC = () => {
 
   // 表单状态
   const [npRatio, setNpRatio] = useState(DEFAULT_VALUES.npRatio);
-  // graphitePercent: Anode Active Material Graphite (%)，范围 85-100 整数
+  // graphitePercent: Anode Active Material Graphite (%)，范围 85-100，支持一位小数
   // siRatio = 100 - graphitePercent，作为 si_ratio 字段发给后端
   const [graphitePercent, setGraphitePercent] = useState(88);
   const [cathodeActiveMaterial, setCathodeActiveMaterial] = useState(DEFAULT_VALUES.cathodeActiveMaterial);
@@ -120,11 +120,11 @@ const PredictPage: React.FC = () => {
     }
   }, [debouncedNpRatio, t]);
 
-  // 实时验证 Graphite Percent（范围 85-100 整数）
+  // 实时验证 Graphite Percent（范围 85-100）
   useEffect(() => {
     const val = debouncedGraphitePercent;
-    if (!Number.isInteger(val) || val < 85 || val > 100) {
-      setGraphiteError(t('design.electrode.validation.graphitePercentRange', 'Graphite content must be an integer between 85 and 100'));
+    if (val < 85 || val > 100) {
+      setGraphiteError(t('design.electrode.validation.graphitePercentRange', 'Graphite content must be between 85 and 100'));
     } else {
       setGraphiteError('');
     }
@@ -305,8 +305,8 @@ const PredictPage: React.FC = () => {
     }
 
     // Graphite Percent 验证
-    if (isNaN(graphitePercent) || graphitePercent < 85 || graphitePercent > 100 || !Number.isInteger(graphitePercent)) {
-      setGraphiteError(t('design.electrode.validation.graphiteRange', 'Graphite content must be an integer between 85 and 100'));
+    if (isNaN(graphitePercent) || graphitePercent < 85 || graphitePercent > 100) {
+      setGraphiteError(t('design.electrode.validation.graphiteRange', 'Graphite content must be between 85 and 100'));
       hasError = true;
     }
 
@@ -540,18 +540,28 @@ const PredictPage: React.FC = () => {
                 <label className="electrode-predict-label">
                   {t('design.electrode.predict.anodeActiveMaterialGraphite', 'Weight Percentage (%) of Graphite in the Anode Active Material (Graphite + SiC)')}
                 </label>
-                <Input
-                  type="number"
+                <InputNumber
                   value={graphitePercent}
-                  onChange={(e) => {
-                    const val = parseInt(e.target.value, 10);
-                    if (!isNaN(val)) setGraphitePercent(val);
+                  onChange={(val) => {
+                    if (val !== null) setGraphitePercent(val);
                   }}
                   placeholder={t('design.electrode.predict.enterGraphitePercent', 'Enter graphite content')}
                   min={85}
                   max={100}
-                  step={1}
+                  step={0.1}
+                  formatter={(value) => {
+                    if (value === undefined || value === '') return '';
+                    const num = parseFloat(String(value));
+                    if (isNaN(num)) return '';
+                    // 最多保留一位小数，整数时不补零
+                    return String(parseFloat(num.toFixed(1)));
+                  }}
+                  parser={(value) => {
+                    const num = parseFloat(value || '');
+                    return isNaN(num) ? 0 : parseFloat(num.toFixed(1));
+                  }}
                   className="electrode-predict-input"
+                  style={{ width: '100%' }}
                 />
                 {graphiteError && (
                   <div className="electrode-predict-error-message" style={{ marginTop: 4 }}>
@@ -571,14 +581,14 @@ const PredictPage: React.FC = () => {
 
                 <div className="electrode-predict-parameters-container">
                   <ParameterInput
-                    label={t('design.electrode.predict.kf9700', 'KF-9700 (wt.%)')}
+                    label={t('design.electrode.predict.kf9700', 'Polyvinylidene Fluoride (PVDF) (wt.%)')}
                     value={cathodeKF9700}
                     onChange={setCathodeKF9700}
                     min={cathodeRanges.cathodeKF9700?.min}
                     max={cathodeRanges.cathodeKF9700?.max}
                   />
                   <ParameterInput
-                    label={t('design.electrode.predict.cn01y', 'CN-01Y (wt.%)')}
+                    label={t('design.electrode.predict.cn01y', 'Carbon Nano Tube (CNT) (wt.%)')}
                     value={cathodeCN01Y}
                     onChange={setCathodeCN01Y}
                     min={cathodeRanges.cathodeCN01Y?.min}
@@ -645,21 +655,21 @@ const PredictPage: React.FC = () => {
 
                 <div className="electrode-predict-parameters-container">
                   <ParameterInput
-                    label={t('design.electrode.predict.cmc', 'CMC (wt.%)')}
+                    label={t('design.electrode.predict.cmc', 'Carboxymethyl Cellulose (CMC) (wt.%)')}
                     value={anodeCMC}
                     onChange={setAnodeCMC}
                     min={anodeRanges.anodeCMC?.min}
                     max={anodeRanges.anodeCMC?.max}
                   />
                   <ParameterInput
-                    label={t('design.electrode.predict.sbr', 'SBR (wt.%)')}
+                    label={t('design.electrode.predict.sbr', 'Styrene-Butadiene Rubber (SBR) (wt.%)')}
                     value={anodeSBR}
                     onChange={setAnodeSBR}
                     min={anodeRanges.anodeSBR?.min}
                     max={anodeRanges.anodeSBR?.max}
                   />
                   <ParameterInput
-                    label={t('design.electrode.predict.paa', 'PAA (wt.%)')}
+                    label={t('design.electrode.predict.paa', 'Poly(acrylic acid) (PAA) (wt.%)')}
                     value={anodePAA}
                     onChange={setAnodePAA}
                     min={anodeRanges.anodePAA?.min}
@@ -673,7 +683,7 @@ const PredictPage: React.FC = () => {
                     max={anodeRanges.anodeSuperP?.max}
                   />
                   <ParameterInput
-                    label={t('design.electrode.predict.swcnt', 'SWCNT (wt.%)')}
+                    label={t('design.electrode.predict.swcnt', 'Carbon Nano Tube (CNT) (wt.%)')}
                     value={anodeSWCNT}
                     onChange={setAnodeSWCNT}
                     min={anodeRanges.anodeSWCNT?.min}
