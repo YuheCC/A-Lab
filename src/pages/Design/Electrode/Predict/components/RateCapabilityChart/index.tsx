@@ -4,27 +4,98 @@ import ReactECharts from 'echarts-for-react';
 import type { ElectrodeModelResult } from '@/services/electrode/types';
 import './index.less';
 
+type RateCapabilityCamelFields = Pick<
+  ElectrodeModelResult,
+  'cap1C' | 'cap2C' | 'cap3C' | 'cap4C' | 'cap5C' | 't1C' | 't2C' | 't3C' | 't4C' | 't5C'
+>;
+
+type RateCapabilitySnakeFields = {
+  Cap_1C?: number | string;
+  Cap_2C?: number | string;
+  Cap_3C?: number | string;
+  Cap_4C?: number | string;
+  Cap_5C?: number | string;
+  T_1C?: number | string;
+  T_2C?: number | string;
+  T_3C?: number | string;
+  T_4C?: number | string;
+  T_5C?: number | string;
+};
+
+export type RateCapabilityChartResult = Partial<RateCapabilityCamelFields & RateCapabilitySnakeFields>;
+
+type MissingDataBehavior = 'overlay' | 'hide';
+
 interface RateCapabilityChartProps {
-  results?: ElectrodeModelResult | null;
+  results?: RateCapabilityChartResult | null;
+  missingDataBehavior?: MissingDataBehavior;
 }
 
 const C_RATES = ['1C', '2C', '3C', '4C', '5C'];
 
-const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) => {
+const RATE_FIELD_PAIRS: Array<{
+  capCamel: keyof RateCapabilityCamelFields;
+  capSnake: keyof RateCapabilitySnakeFields;
+  tempCamel: keyof RateCapabilityCamelFields;
+  tempSnake: keyof RateCapabilitySnakeFields;
+}> = [
+  { capCamel: 'cap1C', capSnake: 'Cap_1C', tempCamel: 't1C', tempSnake: 'T_1C' },
+  { capCamel: 'cap2C', capSnake: 'Cap_2C', tempCamel: 't2C', tempSnake: 'T_2C' },
+  { capCamel: 'cap3C', capSnake: 'Cap_3C', tempCamel: 't3C', tempSnake: 'T_3C' },
+  { capCamel: 'cap4C', capSnake: 'Cap_4C', tempCamel: 't4C', tempSnake: 'T_4C' },
+  { capCamel: 'cap5C', capSnake: 'Cap_5C', tempCamel: 't5C', tempSnake: 'T_5C' },
+];
+
+const getNumericValue = (
+  source: RateCapabilityChartResult,
+  camelKey: keyof RateCapabilityCamelFields,
+  snakeKey: keyof RateCapabilitySnakeFields,
+): number | undefined => {
+  const rawValue = source[camelKey] ?? source[snakeKey];
+  if (rawValue === undefined || rawValue === null || rawValue === '') {
+    return undefined;
+  }
+  const numeric = Number(rawValue);
+  return Number.isFinite(numeric) ? numeric : undefined;
+};
+
+export const hasRateCapabilityData = (results?: RateCapabilityChartResult | null): boolean => {
+  if (!results) {
+    return false;
+  }
+
+  return RATE_FIELD_PAIRS.every(({ capCamel, capSnake, tempCamel, tempSnake }) => {
+    const capValue = getNumericValue(results, capCamel, capSnake);
+    const tempValue = getNumericValue(results, tempCamel, tempSnake);
+    return capValue !== undefined && tempValue !== undefined;
+  });
+};
+
+const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({
+  results,
+  missingDataBehavior = 'overlay',
+}) => {
   const { t } = useTranslation();
 
-  // 判断是否有真实 Cap/T 数据
-  const hasRealData = results &&
-    results.cap1C !== undefined &&
-    results.t1C !== undefined;
+  const parsedData = RATE_FIELD_PAIRS.map(({ capCamel, capSnake, tempCamel, tempSnake }) => ({
+    cap: results ? getNumericValue(results, capCamel, capSnake) : undefined,
+    temp: results ? getNumericValue(results, tempCamel, tempSnake) : undefined,
+  }));
+
+  // 需要 10 个倍率字段都存在时才算真实数据
+  const hasRealData = parsedData.every((item) => item.cap !== undefined && item.temp !== undefined);
 
   const capData = hasRealData
-    ? [results!.cap1C, results!.cap2C, results!.cap3C, results!.cap4C, results!.cap5C].map((v) => Math.round(v))
+    ? parsedData.map((item) => Math.round(item.cap as number))
     : [100, 85, 78, 68, 62];
 
   const tempData = hasRealData
-    ? [results!.t1C, results!.t2C, results!.t3C, results!.t4C, results!.t5C].map((v) => Math.round(v))
+    ? parsedData.map((item) => Math.round(item.temp as number))
     : [15, 14, 13, 14, 17];
+
+  if (!hasRealData && missingDataBehavior === 'hide') {
+    return null;
+  }
 
   const option = {
     grid: {
@@ -212,7 +283,7 @@ const RateCapabilityChart: React.FC<RateCapabilityChartProps> = ({ results }) =>
           opts={{ renderer: 'canvas', devicePixelRatio: window.devicePixelRatio || 2 }}
         />
         {/* 无真实数据时显示 Coming Soon 遮罩（兼容老数据） */}
-        {!hasRealData && (
+        {!hasRealData && missingDataBehavior === 'overlay' && (
           <div className="rate-capability-overlay">
             <div className="rate-capability-overlay-content">
               <span className="rate-capability-overlay-text">Coming Soon</span>

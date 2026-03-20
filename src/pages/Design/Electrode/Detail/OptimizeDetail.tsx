@@ -3,6 +3,9 @@ import type { TFunction } from 'i18next';
 import { LeftOutlined } from '@ant-design/icons';
 import { Select, Table, Modal, Spin } from 'antd';
 import ParameterInput from '../Predict/components/ParameterInput';
+import RateCapabilityChart, {
+  hasRateCapabilityData,
+} from '../Predict/components/RateCapabilityChart';
 import RecommendationTrendChart from '../Optimize/components/RecommendationTrendChart';
 import { mapBackwardResultsToTrendData } from '../Optimize/recommendationData';
 import { downloadRecommendationData } from '../Optimize/recommendationExport';
@@ -699,6 +702,15 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                 </div>
               </div>
             </div>
+
+            {hasRateCapabilityData(selectedResult) && (
+              <div className="designdetail-section">
+                <RateCapabilityChart
+                  results={selectedResult}
+                  missingDataBehavior="hide"
+                />
+              </div>
+            )}
           </div>
         )}
       </Modal>

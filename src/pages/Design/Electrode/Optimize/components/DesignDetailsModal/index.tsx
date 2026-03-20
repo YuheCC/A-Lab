@@ -2,6 +2,9 @@ import React from 'react';
 import { Modal, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 import type { BackwardResultItemDTO } from '@/services/electrode/types';
+import RateCapabilityChart, {
+  hasRateCapabilityData,
+} from '../../../Predict/components/RateCapabilityChart';
 import {
   CELL_DESIGN_OPTIONS,
   CATHODE_ACTIVE_MATERIAL_OPTIONS,
@@ -173,7 +176,7 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
           </div>
 
           {/* Cathode & Anode */}
-          <div className="designdetail-electrodes-grid">
+            <div className="designdetail-electrodes-grid">
             {/* Cathode */}
             <div className="designdetail-electrode-section">
               <h3 className="designdetail-electrode-title designdetail-cathode-title">
@@ -219,9 +222,18 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
                   value={data.anode_press_density}
                 />
               </div>
+              </div>
             </div>
+
+            {hasRateCapabilityData(data) && (
+              <div className="designdetail-section">
+                <RateCapabilityChart
+                  results={data}
+                  missingDataBehavior="hide"
+                />
+              </div>
+            )}
           </div>
-        </div>
       ) : null}
     </Modal>
   );
