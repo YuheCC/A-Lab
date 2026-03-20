@@ -1386,7 +1386,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                                         {t('chatbox.buttons.addToFavorites')}
                                                     </CustomButton>
                                                     {
-                                                        userPermissions === 'admin' && (
+                                                        (
                                                             <MoleculeFeedbackBox
                                                                 molecule={molecule}
                                                                 lastSearch={lastSearch}

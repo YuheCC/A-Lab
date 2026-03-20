@@ -1418,7 +1418,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                                     {t('chatbox.buttons.addToFavorites')}
                                                 </CustomButton>
                                                 {
-                                                    userPermissions === 'admin' && (
+                                                    (
                                                         <MoleculeFeedbackBox
                                                             fullWidth={false}
                                                             molecule={molecule}
