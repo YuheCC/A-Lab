@@ -485,6 +485,7 @@ export default {
             messages: {
                 fillAllFields: "모든 필수 필드를 입력하세요",
                 fillAllDimensions: "모든 치수 매개변수를 입력하세요",
+                fillWidthLengthFirst: "먼저 width와 length를 입력하세요",
                 calculateSuccess: "추천이 성공적으로 계산되었습니다",
                 calculateError: "추천 계산에 실패했습니다",
                 loadDetailsError: "세부정보 로드에 실패했습니다"

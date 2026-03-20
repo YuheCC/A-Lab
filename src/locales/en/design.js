@@ -485,6 +485,7 @@ export default {
             messages: {
                 fillAllFields: "Please fill in all required fields",
                 fillAllDimensions: "Please fill in all dimension parameters",
+                fillWidthLengthFirst: "Please fill in width and length first",
                 calculateSuccess: "Recommendations calculated successfully",
                 calculateError: "Failed to calculate recommendations",
                 loadDetailsError: "Failed to load design details"

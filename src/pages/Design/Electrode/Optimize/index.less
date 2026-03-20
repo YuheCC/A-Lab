@@ -146,6 +146,10 @@
   > .electrode-optimize-parameter-card:only-child {
     grid-column: 1 / -1;
   }
+
+  > .electrode-optimize-parameter-item:only-child {
+    grid-column: 1 / -1;
+  }
 }
 
 .electrode-optimize-form-item {
@@ -328,6 +332,26 @@
   &--active &__radio-dot {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+.electrode-optimize-parameter-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.electrode-optimize-parameter-error-message {
+  margin-top: @spacing-sm;
+  color: #ff4d4f;
+  font-size: 13px;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+
+  &::before {
+    content: '⚠';
+    margin-right: 6px;
+    font-size: 14px;
   }
 }
 
