@@ -92,6 +92,11 @@ const getCathodeMaterialLabel = (value: string): string => {
   return option?.label || value;
 };
 
+const formatNpRatio = (value?: number | string): string => {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric.toFixed(2) : String(value ?? '-');
+};
+
 const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
   visible,
   data,
@@ -106,6 +111,7 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation();
+  const displayNpRatio = formatNpRatio(data?.np_ratio ?? npRatio);
 
   return (
     <Modal
@@ -160,7 +166,7 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
             <h3 className="designdetail-section-title">Design</h3>
             <div className="designdetail-design-grid">
               <DesignInfoItem label="Cell Type" value={getCellDesignLabel(cellDesign)} />
-              <DesignInfoItem label="NP Ratio" value={npRatio} />
+              <DesignInfoItem label="NP Ratio" value={displayNpRatio} />
               <DesignInfoItem
                 label="Cathode Material"
                 value={getCathodeMaterialLabel(cathodeActiveMaterial)}

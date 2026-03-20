@@ -101,6 +101,11 @@ const formatPercent = (value: number): string => {
   return Number.isInteger(value) ? String(value) : String(parseFloat(value.toFixed(2)));
 };
 
+const formatNpRatio = (value?: number | string): string => {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric.toFixed(2) : String(value ?? '-');
+};
+
 const getAnodeMaterialLabel = (
   result?: BackwardResultItemDTO | null,
   fallback?: string,
@@ -359,10 +364,12 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
   const handleDownloadRecommendations = () => {
     downloadRecommendationData({
       type: 'csv',
-      data: trendChartData,
+      data: validItems,
       t,
     });
   };
+
+  const displayModalNpRatio = formatNpRatio(selectedResult?.np_ratio ?? npRatio);
 
   return (
     <div className="electrode-optimize-container antd-readonly-style">
@@ -668,7 +675,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
               <h3 className="designdetail-section-title">Design</h3>
               <div className="designdetail-design-grid">
                 <DesignInfoItem label="Cell Type" value={getCellDesignLabel(cellDesign)} />
-                <DesignInfoItem label="NP Ratio" value={npRatio} />
+                <DesignInfoItem label="NP Ratio" value={displayModalNpRatio} />
                 <DesignInfoItem label="Cathode Material" value={getCathodeMaterialLabel(cathodeActiveMaterial)} />
                 <DesignInfoItem label="Anode Material" value={getAnodeMaterialLabel(selectedResult, anodeActiveMaterial)} />
                 <DesignInfoItem label="Width (mm)" value={modelParams.cathode_width} />

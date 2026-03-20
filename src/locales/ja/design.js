@@ -282,7 +282,7 @@ export default {
         back: "戻る",
         newDesign: "新規設計",
         newPrediction: "新規予測",
-        download: "Download"
+        download: "ダウンロード"
     },
     // Tabs
     tabs: {

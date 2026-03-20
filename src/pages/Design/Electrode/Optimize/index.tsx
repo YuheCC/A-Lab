@@ -500,7 +500,7 @@ const OptimizePage: React.FC = () => {
   const handleDownloadRecommendations = () => {
     downloadRecommendationData({
       type: 'csv',
-      data: trendChartData,
+      data: fullResults.valid,
       t,
     });
   };
