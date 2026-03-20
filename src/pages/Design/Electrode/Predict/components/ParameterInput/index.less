@@ -106,6 +106,109 @@
     user-select: none;
   }
 
+  // 单行模式：标题与 slider/输入框同行
+  &--single-line {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+
+    .parameter-input__label {
+      width: 180px;
+      min-width: 180px;
+      min-height: calc(2 * 1.4em);
+      margin-bottom: 0;
+      white-space: normal;
+      word-break: break-word;
+      line-height: 1.4;
+      padding-top: 2px;
+    }
+
+    .parameter-input__controls {
+      flex: 1;
+      min-width: 0;
+      min-height: calc(2 * 1.4em);
+      align-items: flex-start;
+      flex-wrap: nowrap;
+      gap: 12px;
+    }
+
+    .parameter-input__slider {
+      min-width: 0;
+      margin-top: 2px;
+    }
+
+    .parameter-input__range-inputs {
+      min-width: 156px;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .parameter-input__number {
+      width: 72px;
+    }
+  }
+
+  // showBounds 开启时（通过 slider marks 展示 min/max）做布局兼容
+  &--show-bounds {
+    width: 100%;
+
+    .parameter-input__controls {
+      align-items: flex-start;
+      gap: 24px;
+      flex-wrap: nowrap;
+    }
+
+    .parameter-input__slider {
+      min-width: 0;
+      margin-inline: 10px;
+      margin-top: 5px;
+
+      &.ant-slider-with-marks {
+        // marks 下移后需要预留底部空间，避免文本溢出父容器
+        margin-bottom: 18px;
+      }
+
+      .ant-slider-mark {
+        top: 26px;
+      }
+
+      .ant-slider-mark-text {
+        white-space: nowrap;
+      }
+    }
+
+    .parameter-input__range-inputs {
+      flex-shrink: 0;
+      align-self: flex-start;
+    }
+  }
+
+  // showBounds + 单行模式组合下的间距微调
+  &--single-line&--show-bounds {
+    .parameter-input__controls {
+      gap: 24px;
+      padding-bottom: 2px;
+    }
+
+    .parameter-input__label {
+      padding-top: 5px;
+    }
+
+    .parameter-input__slider {
+      margin-inline: 8px;
+      margin-top: 5px;
+
+      &.ant-slider-with-marks {
+        margin-bottom: 0;
+      }
+
+      // marks 与 title 第二行对齐（单行模式下 title 固定两行高度）
+      .ant-slider-mark {
+        top: 20px;
+      }
+    }
+  }
+
   // 禁用状态
   &--disabled, &--readonly {
     cursor: not-allowed;

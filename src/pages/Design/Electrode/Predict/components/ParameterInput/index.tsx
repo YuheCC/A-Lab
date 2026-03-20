@@ -24,6 +24,11 @@ interface ParameterInputProps {
   // 差值限制（仅区间模式）
   minDiff?: number; // 最小差值
   maxDiff?: number; // 最大差值（可选）
+  showBounds?: boolean; // 是否显示最小/最大值
+  singleLine?: boolean; // 单行模式：label 与控件同行
+  beforeValidate?: (nextValue: number | [number, number]) => boolean; // 变更前校验，返回 true 才允许更新
+  beforeValidateCooldownMs?: number; // 校验失败回调限频时间（毫秒）
+  onBeforeValidateFail?: (nextValue: number | [number, number]) => void; // 变更前校验失败回调（限频触发）
 }
 
 const ParameterInput: React.FC<ParameterInputProps> = ({
@@ -40,6 +45,11 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
   readonly = false,
   minDiff,
   maxDiff,
+  showBounds = false,
+  singleLine = false,
+  beforeValidate,
+  beforeValidateCooldownMs = 3000,
+  onBeforeValidateFail,
 }) => {
   // 是否禁用交互（disabled 或 readonly 都禁用交互）
   const isDisabled = disabled || readonly;
@@ -56,6 +66,8 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
   const draggingHandleRef = useRef<'min' | 'max' | null>(null);
   // 记录拖动开始时另一个 handle 的位置（作为边界）
   const dragBoundaryRef = useRef<number | null>(null);
+  // 记录上次触发校验失败回调的时间（用于限频）
+  const lastFailNotifyAtRef = useRef<number>(0);
 
   // 更新内部状态的同时更新 ref
   const updateInternalRangeValue = (newValue: [number, number]) => {
@@ -91,6 +103,31 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
     if (!val) return 0;
     return parseFloat(val) || 0;
   };
+
+  // 统一前置校验入口：仅返回 true 才放行更新
+  const canApplyValue = (nextValue: number | [number, number]): boolean => {
+    if (!beforeValidate) return true;
+
+    if (beforeValidate(nextValue) === true) return true;
+
+    const now = Date.now();
+    const cooldownMs = Math.max(0, beforeValidateCooldownMs || 0);
+    if (
+      onBeforeValidateFail &&
+      (lastFailNotifyAtRef.current === 0 || now - lastFailNotifyAtRef.current >= cooldownMs)
+    ) {
+      lastFailNotifyAtRef.current = now;
+      onBeforeValidateFail(nextValue);
+    }
+    return false;
+  };
+
+  const sliderMarks = showBounds
+    ? {
+        [min]: formatNumber(min),
+        [max]: formatNumber(max),
+      }
+    : undefined;
 
   // 浮点数近似比较（解决精度问题）
   const EPSILON = 1e-9;
@@ -141,14 +178,14 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
 
   // 单值模式：Slider 变化处理
   const handleSliderChange = (newValue: number) => {
-    if (!isDisabled && onChange) {
+    if (!isDisabled && onChange && canApplyValue(newValue)) {
       onChange(newValue);
     }
   };
 
   // 单值模式：输入框变化处理
   const handleInputChange = (newValue: number | null) => {
-    if (!isDisabled && newValue !== null && onChange) {
+    if (!isDisabled && newValue !== null && onChange && canApplyValue(newValue)) {
       onChange(newValue);
     }
   };
@@ -191,6 +228,8 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
       // 应用 minDiff/maxDiff 校验
       const validatedRange = validateRange([resultMin, resultMax]);
 
+      if (!canApplyValue(validatedRange)) return;
+
       updateInternalRangeValue(validatedRange);
       if (onRangeChange) {
         onRangeChange(validatedRange);
@@ -209,6 +248,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
     if (!isDisabled && newValue !== null) {
       const newRange: [number, number] = [...internalRangeValueRef.current] as [number, number];
       newRange[index] = newValue;
+      if (!canApplyValue(newRange)) return;
       updateInternalRangeValue(newRange);
     }
   };
@@ -218,6 +258,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
     if (!isDisabled && onRangeChange) {
       // 使用 ref 获取最新值，避免闭包陷阱
       const validatedRange = validateRange(internalRangeValueRef.current);
+      if (!canApplyValue(validatedRange)) return;
       updateInternalRangeValue(validatedRange);
       onRangeChange(validatedRange);
     }
@@ -229,7 +270,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
     const sliderValue = rangeValue || [min, max];
 
     return (
-      <div className={`parameter-input parameter-input--range ${getStateClassName()}`}>
+      <div className={`parameter-input parameter-input--range ${getStateClassName()}${showBounds ? ' parameter-input--show-bounds' : ''}${singleLine ? ' parameter-input--single-line' : ''}`}>
         <div className="parameter-input__label">{label}</div>
         <div className="parameter-input__controls">
           <Slider
@@ -240,6 +281,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
             value={sliderValue}
             onChange={handleRangeSliderChange}
             onChangeComplete={handleRangeSliderChangeComplete}
+            marks={sliderMarks}
             disabled={isDisabled}
             className="parameter-input__slider parameter-input__slider--range"
           />
@@ -277,7 +319,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
   const currentValue = value || min;
 
   return (
-    <div className={`parameter-input ${getStateClassName()}`}>
+    <div className={`parameter-input ${getStateClassName()}${showBounds ? ' parameter-input--show-bounds' : ''}${singleLine ? ' parameter-input--single-line' : ''}`}>
       <div className="parameter-input__label">{label}</div>
       <div className="parameter-input__controls">
         <Slider
@@ -286,6 +328,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
           step={step}
           value={currentValue}
           onChange={handleSliderChange}
+          marks={sliderMarks}
           disabled={isDisabled}
           className="parameter-input__slider"
         />

@@ -485,6 +485,7 @@ export default {
             messages: {
                 fillAllFields: "すべての必須フィールドを入力してください",
                 fillAllDimensions: "すべての寸法パラメータを入力してください",
+                fillWidthLengthFirst: "先に幅と長さを入力してください",
                 calculateSuccess: "推奨が正常に計算されました",
                 calculateError: "推奨の計算に失敗しました",
                 loadDetailsError: "詳細の読み込みに失敗しました"

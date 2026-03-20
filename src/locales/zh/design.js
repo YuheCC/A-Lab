@@ -485,6 +485,7 @@ export default {
             messages: {
                 fillAllFields: "请填写所有必填字段",
                 fillAllDimensions: "请填写所有尺寸参数",
+                fillWidthLengthFirst: "请先填写width、length",
                 calculateSuccess: "推荐计算成功",
                 calculateError: "推荐计算失败",
                 loadDetailsError: "加载详情失败"
