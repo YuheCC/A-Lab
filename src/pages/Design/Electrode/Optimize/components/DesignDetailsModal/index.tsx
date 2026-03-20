@@ -5,7 +5,6 @@ import type { BackwardResultItemDTO } from '@/services/electrode/types';
 import {
   CELL_DESIGN_OPTIONS,
   CATHODE_ACTIVE_MATERIAL_OPTIONS,
-  ANODE_ACTIVE_MATERIAL_OPTIONS,
 } from '../../../constants';
 import './index.less';
 
@@ -16,7 +15,7 @@ interface DesignDetailsModalProps {
   cellDesign: string;
   npRatio: string;
   cathodeActiveMaterial: string;
-  anodeActiveMaterial: string;
+  anodeMaterialLabel: string;
   /** Cathode Width (mm)，来自表单，接口结果中不含此字段 */
   width: string;
   /** Cathode Length (mm)，来自表单，接口结果中不含此字段 */
@@ -90,14 +89,6 @@ const getCathodeMaterialLabel = (value: string): string => {
   return option?.label || value;
 };
 
-/**
- * 根据 value 获取 Anode Material 的 label
- */
-const getAnodeMaterialLabel = (value: string): string => {
-  const option = ANODE_ACTIVE_MATERIAL_OPTIONS.find((opt) => opt.value === value);
-  return option?.label || value;
-};
-
 const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
   visible,
   data,
@@ -105,7 +96,7 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
   cellDesign,
   npRatio,
   cathodeActiveMaterial,
-  anodeActiveMaterial,
+  anodeMaterialLabel,
   width,
   length,
   loading,
@@ -173,7 +164,7 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
               />
               <DesignInfoItem
                 label="Anode Material"
-                value={getAnodeMaterialLabel(anodeActiveMaterial)}
+                value={anodeMaterialLabel}
               />
               <DesignInfoItem label="Width (mm)" value={Number(width)} />
               <DesignInfoItem label="Length (mm)" value={Number(length)} />

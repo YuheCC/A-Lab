@@ -2,14 +2,13 @@ import React, { useState, useEffect, useRef, useContext, useMemo } from 'react';
 import type { TFunction } from 'i18next';
 import { LeftOutlined } from '@ant-design/icons';
 import { Select, Table, Modal, Spin } from 'antd';
-import TargetParameterCard from '../Optimize/components/TargetParameterCard';
+import ParameterInput from '../Predict/components/ParameterInput';
 import RecommendationTrendChart from '../Optimize/components/RecommendationTrendChart';
 import { mapBackwardResultsToTrendData } from '../Optimize/recommendationData';
 import { downloadRecommendationData } from '../Optimize/recommendationExport';
 import {
   CELL_DESIGN_OPTIONS,
   CATHODE_ACTIVE_MATERIAL_OPTIONS,
-  ANODE_ACTIVE_MATERIAL_OPTIONS,
 } from '../constants';
 import type {
   OptimizeModelParamsDTO,
@@ -19,13 +18,6 @@ import type {
 import { getBackwardResultList } from '@/services/electrode/electrodeService';
 import type { DeviatedFieldType } from '../Optimize/types';
 import { PARAMETER_RANGES } from '../Optimize/types';
-import {
-  RAW_CAPACITY,
-  RAW_THICKNESS,
-  RAW_VED,
-  RAW_GED,
-  mapCurveData,
-} from '../Optimize/constData';
 import Button from '@/components/Button';
 import { useAuthStore } from '@/models/useAuth';
 import { PricingContext } from '@/layouts/index';
@@ -102,9 +94,24 @@ const getCathodeMaterialLabel = (value: string): string => {
   return option?.label || value;
 };
 
-const getAnodeMaterialLabel = (value: string): string => {
-  const option = ANODE_ACTIVE_MATERIAL_OPTIONS.find((opt) => opt.value === value);
-  return option?.label || value;
+const formatPercent = (value: number): string => {
+  return Number.isInteger(value) ? String(value) : String(parseFloat(value.toFixed(2)));
+};
+
+const getAnodeMaterialLabel = (
+  result?: BackwardResultItemDTO | null,
+  fallback?: string,
+): string => {
+  // 兼容后端字段命名：si_ratio（标准）与 siratio（历史）
+  const rawSiRatio = (result as any)?.siratio ?? result?.si_ratio;
+  const siRatio = Number(rawSiRatio);
+  if (!Number.isFinite(siRatio)) {
+    return fallback || '-';
+  }
+
+  const sicPercent = Math.max(0, Math.min(100, siRatio));
+  const graphitePercent = Math.max(0, Math.min(100, 100 - sicPercent));
+  return `${formatPercent(graphitePercent)}% SiC / ${formatPercent(sicPercent)}% Graphite`;
 };
 
 const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
@@ -120,32 +127,6 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
 }) => {
   const { userPermissions } = useAuthStore();
   const pricingContext = useContext(PricingContext);
-
-  const distributionCurves = useMemo(
-    () => ({
-      designCapacity: mapCurveData(
-        RAW_CAPACITY,
-        PARAMETER_RANGES.designCapacity.min,
-        PARAMETER_RANGES.designCapacity.max,
-      ),
-      specificEnergy: mapCurveData(
-        RAW_GED,
-        PARAMETER_RANGES.specificEnergy.min,
-        PARAMETER_RANGES.specificEnergy.max,
-      ),
-      thickness: mapCurveData(
-        RAW_THICKNESS,
-        PARAMETER_RANGES.thickness.min,
-        PARAMETER_RANGES.thickness.max,
-      ),
-      volumetricEnergyDensity: mapCurveData(
-        RAW_VED,
-        PARAMETER_RANGES.volumetricEnergyDensity.min,
-        PARAMETER_RANGES.volumetricEnergyDensity.max,
-      ),
-    }),
-    [],
-  );
 
   // 推荐结果状态（通过 getBackwardResultList 加载）
   const [validItems, setValidItems] = useState<BackwardResultItemDTO[]>([]);
@@ -366,6 +347,12 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
     [validItems],
   );
 
+  // 页面信息区优先展示当前选中结果的 SiC/Graphite 比例，未选中时回退到首条结果
+  const anodeMaterialDisplayResult = useMemo<BackwardResultItemDTO | null>(
+    () => selectedResult || validItems[0] || invalidItems[0] || null,
+    [selectedResult, validItems, invalidItems],
+  );
+
   const handleDownloadRecommendations = () => {
     downloadRecommendationData({
       type: 'csv',
@@ -438,7 +425,9 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                     {t('design.electrode.optimize.anodeActiveMaterial', 'Anode Active Material')}
                   </label>
                   <Select value={anodeActiveMaterial} disabled className="electrode-optimize-select">
-                    <Option value={anodeActiveMaterial}>{getAnodeMaterialLabel(anodeActiveMaterial)}</Option>
+                    <Option value={anodeActiveMaterial}>
+                      {getAnodeMaterialLabel(anodeMaterialDisplayResult, anodeActiveMaterial)}
+                    </Option>
                   </Select>
                 </div>
               </div>
@@ -476,16 +465,20 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
               </div>
 
               <div className="electrode-optimize-form-row">
-                <TargetParameterCard
-                  title={`${t('design.electrode.optimize.jellyRollThickness', 'Jelly Roll Thickness')} (mm)`}
-                  value={[modelParams.jrt_min, modelParams.jrt_max]}
-                  onChange={() => {}}
-                  min={PARAMETER_RANGES.thickness.min}
-                  max={PARAMETER_RANGES.thickness.max}
-                  step={PARAMETER_RANGES.thickness.step}
-                  curveData={distributionCurves.thickness}
-                  disabled
-                />
+                <div className="electrode-optimize-parameter-card">
+                  <ParameterInput
+                    label={`${t('design.electrode.optimize.jellyRollThickness', 'Jelly Roll Thickness')} (mm)`}
+                    mode="range"
+                    rangeValue={[modelParams.jrt_min, modelParams.jrt_max]}
+                    min={PARAMETER_RANGES.thickness.min}
+                    max={PARAMETER_RANGES.thickness.max}
+                    step={PARAMETER_RANGES.thickness.step}
+                    minDiff={PARAMETER_RANGES.thickness.minDiff}
+                    showBounds
+                    singleLine
+                    readonly
+                  />
+                </div>
               </div>
             </div>
 
@@ -495,45 +488,60 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                 {t('design.electrode.optimize.targets', 'Targets')}
               </h3>
 
-              {/* VED 与次要目标（sed 或 dc）并排显示在同一行 */}
-              <div className="electrode-optimize-parameters__secondary-row">
-                <TargetParameterCard
-                  title={`${t('design.electrode.optimize.volumetricEnergyDensity', 'Volumetric E.D.')} (Wh/L)`}
-                  value={[modelParams.ved_min, modelParams.ved_max]}
-                  onChange={() => {}}
-                  min={PARAMETER_RANGES.volumetricEnergyDensity.min}
-                  max={PARAMETER_RANGES.volumetricEnergyDensity.max}
-                  step={PARAMETER_RANGES.volumetricEnergyDensity.step}
-                  curveData={distributionCurves.volumetricEnergyDensity}
-                  disabled
-                />
+              <div className="electrode-optimize-parameters">
+                <div className="electrode-optimize-parameters__ved-row">
+                  <div className="electrode-optimize-parameter-card">
+                    <ParameterInput
+                      label={`${t('design.electrode.optimize.volumetricEnergyDensity', 'Volumetric E.D.')} (Wh/L)`}
+                      mode="range"
+                      rangeValue={[modelParams.ved_min, modelParams.ved_max]}
+                      min={PARAMETER_RANGES.volumetricEnergyDensity.min}
+                      max={PARAMETER_RANGES.volumetricEnergyDensity.max}
+                      step={PARAMETER_RANGES.volumetricEnergyDensity.step}
+                      minDiff={PARAMETER_RANGES.volumetricEnergyDensity.minDiff}
+                      showBounds
+                      singleLine
+                      readonly
+                    />
+                  </div>
+                </div>
 
                 {/* 根据 model_params 中实际存在的字段决定显示 sed 还是 dc */}
-                {modelParams.sed_min !== undefined && modelParams.sed_max !== undefined && (
-                  <TargetParameterCard
-                    title={`${t('design.electrode.optimize.specificEnergy', 'Specific E.D.')} (Wh/kg)`}
-                    value={[modelParams.sed_min, modelParams.sed_max]}
-                    onChange={() => {}}
-                    min={PARAMETER_RANGES.specificEnergy.min}
-                    max={PARAMETER_RANGES.specificEnergy.max}
-                    step={PARAMETER_RANGES.specificEnergy.step}
-                    curveData={distributionCurves.specificEnergy}
-                    disabled
-                  />
-                )}
+                <div className="electrode-optimize-parameters__secondary-row">
+                  {modelParams.sed_min !== undefined && modelParams.sed_max !== undefined && (
+                    <div className="electrode-optimize-parameter-card">
+                      <ParameterInput
+                        label={`${t('design.electrode.optimize.specificEnergy', 'Specific E.D.')} (Wh/kg)`}
+                        mode="range"
+                        rangeValue={[modelParams.sed_min, modelParams.sed_max]}
+                        min={PARAMETER_RANGES.specificEnergy.min}
+                        max={PARAMETER_RANGES.specificEnergy.max}
+                        step={PARAMETER_RANGES.specificEnergy.step}
+                        minDiff={PARAMETER_RANGES.specificEnergy.minDiff}
+                        showBounds
+                        singleLine
+                        readonly
+                      />
+                    </div>
+                  )}
 
-                {modelParams.dc_min !== undefined && modelParams.dc_max !== undefined && (
-                  <TargetParameterCard
-                    title={`${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah)`}
-                    value={[modelParams.dc_min, modelParams.dc_max]}
-                    onChange={() => {}}
-                    min={PARAMETER_RANGES.designCapacity.min}
-                    max={PARAMETER_RANGES.designCapacity.max}
-                    step={PARAMETER_RANGES.designCapacity.step}
-                    curveData={distributionCurves.designCapacity}
-                    disabled
-                  />
-                )}
+                  {modelParams.dc_min !== undefined && modelParams.dc_max !== undefined && (
+                    <div className="electrode-optimize-parameter-card">
+                      <ParameterInput
+                        label={`${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah)`}
+                        mode="range"
+                        rangeValue={[modelParams.dc_min, modelParams.dc_max]}
+                        min={PARAMETER_RANGES.designCapacity.min}
+                        max={PARAMETER_RANGES.designCapacity.max}
+                        step={PARAMETER_RANGES.designCapacity.step}
+                        minDiff={PARAMETER_RANGES.designCapacity.minDiff}
+                        showBounds
+                        singleLine
+                        readonly
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -659,7 +667,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
                 <DesignInfoItem label="Cell Type" value={getCellDesignLabel(cellDesign)} />
                 <DesignInfoItem label="NP Ratio" value={npRatio} />
                 <DesignInfoItem label="Cathode Material" value={getCathodeMaterialLabel(cathodeActiveMaterial)} />
-                <DesignInfoItem label="Anode Material" value={getAnodeMaterialLabel(anodeActiveMaterial)} />
+                <DesignInfoItem label="Anode Material" value={getAnodeMaterialLabel(selectedResult, anodeActiveMaterial)} />
                 <DesignInfoItem label="Width (mm)" value={modelParams.cathode_width} />
                 <DesignInfoItem label="Length (mm)" value={modelParams.cathode_length} />
                 <DesignInfoItem label="Layers" value={selectedResult.layers} />

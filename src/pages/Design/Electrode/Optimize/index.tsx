@@ -38,6 +38,26 @@ import { Info } from 'lucide-react';
 
 const { Option } = Select;
 
+const formatPercent = (value: number): string => {
+  return Number.isInteger(value) ? String(value) : String(parseFloat(value.toFixed(2)));
+};
+
+const getAnodeMaterialLabelByResult = (
+  result?: BackwardResultItemDTO | null,
+  fallback?: string,
+): string => {
+  // 兼容后端字段命名：si_ratio（标准）与 siratio（历史）
+  const rawSiRatio = (result as any)?.siratio ?? result?.si_ratio;
+  const siRatio = Number(rawSiRatio);
+  if (!Number.isFinite(siRatio)) {
+    return fallback || '-';
+  }
+
+  const sicPercent = Math.max(0, Math.min(100, siRatio));
+  const graphitePercent = Math.max(0, Math.min(100, 100 - sicPercent));
+  return `${formatPercent(graphitePercent)}% SiC / ${formatPercent(sicPercent)}% Graphite`;
+};
+
 const OptimizePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -983,7 +1003,7 @@ const OptimizePage: React.FC = () => {
         cellDesign={formData.cellDesign}
         npRatio={formData.npRatio}
         cathodeActiveMaterial={formData.cathodeActiveMaterial}
-        anodeActiveMaterial={formData.anodeActiveMaterial}
+        anodeMaterialLabel={getAnodeMaterialLabelByResult(selectedDesign, formData.anodeActiveMaterial)}
         width={formData.width}
         length={formData.length}
         loading={modalLoading}
