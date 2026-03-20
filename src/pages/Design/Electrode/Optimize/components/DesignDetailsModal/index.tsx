@@ -2,10 +2,12 @@ import React from 'react';
 import { Modal, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 import type { BackwardResultItemDTO } from '@/services/electrode/types';
+import RateCapabilityChart, {
+  hasRateCapabilityData,
+} from '../../../Predict/components/RateCapabilityChart';
 import {
   CELL_DESIGN_OPTIONS,
   CATHODE_ACTIVE_MATERIAL_OPTIONS,
-  ANODE_ACTIVE_MATERIAL_OPTIONS,
 } from '../../../constants';
 import './index.less';
 
@@ -16,7 +18,7 @@ interface DesignDetailsModalProps {
   cellDesign: string;
   npRatio: string;
   cathodeActiveMaterial: string;
-  anodeActiveMaterial: string;
+  anodeMaterialLabel: string;
   /** Cathode Width (mm)，来自表单，接口结果中不含此字段 */
   width: string;
   /** Cathode Length (mm)，来自表单，接口结果中不含此字段 */
@@ -90,12 +92,9 @@ const getCathodeMaterialLabel = (value: string): string => {
   return option?.label || value;
 };
 
-/**
- * 根据 value 获取 Anode Material 的 label
- */
-const getAnodeMaterialLabel = (value: string): string => {
-  const option = ANODE_ACTIVE_MATERIAL_OPTIONS.find((opt) => opt.value === value);
-  return option?.label || value;
+const formatNpRatio = (value?: number | string): string => {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric.toFixed(2) : String(value ?? '-');
 };
 
 const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
@@ -105,13 +104,14 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
   cellDesign,
   npRatio,
   cathodeActiveMaterial,
-  anodeActiveMaterial,
+  anodeMaterialLabel,
   width,
   length,
   loading,
   onClose,
 }) => {
   const { t } = useTranslation();
+  const displayNpRatio = formatNpRatio(data?.np_ratio ?? npRatio);
 
   return (
     <Modal
@@ -166,14 +166,14 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
             <h3 className="designdetail-section-title">Design</h3>
             <div className="designdetail-design-grid">
               <DesignInfoItem label="Cell Type" value={getCellDesignLabel(cellDesign)} />
-              <DesignInfoItem label="NP Ratio" value={npRatio} />
+              <DesignInfoItem label="NP Ratio" value={displayNpRatio} />
               <DesignInfoItem
                 label="Cathode Material"
                 value={getCathodeMaterialLabel(cathodeActiveMaterial)}
               />
               <DesignInfoItem
                 label="Anode Material"
-                value={getAnodeMaterialLabel(anodeActiveMaterial)}
+                value={anodeMaterialLabel}
               />
               <DesignInfoItem label="Width (mm)" value={Number(width)} />
               <DesignInfoItem label="Length (mm)" value={Number(length)} />
@@ -182,7 +182,7 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
           </div>
 
           {/* Cathode & Anode */}
-          <div className="designdetail-electrodes-grid">
+            <div className="designdetail-electrodes-grid">
             {/* Cathode */}
             <div className="designdetail-electrode-section">
               <h3 className="designdetail-electrode-title designdetail-cathode-title">
@@ -228,9 +228,18 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
                   value={data.anode_press_density}
                 />
               </div>
+              </div>
             </div>
+
+            {hasRateCapabilityData(data) && (
+              <div className="designdetail-section">
+                <RateCapabilityChart
+                  results={data}
+                  missingDataBehavior="hide"
+                />
+              </div>
+            )}
           </div>
-        </div>
       ) : null}
     </Modal>
   );

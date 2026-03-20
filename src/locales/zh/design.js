@@ -282,7 +282,7 @@ export default {
         back: "返回",
         newDesign: "新建设计",
         newPrediction: "新增预测",
-        download: "Download"
+        download: "下载"
     },
     // Tabs
     tabs: {

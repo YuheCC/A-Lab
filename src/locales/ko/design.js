@@ -282,7 +282,7 @@ export default {
         back: "뒤로",
         newDesign: "새 설계",
         newPrediction: "새 예측",
-        download: "Download"
+        download: "다운로드"
     },
     // Tabs
     tabs: {
