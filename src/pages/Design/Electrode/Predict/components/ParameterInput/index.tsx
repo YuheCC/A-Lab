@@ -24,6 +24,8 @@ interface ParameterInputProps {
   // 差值限制（仅区间模式）
   minDiff?: number; // 最小差值
   maxDiff?: number; // 最大差值（可选）
+  showBounds?: boolean; // 是否显示最小/最大值
+  singleLine?: boolean; // 单行模式：label 与控件同行
 }
 
 const ParameterInput: React.FC<ParameterInputProps> = ({
@@ -40,6 +42,8 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
   readonly = false,
   minDiff,
   maxDiff,
+  showBounds = false,
+  singleLine = false,
 }) => {
   // 是否禁用交互（disabled 或 readonly 都禁用交互）
   const isDisabled = disabled || readonly;
@@ -91,6 +95,13 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
     if (!val) return 0;
     return parseFloat(val) || 0;
   };
+
+  const sliderMarks = showBounds
+    ? {
+        [min]: formatNumber(min),
+        [max]: formatNumber(max),
+      }
+    : undefined;
 
   // 浮点数近似比较（解决精度问题）
   const EPSILON = 1e-9;
@@ -229,7 +240,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
     const sliderValue = rangeValue || [min, max];
 
     return (
-      <div className={`parameter-input parameter-input--range ${getStateClassName()}`}>
+      <div className={`parameter-input parameter-input--range ${getStateClassName()}${showBounds ? ' parameter-input--show-bounds' : ''}${singleLine ? ' parameter-input--single-line' : ''}`}>
         <div className="parameter-input__label">{label}</div>
         <div className="parameter-input__controls">
           <Slider
@@ -240,6 +251,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
             value={sliderValue}
             onChange={handleRangeSliderChange}
             onChangeComplete={handleRangeSliderChangeComplete}
+            marks={sliderMarks}
             disabled={isDisabled}
             className="parameter-input__slider parameter-input__slider--range"
           />
@@ -277,7 +289,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
   const currentValue = value || min;
 
   return (
-    <div className={`parameter-input ${getStateClassName()}`}>
+    <div className={`parameter-input ${getStateClassName()}${showBounds ? ' parameter-input--show-bounds' : ''}${singleLine ? ' parameter-input--single-line' : ''}`}>
       <div className="parameter-input__label">{label}</div>
       <div className="parameter-input__controls">
         <Slider
@@ -286,6 +298,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
           step={step}
           value={currentValue}
           onChange={handleSliderChange}
+          marks={sliderMarks}
           disabled={isDisabled}
           className="parameter-input__slider"
         />
