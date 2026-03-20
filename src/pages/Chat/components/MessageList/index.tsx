@@ -393,7 +393,7 @@ const MessageList: FC<MessageListProps> = ({
     return (
       <div className="message-actions">
         {/* 反馈按钮：仅管理员且助手消息显示 */}
-        {isAssistantMessage(message) && userPermissions === 'admin' && (
+        {isAssistantMessage(message) && (
           <>
             <button
               className="action-btn"

@@ -1272,7 +1272,7 @@ const InorganicSearch = () => {
                                                             {t('chatbox.buttons.addToFavorites')}
                                                         </CustomButton>
                                                         {
-                                                            userPermissions === 'admin' && (
+                                                            (
                                                                 <MoleculeFeedbackBox
                                                                     molecule={molecule}
                                                                     lastSearch={lastSearch}
