@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@umijs/max';
 import { LeftOutlined } from '@ant-design/icons';
-import { Select, Input } from 'antd';
+import { Select, Input, Tooltip } from 'antd';
 import Button from '@/components/Button';
 import ParameterInput from './components/ParameterInput';
 import ResultDisplay from './components/ResultDisplay';
@@ -22,6 +22,7 @@ import {
   DEFAULT_VALUES,
 } from '../constants';
 import { useDebounce } from '@/hooks/useDebounce';
+import { Info } from 'lucide-react';
 import './index.less';
 
 const { Option } = Select;
@@ -29,6 +30,34 @@ const { Option } = Select;
 const PredictPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const npRatioSingleFieldRangeTip = t('design.electrode.validation.parameterRange', {
+    label: t('design.electrode.predict.npRatio', 'NP Ratio'),
+    min: 1.05,
+    max: 1.2,
+  });
+  const graphiteSingleFieldRangeTip = t('design.electrode.validation.parameterRange', {
+    label: t(
+      'design.electrode.predict.anodeActiveMaterialGraphite',
+      'Weight Percentage (%) of Graphite in the Anode Active Material (Graphite + SiC)',
+    ),
+    min: 85,
+    max: 100,
+  });
+  const widthSingleFieldRangeTip = t('design.electrode.validation.parameterRange', {
+    label: t('design.electrode.predict.width', 'Width (mm)'),
+    min: dimensionParameterRanges.width.min,
+    max: dimensionParameterRanges.width.max,
+  });
+  const lengthSingleFieldRangeTip = t('design.electrode.validation.parameterRange', {
+    label: t('design.electrode.predict.length', 'Length (mm)'),
+    min: dimensionParameterRanges.length.min,
+    max: dimensionParameterRanges.length.max,
+  });
+  const layersSingleFieldRangeTip = t('design.electrode.validation.parameterRange', {
+    label: t('design.electrode.predict.layers', 'Layers'),
+    min: dimensionParameterRanges.layers.min,
+    max: dimensionParameterRanges.layers.max,
+  });
 
   // 表单状态
   const [npRatio, setNpRatio] = useState(DEFAULT_VALUES.npRatio);
@@ -495,6 +524,17 @@ const PredictPage: React.FC = () => {
               <div className="electrode-predict-form-item">
                 <label className="electrode-predict-label">
                   {t('design.electrode.predict.npRatio', 'NP Ratio')}
+                  <Tooltip
+                    title={npRatioSingleFieldRangeTip}
+                    overlayClassName="common-tooltip-overlay"
+                  >
+                    <div className="tip-icon-container">
+                      <Info
+                        size={16}
+                        className="tip-icon"
+                      />
+                    </div>
+                  </Tooltip>
                 </label>
                 <Input
                   type="number"
@@ -539,6 +579,17 @@ const PredictPage: React.FC = () => {
               <div className="electrode-predict-form-item">
                 <label className="electrode-predict-label">
                   {t('design.electrode.predict.anodeActiveMaterialGraphite', 'Weight Percentage (%) of Graphite in the Anode Active Material (Graphite + SiC)')}
+                  <Tooltip
+                    title={graphiteSingleFieldRangeTip}
+                    overlayClassName="common-tooltip-overlay"
+                  >
+                    <div className="tip-icon-container">
+                      <Info
+                        size={16}
+                        className="tip-icon"
+                      />
+                    </div>
+                  </Tooltip>
                 </label>
                 <Input
                   type="number"
@@ -728,12 +779,23 @@ const PredictPage: React.FC = () => {
               <div className="electrode-predict-dimension-grid">
                 <div className="electrode-predict-dimension-item">
                   <label className="electrode-predict-label">
-                  {t('design.electrode.predict.width', 'Width (mm)')}
-                </label>
-                <Input
-                  type="number"
-                  value={width}
-                  onChange={(e) => setWidth(e.target.value)}
+                    {t('design.electrode.predict.width', 'Width (mm)')}
+                    <Tooltip
+                      title={widthSingleFieldRangeTip}
+                      overlayClassName="common-tooltip-overlay"
+                    >
+                      <div className="tip-icon-container">
+                        <Info
+                          size={16}
+                          className="tip-icon"
+                        />
+                      </div>
+                    </Tooltip>
+                  </label>
+                  <Input
+                    type="number"
+                    value={width}
+                    onChange={(e) => setWidth(e.target.value)}
                     placeholder={t('design.electrode.predict.enterWidth', 'Enter width')}
                     min={dimensionParameterRanges.width.min}
                     max={dimensionParameterRanges.width.max}
@@ -741,12 +803,23 @@ const PredictPage: React.FC = () => {
                 </div>
                 <div className="electrode-predict-dimension-item">
                   <label className="electrode-predict-label">
-                  {t('design.electrode.predict.length', 'Length (mm)')}
-                </label>
-                <Input
-                  type="number"
-                  value={length}
-                  onChange={(e) => setLength(e.target.value)}
+                    {t('design.electrode.predict.length', 'Length (mm)')}
+                    <Tooltip
+                      title={lengthSingleFieldRangeTip}
+                      overlayClassName="common-tooltip-overlay"
+                    >
+                      <div className="tip-icon-container">
+                        <Info
+                          size={16}
+                          className="tip-icon"
+                        />
+                      </div>
+                    </Tooltip>
+                  </label>
+                  <Input
+                    type="number"
+                    value={length}
+                    onChange={(e) => setLength(e.target.value)}
                     placeholder={t('design.electrode.predict.enterLength', 'Enter length')}
                     min={dimensionParameterRanges.length.min}
                     max={dimensionParameterRanges.length.max}
@@ -755,6 +828,17 @@ const PredictPage: React.FC = () => {
                 <div className="electrode-predict-dimension-item">
                   <label className="electrode-predict-label">
                     {t('design.electrode.predict.layers', 'Layers')}
+                    <Tooltip
+                      title={layersSingleFieldRangeTip}
+                      overlayClassName="common-tooltip-overlay"
+                    >
+                      <div className="tip-icon-container">
+                        <Info
+                          size={16}
+                          className="tip-icon"
+                        />
+                      </div>
+                    </Tooltip>
                   </label>
                   <Input
                     type="number"

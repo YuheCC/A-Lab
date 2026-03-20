@@ -29,7 +29,7 @@ import {
   DEFAULT_VALUES,
 } from '../constants';
 import { getGedBoundsFromVed } from './constData/vedGedLookup';
-import { validateDimensionParameters } from '../validation';
+import { validateDimensionParameters, dimensionParameterRanges } from '../validation';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useAuthStore } from '@/models/useAuth';
 import { PricingContext } from '@/layouts/index';
@@ -641,6 +641,21 @@ const OptimizePage: React.FC = () => {
                 <div className="electrode-optimize-form-item">
                   <label className="electrode-optimize-label">
                     {t('design.electrode.optimize.width')}
+                    <Tooltip
+                      title={t('design.electrode.validation.parameterRange', {
+                        label: t('design.electrode.optimize.width'),
+                        min: dimensionParameterRanges.width.min,
+                        max: dimensionParameterRanges.width.max,
+                      })}
+                      overlayClassName="common-tooltip-overlay"
+                    >
+                      <div className="tip-icon-container">
+                        <Info
+                          size={16}
+                          className="tip-icon"
+                        />
+                      </div>
+                    </Tooltip>
                   </label>
                   <input
                     type="number"
@@ -654,6 +669,21 @@ const OptimizePage: React.FC = () => {
                 <div className="electrode-optimize-form-item">
                   <label className="electrode-optimize-label">
                     {t('design.electrode.optimize.length')}
+                    <Tooltip
+                      title={t('design.electrode.validation.parameterRange', {
+                        label: t('design.electrode.optimize.length'),
+                        min: dimensionParameterRanges.length.min,
+                        max: dimensionParameterRanges.length.max,
+                      })}
+                      overlayClassName="common-tooltip-overlay"
+                    >
+                      <div className="tip-icon-container">
+                        <Info
+                          size={16}
+                          className="tip-icon"
+                        />
+                      </div>
+                    </Tooltip>
                   </label>
                   <input
                     type="number"
