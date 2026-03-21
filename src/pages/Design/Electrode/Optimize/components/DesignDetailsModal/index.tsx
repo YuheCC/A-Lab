@@ -64,13 +64,14 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({ label, value, unit })
 interface DesignInfoItemProps {
   label: string;
   value: string | number;
+  precision?: number;
 }
 
-const DesignInfoItem: React.FC<DesignInfoItemProps> = ({ label, value }) => (
+const DesignInfoItem: React.FC<DesignInfoItemProps> = ({ label, value, precision }) => (
   <div className="designdetail-design-info-item">
     <div className="designdetail-design-info-label">{label}</div>
     <div className="designdetail-design-info-value">
-      {typeof value === 'number' ? value.toFixed(label === 'Layers' ? 0 : 2) : value}
+      {typeof value === 'number' ? value.toFixed(precision ?? 2) : value}
     </div>
   </div>
 );
@@ -80,7 +81,6 @@ const DesignInfoItem: React.FC<DesignInfoItemProps> = ({ label, value }) => (
  */
 const getCellDesignLabel = (value: string): string => {
   const option = CELL_DESIGN_OPTIONS.find((opt) => opt.value === value);
-  console.log(option);
   return option?.label || value;
 };
 
@@ -136,25 +136,30 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
         <div className="designdetail-content">
           {/* Performance Prediction */}
           <div className="designdetail-section">
-            <h3 className="designdetail-section-title">Performance Prediction</h3>
+            <h3 className="designdetail-section-title">
+              {t('design.electrode.predict.cellPerformance', 'Cell Performance Prediction')}
+            </h3>
             <div className="designdetail-performance-grid">
               <PerformanceCard
-                label="Design Capacity"
+                label={t('design.electrode.optimize.designCapacity', 'Design Capacity')}
                 value={data.design_capacity}
                 unit="Ah"
               />
               <PerformanceCard
-                label="Specific E.D."
+                label={t('design.electrode.optimize.specificEnergy', 'Specific E.D.')}
                 value={data.specific_ED}
                 unit="Wh/kg"
               />
               <PerformanceCard
-                label="Jelly Roll Thickness"
+                label={t('design.electrode.optimize.jellyRollThickness', 'Jelly Roll Thickness')}
                 value={data.jelly_roll_thickness}
                 unit="mm"
               />
               <PerformanceCard
-                label="Volumetric E.D."
+                label={t(
+                  'design.electrode.optimize.volumetricEnergyDensity',
+                  'Volumetric E.D.',
+                )}
                 value={data.volumetric_ED}
                 unit="Wh/L"
               />
@@ -163,21 +168,30 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
 
           {/* Design */}
           <div className="designdetail-section">
-            <h3 className="designdetail-section-title">Design</h3>
+            <h3 className="designdetail-section-title">
+              {t('design.electrode.optimize.cellInformation', 'Cell Information')}
+            </h3>
             <div className="designdetail-design-grid">
-              <DesignInfoItem label="Cell Type" value={getCellDesignLabel(cellDesign)} />
-              <DesignInfoItem label="NP Ratio" value={displayNpRatio} />
               <DesignInfoItem
-                label="Cathode Material"
+                label={t('design.electrode.optimize.cellType', 'Cell Type')}
+                value={getCellDesignLabel(cellDesign)}
+              />
+              <DesignInfoItem label={t('design.electrode.optimize.npRatio', 'NP Ratio')} value={displayNpRatio} />
+              <DesignInfoItem
+                label={t('design.electrode.optimize.cathodeActiveMaterial', 'Cathode Active Material')}
                 value={getCathodeMaterialLabel(cathodeActiveMaterial)}
               />
               <DesignInfoItem
-                label="Anode Material"
+                label={t('design.electrode.optimize.anodeActiveMaterial', 'Anode Active Material')}
                 value={anodeMaterialLabel}
               />
-              <DesignInfoItem label="Width (mm)" value={Number(width)} />
-              <DesignInfoItem label="Length (mm)" value={Number(length)} />
-              <DesignInfoItem label="Layers" value={data.layers} />
+              <DesignInfoItem label={t('design.electrode.optimize.width', 'Width (mm)')} value={Number(width)} />
+              <DesignInfoItem label={t('design.electrode.optimize.length', 'Length (mm)')} value={Number(length)} />
+              <DesignInfoItem
+                label={t('design.electrode.optimize.layers', 'Layers')}
+                value={data.layers}
+                precision={0}
+              />
             </div>
           </div>
 
@@ -186,21 +200,27 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
             {/* Cathode */}
             <div className="designdetail-electrode-section">
               <h3 className="designdetail-electrode-title designdetail-cathode-title">
-                Cathode
+                {t('design.electrode.optimize.cathodeParameters', 'Cathode Parameters')}
               </h3>
               <div className="designdetail-parameters">
-                <ParameterItem label="PVDF (wt.%)" value={data.cathode_binder_wt} />
-                <ParameterItem label="CNT (wt.%)" value={data.cathode_cnt_wt} />
                 <ParameterItem
-                  label="Carbon black (wt.%)"
+                  label={t('design.electrode.predict.kf9700', 'Polyvinylidene Fluoride (PVDF) (wt.%)')}
+                  value={data.cathode_binder_wt}
+                />
+                <ParameterItem
+                  label={t('design.electrode.predict.cn01y', 'Carbon Nano Tube (CNT) (wt.%)')}
+                  value={data.cathode_cnt_wt}
+                />
+                <ParameterItem
+                  label={t('design.electrode.predict.superC65', 'Carbon Black (wt.%)')}
                   value={data.cathode_conductive_carbon_wt}
                 />
                 <ParameterItem
-                  label="Areal Loading (mAh/cm²)"
+                  label={t('design.electrode.predict.arealLoading', 'Areal Loading (mAh/cm²)')}
                   value={data.cathode_areal_loading}
                 />
                 <ParameterItem
-                  label="Press Density (g/cc)"
+                  label={t('design.electrode.predict.pressDensity', 'Press Density (g/cc)')}
                   value={data.cathode_press_density}
                 />
               </div>
@@ -209,22 +229,31 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
             {/* Anode */}
             <div className="designdetail-electrode-section">
               <h3 className="designdetail-electrode-title designdetail-anode-title">
-                Anode
+                {t('design.electrode.optimize.anodeParameters', 'Anode Parameters')}
               </h3>
               <div className="designdetail-parameters">
-                <ParameterItem label="CMC (wt.%)" value={data.anode_binder1_wt} />
-                <ParameterItem label="SBR (wt.%)" value={data.anode_binder2_wt} />
-                <ParameterItem label="PAA (wt.%)" value={data.anode_binder3_wt} />
                 <ParameterItem
-                  label="Carbon black (wt.%)"
+                  label={t('design.electrode.predict.cmc', 'Carboxymethyl Cellulose (CMC) (wt.%)')}
+                  value={data.anode_binder1_wt}
+                />
+                <ParameterItem
+                  label={t('design.electrode.predict.sbr', 'Styrene-Butadiene Rubber (SBR) (wt.%)')}
+                  value={data.anode_binder2_wt}
+                />
+                <ParameterItem
+                  label={t('design.electrode.predict.paa', 'Poly(acrylic acid) (PAA) (wt.%)')}
+                  value={data.anode_binder3_wt}
+                />
+                <ParameterItem
+                  label={t('design.electrode.predict.superP', 'Carbon Black (wt.%)')}
                   value={data.anode_conductive_carbon_wt}
                 />
                 <ParameterItem
-                  label="CNT (wt.%)"
+                  label={t('design.electrode.predict.swcnt', 'Carbon Nano Tube (CNT) (wt.%)')}
                   value={data.anode_cnt_wt}
                 />
                 <ParameterItem
-                  label="Press Density (g/cc)"
+                  label={t('design.electrode.predict.pressDensity', 'Press Density (g/cc)')}
                   value={data.anode_press_density}
                 />
               </div>

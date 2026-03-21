@@ -661,51 +661,117 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
           <div className="designdetail-content">
             {/* Performance Prediction */}
             <div className="designdetail-section">
-              <h3 className="designdetail-section-title">Performance Prediction</h3>
+              <h3 className="designdetail-section-title">
+                {t('design.electrode.predict.cellPerformance', 'Cell Performance Prediction')}
+              </h3>
               <div className="designdetail-performance-grid">
-                <PerformanceCard label="Design Capacity" value={selectedResult.design_capacity} unit="Ah" />
-                <PerformanceCard label="Specific E.D." value={selectedResult.specific_ED} unit="Wh/kg" />
-                <PerformanceCard label="Jelly Roll Thickness" value={selectedResult.jelly_roll_thickness} unit="mm" />
-                <PerformanceCard label="Volumetric E.D." value={selectedResult.volumetric_ED} unit="Wh/L" />
+                <PerformanceCard
+                  label={t('design.electrode.optimize.designCapacity', 'Design Capacity')}
+                  value={selectedResult.design_capacity}
+                  unit="Ah"
+                />
+                <PerformanceCard
+                  label={t('design.electrode.optimize.specificEnergy', 'Specific E.D.')}
+                  value={selectedResult.specific_ED}
+                  unit="Wh/kg"
+                />
+                <PerformanceCard
+                  label={t('design.electrode.optimize.jellyRollThickness', 'Jelly Roll Thickness')}
+                  value={selectedResult.jelly_roll_thickness}
+                  unit="mm"
+                />
+                <PerformanceCard
+                  label={t('design.electrode.optimize.volumetricEnergyDensity', 'Volumetric E.D.')}
+                  value={selectedResult.volumetric_ED}
+                  unit="Wh/L"
+                />
               </div>
             </div>
 
             {/* Design */}
             <div className="designdetail-section">
-              <h3 className="designdetail-section-title">Design</h3>
+              <h3 className="designdetail-section-title">
+                {t('design.electrode.optimize.cellInformation', 'Cell Information')}
+              </h3>
               <div className="designdetail-design-grid">
-                <DesignInfoItem label="Cell Type" value={getCellDesignLabel(cellDesign)} />
-                <DesignInfoItem label="NP Ratio" value={displayModalNpRatio} />
-                <DesignInfoItem label="Cathode Material" value={getCathodeMaterialLabel(cathodeActiveMaterial)} />
-                <DesignInfoItem label="Anode Material" value={getAnodeMaterialLabel(selectedResult, anodeActiveMaterial)} />
-                <DesignInfoItem label="Width (mm)" value={modelParams.cathode_width} />
-                <DesignInfoItem label="Length (mm)" value={modelParams.cathode_length} />
-                <DesignInfoItem label="Layers" value={selectedResult.layers} />
+                <DesignInfoItem
+                  label={t('design.electrode.optimize.cellType', 'Cell Type')}
+                  value={getCellDesignLabel(cellDesign)}
+                />
+                <DesignInfoItem label={t('design.electrode.optimize.npRatio', 'NP Ratio')} value={displayModalNpRatio} />
+                <DesignInfoItem
+                  label={t('design.electrode.optimize.cathodeActiveMaterial', 'Cathode Active Material')}
+                  value={getCathodeMaterialLabel(cathodeActiveMaterial)}
+                />
+                <DesignInfoItem
+                  label={t('design.electrode.optimize.anodeActiveMaterial', 'Anode Active Material')}
+                  value={getAnodeMaterialLabel(selectedResult, anodeActiveMaterial)}
+                />
+                <DesignInfoItem label={t('design.electrode.optimize.width', 'Width (mm)')} value={modelParams.cathode_width} />
+                <DesignInfoItem label={t('design.electrode.optimize.length', 'Length (mm)')} value={modelParams.cathode_length} />
+                <DesignInfoItem label={t('design.electrode.optimize.layers', 'Layers')} value={selectedResult.layers} />
               </div>
             </div>
 
             {/* Cathode & Anode */}
             <div className="designdetail-electrodes-grid">
               <div className="designdetail-electrode-section">
-                <h3 className="designdetail-electrode-title designdetail-cathode-title">Cathode</h3>
+                <h3 className="designdetail-electrode-title designdetail-cathode-title">
+                  {t('design.electrode.optimize.cathodeParameters', 'Cathode Parameters')}
+                </h3>
                 <div className="designdetail-parameters">
-                  <ParameterItem label="PVDF (wt.%)" value={selectedResult.cathode_binder_wt} />
-                  <ParameterItem label="CNT (wt.%)" value={selectedResult.cathode_cnt_wt} />
-                  <ParameterItem label="Carbon black (wt.%)" value={selectedResult.cathode_conductive_carbon_wt} />
-                  <ParameterItem label="Areal Loading (mAh/cm²)" value={selectedResult.cathode_areal_loading} />
-                  <ParameterItem label="Press Density (g/cc)" value={selectedResult.cathode_press_density} />
+                  <ParameterItem
+                    label={t('design.electrode.predict.kf9700', 'Polyvinylidene Fluoride (PVDF) (wt.%)')}
+                    value={selectedResult.cathode_binder_wt}
+                  />
+                  <ParameterItem
+                    label={t('design.electrode.predict.cn01y', 'Carbon Nano Tube (CNT) (wt.%)')}
+                    value={selectedResult.cathode_cnt_wt}
+                  />
+                  <ParameterItem
+                    label={t('design.electrode.predict.superC65', 'Carbon Black (wt.%)')}
+                    value={selectedResult.cathode_conductive_carbon_wt}
+                  />
+                  <ParameterItem
+                    label={t('design.electrode.predict.arealLoading', 'Areal Loading (mAh/cm²)')}
+                    value={selectedResult.cathode_areal_loading}
+                  />
+                  <ParameterItem
+                    label={t('design.electrode.predict.pressDensity', 'Press Density (g/cc)')}
+                    value={selectedResult.cathode_press_density}
+                  />
                 </div>
               </div>
 
               <div className="designdetail-electrode-section">
-                <h3 className="designdetail-electrode-title designdetail-anode-title">Anode</h3>
+                <h3 className="designdetail-electrode-title designdetail-anode-title">
+                  {t('design.electrode.optimize.anodeParameters', 'Anode Parameters')}
+                </h3>
                 <div className="designdetail-parameters">
-                  <ParameterItem label="CMC (wt.%)" value={selectedResult.anode_binder1_wt} />
-                  <ParameterItem label="SBR (wt.%)" value={selectedResult.anode_binder2_wt} />
-                  <ParameterItem label="PAA (wt.%)" value={selectedResult.anode_binder3_wt} />
-                  <ParameterItem label="Carbon black (wt.%)" value={selectedResult.anode_conductive_carbon_wt} />
-                  <ParameterItem label="CNT (wt.%)" value={selectedResult.anode_cnt_wt} />
-                  <ParameterItem label="Press Density (g/cc)" value={selectedResult.anode_press_density} />
+                  <ParameterItem
+                    label={t('design.electrode.predict.cmc', 'Carboxymethyl Cellulose (CMC) (wt.%)')}
+                    value={selectedResult.anode_binder1_wt}
+                  />
+                  <ParameterItem
+                    label={t('design.electrode.predict.sbr', 'Styrene-Butadiene Rubber (SBR) (wt.%)')}
+                    value={selectedResult.anode_binder2_wt}
+                  />
+                  <ParameterItem
+                    label={t('design.electrode.predict.paa', 'Poly(acrylic acid) (PAA) (wt.%)')}
+                    value={selectedResult.anode_binder3_wt}
+                  />
+                  <ParameterItem
+                    label={t('design.electrode.predict.superP', 'Carbon Black (wt.%)')}
+                    value={selectedResult.anode_conductive_carbon_wt}
+                  />
+                  <ParameterItem
+                    label={t('design.electrode.predict.swcnt', 'Carbon Nano Tube (CNT) (wt.%)')}
+                    value={selectedResult.anode_cnt_wt}
+                  />
+                  <ParameterItem
+                    label={t('design.electrode.predict.pressDensity', 'Press Density (g/cc)')}
+                    value={selectedResult.anode_press_density}
+                  />
                 </div>
               </div>
             </div>
