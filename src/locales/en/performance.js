@@ -36,11 +36,11 @@ export default {
   },
   formulas: {
     sectionTitle: "2. Additive Formulations Configuration",
-    formulaA: "Formula A",
-    formulaB: "Formula B",
-    additive1Label: "Additive 1",
-    additive2Label: "Additive 2",
-    additive3Label: "Additive 3",
+    formulaA: "Formulation A",
+    formulaB: "Formulation B",
+    additive1Label: "Common Additive 1",
+    additive2Label: "Common Additive 2",
+    additive3Label: "Common Additive 3",
     newAdditiveSmiles: "New Additive SMILES",
     weightPercentageLabel: "Weight Percentage (wt%)"
   },
@@ -111,7 +111,7 @@ export default {
   // Results
   results: {
     title: "Cell Performance Prediction",
-    improvementHint: "Improvement of Formula B compared with Formula A",
+    improvementHint: "Performances of Formulation B compared with Formulation A",
     negativeTitle: "Negative",
     positiveTitle: "Positive",
     negativeTip: "After adding the specified additive, the cell will perform equally or worse than the cell with the benchmark electrolyte.",
@@ -289,8 +289,9 @@ export default {
   // Form validation messages
   validation: {
     selectModel: "Please select a prediction model",
-    atLeastOneAdditive: "Please fill in at least one complete additive entry in Formula A or Formula B (both the name/SMILES and a Weight Percentage greater than 0 are required)",
+    atLeastOneAdditive: "Please fill in at least one complete additive entry in Formulation A or Formulation B (both the name/SMILES and a Weight Percentage greater than 0 are required)",
     invalidSmiles: "The SMILES entered for {{formulas}} is invalid. Please correct it before calculating.",
+    duplicateAdditive: "Duplicate additives detected in {{formulas}}, please check",
   },
 
   // Battery system fallback

@@ -12,7 +12,7 @@ import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 import CustomSelect from '../CustomSelect';
 import ModelSelect from '@/components/ModelSelect';
 import { upcomingModels, type PerformanceMetricType, type ModelOption } from './mockModelData';
-import { ADDITIVE_NAME_OPTIONS, ADDITIVE_NAME_OPTIONS_101 } from './additiveOptions';
+import { ADDITIVE_NAME_OPTIONS, ADDITIVE_NAME_OPTIONS_101, ADDITIVE_SMILES_MAP } from './additiveOptions';
 import SmilesInputWithPreview, { type SmilesInputHandle } from './SmilesInputWithPreview';
 import { PricingContext } from '@/layouts/index';
 import { getModelList } from '../../model';
@@ -434,6 +434,39 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     if (!hasFormulaA && !hasFormulaB) {
       setFormValidationError(
         t('performance.validation.atLeastOneAdditive')
+      );
+      return;
+    }
+
+    // 检测同一 formula 组内是否有重复添加剂
+    // names: 下拉选择的缩写数组；smiles: 自定义 SMILES（可为空字符串）
+    const hasDuplicateInGroup = (names: string[], smiles: string): boolean => {
+      const filledNames = names.filter(n => n.trim());
+      if (new Set(filledNames).size !== filledNames.length) return true;
+      if (smiles.trim()) {
+        for (const name of filledNames) {
+          const smilesArr = ADDITIVE_SMILES_MAP[name];
+          if (smilesArr && smilesArr.includes(smiles.trim())) return true;
+        }
+      }
+      return false;
+    };
+
+    const formulaADuplicate = hasDuplicateInGroup(
+      [faAdd3Name, faAdd4Name, faAdd5Name],
+      additive,
+    );
+    const formulaBDuplicate = hasDuplicateInGroup(
+      [fbAdd3Name, fbAdd4Name, fbAdd5Name],
+      fbAdd6Smiles,
+    );
+
+    if (formulaADuplicate || formulaBDuplicate) {
+      const which: string[] = [];
+      if (formulaADuplicate) which.push('Formula A');
+      if (formulaBDuplicate) which.push('Formula B');
+      setFormValidationError(
+        t('performance.validation.duplicateAdditive', { formulas: which.join(' & ') }),
       );
       return;
     }

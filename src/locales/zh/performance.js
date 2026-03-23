@@ -38,9 +38,9 @@ export default {
     sectionTitle: "2. 添加剂配方配置",
     formulaA: "配方 A",
     formulaB: "配方 B",
-    additive1Label: "添加剂 1",
-    additive2Label: "添加剂 2",
-    additive3Label: "添加剂 3",
+    additive1Label: "通用添加剂 1",
+    additive2Label: "通用添加剂 2",
+    additive3Label: "通用添加剂 3",
     newAdditiveSmiles: "新添加剂 SMILES",
     weightPercentageLabel: "重量百分比 (wt%)"
   },
@@ -111,7 +111,7 @@ export default {
   // Results
   results: {
     title: "电池性能预测",
-    improvementHint: "Formula B 相较于 Formula A 的改进",
+    improvementHint: "配方 B 相较于配方 A 的性能表现",
     titleTip: "负面（Negative）表示添加指定添加剂后，电池性能等于或差于使用基准电解液的电池。\n正面（Positive）表示添加指定添加剂后，电池性能优于使用基准电解液的电池。",
     negativeTitle: "负面 (Negative)",
     positiveTitle: "正面 (Positive)",
@@ -289,8 +289,9 @@ export default {
   // Form validation messages
   validation: {
     selectModel: "请选择预测模型",
-    atLeastOneAdditive: "请在 Formula A 或 Formula B 中至少填写一条完整的添加剂记录（需同时填写名称/SMILES 及大于 0 的 Weight Percentage）",
+    atLeastOneAdditive: "请在配方 A 或配方 B 中至少填写一条完整的添加剂记录（需同时填写名称/SMILES 及大于 0 的 Weight Percentage）",
     invalidSmiles: "{{formulas}} 中输入的 SMILES 无效，请修正后再进行计算。",
+    duplicateAdditive: "{{formulas}} 中存在重复的添加剂，请检查",
   },
 
   // Battery system fallback
