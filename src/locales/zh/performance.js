@@ -289,7 +289,7 @@ export default {
   // Form validation messages
   validation: {
     selectModel: "请选择预测模型",
-    atLeastOneAdditive: "Formula A 和 Formula B 都必须至少填写一项添加剂",
+    atLeastOneAdditive: "请在 Formula A 或 Formula B 中至少填写一条完整的添加剂记录（需同时填写名称/SMILES 及大于 0 的 Weight Percentage）",
     invalidSmiles: "{{formulas}} 中输入的 SMILES 无效，请修正后再进行计算。",
   },
 

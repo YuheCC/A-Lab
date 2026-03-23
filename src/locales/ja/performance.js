@@ -289,7 +289,7 @@ export default {
   // Form validation messages
   validation: {
     selectModel: "予測モデルを選択してください",
-    atLeastOneAdditive: "フォーミュラ A とフォーミュラ B の両方に、少なくとも1つの添加剤を入力してください",
+    atLeastOneAdditive: "フォーミュラ A またはフォーミュラ B のいずれかに、完全な添加剤の記録（名称/SMILES と 0 より大きい Weight Percentage の両方）を少なくとも1つ入力してください",
     invalidSmiles: "{{formulas}} に入力された SMILES が無効です。修正してから計算してください。",
   },
 

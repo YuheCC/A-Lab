@@ -289,7 +289,7 @@ export default {
   // Form validation messages
   validation: {
     selectModel: "Please select a prediction model",
-    atLeastOneAdditive: "Both Formula A and Formula B must have at least one additive filled in",
+    atLeastOneAdditive: "Please fill in at least one complete additive entry in Formula A or Formula B (both the name/SMILES and a Weight Percentage greater than 0 are required)",
     invalidSmiles: "The SMILES entered for {{formulas}} is invalid. Please correct it before calculating.",
   },
 

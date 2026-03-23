@@ -289,7 +289,7 @@ export default {
   // Form validation messages
   validation: {
     selectModel: "예측 모델을 선택해 주세요",
-    atLeastOneAdditive: "Formula A와 Formula B 모두 최소 하나의 첨가제를 입력해야 합니다",
+    atLeastOneAdditive: "Formula A 또는 Formula B 중 하나 이상에 완전한 첨가제 항목(이름/SMILES 및 0보다 큰 Weight Percentage 모두 필수)을 입력해 주세요",
     invalidSmiles: "{{formulas}}에 입력된 SMILES가 유효하지 않습니다. 수정 후 계산하세요.",
   },
 
