@@ -1085,7 +1085,23 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
           {/* 2. Additive Formulations Configuration 子分区 */}
           <div className="pm-subsection-card">
-            <h3 className="pm-subsection-title">{t('performance.formulas.sectionTitle', '2. Additive Formulations Configuration')}</h3>
+            <h3 className="pm-subsection-title">
+              {t('performance.formulas.sectionTitle', '2. Additive Formulations Configuration')}
+              <Tooltip
+                title={t(
+                  'performance.formulas.sectionTitleTooltip',
+                  'The selection of additives is optional. A formulation can have 1, 2, 3 or 4 additives.',
+                )}
+                placement="top"
+              >
+                <span className="tip-icon-container">
+                  <Info
+                    size={14}
+                    className="tip-icon"
+                  />
+                </span>
+              </Tooltip>
+            </h3>
             <div className="pm-formula-columns">
 
               {/* Formula A */}

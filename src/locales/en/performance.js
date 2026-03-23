@@ -36,6 +36,7 @@ export default {
   },
   formulas: {
     sectionTitle: "2. Additive Formulations Configuration",
+    sectionTitleTooltip: "The selection of additives is optional. A formulation can have 1, 2, 3 or 4 additives.",
     formulaA: "Formulation A",
     formulaB: "Formulation B",
     additive1Label: "Common Additive 1",
