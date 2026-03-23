@@ -36,6 +36,7 @@ export default {
   },
   formulas: {
     sectionTitle: "2. 첨가제 배합 구성",
+    sectionTitleTooltip: "첨가제 선택은 선택 사항입니다. 하나의 포뮬레이션에는 1개, 2개, 3개 또는 4개의 첨가제를 포함할 수 있습니다.",
     formulaA: "포뮬레이션 A",
     formulaB: "포뮬레이션 B",
     additive1Label: "공통 첨가제 1",

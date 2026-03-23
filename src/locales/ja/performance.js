@@ -36,6 +36,7 @@ export default {
   },
   formulas: {
     sectionTitle: "2. 添加剤フォーミュラ設定",
+    sectionTitleTooltip: "添加剤の選択は任意です。1つのフォーミュレーションには1、2、3、または4種類の添加剤を含めることができます。",
     formulaA: "フォーミュレーション A",
     formulaB: "フォーミュレーション B",
     additive1Label: "共通添加剤 1",

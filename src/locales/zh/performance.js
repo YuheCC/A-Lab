@@ -36,6 +36,7 @@ export default {
   },
   formulas: {
     sectionTitle: "2. 添加剂配方配置",
+    sectionTitleTooltip: "添加剂的选择为可选项。一个配方可以包含 1、2、3 或 4 种添加剂。",
     formulaA: "配方 A",
     formulaB: "配方 B",
     additive1Label: "通用添加剂 1",
