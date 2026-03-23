@@ -36,11 +36,11 @@ export default {
   },
   formulas: {
     sectionTitle: "2. 添加剤フォーミュラ設定",
-    formulaA: "フォーミュラ A",
-    formulaB: "フォーミュラ B",
-    additive1Label: "添加剤 1",
-    additive2Label: "添加剤 2",
-    additive3Label: "添加剤 3",
+    formulaA: "フォーミュレーション A",
+    formulaB: "フォーミュレーション B",
+    additive1Label: "共通添加剤 1",
+    additive2Label: "共通添加剤 2",
+    additive3Label: "共通添加剤 3",
     newAdditiveSmiles: "新規添加剤 SMILES",
     weightPercentageLabel: "重量パーセント (wt%)"
   },
@@ -111,7 +111,7 @@ export default {
   // Results
   results: {
     title: "セル性能予測",
-    improvementHint: "フォーミュラ B のフォーミュラ A に対する改善",
+    improvementHint: "フォーミュレーション A に対するフォーミュレーション B のパフォーマンス",
     titleTip: "ネガティブは、指定された添加剤を添加した後、セルの性能がベンチマーク電解液を使用したセルと同等またはそれ以下になることを意味します。\nポジティブは、指定された添加剤を添加した後、セルの性能がベンチマーク電解液を使用したセルより優れることを意味します。",
     negativeTitle: "ネガティブ (Negative)",
     positiveTitle: "ポジティブ (Positive)",
@@ -289,8 +289,9 @@ export default {
   // Form validation messages
   validation: {
     selectModel: "予測モデルを選択してください",
-    atLeastOneAdditive: "フォーミュラ A とフォーミュラ B の両方に、少なくとも1つの添加剤を入力してください",
+    atLeastOneAdditive: "フォーミュレーション A またはフォーミュレーション B のいずれかに、完全な添加剤の記録（名称/SMILES と 0 より大きい Weight Percentage の両方）を少なくとも1つ入力してください",
     invalidSmiles: "{{formulas}} に入力された SMILES が無効です。修正してから計算してください。",
+    duplicateAdditive: "{{formulas}} に重複する添加剤が検出されました。ご確認ください",
   },
 
   // Battery system fallback

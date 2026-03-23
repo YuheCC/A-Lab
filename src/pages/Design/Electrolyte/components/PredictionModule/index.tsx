@@ -12,7 +12,7 @@ import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 import CustomSelect from '../CustomSelect';
 import ModelSelect from '@/components/ModelSelect';
 import { upcomingModels, type PerformanceMetricType, type ModelOption } from './mockModelData';
-import { ADDITIVE_NAME_OPTIONS, ADDITIVE_NAME_OPTIONS_101 } from './additiveOptions';
+import { ADDITIVE_NAME_OPTIONS, ADDITIVE_NAME_OPTIONS_101, ADDITIVE_SMILES_MAP } from './additiveOptions';
 import SmilesInputWithPreview, { type SmilesInputHandle } from './SmilesInputWithPreview';
 import { PricingContext } from '@/layouts/index';
 import { getModelList } from '../../model';
@@ -324,9 +324,17 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   }, []);
 
 
-  // Weight Percentage 范围钳制（0 ≤ value ≤ 1，保留两位小数）
-  const clampWeight = (val: number | null): number | null =>
-    val === null ? null : Math.min(1, Math.max(0, parseFloat(val.toFixed(2))));
+  // 根据模型类型动态获取 Weight Percentage 最大值
+  // model_type=100 → 2，model_type=101 → 1，默认 → 1
+  const maxWeightValue = useMemo(() => {
+    const type = selectedModelData?.model_type;
+    if (type === 100) return 2;
+    return 1;
+  }, [selectedModelData?.model_type]);
+
+  // Weight Percentage 范围钳制（0 ≤ value ≤ maxWeightValue，保留两位小数）
+  const clampWeight = useCallback((val: number | null): number | null =>
+    val === null ? null : Math.min(maxWeightValue, Math.max(0, parseFloat(val.toFixed(2)))), [maxWeightValue]);
 
   // 执行实际的计算逻辑（在验证通过后调用）
   const performCalculation = async () => {
@@ -407,13 +415,58 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       return;
     }
 
-    // 校验 Formula A 和 B 都至少填写一组参数
-    const hasFormulaA = !!(faAdd3Name || faAdd4Name || faAdd5Name || additive.trim());
-    const hasFormulaB = !!(fbAdd3Name || fbAdd4Name || fbAdd5Name || fbAdd6Smiles.trim());
+    // 一条合法记录：additive 名称/SMILES 有值，且 weight percentage 不为 null 且 > 0
+    const isValidEntry = (name: string, wt: number | null) =>
+      !!name.trim() && wt !== null && wt > 0;
 
-    if (!hasFormulaA || !hasFormulaB) {
+    const hasFormulaA =
+      isValidEntry(faAdd3Name, faAdd3Wt) ||
+      isValidEntry(faAdd4Name, faAdd4Wt) ||
+      isValidEntry(faAdd5Name, faAdd5Wt) ||
+      isValidEntry(additive, faAdd6Wt);
+
+    const hasFormulaB =
+      isValidEntry(fbAdd3Name, fbAdd3Wt) ||
+      isValidEntry(fbAdd4Name, fbAdd4Wt) ||
+      isValidEntry(fbAdd5Name, fbAdd5Wt) ||
+      isValidEntry(fbAdd6Smiles, fbAdd6Wt);
+
+    if (!hasFormulaA && !hasFormulaB) {
       setFormValidationError(
         t('performance.validation.atLeastOneAdditive')
+      );
+      return;
+    }
+
+    // 检测同一 formula 组内是否有重复添加剂
+    // names: 下拉选择的缩写数组；smiles: 自定义 SMILES（可为空字符串）
+    const hasDuplicateInGroup = (names: string[], smiles: string): boolean => {
+      const filledNames = names.filter(n => n.trim());
+      if (new Set(filledNames).size !== filledNames.length) return true;
+      if (smiles.trim()) {
+        for (const name of filledNames) {
+          const smilesArr = ADDITIVE_SMILES_MAP[name];
+          if (smilesArr && smilesArr.includes(smiles.trim())) return true;
+        }
+      }
+      return false;
+    };
+
+    const formulaADuplicate = hasDuplicateInGroup(
+      [faAdd3Name, faAdd4Name, faAdd5Name],
+      additive,
+    );
+    const formulaBDuplicate = hasDuplicateInGroup(
+      [fbAdd3Name, fbAdd4Name, fbAdd5Name],
+      fbAdd6Smiles,
+    );
+
+    if (formulaADuplicate || formulaBDuplicate) {
+      const which: string[] = [];
+      if (formulaADuplicate) which.push('Formula A');
+      if (formulaBDuplicate) which.push('Formula B');
+      setFormValidationError(
+        t('performance.validation.duplicateAdditive', { formulas: which.join(' & ') }),
       );
       return;
     }
@@ -1052,8 +1105,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
                     <InputNumber
                       value={faAdd3Wt}
-                      min={0}
-                      max={1}
+                      min={0.01}
+                      max={maxWeightValue}
                       step={0.01}
                       onChange={(val) => setFaAdd3Wt(clampWeight(val))}
                       className="pm-weight-input-number"
@@ -1072,8 +1125,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
                     <InputNumber
                       value={faAdd4Wt}
-                      min={0}
-                      max={1}
+                      min={0.01}
+                      max={maxWeightValue}
                       step={0.01}
                       onChange={(val) => setFaAdd4Wt(clampWeight(val))}
                       className="pm-weight-input-number"
@@ -1092,8 +1145,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
                     <InputNumber
                       value={faAdd5Wt}
-                      min={0}
-                      max={1}
+                      min={0.01}
+                      max={maxWeightValue}
                       step={0.01}
                       onChange={(val) => setFaAdd5Wt(clampWeight(val))}
                       className="pm-weight-input-number"
@@ -1124,8 +1177,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
                     <InputNumber
                       value={faAdd6Wt}
-                      min={0}
-                      max={1}
+                      min={0.01}
+                      max={maxWeightValue}
                       step={0.01}
                       onChange={(val) => setFaAdd6Wt(clampWeight(val))}
                       className="pm-weight-input-number"
@@ -1152,8 +1205,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
                     <InputNumber
                       value={fbAdd3Wt}
-                      min={0}
-                      max={1}
+                      min={0.01}
+                      max={maxWeightValue}
                       step={0.01}
                       onChange={(val) => setFbAdd3Wt(clampWeight(val))}
                       className="pm-weight-input-number"
@@ -1172,8 +1225,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
                     <InputNumber
                       value={fbAdd4Wt}
-                      min={0}
-                      max={1}
+                      min={0.01}
+                      max={maxWeightValue}
                       step={0.01}
                       onChange={(val) => setFbAdd4Wt(clampWeight(val))}
                       className="pm-weight-input-number"
@@ -1192,8 +1245,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
                     <InputNumber
                       value={fbAdd5Wt}
-                      min={0}
-                      max={1}
+                      min={0.01}
+                      max={maxWeightValue}
                       step={0.01}
                       onChange={(val) => setFbAdd5Wt(clampWeight(val))}
                       className="pm-weight-input-number"
@@ -1217,8 +1270,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     <label className="pm-additive-label">{t('performance.formulas.weightPercentageLabel', 'Weight Percentage (wt%)')}</label>
                     <InputNumber
                       value={fbAdd6Wt}
-                      min={0}
-                      max={1}
+                      min={0.01}
+                      max={maxWeightValue}
                       step={0.01}
                       onChange={(val) => setFbAdd6Wt(clampWeight(val))}
                       className="pm-weight-input-number"
