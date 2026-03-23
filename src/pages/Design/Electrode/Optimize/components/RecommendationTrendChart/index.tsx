@@ -1,8 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Select } from 'antd';
 import type { EChartsOption } from 'echarts';
 import { useTranslation } from 'react-i18next';
-import EchartsReact from '@/components/EchartsReact';
+import EchartsReact, { type EChartsEventParams } from '@/components/EchartsReact';
 import {
   TREND_FIELD_KEYS,
   TREND_FIELD_META,
@@ -16,12 +16,19 @@ import './index.less';
 export type TrendChartXAxisKey = TrendChartFieldKey;
 export type TrendChartYAxisKey = TrendChartFieldKey;
 
+export interface RecommendationTrendChartPointClickPayload {
+  dataIndex: number;
+  datum: RecommendationTrendDatum;
+  no: number;
+}
+
 interface RecommendationTrendChartProps {
   data: RecommendationTrendDatum[];
   title?: string;
   defaultXAxis?: TrendChartFieldKey;
   defaultYAxes?: TrendChartFieldKey[];
   className?: string;
+  onPointClick?: (payload: RecommendationTrendChartPointClickPayload) => void;
 }
 
 // 轴可选个数配置：当前都为 1，后续放开只需改这里
@@ -64,6 +71,7 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
   defaultXAxis = DEFAULT_X_AXIS,
   defaultYAxes = [DEFAULT_Y_AXIS],
   className = '',
+  onPointClick,
 }) => {
   const { t } = useTranslation();
 
@@ -134,7 +142,38 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
     setSelectedYAxis(value);
   };
 
-  const buildChartOption = (): EChartsOption => {
+  const handleChartClick = useCallback(
+    (params: EChartsEventParams) => {
+      const { dataIndex } = params;
+      if (
+        params.componentType !== 'series' ||
+        params.seriesType !== 'scatter' ||
+        typeof dataIndex !== 'number' ||
+        !Number.isInteger(dataIndex)
+      ) {
+        return;
+      }
+
+      const clickedDatum = normalizedData[dataIndex];
+      if (!clickedDatum) {
+        return;
+      }
+
+      onPointClick?.({
+        dataIndex,
+        datum: clickedDatum,
+        no: clickedDatum.no,
+      });
+    },
+    [normalizedData, onPointClick],
+  );
+
+  const chartEvents = useMemo(
+    () => ({ click: handleChartClick }),
+    [handleChartClick],
+  );
+
+  const chartOption = useMemo((): EChartsOption => {
     const xAxisName = getFieldLabel(selectedXAxis);
     const activeYAxes = [selectedYAxis];
     const isDualAxis = activeYAxes.length === 2;
@@ -188,10 +227,7 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
       showSymbol: true,
       symbolSize: 8,
       yAxisIndex: index,
-      data:
-        selectedXAxis === 'no'
-          ? normalizedData.map((item) => [String(item.no), item[key]])
-          : normalizedData.map((item) => [item[selectedXAxis], item[key]]),
+      data: normalizedData.map((item) => [item[selectedXAxis], item[key]]),
       itemStyle: {
         color: TREND_FIELD_META[key].color,
         borderWidth: 2,
@@ -210,7 +246,7 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
         },
       },
       tooltip: {
-        trigger: 'axis',
+        trigger: 'item',
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
         borderColor: '#e5e7eb',
         borderWidth: 1,
@@ -219,26 +255,21 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
           fontSize: 12,
         },
         formatter: (params: any) => {
-          if (!params || params.length === 0) {
+          const param = Array.isArray(params) ? params[0] : params;
+          if (!param) {
             return '';
           }
 
-          const firstParam = params[0];
-          const xValue =
-            selectedXAxis === 'no'
-              ? `${getFieldLabel(selectedXAxis)}: ${firstParam.axisValue}`
-              : `${getFieldLabel(selectedXAxis)}: ${formatNumber(Number(firstParam.axisValue))}`;
+          const xValueRaw = Array.isArray(param.value) ? param.value[0] : param.value;
+          const yValueRaw = Array.isArray(param.value) ? param.value[1] : param.value;
+          const xValue = selectedXAxis === 'no'
+            ? `${getFieldLabel(selectedXAxis)}: ${Math.round(Number(xValueRaw))}`
+            : `${getFieldLabel(selectedXAxis)}: ${formatNumber(Number(xValueRaw))}`;
+          const yValue = formatNumber(Number(yValueRaw));
+          const yKey = activeYAxes[param.seriesIndex];
+          const unit = yKey ? TREND_FIELD_META[yKey].unit : '';
 
-          const lines = [xValue];
-          params.forEach((param: any) => {
-            const yValueRaw = Array.isArray(param.value) ? param.value[1] : param.value;
-            const yValue = formatNumber(Number(yValueRaw));
-            const yKey = activeYAxes[param.seriesIndex];
-            const unit = yKey ? TREND_FIELD_META[yKey].unit : '';
-            lines.push(`${param.marker}${param.seriesName}: ${yValue} ${unit}`);
-          });
-
-          return lines.join('<br/>');
+          return `${xValue}<br/>${param.marker}${param.seriesName}: ${yValue} ${unit}`;
         },
       },
       grid: {
@@ -247,57 +278,35 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
         top: 52,
         bottom: 50,
       },
-      xAxis:
-        selectedXAxis === 'no'
-          ? {
-              type: 'category',
-              name: xAxisName,
-              nameLocation: 'middle',
-              nameGap: 32,
-              boundaryGap: false,
-              data: normalizedData.map((item) => String(item.no)),
-              nameTextStyle: {
-                fontSize: 12,
-                color: '#374151',
-              },
-              axisLine: {
-                lineStyle: {
-                  color: '#d1d5db',
-                },
-              },
-              axisLabel: {
-                color: '#374151',
-                fontSize: 12,
-              },
-            }
-          : {
-              type: 'value',
-              scale: true,
-              name: xAxisName,
-              nameLocation: 'middle',
-              nameGap: 32,
-              nameTextStyle: {
-                fontSize: 12,
-                color: '#374151',
-              },
-              axisLine: {
-                lineStyle: {
-                  color: '#d1d5db',
-                },
-              },
-              axisLabel: {
-                color: '#374151',
-                fontSize: 12,
-                formatter: (value: number) => formatNumber(value),
-              },
-            },
+      xAxis: {
+        type: 'value' as const,
+        scale: true,
+        name: xAxisName,
+        nameLocation: 'middle' as const,
+        nameGap: 32,
+        nameTextStyle: {
+          fontSize: 12,
+          color: '#374151',
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#d1d5db',
+          },
+        },
+        axisLabel: {
+          color: '#374151',
+          fontSize: 12,
+          formatter: selectedXAxis === 'no'
+            ? (value: number) => String(Math.round(value))
+            : (value: number) => formatNumber(value),
+        },
+      },
       yAxis: yAxisConfig,
       series,
     };
-  };
+  }, [normalizedData, selectedXAxis, selectedYAxis, t]);
 
   const trendTitle = title || t('design.electrode.optimize.trendChartTitle', 'Recommendation Trend Chart');
-  const chartOption = buildChartOption();
 
   return (
     <div className={`recommendation-trend-chart ${className}`.trim()}>
@@ -335,7 +344,11 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
         </div>
       ) : (
         <div className="recommendation-trend-chart__chart">
-          <EchartsReact option={chartOption} height={360} />
+          <EchartsReact
+            option={chartOption}
+            height={360}
+            onEvents={chartEvents}
+          />
         </div>
       )}
     </div>

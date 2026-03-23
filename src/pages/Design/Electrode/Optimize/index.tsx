@@ -8,7 +8,9 @@ import Button from '@/components/Button';
 import { useMessage } from '@/components/MessageProvider';
 import type { BackwardResultItemDTO } from '@/services/electrode/types';
 import DesignDetailsModal from './components/DesignDetailsModal';
-import RecommendationTrendChart from './components/RecommendationTrendChart';
+import RecommendationTrendChart, {
+  type RecommendationTrendChartPointClickPayload,
+} from './components/RecommendationTrendChart';
 import { getOptimizeRecommendations } from './model';
 import { mapBackwardResultsToTrendData } from './recommendationData';
 import { downloadRecommendationData } from './recommendationExport';
@@ -384,6 +386,22 @@ const OptimizePage: React.FC = () => {
     if (fullData) {
       setSelectedDesign(fullData);
       setSelectedIndex(index);
+      setModalVisible(true);
+    } else {
+      message.error(t('design.electrode.optimize.messages.loadDetailsError'));
+    }
+  };
+
+  const handleTrendPointClick = ({ dataIndex }: RecommendationTrendChartPointClickPayload) => {
+    if (!['admin', 'enterprise','enterprise1', 'enterprise2', 'enterprise3', 'joint'].includes(userPermissions || '')) {
+      pricingContext?.setShowUpgradeModal?.(true);
+      return;
+    }
+
+    const fullData = fullResults.valid[dataIndex];
+    if (fullData) {
+      setSelectedDesign(fullData);
+      setSelectedIndex(dataIndex);
       setModalVisible(true);
     } else {
       message.error(t('design.electrode.optimize.messages.loadDetailsError'));
@@ -950,7 +968,10 @@ const OptimizePage: React.FC = () => {
             )}
 
             {recommendations.valid.length > 0 && (
-              <RecommendationTrendChart data={trendChartData} />
+              <RecommendationTrendChart
+                data={trendChartData}
+                onPointClick={handleTrendPointClick}
+              />
             )}
 
             {/* 额外推荐折叠提示栏 - 仅在有 invalid 数据时显示 */}
