@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useRef, useContext, useMemo } from 'react';
 import type { TFunction } from 'i18next';
 import { LeftOutlined } from '@ant-design/icons';
-import { Select, Table, Modal, Spin } from 'antd';
+import { Select, Table, Spin } from 'antd';
 import ParameterInput from '../Predict/components/ParameterInput';
-import RateCapabilityChart, {
-  hasRateCapabilityData,
-} from '../Predict/components/RateCapabilityChart';
+import DesignDetailsModal from '../Optimize/components/DesignDetailsModal';
 import RecommendationTrendChart, {
   type RecommendationTrendChartPointClickPayload,
 } from '../Optimize/components/RecommendationTrendChart';
@@ -46,49 +44,6 @@ interface OptimizeDetailContentProps {
   onGoBack: () => void;
 }
 
-// Modal 内部组件
-interface ParameterItemProps {
-  label: string;
-  value?: string | number;
-}
-
-const ParameterItem: React.FC<ParameterItemProps> = ({ label, value }) => (
-  <div className="designdetail-parameter-item">
-    <span className="designdetail-parameter-label">{label}</span>
-    <span className="designdetail-parameter-value">
-      {value !== undefined ? (typeof value === 'number' ? value.toFixed(2) : value) : '-'}
-    </span>
-  </div>
-);
-
-interface PerformanceCardProps {
-  label: string;
-  value: number | string;
-  unit: string;
-}
-
-const PerformanceCard: React.FC<PerformanceCardProps> = ({ label, value, unit }) => (
-  <div className="designdetail-performance-card">
-    <div className="designdetail-performance-label">{label}</div>
-    <div className="designdetail-performance-value">
-      {typeof value === 'number' ? value.toFixed(2) : value}{' '}
-      <span className="designdetail-performance-unit">{unit}</span>
-    </div>
-  </div>
-);
-
-interface DesignInfoItemProps {
-  label: string;
-  value: string | number;
-}
-
-const DesignInfoItem: React.FC<DesignInfoItemProps> = ({ label, value }) => (
-  <div className="designdetail-design-info-item">
-    <div className="designdetail-design-info-label">{label}</div>
-    <div className="designdetail-design-info-value">{value}</div>
-  </div>
-);
-
 const getCellDesignLabel = (value: string): string => {
   const option = CELL_DESIGN_OPTIONS.find((opt) => opt.value === value);
   return option?.label || value;
@@ -101,11 +56,6 @@ const getCathodeMaterialLabel = (value: string): string => {
 
 const formatPercent = (value: number): string => {
   return Number.isInteger(value) ? String(value) : String(parseFloat(value.toFixed(2)));
-};
-
-const formatNpRatio = (value?: number | string): string => {
-  const numeric = Number(value);
-  return Number.isFinite(numeric) ? numeric.toFixed(2) : String(value ?? '-');
 };
 
 const getAnodeMaterialLabel = (
@@ -387,8 +337,6 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
     });
   };
 
-  const displayModalNpRatio = formatNpRatio(selectedResult?.np_ratio ?? npRatio);
-
   return (
     <div className="electrode-optimize-container antd-readonly-style">
       {/* 页面标题和返回按钮 */}
@@ -668,146 +616,18 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
       </div>
 
       {/* 详情 Modal */}
-      <Modal
-        title={`${t('design.electrode.optimize.designDetails', 'Design Details')} - ${t('design.electrode.optimize.no')} #${selectedIndex + 1}`}
-        open={modalVisible}
-        centered
-        onCancel={() => setModalVisible(false)}
-        footer={null}
-        width="80%"
-        style={{ maxWidth: 1100 }}
-        className="design-details-modal"
-      >
-        {selectedResult && (
-          <div className="designdetail-content">
-            {/* Performance Prediction */}
-            <div className="designdetail-section">
-              <h3 className="designdetail-section-title">
-                {t('design.electrode.predict.cellPerformance', 'Cell Performance Prediction')}
-              </h3>
-              <div className="designdetail-performance-grid">
-                <PerformanceCard
-                  label={t('design.electrode.optimize.designCapacity', 'Design Capacity')}
-                  value={selectedResult.design_capacity}
-                  unit="Ah"
-                />
-                <PerformanceCard
-                  label={t('design.electrode.optimize.specificEnergy', 'Specific E.D.')}
-                  value={selectedResult.specific_ED}
-                  unit="Wh/kg"
-                />
-                <PerformanceCard
-                  label={t('design.electrode.optimize.jellyRollThickness', 'Jelly Roll Thickness')}
-                  value={selectedResult.jelly_roll_thickness}
-                  unit="mm"
-                />
-                <PerformanceCard
-                  label={t('design.electrode.optimize.volumetricEnergyDensity', 'Volumetric E.D.')}
-                  value={selectedResult.volumetric_ED}
-                  unit="Wh/L"
-                />
-              </div>
-            </div>
-
-            {/* Design */}
-            <div className="designdetail-section">
-              <h3 className="designdetail-section-title">
-                {t('design.electrode.optimize.cellInformation', 'Cell Information')}
-              </h3>
-              <div className="designdetail-design-grid">
-                <DesignInfoItem
-                  label={t('design.electrode.optimize.cellType', 'Cell Type')}
-                  value={getCellDesignLabel(cellDesign)}
-                />
-                <DesignInfoItem label={t('design.electrode.optimize.npRatio', 'NP Ratio')} value={displayModalNpRatio} />
-                <DesignInfoItem
-                  label={t('design.electrode.optimize.cathodeActiveMaterial', 'Cathode Active Material')}
-                  value={getCathodeMaterialLabel(cathodeActiveMaterial)}
-                />
-                <DesignInfoItem
-                  label={t('design.electrode.optimize.anodeActiveMaterial', 'Anode Active Material')}
-                  value={getAnodeMaterialLabel(selectedResult, anodeActiveMaterial)}
-                />
-                <DesignInfoItem label={t('design.electrode.optimize.width', 'Width (mm)')} value={modelParams.cathode_width} />
-                <DesignInfoItem label={t('design.electrode.optimize.length', 'Length (mm)')} value={modelParams.cathode_length} />
-                <DesignInfoItem label={t('design.electrode.optimize.layers', 'Layers')} value={selectedResult.layers} />
-              </div>
-            </div>
-
-            {/* Cathode & Anode */}
-            <div className="designdetail-electrodes-grid">
-              <div className="designdetail-electrode-section">
-                <h3 className="designdetail-electrode-title designdetail-cathode-title">
-                  {t('design.electrode.optimize.cathodeParameters', 'Cathode Parameters')}
-                </h3>
-                <div className="designdetail-parameters">
-                  <ParameterItem
-                    label={t('design.electrode.predict.kf9700', 'Polyvinylidene Fluoride (PVDF) (wt.%)')}
-                    value={selectedResult.cathode_binder_wt}
-                  />
-                  <ParameterItem
-                    label={t('design.electrode.predict.cn01y', 'Carbon Nano Tube (CNT) (wt.%)')}
-                    value={selectedResult.cathode_cnt_wt}
-                  />
-                  <ParameterItem
-                    label={t('design.electrode.predict.superC65', 'Carbon Black (wt.%)')}
-                    value={selectedResult.cathode_conductive_carbon_wt}
-                  />
-                  <ParameterItem
-                    label={t('design.electrode.predict.arealLoading', 'Areal Loading (mAh/cm²)')}
-                    value={selectedResult.cathode_areal_loading}
-                  />
-                  <ParameterItem
-                    label={t('design.electrode.predict.pressDensity', 'Press Density (g/cc)')}
-                    value={selectedResult.cathode_press_density}
-                  />
-                </div>
-              </div>
-
-              <div className="designdetail-electrode-section">
-                <h3 className="designdetail-electrode-title designdetail-anode-title">
-                  {t('design.electrode.optimize.anodeParameters', 'Anode Parameters')}
-                </h3>
-                <div className="designdetail-parameters">
-                  <ParameterItem
-                    label={t('design.electrode.predict.cmc', 'Carboxymethyl Cellulose (CMC) (wt.%)')}
-                    value={selectedResult.anode_binder1_wt}
-                  />
-                  <ParameterItem
-                    label={t('design.electrode.predict.sbr', 'Styrene-Butadiene Rubber (SBR) (wt.%)')}
-                    value={selectedResult.anode_binder2_wt}
-                  />
-                  <ParameterItem
-                    label={t('design.electrode.predict.paa', 'Poly(acrylic acid) (PAA) (wt.%)')}
-                    value={selectedResult.anode_binder3_wt}
-                  />
-                  <ParameterItem
-                    label={t('design.electrode.predict.superP', 'Carbon Black (wt.%)')}
-                    value={selectedResult.anode_conductive_carbon_wt}
-                  />
-                  <ParameterItem
-                    label={t('design.electrode.predict.swcnt', 'Carbon Nano Tube (CNT) (wt.%)')}
-                    value={selectedResult.anode_cnt_wt}
-                  />
-                  <ParameterItem
-                    label={t('design.electrode.predict.pressDensity', 'Press Density (g/cc)')}
-                    value={selectedResult.anode_press_density}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {hasRateCapabilityData(selectedResult) && (
-              <div className="designdetail-section">
-                <RateCapabilityChart
-                  results={selectedResult}
-                  missingDataBehavior="hide"
-                />
-              </div>
-            )}
-          </div>
-        )}
-      </Modal>
+      <DesignDetailsModal
+        visible={modalVisible}
+        data={selectedResult}
+        rank={selectedIndex + 1}
+        cellDesign={cellDesign}
+        npRatio={npRatio}
+        cathodeActiveMaterial={cathodeActiveMaterial}
+        anodeMaterialLabel={getAnodeMaterialLabel(selectedResult, anodeActiveMaterial)}
+        width={modelParams.cathode_width}
+        length={modelParams.cathode_length}
+        onClose={() => setModalVisible(false)}
+      />
     </div>
   );
 };

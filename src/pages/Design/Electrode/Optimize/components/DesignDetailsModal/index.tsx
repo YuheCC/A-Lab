@@ -20,10 +20,10 @@ interface DesignDetailsModalProps {
   cathodeActiveMaterial: string;
   anodeMaterialLabel: string;
   /** Cathode Width (mm)，来自表单，接口结果中不含此字段 */
-  width: string;
+  width: string | number;
   /** Cathode Length (mm)，来自表单，接口结果中不含此字段 */
-  length: string;
-  loading: boolean;
+  length: string | number;
+  loading?: boolean;
   onClose: () => void;
 }
 
@@ -107,7 +107,7 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
   anodeMaterialLabel,
   width,
   length,
-  loading,
+  loading = false,
   onClose,
 }) => {
   const { t } = useTranslation();
