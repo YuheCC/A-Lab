@@ -324,9 +324,17 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   }, []);
 
 
-  // Weight Percentage 范围钳制（0 ≤ value ≤ 1，保留两位小数）
-  const clampWeight = (val: number | null): number | null =>
-    val === null ? null : Math.min(1, Math.max(0, parseFloat(val.toFixed(2))));
+  // 根据模型类型动态获取 Weight Percentage 最大值
+  // model_type=100 → 2，model_type=101 → 1，默认 → 1
+  const maxWeightValue = useMemo(() => {
+    const type = selectedModelData?.model_type;
+    if (type === 100) return 2;
+    return 1;
+  }, [selectedModelData?.model_type]);
+
+  // Weight Percentage 范围钳制（0 ≤ value ≤ maxWeightValue，保留两位小数）
+  const clampWeight = useCallback((val: number | null): number | null =>
+    val === null ? null : Math.min(maxWeightValue, Math.max(0, parseFloat(val.toFixed(2)))), [maxWeightValue]);
 
   // 执行实际的计算逻辑（在验证通过后调用）
   const performCalculation = async () => {
@@ -1065,7 +1073,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     <InputNumber
                       value={faAdd3Wt}
                       min={0.01}
-                      max={1}
+                      max={maxWeightValue}
                       step={0.01}
                       onChange={(val) => setFaAdd3Wt(clampWeight(val))}
                       className="pm-weight-input-number"
@@ -1085,7 +1093,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     <InputNumber
                       value={faAdd4Wt}
                       min={0.01}
-                      max={1}
+                      max={maxWeightValue}
                       step={0.01}
                       onChange={(val) => setFaAdd4Wt(clampWeight(val))}
                       className="pm-weight-input-number"
@@ -1105,7 +1113,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     <InputNumber
                       value={faAdd5Wt}
                       min={0.01}
-                      max={1}
+                      max={maxWeightValue}
                       step={0.01}
                       onChange={(val) => setFaAdd5Wt(clampWeight(val))}
                       className="pm-weight-input-number"
@@ -1137,7 +1145,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     <InputNumber
                       value={faAdd6Wt}
                       min={0.01}
-                      max={1}
+                      max={maxWeightValue}
                       step={0.01}
                       onChange={(val) => setFaAdd6Wt(clampWeight(val))}
                       className="pm-weight-input-number"
@@ -1165,7 +1173,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     <InputNumber
                       value={fbAdd3Wt}
                       min={0.01}
-                      max={1}
+                      max={maxWeightValue}
                       step={0.01}
                       onChange={(val) => setFbAdd3Wt(clampWeight(val))}
                       className="pm-weight-input-number"
@@ -1185,7 +1193,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     <InputNumber
                       value={fbAdd4Wt}
                       min={0.01}
-                      max={1}
+                      max={maxWeightValue}
                       step={0.01}
                       onChange={(val) => setFbAdd4Wt(clampWeight(val))}
                       className="pm-weight-input-number"
@@ -1205,7 +1213,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     <InputNumber
                       value={fbAdd5Wt}
                       min={0.01}
-                      max={1}
+                      max={maxWeightValue}
                       step={0.01}
                       onChange={(val) => setFbAdd5Wt(clampWeight(val))}
                       className="pm-weight-input-number"
@@ -1230,7 +1238,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     <InputNumber
                       value={fbAdd6Wt}
                       min={0.01}
-                      max={1}
+                      max={maxWeightValue}
                       step={0.01}
                       onChange={(val) => setFbAdd6Wt(clampWeight(val))}
                       className="pm-weight-input-number"
