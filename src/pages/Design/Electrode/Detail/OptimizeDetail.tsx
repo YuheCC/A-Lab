@@ -6,7 +6,9 @@ import ParameterInput from '../Predict/components/ParameterInput';
 import RateCapabilityChart, {
   hasRateCapabilityData,
 } from '../Predict/components/RateCapabilityChart';
-import RecommendationTrendChart from '../Optimize/components/RecommendationTrendChart';
+import RecommendationTrendChart, {
+  type RecommendationTrendChartPointClickPayload,
+} from '../Optimize/components/RecommendationTrendChart';
 import { mapBackwardResultsToTrendData } from '../Optimize/recommendationData';
 import { downloadRecommendationData } from '../Optimize/recommendationExport';
 import {
@@ -242,6 +244,22 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
     setSelectedResult(record);
     const actualIndex = isInvalid ? validItems.length + index : index;
     setSelectedIndex(actualIndex);
+    setModalVisible(true);
+  };
+
+  const handleTrendPointClick = ({ dataIndex }: RecommendationTrendChartPointClickPayload) => {
+    if (!['admin', 'enterprise', 'enterprise1', 'enterprise2', 'enterprise3', 'joint'].includes(userPermissions || '')) {
+      pricingContext?.setShowUpgradeModal?.(true);
+      return;
+    }
+
+    const selectedItem = validItems[dataIndex];
+    if (!selectedItem) {
+      return;
+    }
+
+    setSelectedResult(selectedItem);
+    setSelectedIndex(dataIndex);
     setModalVisible(true);
   };
 
@@ -609,7 +627,10 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
           )}
 
           {!resultsLoading && validItems.length > 0 && (
-            <RecommendationTrendChart data={trendChartData} />
+            <RecommendationTrendChart
+              data={trendChartData}
+              onPointClick={handleTrendPointClick}
+            />
           )}
 
           {/* Additional Recommendations 折叠提示 */}
