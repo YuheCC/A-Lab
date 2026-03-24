@@ -39,22 +39,10 @@ export interface RecommendationTrendDatum {
 }
 
 export const TREND_FIELD_KEYS: TrendChartFieldKey[] = [
-  'no',
   'designCapacity',
   'specificEnergy',
   'thickness',
-  'volumetricEnergyDensity',
-  'cathodeBinderWt',
-  'cathodeCntWt',
-  'cathodeConductiveCarbonWt',
-  'cathodeArealLoading',
-  'cathodePressDensity',
-  'anodeBinder1Wt',
-  'anodeBinder2Wt',
-  'anodeBinder3Wt',
-  'anodeConductiveCarbonWt',
-  'anodeCntWt',
-  'anodePressDensity',
+  'volumetricEnergyDensity'
 ];
 
 export const TREND_FIELD_META: Record<TrendChartFieldKey, { unit: string; color: string }> = {
