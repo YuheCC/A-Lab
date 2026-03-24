@@ -227,7 +227,10 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
       showSymbol: true,
       symbolSize: 8,
       yAxisIndex: index,
-      data: normalizedData.map((item) => [item[selectedXAxis], item[key]]),
+      data: normalizedData.map((item) => ({
+        value: [item[selectedXAxis], item[key]],
+        no: item.no,
+      })),
       itemStyle: {
         color: TREND_FIELD_META[key].color,
         borderWidth: 2,
@@ -269,7 +272,11 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
           const yKey = activeYAxes[param.seriesIndex];
           const unit = yKey ? TREND_FIELD_META[yKey].unit : '';
 
-          return `${xValue}<br/>${param.marker}${param.seriesName}: ${yValue} ${unit}`;
+          const noLine = selectedXAxis !== 'no' && param.data?.no !== undefined
+            ? `No: ${Math.round(Number(param.data.no))}<br/>`
+            : '';
+
+          return `${noLine}${xValue}<br/>${param.seriesName}: ${yValue} ${unit}`;
         },
       },
       grid: {
