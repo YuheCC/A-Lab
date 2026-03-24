@@ -293,6 +293,7 @@ export default {
     atLeastOneAdditive: "포뮬레이션 A 또는 포뮬레이션 B 중 하나 이상에 완전한 첨가제 항목(이름/SMILES 및 0보다 큰 Weight Percentage 모두 필수)을 입력해 주세요",
     invalidSmiles: "{{formulas}}에 입력된 SMILES가 유효하지 않습니다. 수정 후 계산하세요.",
     duplicateAdditive: "{{formulas}} 에 중복된 첨가제가 있습니다. 확인해 주세요",
+    invalidWeightRange: "{{fieldLabel}}의 Weight Percentage는 0보다 크고 {{max}} 이하여야 합니다.",
   },
 
   // Battery system fallback
