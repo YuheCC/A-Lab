@@ -34,12 +34,11 @@ export const PARAMETER_RANGES: Record<string, ParameterRange> = {
 
 // 设计推荐结果（表格行）
 export interface DesignRecommendation {
-  rank: number;
+  id: string; // 稳定标识，用于表格和详情映射
   designCapacity: number;
   specificEnergy: number;
   thickness: number;
   volumetricEnergyDensity: number;
-  id: string; // 用于查询详情
 }
 
 // 正极参数

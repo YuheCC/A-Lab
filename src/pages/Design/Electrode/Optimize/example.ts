@@ -4,7 +4,6 @@ import { DesignRecommendation, DesignDetails } from './types';
 // Mock 推荐数据（8 条）
 export const mockRecommendations: DesignRecommendation[] = [
   {
-    rank: 1,
     designCapacity: 85,
     specificEnergy: 280,
     thickness: 5.2,
@@ -12,7 +11,6 @@ export const mockRecommendations: DesignRecommendation[] = [
     id: 'rec-1',
   },
   {
-    rank: 2,
     designCapacity: 75,
     specificEnergy: 260,
     thickness: 5.5,
@@ -20,7 +18,6 @@ export const mockRecommendations: DesignRecommendation[] = [
     id: 'rec-2',
   },
   {
-    rank: 3,
     designCapacity: 90,
     specificEnergy: 295,
     thickness: 4.9,
@@ -28,7 +25,6 @@ export const mockRecommendations: DesignRecommendation[] = [
     id: 'rec-3',
   },
   {
-    rank: 4,
     designCapacity: 80,
     specificEnergy: 270,
     thickness: 5.3,
@@ -36,7 +32,6 @@ export const mockRecommendations: DesignRecommendation[] = [
     id: 'rec-4',
   },
   {
-    rank: 5,
     designCapacity: 82,
     specificEnergy: 275,
     thickness: 5.1,
@@ -44,7 +39,6 @@ export const mockRecommendations: DesignRecommendation[] = [
     id: 'rec-5',
   },
   {
-    rank: 6,
     designCapacity: 72,
     specificEnergy: 255,
     thickness: 5.6,
@@ -52,7 +46,6 @@ export const mockRecommendations: DesignRecommendation[] = [
     id: 'rec-6',
   },
   {
-    rank: 7,
     designCapacity: 88,
     specificEnergy: 290,
     thickness: 5.0,
@@ -60,7 +53,6 @@ export const mockRecommendations: DesignRecommendation[] = [
     id: 'rec-7',
   },
   {
-    rank: 8,
     designCapacity: 84,
     specificEnergy: 278,
     thickness: 5.2,
@@ -68,7 +60,6 @@ export const mockRecommendations: DesignRecommendation[] = [
     id: 'rec-8',
   },
   {
-    rank: 9,
     designCapacity: 87,
     specificEnergy: 285,
     thickness: 5.1,
@@ -76,7 +67,6 @@ export const mockRecommendations: DesignRecommendation[] = [
     id: 'rec-9',
   },
   {
-    rank: 10,
     designCapacity: 70,
     specificEnergy: 250,
     thickness: 5.7,
@@ -88,7 +78,7 @@ export const mockRecommendations: DesignRecommendation[] = [
 // 生成 Mock 详情数据的函数
 export const generateMockDetail = (id: string): DesignDetails => {
   const recommendation = mockRecommendations.find((rec) => rec.id === id);
-  const rank = recommendation?.rank || 1;
+  const rank = recommendation ? mockRecommendations.indexOf(recommendation) + 1 : 1;
 
   // 根据不同的 rank 生成不同的详情数据
   const detailsMap: Record<number, DesignDetails> = {

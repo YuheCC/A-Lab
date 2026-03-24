@@ -2,7 +2,6 @@ import type { TFunction } from 'i18next';
 import type { BackwardResultItemDTO } from '@/services/electrode/types';
 
 export type TrendChartFieldKey =
-  | 'no'
   | 'designCapacity'
   | 'specificEnergy'
   | 'thickness'
@@ -19,7 +18,12 @@ export type TrendChartFieldKey =
   | 'anodeCntWt'
   | 'anodePressDensity';
 
+export const getBackwardResultKey = (
+  item: Pick<BackwardResultItemDTO, 'id' | 'item_id'>,
+): string => `${item.id}-${item.item_id}`;
+
 export interface RecommendationTrendDatum {
+  resultKey: string;
   no: number;
   designCapacity: number;
   specificEnergy: number;
@@ -46,7 +50,6 @@ export const TREND_FIELD_KEYS: TrendChartFieldKey[] = [
 ];
 
 export const TREND_FIELD_META: Record<TrendChartFieldKey, { unit: string; color: string }> = {
-  no: { unit: '', color: '#6b7280' },
   designCapacity: { unit: 'Ah', color: '#8b5cf6' },
   specificEnergy: { unit: 'Wh/kg', color: '#56B26A' },
   thickness: { unit: 'mm', color: '#3b82f6' },
@@ -68,9 +71,6 @@ export const isTrendField = (value?: string): value is TrendChartFieldKey =>
   !!value && TREND_FIELD_KEYS.includes(value as TrendChartFieldKey);
 
 export const getTrendFieldLabel = (t: TFunction, key: TrendChartFieldKey): string => {
-  if (key === 'no') {
-    return t('design.electrode.optimize.no', 'No.');
-  }
   if (key === 'designCapacity') {
     return `${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah)`;
   }
@@ -120,6 +120,7 @@ export const mapBackwardResultsToTrendData = (
   items: BackwardResultItemDTO[],
 ): RecommendationTrendDatum[] =>
   items.map((item, index) => ({
+    resultKey: getBackwardResultKey(item),
     no: index + 1,
     designCapacity: item.design_capacity,
     specificEnergy: item.specific_ED,
