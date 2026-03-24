@@ -293,6 +293,7 @@ export default {
     atLeastOneAdditive: "请在配方 A 或配方 B 中至少填写一条完整的添加剂记录（需同时填写名称/SMILES 及大于 0 的 Weight Percentage）",
     invalidSmiles: "{{formulas}} 中输入的 SMILES 无效，请修正后再进行计算。",
     duplicateAdditive: "{{formulas}} 中存在重复的添加剂，请检查",
+    invalidWeightRange: "{{fieldLabel}} 的 Weight Percentage 必须大于 0 且小于等于 {{max}}。",
   },
 
   // Battery system fallback

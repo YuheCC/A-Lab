@@ -293,6 +293,7 @@ export default {
     atLeastOneAdditive: "フォーミュレーション A またはフォーミュレーション B のいずれかに、完全な添加剤の記録（名称/SMILES と 0 より大きい Weight Percentage の両方）を少なくとも1つ入力してください",
     invalidSmiles: "{{formulas}} に入力された SMILES が無効です。修正してから計算してください。",
     duplicateAdditive: "{{formulas}} に重複する添加剤が検出されました。ご確認ください",
+    invalidWeightRange: "{{fieldLabel}} の Weight Percentage は 0 より大きく、{{max}} 以下である必要があります。",
   },
 
   // Battery system fallback

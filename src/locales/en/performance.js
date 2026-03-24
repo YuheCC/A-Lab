@@ -293,6 +293,7 @@ export default {
     atLeastOneAdditive: "Please fill in at least one complete additive entry in Formulation A or Formulation B (both the name/SMILES and a Weight Percentage greater than 0 are required)",
     invalidSmiles: "The SMILES entered for {{formulas}} is invalid. Please correct it before calculating.",
     duplicateAdditive: "Duplicate additives detected in {{formulas}}, please check",
+    invalidWeightRange: "{{fieldLabel}} Weight Percentage must be greater than 0 and less than or equal to {{max}}.",
   },
 
   // Battery system fallback
