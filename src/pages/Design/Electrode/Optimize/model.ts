@@ -5,6 +5,7 @@ import {
   type BackwardResultItemDTO,
 } from '@/services/electrode/types';
 import { generateMockDetail } from './example';
+import { getBackwardResultKey } from './recommendationData';
 import type {
   DesignTargetsFormData,
   DesignRecommendation,
@@ -18,18 +19,15 @@ import type {
 /**
  * 将 API 结果转换为前端 DesignRecommendation 格式
  * @param item 接口返回的单条结果（BackwardResultItemDTO）
- * @param index 索引（用于生成 rank 和 id）
  */
 const transformToRecommendation = (
   item: BackwardResultItemDTO,
-  index: number,
 ): DesignRecommendation => ({
-  rank: index + 1,
+  id: getBackwardResultKey(item),
   designCapacity: item.design_capacity,
   specificEnergy: item.specific_ED,
   thickness: item.jelly_roll_thickness,
   volumetricEnergyDensity: item.volumetric_ED,
-  id: `${index + 1}`,
 });
 
 /**
@@ -137,13 +135,13 @@ export const getOptimizeRecommendations = async (
 
   // 转换 valid 数据
   const validData: DesignRecommendation[] = validItems.map(
-    (item, index) => transformToRecommendation(item, index),
+    (item) => transformToRecommendation(item),
   );
 
   // 转换 invalid 数据 - 附带偏差字段信息
   const invalidData: DesignRecommendationWithDeviation[] = invalidItems.map(
-    (item, index) => ({
-      ...transformToRecommendation(item, index),
+    (item) => ({
+      ...transformToRecommendation(item),
       deviatedFields: checkDeviations(item, formData, activeSecondaryTarget),
     }),
   );

@@ -18,8 +18,8 @@ export type TrendChartYAxisKey = TrendChartFieldKey;
 
 export interface RecommendationTrendChartPointClickPayload {
   dataIndex: number;
+  resultKey: string;
   datum: RecommendationTrendDatum;
-  no: number;
 }
 
 interface RecommendationTrendChartProps {
@@ -161,8 +161,8 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
 
       onPointClick?.({
         dataIndex,
+        resultKey: clickedDatum.resultKey,
         datum: clickedDatum,
-        no: clickedDatum.no,
       });
     },
     [normalizedData, onPointClick],
@@ -229,6 +229,7 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
       yAxisIndex: index,
       data: normalizedData.map((item) => ({
         value: [item[selectedXAxis], item[key]],
+        resultKey: item.resultKey,
         no: item.no,
       })),
       itemStyle: {
@@ -265,18 +266,12 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
 
           const xValueRaw = Array.isArray(param.value) ? param.value[0] : param.value;
           const yValueRaw = Array.isArray(param.value) ? param.value[1] : param.value;
-          const xValue = selectedXAxis === 'no'
-            ? `${getFieldLabel(selectedXAxis)}: ${Math.round(Number(xValueRaw))}`
-            : `${getFieldLabel(selectedXAxis)}: ${formatNumber(Number(xValueRaw))}`;
+          const xValue = `${getFieldLabel(selectedXAxis)}: ${formatNumber(Number(xValueRaw))}`;
           const yValue = formatNumber(Number(yValueRaw));
           const yKey = activeYAxes[param.seriesIndex];
           const unit = yKey ? TREND_FIELD_META[yKey].unit : '';
 
-          const noLine = selectedXAxis !== 'no' && param.data?.no !== undefined
-            ? `No: ${Math.round(Number(param.data.no))}<br/>`
-            : '';
-
-          return `${noLine}${xValue}<br/>${param.seriesName}: ${yValue} ${unit}`;
+          return `${xValue}<br/>${param.seriesName}: ${yValue} ${unit}`;
         },
       },
       grid: {
@@ -303,9 +298,7 @@ const RecommendationTrendChart: React.FC<RecommendationTrendChartProps> = ({
         axisLabel: {
           color: '#374151',
           fontSize: 12,
-          formatter: selectedXAxis === 'no'
-            ? (value: number) => String(Math.round(value))
-            : (value: number) => formatNumber(value),
+          formatter: (value: number) => formatNumber(value),
         },
       },
       yAxis: yAxisConfig,

@@ -18,7 +18,6 @@ import './index.less';
 interface DesignDetailsModalProps {
   visible: boolean;
   data: BackwardResultItemDTO | null;
-  rank: number;
   cellDesign: string;
   npRatio: string;
   cathodeActiveMaterial: string;
@@ -104,7 +103,6 @@ const formatNpRatio = (value?: number | string): string => {
 const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
   visible,
   data,
-  rank,
   cellDesign,
   npRatio,
   cathodeActiveMaterial,
@@ -390,7 +388,7 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
         isFirstPage = false;
       }
 
-      pdf.save(`design-details-${rank}.pdf`);
+      pdf.save(`design-details-${data.item_id}.pdf`);
     } catch (error) {
       console.error('[DesignDetailsModal] Failed to export PDF:', error);
       message.error(t('common.operationFailed', { defaultValue: 'Operation failed' }));
@@ -406,9 +404,7 @@ const DesignDetailsModal: React.FC<DesignDetailsModalProps> = ({
       title={
         <div className="designdetail-modal-title">
           <span>
-            {data
-              ? `${t('design.electrode.optimize.designDetails')} - ${t('design.electrode.optimize.no')} #${rank}`
-              : t('design.electrode.optimize.designDetails')}
+            {t('design.electrode.optimize.designDetails')}
           </span>
           <Button
             variant="secondary"

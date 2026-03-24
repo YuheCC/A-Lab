@@ -12,7 +12,7 @@ import RecommendationTrendChart, {
   type RecommendationTrendChartPointClickPayload,
 } from './components/RecommendationTrendChart';
 import { getOptimizeRecommendations } from './model';
-import { mapBackwardResultsToTrendData } from './recommendationData';
+import { getBackwardResultKey, mapBackwardResultsToTrendData } from './recommendationData';
 import { downloadRecommendationData } from './recommendationExport';
 import ParameterInput from '../Predict/components/ParameterInput';
 import {
@@ -240,7 +240,6 @@ const OptimizePage: React.FC = () => {
   // Modal 状态
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedDesign, setSelectedDesign] = useState<BackwardResultItemDTO | null>(null);
-  const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [modalLoading, setModalLoading] = useState(false);
 
   // 额外推荐区域的 ref
@@ -373,7 +372,7 @@ const OptimizePage: React.FC = () => {
   };
 
   // 处理查看详情
-  const handleViewDetails = (record: DesignRecommendation, index: number, isInvalid = false) => {
+  const handleViewDetails = (record: DesignRecommendation, isInvalid = false) => {
     // 权限判断：非 enterprise 以上权限，显示会员升级框
     if (!['admin', 'enterprise','enterprise1', 'enterprise2', 'enterprise3', 'joint'].includes(userPermissions || '')) {
       pricingContext?.setShowUpgradeModal?.(true);
@@ -382,26 +381,24 @@ const OptimizePage: React.FC = () => {
 
     // 根据来源从 fullResults.valid 或 fullResults.invalid 获取详情数据
     const sourceData = isInvalid ? fullResults.invalid : fullResults.valid;
-    const fullData = sourceData[index];
+    const fullData = sourceData.find((item) => getBackwardResultKey(item) === record.id);
     if (fullData) {
       setSelectedDesign(fullData);
-      setSelectedIndex(index);
       setModalVisible(true);
     } else {
       message.error(t('design.electrode.optimize.messages.loadDetailsError'));
     }
   };
 
-  const handleTrendPointClick = ({ dataIndex }: RecommendationTrendChartPointClickPayload) => {
+  const handleTrendPointClick = ({ resultKey }: RecommendationTrendChartPointClickPayload) => {
     if (!['admin', 'enterprise','enterprise1', 'enterprise2', 'enterprise3', 'joint'].includes(userPermissions || '')) {
       pricingContext?.setShowUpgradeModal?.(true);
       return;
     }
 
-    const fullData = fullResults.valid[dataIndex];
+    const fullData = fullResults.valid.find((item) => getBackwardResultKey(item) === resultKey);
     if (fullData) {
       setSelectedDesign(fullData);
-      setSelectedIndex(dataIndex);
       setModalVisible(true);
     } else {
       message.error(t('design.electrode.optimize.messages.loadDetailsError'));
@@ -411,40 +408,38 @@ const OptimizePage: React.FC = () => {
   // 表格列配置
   const columns: ColumnsType<DesignRecommendation> = [
     {
-      title: t('design.electrode.optimize.no'),
-      dataIndex: 'rank',
-      width: 80,
-      align: 'center',
-    },
-    {
       title: t('design.electrode.optimize.designCapacity') + ' (Ah)',
       dataIndex: 'designCapacity',
       width: 180,
+      sorter: (a, b) => a.designCapacity - b.designCapacity,
       render: (value: number) => value.toFixed(2),
     },
     {
       title: t('design.electrode.optimize.specificEnergy') + ' (Wh/kg)',
       dataIndex: 'specificEnergy',
       width: 200,
+      sorter: (a, b) => a.specificEnergy - b.specificEnergy,
       render: (value: number) => value.toFixed(2),
     },
     {
       title: t('design.electrode.optimize.jellyRollThickness') + ' (mm)',
       dataIndex: 'thickness',
       width: 200,
+      sorter: (a, b) => a.thickness - b.thickness,
       render: (value: number) => value.toFixed(2),
     },
     {
       title: t('design.electrode.optimize.volumetricEnergyDensity') + ' (Wh/L)',
       dataIndex: 'volumetricEnergyDensity',
       width: 220,
+      sorter: (a, b) => a.volumetricEnergyDensity - b.volumetricEnergyDensity,
       render: (value: number) => value.toFixed(2),
     },
     {
       title: t('design.electrode.optimize.actions'),
       width: 100,
-      render: (_: any, record: DesignRecommendation, index: number) => (
-        <a className="electrode-optimize-details-link" onClick={() => handleViewDetails(record, index)}>
+      render: (_: any, record: DesignRecommendation) => (
+        <a className="electrode-optimize-details-link" onClick={() => handleViewDetails(record)}>
           {t('design.electrode.optimize.details')}
         </a>
       ),
@@ -454,15 +449,10 @@ const OptimizePage: React.FC = () => {
   // Invalid 表格列配置 - 显示偏差值为绿色
   const invalidColumns: ColumnsType<DesignRecommendationWithDeviation> = [
     {
-      title: t('design.electrode.optimize.no'),
-      dataIndex: 'rank',
-      width: 80,
-      align: 'center',
-    },
-    {
       title: t('design.electrode.optimize.designCapacity') + ' (Ah)',
       dataIndex: 'designCapacity',
       width: 180,
+      sorter: (a, b) => a.designCapacity - b.designCapacity,
       render: (value: number, record: DesignRecommendationWithDeviation) => (
         <span className={record.deviatedFields.includes('designCapacity') ? 'deviated-value' : ''}>
           {value.toFixed(2)}
@@ -473,6 +463,7 @@ const OptimizePage: React.FC = () => {
       title: t('design.electrode.optimize.specificEnergy') + ' (Wh/kg)',
       dataIndex: 'specificEnergy',
       width: 200,
+      sorter: (a, b) => a.specificEnergy - b.specificEnergy,
       render: (value: number, record: DesignRecommendationWithDeviation) => (
         <span className={record.deviatedFields.includes('specificEnergy') ? 'deviated-value' : ''}>
           {value.toFixed(2)}
@@ -483,6 +474,7 @@ const OptimizePage: React.FC = () => {
       title: t('design.electrode.optimize.jellyRollThickness') + ' (mm)',
       dataIndex: 'thickness',
       width: 200,
+      sorter: (a, b) => a.thickness - b.thickness,
       render: (value: number, record: DesignRecommendationWithDeviation) => (
         <span className={record.deviatedFields.includes('thickness') ? 'deviated-value' : ''}>
           {value.toFixed(2)}
@@ -493,6 +485,7 @@ const OptimizePage: React.FC = () => {
       title: t('design.electrode.optimize.volumetricEnergyDensity') + ' (Wh/L)',
       dataIndex: 'volumetricEnergyDensity',
       width: 220,
+      sorter: (a, b) => a.volumetricEnergyDensity - b.volumetricEnergyDensity,
       render: (value: number, record: DesignRecommendationWithDeviation) => (
         <span className={record.deviatedFields.includes('volumetricEnergyDensity') ? 'deviated-value' : ''}>
           {value.toFixed(2)}
@@ -502,8 +495,8 @@ const OptimizePage: React.FC = () => {
     {
       title: t('design.electrode.optimize.actions'),
       width: 100,
-      render: (_: any, record: DesignRecommendationWithDeviation, index: number) => (
-        <a className="electrode-optimize-details-link" onClick={() => handleViewDetails(record, index, true)}>
+      render: (_: any, record: DesignRecommendationWithDeviation) => (
+        <a className="electrode-optimize-details-link" onClick={() => handleViewDetails(record, true)}>
           {t('design.electrode.optimize.details')}
         </a>
       ),
@@ -1020,7 +1013,6 @@ const OptimizePage: React.FC = () => {
       <DesignDetailsModal
         visible={modalVisible}
         data={selectedDesign}
-        rank={selectedIndex + 1}
         cellDesign={formData.cellDesign}
         npRatio={formData.npRatio}
         cathodeActiveMaterial={formData.cathodeActiveMaterial}

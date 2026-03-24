@@ -2,12 +2,13 @@ import React, { useState, useEffect, useRef, useContext, useMemo } from 'react';
 import type { TFunction } from 'i18next';
 import { LeftOutlined } from '@ant-design/icons';
 import { Select, Table, Spin } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
 import ParameterInput from '../Predict/components/ParameterInput';
 import DesignDetailsModal from '../Optimize/components/DesignDetailsModal';
 import RecommendationTrendChart, {
   type RecommendationTrendChartPointClickPayload,
 } from '../Optimize/components/RecommendationTrendChart';
-import { mapBackwardResultsToTrendData } from '../Optimize/recommendationData';
+import { getBackwardResultKey, mapBackwardResultsToTrendData } from '../Optimize/recommendationData';
 import { downloadRecommendationData } from '../Optimize/recommendationExport';
 import {
   CELL_DESIGN_OPTIONS,
@@ -27,6 +28,8 @@ import { PricingContext } from '@/layouts/index';
 import './index.less';
 
 const { Option } = Select;
+
+type InvalidBackwardResultItem = BackwardResultItemDTO & { deviatedFields: DeviatedFieldType[] };
 
 // ============================================
 // type=2 (Optimize) 详情内容组件
@@ -90,13 +93,12 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
 
   // 推荐结果状态（通过 getBackwardResultList 加载）
   const [validItems, setValidItems] = useState<BackwardResultItemDTO[]>([]);
-  const [invalidItems, setInvalidItems] = useState<(BackwardResultItemDTO & { deviatedFields: DeviatedFieldType[] })[]>([]);
+  const [invalidItems, setInvalidItems] = useState<InvalidBackwardResultItem[]>([]);
   const [resultsLoading, setResultsLoading] = useState(true);
 
   // Modal 状态
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedResult, setSelectedResult] = useState<BackwardResultItemDTO | null>(null);
-  const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isAdditionalExpanded, setIsAdditionalExpanded] = useState(false);
   const [isCollapsing, setIsCollapsing] = useState(false);
   const additionalSectionRef = useRef<HTMLDivElement>(null);
@@ -145,7 +147,7 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
         const flatItems = await getBackwardResultList({ history_id: historyId });
 
         const valid: BackwardResultItemDTO[] = [];
-        const invalid: (BackwardResultItemDTO & { deviatedFields: DeviatedFieldType[] })[] = [];
+        const invalid: InvalidBackwardResultItem[] = [];
 
         flatItems.forEach((item) => {
           const deviations = checkDeviations(item);
@@ -186,30 +188,32 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
     }
   };
 
-  const handleViewDetails = (record: BackwardResultItemDTO, index: number, isInvalid = false) => {
+  const handleViewDetails = (record: BackwardResultItemDTO, isInvalid = false) => {
     if (!['admin', 'enterprise', 'enterprise1', 'enterprise2', 'enterprise3', 'joint'].includes(userPermissions || '')) {
       pricingContext?.setShowUpgradeModal?.(true);
       return;
     }
-    setSelectedResult(record);
-    const actualIndex = isInvalid ? validItems.length + index : index;
-    setSelectedIndex(actualIndex);
+    const sourceData = isInvalid ? invalidItems : validItems;
+    const fullData = sourceData.find((item) => getBackwardResultKey(item) === getBackwardResultKey(record));
+    if (!fullData) {
+      return;
+    }
+    setSelectedResult(fullData);
     setModalVisible(true);
   };
 
-  const handleTrendPointClick = ({ dataIndex }: RecommendationTrendChartPointClickPayload) => {
+  const handleTrendPointClick = ({ resultKey }: RecommendationTrendChartPointClickPayload) => {
     if (!['admin', 'enterprise', 'enterprise1', 'enterprise2', 'enterprise3', 'joint'].includes(userPermissions || '')) {
       pricingContext?.setShowUpgradeModal?.(true);
       return;
     }
 
-    const selectedItem = validItems[dataIndex];
+    const selectedItem = validItems.find((item) => getBackwardResultKey(item) === resultKey);
     if (!selectedItem) {
       return;
     }
 
     setSelectedResult(selectedItem);
-    setSelectedIndex(dataIndex);
     setModalVisible(true);
   };
 
@@ -217,42 +221,40 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
     deviatedFields?.includes(field);
 
   // 主表格列配置（valid 数据）
-  const columns = [
-    {
-      title: t('design.electrode.optimize.no', 'No.'),
-      width: 80,
-      align: 'center' as const,
-      render: (_: any, __: any, index: number) => index + 1,
-    },
+  const columns: ColumnsType<BackwardResultItemDTO> = [
     {
       title: `${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah)`,
       dataIndex: 'design_capacity',
       width: 180,
+      sorter: (a, b) => a.design_capacity - b.design_capacity,
       render: (value: number) => value?.toFixed(2),
     },
     {
       title: `${t('design.electrode.optimize.specificEnergy', 'Specific E.D.')} (Wh/kg)`,
       dataIndex: 'specific_ED',
       width: 200,
+      sorter: (a, b) => a.specific_ED - b.specific_ED,
       render: (value: number) => value?.toFixed(2),
     },
     {
       title: `${t('design.electrode.optimize.jellyRollThickness', 'Jelly Roll Thickness')} (mm)`,
       dataIndex: 'jelly_roll_thickness',
       width: 200,
+      sorter: (a, b) => a.jelly_roll_thickness - b.jelly_roll_thickness,
       render: (value: number) => value?.toFixed(2),
     },
     {
       title: `${t('design.electrode.optimize.volumetricEnergyDensity', 'Volumetric E.D.')} (Wh/L)`,
       dataIndex: 'volumetric_ED',
       width: 220,
+      sorter: (a, b) => a.volumetric_ED - b.volumetric_ED,
       render: (value: number) => value?.toFixed(2),
     },
     {
       title: t('design.electrode.optimize.actions', 'Actions'),
       width: 100,
-      render: (_: any, record: BackwardResultItemDTO, index: number) => (
-        <a className="electrode-optimize-details-link" onClick={() => handleViewDetails(record, index)}>
+      render: (_: any, record: BackwardResultItemDTO) => (
+        <a className="electrode-optimize-details-link" onClick={() => handleViewDetails(record)}>
           {t('design.electrode.optimize.details', 'Details')}
         </a>
       ),
@@ -260,18 +262,13 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
   ];
 
   // Invalid 数据列配置（带偏差高亮）
-  const invalidColumns = [
-    {
-      title: t('design.electrode.optimize.no', 'No.'),
-      width: 80,
-      align: 'center' as const,
-      render: (_: any, __: any, index: number) => validItems.length + index + 1,
-    },
+  const invalidColumns: ColumnsType<InvalidBackwardResultItem> = [
     {
       title: `${t('design.electrode.optimize.designCapacity', 'Design Capacity')} (Ah)`,
       dataIndex: 'design_capacity',
       width: 180,
-      render: (value: number, record: any) => (
+      sorter: (a, b) => a.design_capacity - b.design_capacity,
+      render: (value: number, record: InvalidBackwardResultItem) => (
         <span className={isFieldDeviated('designCapacity', record.deviatedFields) ? 'deviated-value' : ''}>
           {value?.toFixed(2)}
         </span>
@@ -281,7 +278,8 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
       title: `${t('design.electrode.optimize.specificEnergy', 'Specific E.D.')} (Wh/kg)`,
       dataIndex: 'specific_ED',
       width: 200,
-      render: (value: number, record: any) => (
+      sorter: (a, b) => a.specific_ED - b.specific_ED,
+      render: (value: number, record: InvalidBackwardResultItem) => (
         <span className={isFieldDeviated('specificEnergy', record.deviatedFields) ? 'deviated-value' : ''}>
           {value?.toFixed(2)}
         </span>
@@ -291,7 +289,8 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
       title: `${t('design.electrode.optimize.jellyRollThickness', 'Jelly Roll Thickness')} (mm)`,
       dataIndex: 'jelly_roll_thickness',
       width: 200,
-      render: (value: number, record: any) => (
+      sorter: (a, b) => a.jelly_roll_thickness - b.jelly_roll_thickness,
+      render: (value: number, record: InvalidBackwardResultItem) => (
         <span className={isFieldDeviated('thickness', record.deviatedFields) ? 'deviated-value' : ''}>
           {value?.toFixed(2)}
         </span>
@@ -301,7 +300,8 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
       title: `${t('design.electrode.optimize.volumetricEnergyDensity', 'Volumetric E.D.')} (Wh/L)`,
       dataIndex: 'volumetric_ED',
       width: 220,
-      render: (value: number, record: any) => (
+      sorter: (a, b) => a.volumetric_ED - b.volumetric_ED,
+      render: (value: number, record: InvalidBackwardResultItem) => (
         <span className={isFieldDeviated('volumetricEnergyDensity', record.deviatedFields) ? 'deviated-value' : ''}>
           {value?.toFixed(2)}
         </span>
@@ -310,8 +310,8 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
     {
       title: t('design.electrode.optimize.actions', 'Actions'),
       width: 100,
-      render: (_: any, record: any, index: number) => (
-        <a className="electrode-optimize-details-link" onClick={() => handleViewDetails(record, index, true)}>
+      render: (_: any, record: InvalidBackwardResultItem) => (
+        <a className="electrode-optimize-details-link" onClick={() => handleViewDetails(record, true)}>
           {t('design.electrode.optimize.details', 'Details')}
         </a>
       ),
@@ -619,7 +619,6 @@ const OptimizeDetailContent: React.FC<OptimizeDetailContentProps> = ({
       <DesignDetailsModal
         visible={modalVisible}
         data={selectedResult}
-        rank={selectedIndex + 1}
         cellDesign={cellDesign}
         npRatio={npRatio}
         cathodeActiveMaterial={cathodeActiveMaterial}
