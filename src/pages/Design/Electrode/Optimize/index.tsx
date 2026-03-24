@@ -44,6 +44,10 @@ const formatPercent = (value: number): string => {
   return Number.isInteger(value) ? String(value) : String(parseFloat(value.toFixed(2)));
 };
 
+const isRangeEqual = (a: [number, number], b: [number, number]): boolean => {
+  return a[0] === b[0] && a[1] === b[1];
+};
+
 const getAnodeMaterialLabelByResult = (
   result?: BackwardResultItemDTO | null,
   fallback?: string,
@@ -147,7 +151,9 @@ const OptimizePage: React.FC = () => {
   // 根据 Cell Design 自动更新 NP Ratio
   useEffect(() => {
     const npRatio = getNpRatioByCellDesign(formData.cellDesign);
-    setFormData((prev) => ({ ...prev, npRatio }));
+    setFormData((prev) => (
+      prev.npRatio === npRatio ? prev : { ...prev, npRatio }
+    ));
   }, [formData.cellDesign]);
 
   // ============ 实时验证 useEffect ============
@@ -163,7 +169,8 @@ const OptimizePage: React.FC = () => {
     const error = validateDimensionParameters(dimensionParams, t, { skipEmptyCheck: true });
 
     // 更新错误状态
-    setDimensionError(error || '');
+    const nextError = error || '';
+    setDimensionError((prev) => (prev === nextError ? prev : nextError));
   }, [
     debouncedWidth,
     debouncedLength,
@@ -175,46 +182,58 @@ const OptimizePage: React.FC = () => {
     const hasWidth = String(formData.width ?? '').trim() !== '';
     const hasLength = String(formData.length ?? '').trim() !== '';
     if (hasWidth && hasLength) {
-      setTargetParameterError('');
-      setTargetParameterErrorAnchor(null);
+      setTargetParameterError((prev) => (prev === '' ? prev : ''));
+      setTargetParameterErrorAnchor((prev) => (prev === null ? prev : null));
     }
   }, [formData.width, formData.length]);
 
   // 监听 VED / width / length / thickness 变化，动态计算 capacity 的 min/max 范围
   useEffect(() => {
-    if (canComputeLinkedRange(formData.width, formData.length, formData.thickness)) {
-      const newBounds = computeCapacityFromVED(
-        formData.volumetricEnergyDensity,
-        formData.width,
-        formData.length,
-        formData.thickness,
-      );
-      setCapacityBounds(newBounds);
-      setFormData((prev) => ({
-        ...prev,
-        designCapacity: [newBounds[0], newBounds[1]],
-      }));
-    } else {
-      setCapacityBounds([
-        PARAMETER_RANGES.designCapacity.min,
-        PARAMETER_RANGES.designCapacity.max,
-      ]);
-      setFormData((prev) => ({
-        ...prev,
-        designCapacity: PARAMETER_RANGES.designCapacity.default,
-      }));
+    const canComputeBounds = canComputeLinkedRange(
+      formData.width,
+      formData.length,
+      formData.thickness,
+    );
+    const nextBounds: [number, number] = canComputeBounds
+      ? computeCapacityFromVED(
+          formData.volumetricEnergyDensity,
+          formData.width,
+          formData.length,
+          formData.thickness,
+        )
+      : [
+          PARAMETER_RANGES.designCapacity.min,
+          PARAMETER_RANGES.designCapacity.max,
+        ];
+
+    if (canComputeBounds) {
+      setCapacityBounds((prev) => (isRangeEqual(prev, nextBounds) ? prev : nextBounds));
+      setFormData((prev) => (
+        isRangeEqual(prev.designCapacity, nextBounds)
+          ? prev
+          : { ...prev, designCapacity: nextBounds }
+      ));
+      return;
     }
+
+    setCapacityBounds((prev) => (isRangeEqual(prev, nextBounds) ? prev : nextBounds));
+    setFormData((prev) => (
+      isRangeEqual(prev.designCapacity, PARAMETER_RANGES.designCapacity.default)
+        ? prev
+        : { ...prev, designCapacity: PARAMETER_RANGES.designCapacity.default }
+    ));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.width, formData.length, formData.thickness, formData.volumetricEnergyDensity]);
 
   // 监听 VED 变化，通过查找表动态计算 GED（specificEnergy）的 min/max 范围并重置为默认全范围
   useEffect(() => {
     const newBounds = getGedBoundsFromVed(formData.volumetricEnergyDensity);
-    setSpecificEnergyBounds(newBounds);
-    setFormData((prev) => ({
-      ...prev,
-      specificEnergy: [newBounds[0], newBounds[1]],
-    }));
+    setSpecificEnergyBounds((prev) => (isRangeEqual(prev, newBounds) ? prev : newBounds));
+    setFormData((prev) => (
+      isRangeEqual(prev.specificEnergy, newBounds)
+        ? prev
+        : { ...prev, specificEnergy: newBounds }
+    ));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.volumetricEnergyDensity]);
 
@@ -249,7 +268,7 @@ const OptimizePage: React.FC = () => {
   useEffect(() => {
     if (!lastCalculatedFormData) {
       // 如果还没有计算过，表单未修改
-      setIsFormModified(false);
+      setIsFormModified((prev) => (prev ? false : prev));
       return;
     }
 
@@ -258,12 +277,20 @@ const OptimizePage: React.FC = () => {
     
     // 如果表单被修改，清空结果数据（即使用户改回原值，结果也不会重新显示）
     if (isModified) {
-      setRecommendations({ valid: [], invalid: [] });
-      setFullResults({ valid: [], invalid: [] });
-      setHasCalculated(false);
+      setRecommendations((prev) => (
+        prev.valid.length === 0 && prev.invalid.length === 0
+          ? prev
+          : { valid: [], invalid: [] }
+      ));
+      setFullResults((prev) => (
+        prev.valid.length === 0 && prev.invalid.length === 0
+          ? prev
+          : { valid: [], invalid: [] }
+      ));
+      setHasCalculated((prev) => (prev ? false : prev));
     }
-    
-    setIsFormModified(isModified);
+
+    setIsFormModified((prev) => (prev === isModified ? prev : isModified));
   }, [formData, lastCalculatedFormData]);
 
   // 处理额外推荐的展开/折叠
@@ -305,8 +332,9 @@ const OptimizePage: React.FC = () => {
       return true;
     }
 
-    setTargetParameterError(t('design.electrode.optimize.messages.fillWidthLengthFirst'));
-    setTargetParameterErrorAnchor(anchor);
+    const nextError = t('design.electrode.optimize.messages.fillWidthLengthFirst');
+    setTargetParameterError((prev) => (prev === nextError ? prev : nextError));
+    setTargetParameterErrorAnchor((prev) => (prev === anchor ? prev : anchor));
     return false;
   };
 
