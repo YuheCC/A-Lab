@@ -1,4 +1,11 @@
-export default  [
+declare const ENVIRONMENT: string;
+
+const githubRoutes = [
+  { path: '/', component: 'ALab', layout: false },
+  { path: '*', redirect: '/', layout: false },
+];
+
+const appRoutes = [
     { path: "/", redirect: "/map", layout: false },
     {
         path: "/about",
@@ -166,4 +173,6 @@ export default  [
         path: "*",
         component: "404",
     },
-]
+];
+
+export default ENVIRONMENT === 'github' ? githubRoutes : appRoutes;
