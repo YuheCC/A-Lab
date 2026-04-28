@@ -31,7 +31,7 @@ jobs:
         run: |
           node -v
           npm -v
-          npm ci
+          npm ci --legacy-peer-deps
 
       - name: Build for GitHub Pages
         run: |
