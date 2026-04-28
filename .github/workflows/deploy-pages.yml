@@ -26,7 +26,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: pnpm
+          # cache is disabled because setup-node's pnpm cache requires pnpm to be
+          # available on PATH before this step runs.
           
       - name: Setup pnpm
         run: |
