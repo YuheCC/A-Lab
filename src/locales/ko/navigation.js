@@ -3,6 +3,7 @@ export default {
   header: {
     map: "분자 지도",
     ask: "질문하기",
+    aLab: "A-Lab",
     search: "검색하기",
     molecule: "분자",
     filter: "조건별 검색",

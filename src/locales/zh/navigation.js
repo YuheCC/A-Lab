@@ -3,6 +3,7 @@ export default {
   header: {
     map: "地图",
     ask: "智能问答",
+    aLab: "A-Lab",
     search: "搜索",
     molecule: "分子",
     filter: "筛选",

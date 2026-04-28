@@ -98,7 +98,18 @@ export const triggerPricingModal = (permission?: string | null) => {
 /**
  * 检查当前路径是否需要弹出登录浮层
  */
-const PUBLIC_ROUTES_WITHOUT_LOGIN_MODAL = ['/login', '/pricing'];
+const PUBLIC_ROUTES_WITHOUT_LOGIN_MODAL = [
+  '/login',
+  '/register',
+  '/forgot-password',
+  '/verify-code',
+  '/verify-education',
+  '/verify-forgot-password',
+  '/reset-password',
+  '/redeem',
+  '/pricing',
+  '/terms',
+];
 
 const normalizePathname = (pathname: string) => {
   if (pathname.length > 1 && pathname.endsWith('/')) {

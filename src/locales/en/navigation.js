@@ -3,6 +3,7 @@ export default {
   header: {
     map: "Map",
     ask: "Ask",
+    aLab: "A-Lab",
     search: "Search",
     molecule: "Molecule",
     filter: "Filter",

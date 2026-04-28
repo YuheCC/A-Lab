@@ -3,6 +3,7 @@ export default {
   header: {
     map: "マップ",
     ask: "尋ねる",
+    aLab: "A-Lab",
     search: "検索",
     molecule: "分子",
     filter: "フィルター",

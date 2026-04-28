@@ -115,6 +115,10 @@ export default  [
         redirect: "/ask/new"
     },
     {
+        path: "/a-lab",
+        component: "ALab",
+    },
+    {
         path: "/ask/:id",
         component: "Chat",
     },
