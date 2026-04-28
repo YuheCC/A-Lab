@@ -42,7 +42,16 @@ jobs:
 
       - name: Umi setup
         run: |
-          npm run setup
+          npm run setup 2>&1 | tee umi-setup.log
+
+      - name: Upload setup logs (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: umi-setup-logs
+          path: |
+            umi-setup.log
+            ~/.npm/_logs
 
       - name: Build for GitHub Pages
         run: |
