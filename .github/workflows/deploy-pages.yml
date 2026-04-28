@@ -31,7 +31,14 @@ jobs:
         run: |
           node -v
           npm -v
-          npm ci --legacy-peer-deps
+          npm ci --legacy-peer-deps --no-audit --no-fund --loglevel=verbose
+
+      - name: Upload npm logs (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-logs
+          path: ~/.npm/_logs
 
       - name: Build for GitHub Pages
         run: |
