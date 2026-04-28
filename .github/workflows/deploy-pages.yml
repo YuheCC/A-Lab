@@ -40,6 +40,10 @@ jobs:
           name: npm-logs
           path: ~/.npm/_logs
 
+      - name: Umi setup
+        run: |
+          npm run setup
+
       - name: Build for GitHub Pages
         run: |
           npm run build:github
