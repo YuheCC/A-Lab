@@ -31,12 +31,11 @@ jobs:
           
       - name: Setup pnpm
         run: |
-          corepack enable
-          corepack prepare pnpm@9.15.4 --activate
+          npm i -g pnpm@9.15.4
+          pnpm -v
 
       - name: Install dependencies
         run: |
-          pnpm -v
           pnpm install --no-frozen-lockfile
 
       - name: Build for GitHub Pages
