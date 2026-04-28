@@ -10,6 +10,17 @@ export default defineConfig({
   history: {
     type: "hash",
   },
+  routes: [
+    {
+      path: "/",
+      component: "ALab",
+      layout: false,
+    },
+    {
+      path: "*",
+      redirect: "/",
+    },
+  ],
   define: {
     ENVIRONMENT: "github",
     BASE_URL: "/",
